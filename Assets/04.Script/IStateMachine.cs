@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace IStateMachine
 {
-    interface IStateMachineBase<T> where T : StateBase, new()
+    interface IStateMachineBase<T> where T : IStateBase, new()
     {
         void ChangeState(T next);
         void ForceSet(T next);
