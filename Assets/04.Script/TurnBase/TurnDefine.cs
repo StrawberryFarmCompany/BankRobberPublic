@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class TurnStateMachine : IStateMachineBase<TurnStateBase>
 {
+    TurnStateBase currState;
     public Dictionary<TurnTypes,TurnStateBase> states;
     public void ChangeState(TurnStateBase next)
     {
