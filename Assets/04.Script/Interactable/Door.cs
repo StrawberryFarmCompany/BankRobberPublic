@@ -11,10 +11,15 @@ public class Door : IInteractable
 
     public void UnInteraction()
     {
-        
+        CloseDoor();
     }
 
     public void OpenDoor()
+    {
+
+    }
+
+    public void CloseDoor()
     {
 
     }

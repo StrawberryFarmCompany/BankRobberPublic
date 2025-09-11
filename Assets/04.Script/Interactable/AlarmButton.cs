@@ -6,7 +6,7 @@ public class AlarmButton : IInteractable
 {
     public void OnInteraction()
     {
-
+        PushButton();
     }
 
     public void UnInteraction()
@@ -14,4 +14,8 @@ public class AlarmButton : IInteractable
 
     }
 
+    public void PushButton()
+    {
+
+    }
 }
