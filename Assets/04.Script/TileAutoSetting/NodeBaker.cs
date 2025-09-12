@@ -51,12 +51,12 @@ public class NodeBaker : MonoBehaviour
                     if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.5f, NavMesh.AllAreas))
                     {
                         walkable[x, y, z] = true;
-                        vectors.Add(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y)-1, Mathf.CeilToInt(worldPos.z)));
+                        vectors.Add(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y), Mathf.CeilToInt(worldPos.z)));
                     }
                     else
                     {
                         walkable[x, y, z] = false;
-                        vectors.Remove(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y) - 1, Mathf.CeilToInt(worldPos.z)));
+                        vectors.Remove(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y), Mathf.CeilToInt(worldPos.z)));
                     }
                 }
             }
