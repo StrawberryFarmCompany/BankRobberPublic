@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 namespace NodeDefines
 {
@@ -25,10 +26,12 @@ namespace NodeDefines
         }
         public Node GetNode(Vector3 pos)
         {
-            return nodes[new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z))];
+            nodes.TryGetValue(new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z)), out Node result);
+            return result;
         }
-
-
-
+        public Vector3Int GetVecInt(Vector3 pos)
+        {
+            return new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+        }
     }
 }
