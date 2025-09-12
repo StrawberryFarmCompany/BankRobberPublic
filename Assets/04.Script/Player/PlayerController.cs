@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,7 +5,9 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
+    public float jumpPower;
     private Vector2 curMovementInput;
+    public LayerMask groundLayerMask;
 
     [Header("Look")]
     public Transform cameraContainer;
@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour
     public float maxXLook;
     private float camCurXRot;
     public float lookSensitivity;
-    private Vector2 mouseDelta;
 
     private Rigidbody _rigidbody;
 
@@ -34,22 +33,26 @@ public class PlayerController : MonoBehaviour
         Move();
     }
 
-    private void LateUpdate()
+    // 카메라 움직임 값 구현 및 Player Input에 전달
+    public void CameraLook(InputAction.CallbackContext context)
     {
-        CameraLook();
-    }
+        Vector2 temp = context.ReadValue<Vector2>();
 
-    void CameraLook()
-    {
-        camCurXRot += mouseDelta.y * lookSensitivity;
+        camCurXRot += temp.y * lookSensitivity;
         camCurXRot = Mathf.Clamp(camCurXRot, minXLook, maxXLook);
         cameraContainer.localEulerAngles = new Vector3(-camCurXRot, 0, 0);
 
-        transform.localEulerAngles += new Vector3(0, mouseDelta.x * lookSensitivity, 0);
+        transform.eulerAngles += new Vector3(0, temp.x * lookSensitivity, 0);
     }
 
+    // 움직임 값 구현
     void Move()
     {
+        if(curMovementInput == Vector2.zero)
+        {
+            _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y , 0);
+            return;
+        }
         Vector3 dir = transform.forward * curMovementInput.y + transform.right * curMovementInput.x; // W->(0,1), S->(0,-1), D->(1,0), A->(-1,0) 를 통해 네 방향값 정해 주기
         dir *= moveSpeed;
         dir.y = _rigidbody.velocity.y;  // y에 velocity.y값 넣은 이유는 점프 할 때만 위아래로 움직여야 해서 
@@ -57,21 +60,49 @@ public class PlayerController : MonoBehaviour
         _rigidbody.velocity = dir;
     }
 
+    // 움직임을 Player Input에 전달
     public void OnMove(InputAction.CallbackContext context)
     {
+        // 움직일 때 (키보드 누르고 있을 때)
         if(context.phase == InputActionPhase.Performed)
         {
             curMovementInput = context.ReadValue<Vector2>();
         }
 
+        // 가만히 있을 때 (키보드 안누를 때)
         else if(context.phase == InputActionPhase.Canceled)
         {
             curMovementInput = Vector2.zero;
         }
     }
 
-    public void OnLook(InputAction.CallbackContext context)
+    // 점프 Player Input에 전달
+    public void OnJump(InputAction.CallbackContext context)
     {
-        mouseDelta = context.ReadValue<Vector2>();
+        if(context.phase == InputActionPhase.Started && IsGrounded())
+        {
+            _rigidbody.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
+        }
+    }
+
+    bool IsGrounded()
+    {
+        Ray[] rays = new Ray[4]
+        {
+            new Ray(transform.position + (transform.forward * 0.2f), Vector3.down),
+            new Ray(transform.position + (-transform.forward * 0.2f), Vector3.down),
+            new Ray(transform.position + (transform.right * 0.2f), Vector3.down),
+            new Ray(transform.position + (-transform.right * 0.2f), Vector3.down)
+        };
+
+        for(int i = 0; i < rays.Length; i++)
+        {
+            if (Physics.Raycast(rays[i], 0.1f, groundLayerMask))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
