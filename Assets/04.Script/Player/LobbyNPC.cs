@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LobbyNPC : IInteractable
+public class LobbyNPC : MonoBehaviour, IInteractable
 {
     public void OnInteraction()
     {
