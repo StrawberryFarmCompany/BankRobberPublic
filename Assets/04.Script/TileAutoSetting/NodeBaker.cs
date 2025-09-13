@@ -1,3 +1,4 @@
+using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
@@ -10,9 +11,20 @@ public class NodeBaker : MonoBehaviour
 {
     [SerializeField]NavMeshSurface surface;
     HashSet<Vector3Int> vectors = new HashSet<Vector3Int>();
-    void Start()
+    private void Awake()
     {
+        if (vectors.Count == 0) OnBake();
+        RegistNodes();
+    }
 
+    private void RegistNodes()
+    {
+        foreach (Vector3Int v in vectors)
+        {
+            NodeManager.GetInstance.RegistNode(v);
+        }
+        vectors = null;
+        Destroy(this);
     }
 
     public void OnBake()
@@ -24,7 +36,7 @@ public class NodeBaker : MonoBehaviour
         Vector3 min = triangulation.vertices[0];
         Vector3 max = triangulation.vertices[0];
 
-        foreach (var v in triangulation.vertices)
+        foreach (Vector3 v in triangulation.vertices)
         {
             min = Vector3.Min(min, v);
             max = Vector3.Max(max, v);
@@ -71,7 +83,7 @@ public class NodeBaker : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        foreach (Vector3 item in vectors)
+        foreach (Vector3Int item in vectors)
         {
             Gizmos.DrawCube(item, Vector3.one);
         }
