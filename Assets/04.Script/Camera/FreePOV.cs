@@ -7,17 +7,25 @@ public class FreePOV : MonoBehaviour
 {
     public CinemachineVirtualCamera vcam;
     public Transform followTarget;
+    [SerializeField] private BoxCollider bound;
 
     [Header("Move Settings")]
     public float moveSpeed = 10f;
 
     [Header("Default Offset")]
-    public Vector3 defaultOffset = new Vector3(0, 10, -10);
+    private Vector3 defaultOffset = new Vector3(0, 16.5f, 0);
     public float resetDuration = 0.4f;
 
     private CinemachineTransposer transposer;
     private Vector2 moveInput;
 
+    private Vector2 resetInput;
+    private Vector3 player1;
+    private Vector3 player2;
+    private Vector3 player3;
+
+
+    
     void Start()
     {
         if (vcam == null) vcam = GetComponent<CinemachineVirtualCamera>();
@@ -25,6 +33,7 @@ public class FreePOV : MonoBehaviour
         if (transposer != null)
             transposer.m_FollowOffset = defaultOffset;
         Application.targetFrameRate = 60;
+        defaultOffset.y = bound.size.y / 2;
     }
 
     void FixedUpdate()
@@ -52,21 +61,35 @@ public class FreePOV : MonoBehaviour
 
 
     }
-    public void OnMove(InputAction.CallbackContext ctx)
+    public void OnMove(InputAction.CallbackContext context)
     {
-        moveInput = ctx.ReadValue<Vector2>();
+        moveInput = context.ReadValue<Vector2>();
         Debug.Log("Input: " + moveInput);
     }
 
-    public void OnReset(InputAction.CallbackContext ctx)
+    public void OnReset(InputAction.CallbackContext context)
     {
-        if (ctx.performed && transposer != null)
+        //if (context.performed && transposer != null)
+        //{
+        //    StopAllCoroutines();
+        //    StartCoroutine(ResetOffsetSmooth());
+        //}
+
+        if (context.started)
         {
-            StopAllCoroutines();
-            StartCoroutine(ResetOffsetSmooth());
+            transform.position = CalculatePos();
         }
     }
 
+    private Vector3 CalculatePos()
+    {
+        player1 = CameraManager.GetInstance.player1Cam.Follow.position;
+        player2 = CameraManager.GetInstance.player2Cam.Follow.position;
+        player3 = CameraManager.GetInstance.player3Cam.Follow.position;
+        Vector3 centerPos = (player1 + player2 + player3) / 3;
+        centerPos.y = defaultOffset.y;
+        return centerPos;
+    }
     private IEnumerator ResetOffsetSmooth()
     {
         Vector3 start = transposer.m_FollowOffset;
