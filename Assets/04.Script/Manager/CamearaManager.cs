@@ -21,9 +21,9 @@ public class CameraManager : MonoBehaviour
     private CinemachineBrain brain;
     [SerializeField] private GameObject cam;
     [SerializeField] private CinemachineVirtualCamera freeViewCam;
-    public CinemachineVirtualCamera player1Cam;
-    public CinemachineVirtualCamera player2Cam;
-    public CinemachineVirtualCamera player3Cam;
+    public CinemachineFreeLook player1Cam;
+    public CinemachineFreeLook player2Cam;
+    public CinemachineFreeLook player3Cam;
 
     [Header("플레이어 추적 카메라")]
     public float rotateSpeed = 0.2f;
@@ -41,6 +41,7 @@ public class CameraManager : MonoBehaviour
     public bool isFreeView = true;
 
     private bool isRotationMode = false;
+    private bool canFollowMove = false;
     private void Awake()
     {
         if (instance == null)
@@ -97,39 +98,7 @@ public class CameraManager : MonoBehaviour
         }
     }
 
-    public void OnRotationMode(InputAction.CallbackContext context)
-    {
-        if (context.performed && !isFreeView)
-            isRotationMode = true;
-
-        if (context.canceled)
-            isRotationMode = false;
-    }
-
-    public void OnLook(InputAction.CallbackContext context)
-    {
-        if (isFreeView || !isRotationMode) return;
-
-        Vector2 lookDelta = context.ReadValue<Vector2>();
-        float yaw = lookDelta.x * rotateSpeed * (xflip ? 1 : -1);
-        float pitch = -lookDelta.y * rotateSpeed * (yflip ? 1 : -1);
-
-        // 현재 회전각
-        Vector3 currentEuler = transform.rotation.eulerAngles;
-
-        // 오일러 각도는 0~360이니까 0~180과 180~360 사이 구분 필요
-        float currentPitch = currentEuler.x;
-        if (currentPitch > 180f) currentPitch -= 360f;
-
-        // pitch 제한 적용
-        float newPitch = Mathf.Clamp(currentPitch + pitch, 0f, 89.9f);
-
-        // 회전 적용 (Y는 누적, X는 제한)
-        float newYaw = currentEuler.y + yaw;
-        transform.rotation = Quaternion.Euler(newPitch, newYaw, 0f);
-    }
-
-    private IEnumerator transPlayerViewCoroutine(CinemachineVirtualCamera transTarget)
+    private IEnumerator transPlayerViewCoroutine(CinemachineFreeLook transTarget)
     {
         isFreeView = false;
         InitializePriority();
