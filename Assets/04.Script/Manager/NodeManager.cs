@@ -12,7 +12,8 @@ namespace NodeDefines
     class NodeManager : SingleTon<NodeManager>
     {
         private Dictionary<Vector3Int, Node> nodes;
-        private readonly Vector3Int[] nearNode = new Vector3Int[8]{Vector3Int.up,Vector3Int.right,Vector3Int.down,Vector3Int.left,Vector3Int.one, -Vector3Int.one, };
+        //현재 팔방, 추후 4방이면 4방으로 바꿔야함
+        private readonly Vector3Int[] nearNode = new Vector3Int[8]{Vector3Int.forward,Vector3Int.right,Vector3Int.back,Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1,0,1), new Vector3Int(1, 0, -1) };
         protected override void Init()
         {
             base.Init();
@@ -34,6 +35,10 @@ namespace NodeDefines
         public Vector3Int GetVecInt(Vector3 pos)
         {
             return new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+        }
+        public bool IsExistNode(Vector3Int vec)
+        {
+            return nodes.ContainsKey(vec);
         }
         public void RegistEvent(Vector3 pos,Interaction a)
         {
