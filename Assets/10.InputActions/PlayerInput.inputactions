@@ -484,6 +484,74 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "ChangePlayer",
+            "id": "69786ea3-1a56-4a6b-8bbe-8e317bd13dd5",
+            "actions": [
+                {
+                    "name": "Player1",
+                    "type": "Button",
+                    "id": "21467bbd-3844-40a3-ad5b-247d44804f17",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Player2",
+                    "type": "Button",
+                    "id": "8f2d551f-f5e2-4c76-9d38-376a599366cb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Player3",
+                    "type": "Button",
+                    "id": "ab57bcac-41f9-46a3-aea0-88e1a7a75047",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "dfd8831a-a35e-4658-b269-9a2dbe4e59a7",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Player1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "49cd0859-8970-4566-887a-b7cb342d1b1d",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Player2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d305dfa2-fbff-420d-8b9d-0520e418f5cf",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Player3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
