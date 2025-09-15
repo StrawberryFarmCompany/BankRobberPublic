@@ -10,14 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86d7d9a2629ed77458bf2a328da7207d, type: 3}
-  m_Name: Bouncer
+  m_Name: Citizen
   m_EditorClassIdentifier: 
-  displayName: "\uACBD\uBE44\uC6D0"
-  description: "\uC870\uC6A9\uD544"
-  type: 1
+  displayName: "\uC2DC\uBBFC"
+  description: 
+  Tag: 2
+  maxActionPoint: 0
+  curActionPoint: 0
+  movementSpeed: 0
+  movementPoint: 0
   maxHp: 0
   curHp: 0
-  movementSpeed: 0
+  evasionRate: 0
+  accuracyModifier: 0
+  detectingDistance: 0
+  sabotage: 0
+  aggroControl: 0
+  maxRerollCount: 0
+  curRerollCount: 0
   isCombat: 0
-  accuracy: 0
-  sensingDistance: 0
