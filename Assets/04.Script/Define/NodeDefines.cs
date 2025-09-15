@@ -11,8 +11,11 @@ namespace NodeDefines
         //TODO : 캐릭터 
 
         private Interaction NodeInteraction;
-        public Node(Vector3Int center)
+        private bool isWalkable;
+        public bool IsWalkable { get { return isWalkable; } }
+        public Node(Vector3Int center,bool isWalkable)
         {
+            this.isWalkable = isWalkable;
             centerPos = center;
         }
         public void RemoveInteraction(Interaction remove)

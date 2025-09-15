@@ -23,9 +23,9 @@ namespace NodeDefines
         {
             base.Reset();
         }
-        public void RegistNode(Vector3Int vec)
+        public void RegistNode(Vector3Int vec,bool isWalkable)
         {
-            nodes.TryAdd(vec, new Node(vec));
+            nodes.TryAdd(vec, new Node(vec, isWalkable));
         }
         public Node GetNode(Vector3 pos)
         {
