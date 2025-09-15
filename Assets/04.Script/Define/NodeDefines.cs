@@ -9,14 +9,32 @@ namespace NodeDefines
     {
         private Vector3Int centerPos;
         //TODO : 캐릭터 
-        public Action Interaction;
-        public Node(Vector3Int center)
+
+        private Interaction NodeInteraction;
+        private bool isWalkable;
+        public bool IsWalkable { get { return isWalkable; } }
+        public Node(Vector3Int center,bool isWalkable)
         {
+            this.isWalkable = isWalkable;
             centerPos = center;
         }
+        public void RemoveInteraction(Interaction remove)
+        {
+            NodeInteraction -= remove;
+        }
+        public void AddInteraction(Interaction add)
+        {
+            NodeInteraction += add;
+        }
+
         public void ResetInteraction()
         {
-            Interaction = null;
+            NodeInteraction = null;
+        }
+        public void InvokeInteraction()
+        {
+            NodeInteraction.Invoke();
         }
     }
+    public delegate void Interaction();
 }
