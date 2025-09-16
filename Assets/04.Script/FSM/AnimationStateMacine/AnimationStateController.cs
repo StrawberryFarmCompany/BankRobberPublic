@@ -13,11 +13,8 @@ public class AnimationStateController : MonoBehaviour
     private MeleeState attackState;
     private DamagedState damagedState;
     private DeadState deadState;
-    private JumpState jumpState;
-    private FallState fallState;
     private InteractionState InteractionState;
     private RangeAttackState rangeAttackState;
-    private SquatState squatState;
 
 
     void Start()
