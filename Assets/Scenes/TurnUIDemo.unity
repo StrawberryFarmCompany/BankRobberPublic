@@ -681,6 +681,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 129756152}
   m_CullTransparentMesh: 1
+--- !u!1 &146747471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 146747472}
+  - component: {fileID: 146747473}
+  m_Layer: 0
+  m_Name: ActionInput
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &146747472
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146747471}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 193.88165, y: 181.68817, z: 3.7376432}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &146747473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146747471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b46e6efb60efcd4cbcc99b1d4b8c1f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &162607878
 GameObject:
   m_ObjectHideFlags: 0
@@ -1394,7 +1438,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 246112057}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 146747473}
+        m_TargetAssemblyTypeName: TurnActionInput, Assembly-CSharp
+        m_MethodName: OnSpecialActionPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &246112057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2305,7 +2361,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 517694139}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 146747473}
+        m_TargetAssemblyTypeName: TurnActionInput, Assembly-CSharp
+        m_MethodName: OnRangedAttackPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &517694139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2907,7 +2975,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 763202870}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 146747473}
+        m_TargetAssemblyTypeName: TurnActionInput, Assembly-CSharp
+        m_MethodName: OnMeleeAttackPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &763202870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3029,7 +3109,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 776298516}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 146747473}
+        m_TargetAssemblyTypeName: TurnActionInput, Assembly-CSharp
+        m_MethodName: OnHidePressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &776298516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6614,7 +6706,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2083933898}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 146747473}
+        m_TargetAssemblyTypeName: TurnActionInput, Assembly-CSharp
+        m_MethodName: OnRunPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2083933898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7033,3 +7137,4 @@ SceneRoots:
   - {fileID: 1069475664}
   - {fileID: 439765617}
   - {fileID: 1914567369}
+  - {fileID: 146747472}
