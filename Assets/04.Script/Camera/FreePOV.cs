@@ -8,6 +8,7 @@ public class FreePOV : MonoBehaviour
     public Transform followTarget;
 
     [Header("Move Settings")]
+    public float wasdMoveSpeed = 20f; // WASD 이동 속도
     public float moveSpeed = 0.1f;    // 마우스 이동 속도
     public float rotateSpeed = 45f;   // 회전 속도 (deg per press)
 
@@ -19,6 +20,7 @@ public class FreePOV : MonoBehaviour
 
     private bool canMove = false;      // 마우스 휠 버튼 눌림 상태
     private Vector2 moveInput;         // 마우스 델타
+    private Vector2 wasdMoveInput;   // WASD 입력
 
     public float speedMultiplier = 1.5f;
     private float currSpeedMultiplier = 1f;
@@ -31,11 +33,51 @@ public class FreePOV : MonoBehaviour
 
     void Update()
     {
-        if (canMove && moveInput != Vector2.zero)
+        if (wasdMoveInput != Vector2.zero)
         {
-            MoveCamera(moveInput);
+            Movement(wasdMoveInput);
         }
+        if(moveInput != Vector2.zero)
+        { 
+            if (canMove)
+            {
+                MoveCamera(moveInput);
+
+            }
+        }
+        
+
         ApplyRotation();
+    }
+
+    private void Movement(Vector2 direction)
+    {
+        if (direction == Vector2.zero) return;
+
+        // 회전 기준 벡터를 평면에 투영해서 Y값 제거
+        Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+        Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
+
+        // XZ 이동
+        Vector3 move = (right * direction.x + forward * direction.y) * wasdMoveSpeed * Time.deltaTime * currSpeedMultiplier;
+
+        Transform target = transform;
+        Vector3 newPos = target.position + move;
+
+        if (bound != null)
+        {
+            Bounds b = bound.bounds;
+            newPos.x = Mathf.Clamp(newPos.x, b.min.x, b.max.x);
+            newPos.y = Mathf.Clamp(newPos.y, b.min.y, b.max.y);
+            newPos.z = Mathf.Clamp(newPos.z, b.min.z, b.max.z);
+        }
+
+        target.position = newPos;
+    }
+    public void OnWASDMove(InputAction.CallbackContext context)
+    {
+        if (CameraManager.GetInstance.isFreeView == false) return;
+        wasdMoveInput = context.ReadValue<Vector2>();
     }
 
     private void MoveCamera(Vector2 delta)
