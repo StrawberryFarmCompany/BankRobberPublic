@@ -29,12 +29,17 @@ namespace NodeDefines
         }
         public Node GetNode(Vector3 pos)
         {
-            nodes.TryGetValue(new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z)), out Node result);
+            nodes.TryGetValue(GetVecInt(pos), out Node result);
             return result;
         }
         public Vector3Int GetVecInt(Vector3 pos)
         {
-            return new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+            float x = pos.x % 1f;
+            float z = pos.z % 1f;
+            return new Vector3Int(
+                x < 0f ? (x <= -0.5f ? Mathf.FloorToInt(pos.x) : Mathf.CeilToInt(pos.x)) : (x <= 0.5f ? Mathf.FloorToInt(pos.x) : Mathf.CeilToInt(pos.x)),
+                Mathf.FloorToInt(pos.y),
+                z < 0f ? (z <= -0.5f ? Mathf.FloorToInt(pos.z) : Mathf.CeilToInt(pos.z)) : (z <= 0.5f ? Mathf.FloorToInt(pos.z) : Mathf.CeilToInt(pos.z)));
         }
         public bool IsExistNode(Vector3Int vec)
         {

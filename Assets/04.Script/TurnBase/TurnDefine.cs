@@ -4,10 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 잠입턴 스테이트머신
+/// </summary>
 public class TurnStateMachine : IStateMachineBase<TurnStateBase>
 {
     TurnStateBase currState;
     public Dictionary<TurnTypes,TurnStateBase> states;
+    
     public void ChangeState(TurnStateBase next)
     {
         if (currState == next) return;

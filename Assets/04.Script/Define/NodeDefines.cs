@@ -9,6 +9,7 @@ namespace NodeDefines
     {
         private Vector3Int centerPos;
         //TODO : 캐릭터 
+        public Vector3Int GetCenter { get{ return centerPos; } }
 
         private Interaction NodeInteraction;
         private bool isWalkable;
