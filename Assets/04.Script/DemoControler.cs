@@ -21,11 +21,13 @@ public class DemoControler : MonoBehaviour
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
+            Vector3 mouseScreenPos = Mouse.current.position.ReadValue();
             Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Vector3Int vec = NodeManager.GetInstance.GetVecInt(hit.point);
+                Vector3Int vec = NodeManager.GetInstance.GetNode(hit.point).GetCenter;
+
+                Debug.Log(vec);
                 if (NodeManager.GetInstance.IsExistNode(vec))
                 {
                     agent.SetDestination(vec);
