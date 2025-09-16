@@ -25,9 +25,8 @@ public class DemoControler : MonoBehaviour
             Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
+                Debug.Log(hit.point);
                 Vector3Int vec = NodeManager.GetInstance.GetNode(hit.point).GetCenter;
-
-                Debug.Log(vec);
                 if (NodeManager.GetInstance.IsExistNode(vec))
                 {
                     agent.SetDestination(vec);
