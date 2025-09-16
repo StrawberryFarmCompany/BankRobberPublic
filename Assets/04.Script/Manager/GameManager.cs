@@ -5,22 +5,25 @@ using UnityEngine;
 class GameManager : SingleTon<GameManager>
 {
     private Dictionary<Vector3Int, Node> nodes;
-    private NoneBattleTurnStateMachine turn;
-    public NoneBattleTurnStateMachine Turn { get { return turn; } }
+    private NoneBattleTurnStateMachine noneBattleTurn;
+    public NoneBattleTurnStateMachine NoneBattleTurn { get { return noneBattleTurn; } }
+
+    private NoneBattleTurnStateMachine battleTurn;
+    public NoneBattleTurnStateMachine BattleTurn { get { return battleTurn; } }
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
     private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
     protected override void Init()
     {
         base.Init();
         nodes = new Dictionary<Vector3Int, Node>();
-        turn = new NoneBattleTurnStateMachine();
+        noneBattleTurn = new NoneBattleTurnStateMachine();
     }
     protected override void Reset()
     {
         base.Reset();
         nodes.Clear();
-        turn = null;
-        turn = new NoneBattleTurnStateMachine();
+        noneBattleTurn = null;
+        noneBattleTurn = new NoneBattleTurnStateMachine();
     }
     public void RegistNode(Vector3Int vec, bool isWalkable)
     {

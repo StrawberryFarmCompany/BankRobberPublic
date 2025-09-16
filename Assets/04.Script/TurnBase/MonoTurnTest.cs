@@ -8,8 +8,8 @@ public class MonoTurnTest : MonoBehaviour
     public TurnTypes type;
     void Start()
     {
-        GameManager.GetInstance.Turn.AddStartPointer(type, OnTurnStart);
-        GameManager.GetInstance.Turn.AddEndPointer(type, OnTurnEnd);
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(type, OnTurnStart);
+        GameManager.GetInstance.NoneBattleTurn.AddEndPointer(type, OnTurnEnd);
     }
 
     private void OnTurnStart()

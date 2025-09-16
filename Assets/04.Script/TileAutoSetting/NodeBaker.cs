@@ -74,12 +74,6 @@ public class NodeBaker : MonoBehaviour
             }
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
