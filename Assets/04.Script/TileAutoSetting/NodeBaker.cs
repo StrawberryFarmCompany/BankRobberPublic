@@ -21,7 +21,7 @@ public class NodeBaker : MonoBehaviour
     {
         foreach (Vector3Int v in vectors)
         {
-            NodeManager.GetInstance.RegistNode(v,true);
+            GameManager.GetInstance.RegistNode(v,true);
         }
         vectors = null;
         Destroy(this);

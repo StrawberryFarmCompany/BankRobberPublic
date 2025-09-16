@@ -8,7 +8,7 @@ public class NodeObject : MonoBehaviour
     [SerializeField] NodeType nodeType;
     private void Awake()
     {
-        NodeManager.GetInstance.RegistNode(NodeManager.GetInstance.GetVecInt(transform.position), nodeType == NodeType.wall? false : true);
+        GameManager.GetInstance.RegistNode(GameManager.GetInstance.GetVecInt(transform.position), nodeType == NodeType.wall? false : true);
         Destroy(this);
     }
 }
