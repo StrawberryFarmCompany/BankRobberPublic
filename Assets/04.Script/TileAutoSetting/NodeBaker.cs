@@ -21,7 +21,7 @@ public class NodeBaker : MonoBehaviour
     {
         foreach (Vector3Int v in vectors)
         {
-            NodeManager.GetInstance.RegistNode(v,true);
+            GameManager.GetInstance.RegistNode(v,true);
         }
         vectors = null;
         Destroy(this);
@@ -73,12 +73,6 @@ public class NodeBaker : MonoBehaviour
                 }
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
