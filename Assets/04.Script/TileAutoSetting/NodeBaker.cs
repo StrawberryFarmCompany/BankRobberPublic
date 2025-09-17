@@ -49,25 +49,21 @@ public class NodeBaker : MonoBehaviour
         int sizeY = Mathf.CeilToInt((max.y - min.y) / tileSize);
         int sizeZ = Mathf.CeilToInt((max.z - min.z) / tileSize);
 
-        bool[,,] walkable = new bool[sizeX, sizeY, sizeZ];
-
-        for (int x = 0; x < sizeX; x++)
+        for (int y = (int)min.y - 1; y <= (int)(max.y); y++)
         {
-            for (int y = 0; y < sizeY; y++)
+            for (int x = 0; x < sizeX; x++)
             {
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    Vector3 worldPos = new Vector3(min.x + x * tileSize + tileSize * 0.5f, min.y + y * tileSize + tileSize * 0.5f, min.z + z * tileSize + tileSize * 0.5f);
+                    Vector3 worldPos = new Vector3(min.x + x , min.y + y , min.z + z );
 
                     // NavMesh 위에 있는지 검사
                     if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.5f, NavMesh.AllAreas))
                     {
-                        walkable[x, y, z] = true;
-                        vectors.Add(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y), Mathf.CeilToInt(worldPos.z)));
+                        vectors.Add(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y)-1, Mathf.CeilToInt(worldPos.z)));
                     }
                     else
                     {
-                        walkable[x, y, z] = false;
                         vectors.Remove(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y), Mathf.CeilToInt(worldPos.z)));
                     }
                 }
