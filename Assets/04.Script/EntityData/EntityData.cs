@@ -30,5 +30,7 @@ public class EntityData : ScriptableObject
     public int aggroControl;       //장악력
     public int maxRerollCount;     //최대 리롤 횟수
     public int curRerollCount;     //현재 리롤 횟수
+    public float visionRange;      //시야 범위
+    public float attackRange;      //공격 범위
     public bool isCombat;          //NPC 공격 가능 여부
 }
