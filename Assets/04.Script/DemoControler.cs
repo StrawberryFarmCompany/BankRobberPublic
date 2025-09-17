@@ -26,6 +26,7 @@ public class DemoControler : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 Debug.Log(hit.point);
+                Debug.Log(hit.collider.gameObject.name);
                 Vector3Int vec = GameManager.GetInstance.GetNode(hit.point).GetCenter;
                 if (GameManager.GetInstance.IsExistNode(vec))
                 {

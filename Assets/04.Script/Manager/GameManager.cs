@@ -5,6 +5,7 @@ using UnityEngine;
 class GameManager : SingleTon<GameManager>
 {
     private Dictionary<Vector3Int, Node> nodes;
+    public Dictionary<Vector3Int, Node> Nodes => nodes;
     private NoneBattleTurnStateMachine noneBattleTurn;
     public NoneBattleTurnStateMachine NoneBattleTurn { get { return noneBattleTurn; } }
 
