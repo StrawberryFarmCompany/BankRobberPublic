@@ -47,4 +47,13 @@ public class PlayerStats
             equippedPassive = null;
         }
     }
+
+    public bool IsHit(float diceSum, float weaponRangeBonus, PlayerStats target)
+    {
+        return GetShotRate(diceSum, weaponRangeBonus, target) >= 0;
+    }
+    public float GetShotRate(float diceSum,float weaponRangeBonus,PlayerStats target)
+    {
+        return diceSum + accuracyModifier - weaponRangeBonus - target.evasionRate;
+    }
 }
