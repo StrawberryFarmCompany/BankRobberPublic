@@ -23,9 +23,9 @@ public class EntityData : ScriptableObject
     public int movementPoint;      //이동력
     public int maxHp;              //전체 체력
     public int curHp;              //현재 체력
-    public int evasionRate;        //회피율
+    public int evasionRate;        //회피율(기본 회피율 7)
     public int accuracyModifier;   //명중 보정치(처음엔 다 0 추후 업그레이드 느낌)
-    public float attackRange;      //공격 범위
+    public float attackRange;      //공격 범위(초기값 5.25)
 
     [Header("NPCOnly")]
     public float detectingDistance;//감지 거리
