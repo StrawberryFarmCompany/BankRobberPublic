@@ -1,11 +1,14 @@
 using IStateMachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EntityStateMachine : IStateMachineBase<EntityState>
 {
-    private EntityState currentState;
+    public EntityState currentState;
+    public EntityTag tag;
     public void ChangeState(EntityState next)
     {
         currentState.Exit();
@@ -22,9 +25,12 @@ public class EntityStateMachine : IStateMachineBase<EntityState>
 
 public class EntityState : IStateBase
 {
+    public Action StartAction;
+    public Action EndAction;
+
     public virtual void Enter()
     {
-        
+         StartAction?.Invoke();
     }
 
     public virtual void Execute()
@@ -34,6 +40,6 @@ public class EntityState : IStateBase
 
     public virtual void Exit()
     {
-        
+        EndAction?.Invoke();
     }
 }

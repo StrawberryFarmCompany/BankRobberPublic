@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CitizenDeadState : MonoBehaviour
+public class CitizenDeadState : EntityState
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Enter()
     {
-        
+        base.Enter();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Exit() 
     {
-        
+        base.Exit();
     }
 }
