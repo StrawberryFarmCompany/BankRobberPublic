@@ -26,8 +26,18 @@ class GameManager : SingleTon<GameManager>
 
     private CharacterNumber currCharacter;
     public CharacterNumber CurrCharacter { get { return currCharacter; } set { currCharacter = value; } }
+
+    private bool isFirstCharacterEnd;
+    public bool IsFirstCharacterEnd { get { return isFirstCharacterEnd; } set { isFirstCharacterEnd = value; } }
+    private bool isSecondCharacterEnd;
+    public bool IsSecondCharacterEnd { get { return isSecondCharacterEnd; } set { isSecondCharacterEnd = value; } }
+    private bool isThirdCharacterEnd;
+    public bool IsThirdCharacterEnd { get { return isThirdCharacterEnd; } set { isThirdCharacterEnd = value; } }
+
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
     private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
+
+    public int endTurnCount = 0;
     protected override void Init()
     {
         base.Init();
@@ -128,13 +138,113 @@ class GameManager : SingleTon<GameManager>
             currCharacter = CharacterNumber.Character_3;
 
     }
-    public void EndTurn()
+
+    public void StartPlayerTurn()
     {
-        noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
+        if (IsNoneBattlePhase())
+        {
+            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.allay));
+            isFirstCharacterEnd = false;
+            isSecondCharacterEnd = false;
+            isThirdCharacterEnd = false;
+            currCharacter = CharacterNumber.Character_1;
+        }
+        else if (!IsNoneBattlePhase())
+        {
+            battleTurn.ChangeState(battleTurn.FindState(TurnTypes.allay));
+            isFirstCharacterEnd = false;
+            isSecondCharacterEnd = true;
+            isThirdCharacterEnd = true;
+            currCharacter = CharacterNumber.Character_1;
+        }
+    }
+
+    public void EndPlayerTurn()
+    {
+        if (IsNoneBattlePhase())
+            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
+        else if (!IsNoneBattlePhase())
+            battleTurn.ChangeState(battleTurn.FindState(TurnTypes.enemy));
     }
 
     public bool IsNoneBattlePhase()
     {
         return CurrentPhase == GamePhase.NoneBattle;
+    }
+
+    /// <summary>
+    /// 인자 캐릭터의 활동 가능 조건을 false로 바꿔주고, 다음 캐릭터로 턴을 넘기거나, 모든 캐릭터가 턴을 종료했는지 확인. (잠입, 배틀 페이즈 알아서 처리)
+    /// </summary>
+    /// <param name="characterNumber"></param>
+    public void EndCharacterTurn(CharacterNumber characterNumber)
+    {
+        if (IsNoneBattlePhase())
+        {
+            switch (characterNumber)
+            {
+                case CharacterNumber.Character_1:
+                    isFirstCharacterEnd = true;
+                    if(!isSecondCharacterEnd)
+                        currCharacter = CharacterNumber.Character_2;
+                    else if (!isThirdCharacterEnd)
+                        currCharacter = CharacterNumber.Character_3;
+                    endTurnCount++;
+                    break;
+                case CharacterNumber.Character_2:
+                    isSecondCharacterEnd = true;
+                    if(!isFirstCharacterEnd)
+                        currCharacter = CharacterNumber.Character_1;
+                    else if (!isThirdCharacterEnd)
+                        currCharacter = CharacterNumber.Character_3;
+                    endTurnCount++;
+                    break;
+                case CharacterNumber.Character_3:
+                    isThirdCharacterEnd = true;
+                    if(!isFirstCharacterEnd)
+                        currCharacter = CharacterNumber.Character_1;
+                    else if (!isSecondCharacterEnd)
+                        currCharacter = CharacterNumber.Character_2;
+                    endTurnCount++;
+                    break;
+            }
+        }
+        else if (!IsNoneBattlePhase())
+        {
+            switch (characterNumber)
+            {
+                case CharacterNumber.Character_1:
+                    isFirstCharacterEnd = true;
+                    isSecondCharacterEnd = false;
+                    currCharacter = CharacterNumber.Character_2;
+                    endTurnCount++;
+                    break;
+                case CharacterNumber.Character_2:
+                    isSecondCharacterEnd = true;
+                    isThirdCharacterEnd = false;
+                    currCharacter = CharacterNumber.Character_3;
+                    endTurnCount++;
+                    break;
+                case CharacterNumber.Character_3:
+                    isThirdCharacterEnd = true;
+                    endTurnCount++;
+                    break;
+            }
+        }
+        
+        CheckAllCharacterEndTurn();
+
+    }
+
+    /// <summary>
+    /// 앤드갯수 충족 시 플레이어 턴 종료
+    /// </summary>
+    public void CheckAllCharacterEndTurn()
+    {
+        if (endTurnCount >= System.Enum.GetValues(typeof(CharacterNumber)).Length)
+        {
+            //플레이어 턴 종료 로직 필요
+            EndPlayerTurn();
+            endTurnCount = 0;
+        }
     }
 }
