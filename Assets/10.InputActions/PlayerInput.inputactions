@@ -552,6 +552,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "NodePlayer",
+            "id": "82823020-d4e5-4dd0-a68a-0b158a698084",
+            "actions": [
+                {
+                    "name": "MoveClick",
+                    "type": "Button",
+                    "id": "a479538b-c268-4bee-88ff-f7d4474a06b4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "f2ba02ef-0a2a-43f0-a83f-e2f55c89b8a7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b18c1218-596e-411a-9467-a470ffc35d2e",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d6bb192e-43c3-4b5f-910c-6366c3fc85fa",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

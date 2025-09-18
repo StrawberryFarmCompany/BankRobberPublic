@@ -89,8 +89,8 @@ class GameManager : SingleTon<GameManager>
     {
         if (context.started && IsNoneBattlePhase())
             currCharacter = CharacterNumber.Character_3;
-    }
 
+    }
     public void EndTurn()
     {
         noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
