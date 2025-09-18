@@ -1,9 +1,8 @@
-using IStateMachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ManagerIdleState : EntityState
+public class PatrolEnemyPatrolState : EnemyState
 {
     public override void Enter()
     {
