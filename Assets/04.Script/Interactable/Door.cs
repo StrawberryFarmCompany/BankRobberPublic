@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class Door : IInteractable
 {
+    public Vector3Int[] tiles { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
     public void OnInteraction()
     {
-        OpenDoor();
+        
     }
-
     public void UnInteraction()
     {
-        CloseDoor();
+        
     }
-
-    public void OpenDoor()
+    public void RegistInteraction()
     {
 
     }
 
-    public void CloseDoor()
+    public void ReleaseInteraction()
     {
 
     }

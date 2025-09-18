@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class MoneyBag : IInteractable
 {
+    public Vector3Int[] tiles { get; set; }
+
     public void OnInteraction()
     {
-        EquipMoneyBag();
+        
     }
 
     public void UnInteraction()
     {
-        UnEquipMoneyBag();
+        
     }
 
-    public void EquipMoneyBag()
+
+    public void RegistInteraction()
     {
 
     }
 
-    public void UnEquipMoneyBag()
+    public void ReleaseInteraction()
     {
 
     }

@@ -26,7 +26,7 @@ class GameManager : SingleTon<GameManager>
         noneBattleTurn = null;
         noneBattleTurn = new NoneBattleTurnStateMachine();
     }
-    public void RegistNode(Vector3Int vec, bool isWalkable)
+    public void RegistNode(Vector3Int vec, bool isWalkable = false)
     {
         nodes.TryAdd(vec, new Node(vec, isWalkable));
     }
@@ -48,13 +48,25 @@ class GameManager : SingleTon<GameManager>
     {
         return nodes.ContainsKey(vec);
     }
-    public void RegistEvent(Vector3 pos, Interaction a)
+    public void RegistEvent(Vector3 pos, Interaction a,string interactionName)
     {
+        Vector3Int convertedPos = GetVecInt(pos);
         for (int i = 0; i < nearNode.Length; i++)
         {
-            if (nodes.TryGetValue(nearNode[i], out Node node))
+            if (nodes.TryGetValue(nearNode[i]+ convertedPos, out Node node))
             {
-                node.AddInteraction(a);
+                node.AddInteraction(a, interactionName);
+            }
+        }
+    }
+    public void RemoveEvent(Vector3 pos, Interaction a,string interactionName)
+    {
+        Vector3Int convertedPos = GetVecInt(pos);
+        for (int i = 0; i < nearNode.Length; i++)
+        {
+            if (nodes.TryGetValue(nearNode[i]+ convertedPos, out Node node))
+            {
+                node.RemoveInteraction(a, interactionName);
             }
         }
     }

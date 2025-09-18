@@ -4,22 +4,21 @@ using UnityEngine;
 
 public class BankVault : IInteractable
 {
+    public Vector3Int[] tiles { get; set; }
+
     public void OnInteraction()
     {
-        OpenBankVault();
+        
     }
-
     public void UnInteraction()
     {
-        CloseBankVault();
+        
     }
-
-    public void OpenBankVault()
+    public void RegistInteraction()
     {
 
     }
-
-    public void CloseBankVault()
+    public void ReleaseInteraction()
     {
 
     }
