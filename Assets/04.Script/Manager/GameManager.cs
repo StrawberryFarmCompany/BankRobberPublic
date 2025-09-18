@@ -66,13 +66,38 @@ class GameManager : SingleTon<GameManager>
     public void RegistEvent(Vector3 pos, Interaction a,string interactionName)
     {
         Vector3Int convertedPos = GetVecInt(pos);
-        for (int i = 0; i < nearNode.Length; i++)
+        List<Vector3Int> vectors = GetNearNodes(pos);
+        for (int i = 0; i < vectors.Count; i++)
         {
-            if (nodes.TryGetValue(nearNode[i]+ convertedPos, out Node node))
+            if (nodes.TryGetValue(vectors[i], out Node node))
             {
                 node.AddInteraction(a, interactionName);
             }
         }
+    }
+    public void RegistEvent(Vector3Int[] poses,Interaction a,string interactionName)
+    {
+        for (int i = 0; i < poses.Length; i++)
+        {
+            if (nodes.TryGetValue(poses[i], out Node node))
+            {
+                node.AddInteraction(a, interactionName);
+            }
+        }
+    }
+    public List<Vector3Int> GetNearNodes(Vector3 pos)
+    {
+        Vector3Int convertedPos = GetVecInt(pos);
+        List<Vector3Int> poses = new List<Vector3Int>();
+        poses.Add(convertedPos);
+        for (int i = 0; i < nearNode.Length; i++)
+        {
+            if (nodes.ContainsKey(nearNode[i] + convertedPos))
+            {
+                poses.Add(nearNode[i] + convertedPos);
+            }
+        }
+        return poses;
     }
     public void RemoveEvent(Vector3 pos, Interaction a,string interactionName)
     {

@@ -38,9 +38,7 @@ namespace NodeDefines
             if (NodeInteractions == null) NodeInteractions = new Dictionary<string, Interaction>();
             if (NodeInteractions.TryAdd(interactionName, add))
             {
-                //중복된 노드에 중복된 키값이 있을 경우에 대한 예외처리
-                //1안 싹다 실행한다, else에서 현재 인수로 받은 add를 Event로 넣어줌
-                //2안 키값으로 나눈다, 인터렉션 등록해주는 객체에서 키값을 가지고 있어야함
+
             }
             else
             {

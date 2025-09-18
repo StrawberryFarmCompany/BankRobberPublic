@@ -9,12 +9,7 @@ public class InteractionSetter : MonoBehaviour
     void Start()
     {
         interaction = IInteractable.Factory(type);
-        GameManager.GetInstance.RegistEvent(transform.position,interaction.OnInteraction , type.ToString());
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        interaction.tiles = GameManager.GetInstance.GetNearNodes(transform.position).ToArray();
+        GameManager.GetInstance.RegistEvent(interaction.tiles, interaction.OnInteraction , type.ToString());
     }
 }
