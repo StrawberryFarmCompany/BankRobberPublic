@@ -14,6 +14,8 @@ public class PlayerStats
 
     private PassiveSkill equippedPassive;
 
+    public int weaponRange = 5;
+
     public PlayerStats(EntityData baseStats)
     {
         characterName = baseStats.displayName;
