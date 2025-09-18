@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class AlarmButton : IInteractable
 {
+    public Vector3Int[] tiles { get; set; }
     public void OnInteraction()
     {
-        PushButton();
+        
     }
-
     public void UnInteraction()
     {
 
     }
-
-    public void PushButton()
+    public void RegistInteraction()
     {
-
+        
+    }
+    public void ReleaseInteraction()
+    {
+        
     }
 }
