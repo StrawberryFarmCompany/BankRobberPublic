@@ -1,6 +1,14 @@
 using NodeDefines;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
+public enum GamePhase
+{
+    NoneBattle, // 잠입
+    Battle      // 전투
+}
 
 class GameManager : SingleTon<GameManager>
 {
@@ -11,6 +19,13 @@ class GameManager : SingleTon<GameManager>
 
     private NoneBattleTurnStateMachine battleTurn;
     public NoneBattleTurnStateMachine BattleTurn { get { return battleTurn; } }
+
+    public BattleTurnStateMachine TurnMachine { get; private set; }
+
+    public GamePhase CurrentPhase { get; private set; } = GamePhase.NoneBattle;
+
+    private CharacterNumber currCharacter;
+    public CharacterNumber CurrCharacter { get { return currCharacter; } set { currCharacter = value; } }
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
     private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
     protected override void Init()
@@ -57,5 +72,32 @@ class GameManager : SingleTon<GameManager>
                 node.AddInteraction(a);
             }
         }
+    }
+
+    public void OnFirst(InputAction.CallbackContext context)
+    {
+        if(context.started && IsNoneBattlePhase())
+            currCharacter = CharacterNumber.Character_1;
+    }
+
+    public void OnSecond(InputAction.CallbackContext context)
+    {
+        if (context.started && IsNoneBattlePhase())
+            currCharacter = CharacterNumber.Character_2;
+    }
+    public void OnThird(InputAction.CallbackContext context)
+    {
+        if (context.started && IsNoneBattlePhase())
+            currCharacter = CharacterNumber.Character_3;
+    }
+
+    public void EndTurn()
+    {
+        noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
+    }
+
+    public bool IsNoneBattlePhase()
+    {
+        return CurrentPhase == GamePhase.NoneBattle;
     }
 }
