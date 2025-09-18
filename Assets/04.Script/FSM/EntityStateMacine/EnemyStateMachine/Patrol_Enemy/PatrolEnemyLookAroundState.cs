@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PatrolEnemyCombatState : EntityState
+public class PatrolEnemyLookAroundState : EnemyState
 {
     public override void Enter()
     {

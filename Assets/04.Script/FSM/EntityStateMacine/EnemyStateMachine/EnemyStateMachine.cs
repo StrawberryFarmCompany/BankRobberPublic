@@ -1,29 +1,27 @@
 using IStateMachine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
 
-public class EntityStateMachine : IStateMachineBase<EntityState>
+public class EnemyStateMachine : IStateMachineBase<EnemyState>
 {
-    public EntityState currentState;
-    public EntityTag tag;
-    public void ChangeState(EntityState next)
+    private EnemyState currentState;
+
+    public EnemyState Current => currentState;
+
+    public void ChangeState(EnemyState next)
     {
-        currentState.Exit();
+        currentState?.Exit();
         currentState = next;
         currentState.Enter();
     }
 
-    public void ForceSet(EntityState next)
+    public void ForceSet(EnemyState next)
     {
         currentState = next;
         currentState.Enter();
     }
 }
 
-public class EntityState : IStateBase
+public class EnemyState : IStateBase
 {
     public Action StartAction;
     public Action EndAction;
