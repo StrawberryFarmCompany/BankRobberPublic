@@ -5,47 +5,50 @@ using UnityEngine;
 
 public class Citizen : MonoBehaviour
 {
-    private EntityStateMachine entityStateMachine;
+    private NeutralStateMachine neutralStateMachine;
     private CitizenIdleState citizenIdleState;
     private CitizenCowerState citizenCowerState;
     private CitizenDeadState citizenDeadState;
     private CitizenFleeState citizenFleeState;
     public EntityData entityData;
-
     private void Awake()
     {
-        entityStateMachine = new EntityStateMachine();
+        neutralStateMachine = new NeutralStateMachine();
         citizenIdleState = new CitizenIdleState();
         citizenCowerState = new CitizenCowerState();
         citizenDeadState = new CitizenDeadState();
         citizenFleeState = new CitizenFleeState();
         entityData = new EntityData();
 
-        entityStateMachine.ForceSet(citizenIdleState);
+        neutralStateMachine.ForceSet(citizenIdleState);
     }
 
     private void Update()
     {
-        
+        if(entityData.curHp <= 0)
+        {
+            ChangeToDead();
+        }
     }
     public void ChangeToIdle()
     {
-        entityStateMachine.ChangeState(citizenIdleState);
+        neutralStateMachine.ChangeState(citizenIdleState);
     }
 
     public void ChangeToCowerState()
     {
-        entityStateMachine.ChangeState(citizenCowerState);
+        neutralStateMachine.ChangeState(citizenCowerState);
     }
 
     public void ChangeToDead()
     {
-        entityStateMachine.ChangeState(citizenDeadState);
+        neutralStateMachine.ChangeState(citizenDeadState);
     }
 
     public void ChangeToFlee()
     {
-        entityStateMachine.ChangeState(citizenFleeState);
+        neutralStateMachine.ChangeState(citizenFleeState);
     }
+
 
 }

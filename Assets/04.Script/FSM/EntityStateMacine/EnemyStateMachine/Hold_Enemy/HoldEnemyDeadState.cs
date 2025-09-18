@@ -2,15 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CitizenDeadState : EntityState
+public class HoldEnemyDeadState : EnemyState
 {
     public override void Enter()
     {
-        base.Enter();
+
     }
 
-    public override void Exit() 
+    public override void Execute()
     {
-        base.Exit();
+
+    }
+
+    public override void Exit()
+    {
+
     }
 }

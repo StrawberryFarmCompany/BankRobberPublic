@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CitizenCowerState : EntityState
+public class CitizenCowerState : NeutralState
 {
     public override void Enter()
     {

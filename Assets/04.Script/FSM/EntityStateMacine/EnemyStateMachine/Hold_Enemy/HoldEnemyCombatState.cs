@@ -1,24 +1,21 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CitizenIdleState : EntityState
+public class HoldEnemyCombatState : EnemyState
 {
-    IdleState idleState;
     public override void Enter()
     {
-        idleState.Enter();
+
     }
 
     public override void Execute()
     {
-        
+
     }
 
-    public override void Exit() 
+    public override void Exit()
     {
-        idleState.Exit();
-    }
 
+    }
 }
