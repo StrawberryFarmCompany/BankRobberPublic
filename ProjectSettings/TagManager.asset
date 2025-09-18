@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Combined Mesh
+  - Tile Mesh
+  - Rule Tile
+  - Grid
   layers:
   - Default
   - TransparentFX

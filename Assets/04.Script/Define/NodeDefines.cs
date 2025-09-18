@@ -14,6 +14,10 @@ namespace NodeDefines
         private Interaction NodeInteraction;
         private bool isWalkable;
         public bool IsWalkable { get { return isWalkable; } }
+
+        private bool isSecurityArea;
+        public bool IsSecurityArea { get { return isSecurityArea; } set { isSecurityArea = value; } } //나중을 위한 보안 구역
+
         public Node(Vector3Int center,bool isWalkable)
         {
             this.isWalkable = isWalkable;
