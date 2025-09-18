@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PatrolEnemyPatrolState : EntityState
+public class ManagerIdleCowerState : NeutralState
 {
     public override void Enter()
     {
