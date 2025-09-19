@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : IInteractable
+public class KeyCard : IInteractable
 {
     public Vector3Int tile { get; set; }
     public Transform tr;
@@ -34,4 +34,3 @@ public class Door : IInteractable
         }
     }
 }
-public enum DoorLockType{none,lockPick,keyCard}
