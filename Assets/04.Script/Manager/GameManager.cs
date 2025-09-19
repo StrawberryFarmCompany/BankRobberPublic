@@ -123,7 +123,19 @@ class GameManager : SingleTon<GameManager>
             }
         }
     }
-
+    public List<Vector3Int> GetNearNodes(Vector3Int convertedPos)
+    {
+        List<Vector3Int> poses = new List<Vector3Int>();
+        poses.Add(convertedPos);
+        for (int i = 0; i < nearNode.Length; i++)
+        {
+            if (nodes.ContainsKey(nearNode[i] + convertedPos))
+            {
+                poses.Add(nearNode[i] + convertedPos);
+            }
+        }
+        return poses;
+    }
     public void OnFirst(InputAction.CallbackContext context)
     {
         if(context.started && IsNoneBattlePhase())
