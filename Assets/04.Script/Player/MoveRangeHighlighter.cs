@@ -14,7 +14,7 @@ public class MoveRangeHighlighter : MonoBehaviour
 
     private List<GameObject> activeHighlights = new();
 
-    public void ShowMoveRange(Vector3Int start)
+    public void ShowMoveRange(Vector3Int start, int range)
     {
         ClearHighlights();
 
