@@ -58,46 +58,4 @@ class GameManager : SingleTon<GameManager>
             }
         }
     }
-
-    private readonly List<Transform> enemies = new List<Transform>();
-
-    public void RegisterEnemy(Transform t)
-    {
-        if (t != null && !enemies.Contains(t))
-            enemies.Add(t);
-    }
-
-    public void UnregisterEnemy(Transform t)
-    {
-        if (t != null)
-            enemies.Remove(t);
-    }
-
-    public IReadOnlyList<Transform> GetEnemies() => enemies;
-
-    // 타일 간 원형 거리(사거리/타게팅용)
-    public float TileDistance(Vector3Int a, Vector3Int b)
-    {
-        int dx = a.x - b.x;
-        int dz = a.z - b.z;
-        return Mathf.Sqrt(dx * dx + dz * dz);
-    }
-
-    public bool HasLineOfSight(Vector3Int from, Vector3Int to, bool allowEndBlocked = true)
-    {
-        var start = new Vector3(from.x, 1.2f, from.z);
-        var end = new Vector3(to.x, 1.2f, to.z);
-
-        if (Physics.Linecast(start, end, out var hit))
-        {
-            if (allowEndBlocked)
-            {
-                var hx = Mathf.RoundToInt(hit.point.x);
-                var hz = Mathf.RoundToInt(hit.point.z);
-                if (hx == to.x && hz == to.z) return true;
-            }
-            return false;
-        }
-        return true;
-    }
 }

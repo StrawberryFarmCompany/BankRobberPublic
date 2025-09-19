@@ -15,7 +15,7 @@ namespace Weapons
     {
         public int MaxAmmo { get; }             //탄창 최대 용량
         public int Ammo { get; private set; }   //현재 남은 탄 수
-     
+
         public Gun(int maxAmmo, bool startFull = true)
         {
             MaxAmmo = Mathf.Max(1, maxAmmo);

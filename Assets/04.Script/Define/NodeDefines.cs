@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace NodeDefines
 {
-    public enum Team { Ally, Enemy, Neutral}
-
     public class Node
     {
         private Vector3Int centerPos;
@@ -43,25 +41,5 @@ namespace NodeDefines
             NodeInteraction.Invoke();
         }
     }
-
-    public class CharacterInfo : MonoBehaviour
-    {
-        public Team team = Team.Ally;
-        public EntityData baseStats; // SO (사거리 등 읽기용)
-
-        public int WeaponRangeTiles =>
-            Mathf.Max(0, Mathf.RoundToInt(baseStats ? baseStats.attackRange : 0f));
-
-        void OnEnable()
-        {
-            if (team == Team.Enemy) GameManager.GetInstance.RegisterEnemy(transform);
-        }
-
-        void OnDisable()
-        {
-            if (team == Team.Enemy) GameManager.GetInstance.UnregisterEnemy(transform);
-        }
-    }
-
     public delegate void Interaction();
 }
