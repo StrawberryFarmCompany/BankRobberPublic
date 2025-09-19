@@ -24,6 +24,7 @@ public class AnimationStateController : MonoBehaviour
         // 상태 인스턴스 생성
         idleState = new IdleState(animator);
         walkState = new WalkState(animator);
+        attackState = new MeleeState(animator);
 
         // 처음 상태는 Idle
         stateMachine.ForceSet(idleState);
@@ -41,4 +42,8 @@ public class AnimationStateController : MonoBehaviour
         else
             stateMachine.ChangeState(idleState);
     }
+
+    public void StartMelee() => stateMachine.ForceSet(attackState);
+
+    public bool ActionFinished => attackState != null && attackState.IsDone;
 }

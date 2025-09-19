@@ -33,9 +33,11 @@ public class AnimationStateMachine : IStateMachineBase<AnimationState>
 
 public class AnimationState : IStateBase
 {
+    public bool IsDone { get; protected set; }
+
     public virtual void Enter()
     {
-
+        IsDone = false;
     }
 
     public virtual void Execute()
