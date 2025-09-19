@@ -1,10 +1,11 @@
+using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BankVault : IInteractable
 {
-    public Vector3Int[] tiles { get; set; }
+    public Vector3Int tile { get; set; }
 
     public void OnInteraction()
     {
@@ -12,14 +13,22 @@ public class BankVault : IInteractable
     }
     public void UnInteraction()
     {
-        
-    }
-    public void RegistInteraction()
-    {
 
     }
-    public void ReleaseInteraction()
+    public void RegistInteraction(Interaction interaction)
     {
-
+        List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
+        for (int i = 0; i < vecs.Count; i++)
+        {
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.BankVault.ToString());
+        }
+    }
+    public void ReleaseInteraction(Interaction interaction)
+    {
+        List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
+        for (int i = 0; i < vecs.Count; i++)
+        {
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.BankVault.ToString());
+        }
     }
 }

@@ -1,10 +1,11 @@
+using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Door : IInteractable
 {
-    public Vector3Int[] tiles { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public Vector3Int tile { get; set; }
 
     public void OnInteraction()
     {
@@ -12,15 +13,22 @@ public class Door : IInteractable
     }
     public void UnInteraction()
     {
-        
-    }
-    public void RegistInteraction()
-    {
 
     }
-
-    public void ReleaseInteraction()
+    public void RegistInteraction(Interaction interaction)
     {
-
+        List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
+        for (int i = 0; i < vecs.Count; i++)
+        {
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.Door.ToString());
+        }
+    }
+    public void ReleaseInteraction(Interaction interaction)
+    {
+        List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
+        for (int i = 0; i < vecs.Count; i++)
+        {
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.Door.ToString());
+        }
     }
 }
