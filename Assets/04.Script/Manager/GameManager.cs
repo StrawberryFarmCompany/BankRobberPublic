@@ -25,7 +25,10 @@ class GameManager : SingleTon<GameManager>
     public GamePhase CurrentPhase { get; private set; } = GamePhase.NoneBattle;
 
     private CharacterNumber currCharacter;
-    public CharacterNumber CurrCharacter { get { return currCharacter; } set { currCharacter = value; } }
+    public CharacterNumber CurrCharacter { get { return currCharacter; } set { currCharacter = value; } } //현재 조작중인 캐릭터
+
+    private bool playerTurn;
+    public bool PlayerTurn { get { return playerTurn; } set { playerTurn = value; } } //현재 플레이어의 턴인가?
 
     private bool isFirstCharacterEnd;
     public bool IsFirstCharacterEnd { get { return isFirstCharacterEnd; } set { isFirstCharacterEnd = value; } }
@@ -245,6 +248,22 @@ class GameManager : SingleTon<GameManager>
             //플레이어 턴 종료 로직 필요
             EndPlayerTurn();
             endTurnCount = 0;
+        }
+    }
+
+    public bool IsCharacterTurn(CharacterNumber characterNumber)
+    {
+        switch(characterNumber)
+        {
+            case CharacterNumber.Character_1:
+                return isFirstCharacterEnd;
+            case CharacterNumber.Character_2:
+                return isSecondCharacterEnd;
+            case CharacterNumber.Character_3:
+                return isThirdCharacterEnd;
+            default:
+                return false;
+                break;
         }
     }
 }

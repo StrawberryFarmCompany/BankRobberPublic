@@ -25,7 +25,6 @@ public class NeutralStateMachine : IStateMachineBase<NeutralState>
 
     public NeutralState FindState(NeutralStates statesType)
     {
-        new NeutralStateMachine(NeutralStates.CitizenIdleState);
         return neutralStates[statesType];
     }
 
@@ -69,9 +68,10 @@ public class NeutralState : IStateBase
     {
 
     }
-    public static NeutralState Factory(NeutralStates turnTypes)
+
+    public static NeutralState Factory(NeutralStates neutralStatesType)
     {
-        switch (turnTypes)
+        switch (neutralStatesType)
         {
             case NeutralStates.CitizenIdleState:
                 return new CitizenIdleState();
