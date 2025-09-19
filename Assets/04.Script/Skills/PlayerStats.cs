@@ -4,13 +4,19 @@ public class PlayerStats
 {
     public string characterName;
     public int actionPoint;
+    public int curActionPoint;
     public int movementSpeed;
     public int movement;
     public int maxHp;
+    public int curHp;
     public int evasionRate;
     public int accuracyModifier;
+    public float attackRange;
+    public float detectingDistance;
     public int sabotage;
     public int aggroControl;
+    public int maxRerollCount;
+    public int curRerollCount;
 
     private PassiveSkill equippedPassive;
 
@@ -18,13 +24,19 @@ public class PlayerStats
     {
         characterName = baseStats.displayName;
         actionPoint = baseStats.maxActionPoint;
+        curActionPoint = baseStats.curActionPoint;
         movementSpeed = baseStats.movementSpeed;
         movement = baseStats.movementPoint;
         maxHp = baseStats.maxHp;
+        curHp = baseStats.curHp;
         evasionRate = baseStats.evasionRate;
         accuracyModifier = baseStats.accuracyModifier;
+        attackRange = baseStats.attackRange;
+        detectingDistance = baseStats.detectingDistance;
         sabotage = baseStats.sabotage;
         aggroControl = baseStats.aggroControl;
+        maxRerollCount = baseStats.maxRerollCount;
+        curRerollCount = baseStats.curRerollCount;
     }
 
     public void EquipPassive(PassiveSkill skill)

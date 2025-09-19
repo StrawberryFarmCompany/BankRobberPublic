@@ -13,4 +13,5 @@ public class CitizenDeadState : NeutralState
     {
         base.Exit();
     }
+
 }
