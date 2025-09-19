@@ -47,7 +47,7 @@ public class NodePlayerController : MonoBehaviour
     public bool isPerkActionMode;
 
     [Header("명중 보정치")]
-    public int hitBonus;
+    public int hitBonus = 0;
 
 
 
@@ -333,13 +333,15 @@ public class NodePlayerController : MonoBehaviour
         {
             if (playerCondition.ConsumeActionPoint(1))
             {
-                if()
-                //실제 격발하는 로직
-
+                //if (RangeAttackActionCheck(GetNodeVector3ByRay(mouseScreenPos)))
+                //{
+                   
+                //}
                 if (isAiming)
                 {
                     RemoveAiming();
                 }
+
             }
         }
     }
@@ -520,4 +522,30 @@ public class NodePlayerController : MonoBehaviour
         return cost;
     }
 
+    public bool RangeAttackActionCheck(Vector3Int targetPos /*, 타겟 엔티티*/)
+    {
+        int hitAdjustment;
+        if (CheckRange(targetPos, 5))
+        {
+            hitAdjustment = 0;
+        }
+        else if(CheckRange(targetPos, 9))
+        {
+            hitAdjustment = -2;
+        }
+        else if(CheckRange(targetPos, 20))
+        {
+            hitAdjustment = -5;
+        }
+        else
+        {
+            hitAdjustment = -13;
+        }
+
+        hitAdjustment += hitBonus;
+
+        return true;
+
+        //return (/*3d6 다이스*/ (playerCondition.playerStats.attackRange + hitAdjustment - /*타겟 엔티티의 회피율*/)>)
+    }
 }

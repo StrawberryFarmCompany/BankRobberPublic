@@ -558,7 +558,7 @@
             "id": "82823020-d4e5-4dd0-a68a-0b158a698084",
             "actions": [
                 {
-                    "name": "MoveClick",
+                    "name": "Click",
                     "type": "Button",
                     "id": "a479538b-c268-4bee-88ff-f7d4474a06b4",
                     "expectedControlType": "Button",
@@ -567,9 +567,81 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "New action",
+                    "name": "Run",
                     "type": "Button",
                     "id": "f2ba02ef-0a2a-43f0-a83f-e2f55c89b8a7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HideAndSneakAttack",
+                    "type": "Button",
+                    "id": "e3715812-a865-493f-b50c-bedd0df30bab",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RangeAttack",
+                    "type": "Button",
+                    "id": "7f963bb4-bc71-4a3d-9ec9-c91ba2a95757",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel",
+                    "type": "Button",
+                    "id": "a37846f2-3923-4be7-8e0b-74a4595eab93",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Throw",
+                    "type": "Button",
+                    "id": "e751d7f3-a51f-4710-be6f-660792b0cc56",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PickPocket",
+                    "type": "Button",
+                    "id": "42be2845-0ca1-4bdb-902d-38d4301ecfc1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Aiming",
+                    "type": "Button",
+                    "id": "eef1e534-7934-4a77-a49d-12950cc2a02f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PerkAction",
+                    "type": "Button",
+                    "id": "0ceee91d-e17b-4be4-bcc3-f94c687563bf",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EndTurn",
+                    "type": "Button",
+                    "id": "46f50443-5985-4c76-88b5-ad5d8e581044",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -584,18 +656,106 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveClick",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "d6bb192e-43c3-4b5f-910c-6366c3fc85fa",
-                    "path": "",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0e456429-0ebc-41ff-82df-bd5b4e50b5ae",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HideAndSneakAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42c5f3ee-5117-448d-837b-e8358046d272",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RangeAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5062b25c-4443-443d-bb24-c38c27441777",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "31c08574-ae3f-4547-b0ae-e9bc0c207881",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cbf1ebf4-effa-4320-a81b-8c1390b049d8",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PickPocket",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "91161add-6949-4efd-b3e0-09b25a521571",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aiming",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "61ea7add-8906-412a-bd6d-eb3efeda42c8",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PerkAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "191965b6-95a6-43e5-b2b7-7deaf1c28123",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EndTurn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

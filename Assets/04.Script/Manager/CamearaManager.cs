@@ -21,9 +21,15 @@ public class CameraManager : MonoBehaviour
     private CinemachineBrain brain;
     [SerializeField] private GameObject cam;
     [SerializeField] private CinemachineVirtualCamera freeViewCam;
-    public CinemachineFreeLook player1Cam;
-    public CinemachineFreeLook player2Cam;
-    public CinemachineFreeLook player3Cam;
+    //public CinemachineFreeLook player1Cam;
+    //public CinemachineFreeLook player2Cam;
+    //public CinemachineFreeLook player3Cam;
+
+    [Header("플레이어 캐릭터")]
+    public GameObject player1;
+    public GameObject player2;
+    public GameObject player3;
+
 
     [Header("플레이어 추적 카메라")]
     public float rotateSpeed = 0.2f;
@@ -58,7 +64,6 @@ public class CameraManager : MonoBehaviour
 
     private void Start()
     {
-        InitializePriority();
         freeViewCam.Priority = activeProiority;
 
         transitionDuration = brain.m_DefaultBlend.m_Time;
@@ -68,7 +73,6 @@ public class CameraManager : MonoBehaviour
     {
         if (context.started && isCompleteTransition)
         {
-            InitializePriority();
             freeViewCam.Priority = activeProiority;
             isFreeView = true;
         }
@@ -78,7 +82,8 @@ public class CameraManager : MonoBehaviour
     {
         if (context.started)
         {
-            StartCoroutine(transPlayerViewCoroutine(player1Cam));
+         
+            
         }
     }
 
@@ -86,7 +91,7 @@ public class CameraManager : MonoBehaviour
     {
         if (context.started)
         {
-            StartCoroutine(transPlayerViewCoroutine(player2Cam));
+            
         }
     }
 
@@ -94,27 +99,27 @@ public class CameraManager : MonoBehaviour
     {
         if (context.started)
         {
-            StartCoroutine(transPlayerViewCoroutine(player3Cam));
+            
         }
     }
 
-    private IEnumerator transPlayerViewCoroutine(CinemachineFreeLook transTarget)
-    {
-        isFreeView = false;
-        InitializePriority();
-        transTarget.Priority = activeProiority;
-        isCompleteTransition = false;
-        yield return new WaitForSeconds(transitionDuration);
-        freeViewCam.transform.position = transTarget.transform.position;
-        freeViewCam.transform.rotation = transTarget.transform.rotation;
-        isCompleteTransition = true;
-    }
+    //private IEnumerator transPlayerViewCoroutine(CinemachineFreeLook transTarget)
+    //{
+    //    isFreeView = false;
+    //    InitializePriority();
+    //    transTarget.Priority = activeProiority;
+    //    isCompleteTransition = false;
+    //    yield return new WaitForSeconds(transitionDuration);
+    //    freeViewCam.transform.position = transTarget.transform.position;
+    //    freeViewCam.transform.rotation = transTarget.transform.rotation;
+    //    isCompleteTransition = true;
+    //}
 
-    private void InitializePriority()
-    {
-        freeViewCam.Priority = disablePriority;
-        player1Cam.Priority = disablePriority;
-        player2Cam.Priority = disablePriority;
-        player3Cam.Priority = disablePriority;
-    }
+    //private void InitializePriority()
+    //{
+    //    freeViewCam.Priority = disablePriority;
+    //    player1Cam.Priority = disablePriority;
+    //    player2Cam.Priority = disablePriority;
+    //    player3Cam.Priority = disablePriority;
+    //}
 }
