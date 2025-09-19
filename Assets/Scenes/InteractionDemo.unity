@@ -368,6 +368,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  isWalkAble: 0
+  target: {fileID: 0}
 --- !u!1 &757416032
 GameObject:
   m_ObjectHideFlags: 0

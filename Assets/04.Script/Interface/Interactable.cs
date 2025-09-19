@@ -1,3 +1,4 @@
+using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,11 +6,11 @@ using UnityEngine.InputSystem;
 
 public interface IInteractable
 {
-    public Vector3Int[] tiles { get; set; }
+    public Vector3Int tile { get; set; }
     void OnInteraction();
     void UnInteraction();
-    void RegistInteraction();
-    void ReleaseInteraction();
+    void RegistInteraction(Interaction interaction);
+    void ReleaseInteraction(Interaction interaction);
     static IInteractable Factory(InteractionType type)
     {
         switch (type)

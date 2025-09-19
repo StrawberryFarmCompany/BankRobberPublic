@@ -19,9 +19,11 @@ namespace NodeDefines
         private bool isSecurityArea;
         public bool IsSecurityArea { get { return isSecurityArea; } set { isSecurityArea = value; } } //나중을 위한 보안 구역
 
-        Dictionary<string, Interaction> NodeInteractions;
+        Dictionary<string, Interaction> nodeInteractions;
 
-        string[] GetInteractionID { get { return NodeInteractions.Keys.ToArray(); } }
+        public PlayerStats standingCharactor;
+
+        string[] GetInteractionID { get { return nodeInteractions.Keys.ToArray(); } }
 
         public Node(Vector3Int center,bool isWalkable)
         {
@@ -30,19 +32,19 @@ namespace NodeDefines
         }
         public void RemoveInteraction(Interaction remove, string interactionName)
         {
-            NodeInteractions.Remove(interactionName);
-            if (NodeInteractions.Count == 0) NodeInteractions = null;
+            nodeInteractions.Remove(interactionName);
+            if (nodeInteractions.Count == 0) nodeInteractions = null;
         }
         public void AddInteraction(Interaction add,string interactionName)
         {
-            if (NodeInteractions == null) NodeInteractions = new Dictionary<string, Interaction>();
-            if (NodeInteractions.TryAdd(interactionName, add))
+            if (nodeInteractions == null) nodeInteractions = new Dictionary<string, Interaction>();
+            if (nodeInteractions.TryAdd(interactionName, add))
             {
 
             }
             else
             {
-                NodeInteractions[interactionName] += add;
+                nodeInteractions[interactionName] += add;
             }
         }
         public void RemoveEvent(Interaction remove)

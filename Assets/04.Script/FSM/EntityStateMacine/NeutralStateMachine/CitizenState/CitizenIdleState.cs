@@ -21,4 +21,8 @@ public class CitizenIdleState : NeutralState
         idleState.Exit();
     }
 
+    public void Idle()
+    {
+
+    }
 }
