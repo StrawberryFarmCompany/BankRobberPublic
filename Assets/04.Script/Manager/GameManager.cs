@@ -39,13 +39,15 @@ class GameManager : SingleTon<GameManager>
 
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
     private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
-
+    public bool isPlayerGeyKeyCard;
     public int endTurnCount = 0;
+
     protected override void Init()
     {
         base.Init();
         nodes = new Dictionary<Vector3Int, Node>();
         noneBattleTurn = new NoneBattleTurnStateMachine();
+        isPlayerGeyKeyCard = false;
     }
     protected override void Reset()
     {
@@ -53,6 +55,7 @@ class GameManager : SingleTon<GameManager>
         nodes.Clear();
         noneBattleTurn = null;
         noneBattleTurn = new NoneBattleTurnStateMachine();
+        isPlayerGeyKeyCard = false;
     }
     public void RegistNode(Vector3Int vec, bool isWalkable = false)
     {
@@ -123,7 +126,19 @@ class GameManager : SingleTon<GameManager>
             }
         }
     }
-
+    public List<Vector3Int> GetNearNodes(Vector3Int convertedPos)
+    {
+        List<Vector3Int> poses = new List<Vector3Int>();
+        poses.Add(convertedPos);
+        for (int i = 0; i < nearNode.Length; i++)
+        {
+            if (nodes.ContainsKey(nearNode[i] + convertedPos))
+            {
+                poses.Add(nearNode[i] + convertedPos);
+            }
+        }
+        return poses;
+    }
     public void OnFirst(InputAction.CallbackContext context)
     {
         if(context.started && IsNoneBattlePhase())
