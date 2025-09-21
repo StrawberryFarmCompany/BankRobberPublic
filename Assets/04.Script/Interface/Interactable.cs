@@ -25,10 +25,12 @@ public interface IInteractable
                 return new GoldBar();
             case InteractionType.MoneyBag:
                 return new MoneyBag();
+            case InteractionType.KeyCard:
+                return new KeyCard();
             default:
                 return null;
         }
-        
+
     }
 }
-public enum InteractionType{AlamBTN,BankVault,Door,GoldBar,MoneyBag}
+public enum InteractionType{AlamBTN,BankVault,Door,GoldBar,MoneyBag,KeyCard}
