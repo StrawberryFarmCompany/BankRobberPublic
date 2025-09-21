@@ -2,21 +2,26 @@ using UnityEngine;
 
 public class ManagerIdleState : NeutralState
 {
+    public ManagerNPC managerNPC;
+
+    public ManagerIdleState(ManagerNPC managerNPC)
+    {
+        this.managerNPC = managerNPC;
+    }
 
     public override void Enter()
     {
         Debug.Log("Manager 대기 상태");
     }
 
+    // 플레이어 발견시 상태 변경
     public override void Execute()
     {
-        // 플레이어 감지 로직 넣을 수도 있음
+        managerNPC.OnPlayerDetected();
     }
 
     public override void Exit()
     {
         Debug.Log("Manager 대기 상태 종료");
     }
-
-
 }

@@ -28,12 +28,12 @@ public class NeutralStateMachine : IStateMachineBase<NeutralState>
         return neutralStates[statesType];
     }
 
-    public NeutralStateMachine(NeutralStates startType = NeutralStates.CitizenIdleState) 
+    public NeutralStateMachine(ManagerNPC managerNPC, NeutralStates startType = NeutralStates.CitizenIdleState) 
     {
         neutralStates = new Dictionary<NeutralStates, NeutralState>();
         for (int i = 0; i < Enum.GetValues(typeof(NeutralStates)).Length; i++)
         {
-            neutralStates.TryAdd((NeutralStates)i, NeutralState.Factory((NeutralStates)i));
+            neutralStates.TryAdd((NeutralStates)i, NeutralState.Factory((NeutralStates)i, managerNPC));
         }
         currentState = neutralStates[startType];
         currentState.Enter();
@@ -69,24 +69,28 @@ public class NeutralState : IStateBase
 
     }
 
-    public static NeutralState Factory(NeutralStates neutralStatesType)
+    public static NeutralState Factory(NeutralStates neutralStatesType, ManagerNPC managerNPC)
     {
         switch (neutralStatesType)
         {
             case NeutralStates.CitizenIdleState:
+                managerNPC = null;
                 return new CitizenIdleState();
             case NeutralStates.CitizenCowerState:
+                managerNPC = null;
                 return new CitizenCowerState();
             case NeutralStates.CitizenFleeState:
+                managerNPC = null;
                 return new CitizenFleeState();
             case NeutralStates.CitizenDeadState:
+                managerNPC = null;
                 return new CitizenDeadState();
             case NeutralStates.ManagerIdleState:
-                return new ManagerIdleState();
+                return new ManagerIdleState(managerNPC);
             case NeutralStates.ManagerIdleCowerState:
-                return new ManagerIdleCowerState();
+                return new ManagerIdleCowerState(managerNPC);
             case NeutralStates.ManagerDeadState:
-                return new ManagerDeadState();
+                return new ManagerDeadState(managerNPC);
             default:
                 return null;
         }
