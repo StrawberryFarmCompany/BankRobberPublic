@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public enum GamePhase
 {
@@ -39,6 +40,31 @@ class GameManager : SingleTon<GameManager>
     private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
     public List<bool> isPlayerGeyKeyCard = new List<bool>();
     public int endTurnCount = 0;
+
+    private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
+    public NodePlayerController CurrentActor { get; private set; }
+    public PlayerStats CurrentStats => CurrentActor != null ? CurrentActor.playerStats : null;
+
+    public void RegisterActor(NodePlayerController actor)
+    {
+        _actors[actor.characterNumber] = actor;
+        if (CurrentActor == null && actor.characterNumber == CurrCharacter)
+            SetCurrentCharacter(CurrCharacter);
+    }
+
+    public void UnregisterActor(NodePlayerController actor)
+    {
+        if (_actors.TryGetValue(actor.characterNumber, out var cur) && cur == actor)
+            _actors.Remove(actor.characterNumber);
+        if (CurrentActor == actor) CurrentActor = null;
+    }
+
+    public void SetCurrentCharacter(CharacterNumber num)
+    {
+        CurrCharacter = num;
+        _actors.TryGetValue(num, out var actor);
+        CurrentActor = actor;
+    }
 
     protected override void Init()
     {
@@ -140,18 +166,18 @@ class GameManager : SingleTon<GameManager>
     public void OnFirst(InputAction.CallbackContext context)
     {
         if(context.started && IsNoneBattlePhase())
-            currCharacter = CharacterNumber.Character_1;
+            SetCurrentCharacter(CharacterNumber.Character_1);
     }
 
     public void OnSecond(InputAction.CallbackContext context)
     {
         if (context.started && IsNoneBattlePhase())
-            currCharacter = CharacterNumber.Character_2;
+            SetCurrentCharacter(CharacterNumber.Character_2);
     }
     public void OnThird(InputAction.CallbackContext context)
     {
         if (context.started && IsNoneBattlePhase())
-            currCharacter = CharacterNumber.Character_3;
+            SetCurrentCharacter(CharacterNumber.Character_3);
 
     }
 
@@ -163,7 +189,7 @@ class GameManager : SingleTon<GameManager>
             isFirstCharacterEnd = false;
             isSecondCharacterEnd = false;
             isThirdCharacterEnd = false;
-            currCharacter = CharacterNumber.Character_1;
+            SetCurrentCharacter(CharacterNumber.Character_1);
         }
         else if (!IsNoneBattlePhase())
         {
@@ -172,7 +198,7 @@ class GameManager : SingleTon<GameManager>
             isFirstCharacterEnd = false;
             isSecondCharacterEnd = true;
             isThirdCharacterEnd = true;
-            currCharacter = CharacterNumber.Character_1;
+            SetCurrentCharacter(CharacterNumber.Character_1);
         }
     }
 
@@ -195,6 +221,8 @@ class GameManager : SingleTon<GameManager>
     /// <param name="characterNumber"></param>
     public void EndCharacterTurn(CharacterNumber characterNumber)
     {
+        var next = CurrCharacter;
+
         if (IsNoneBattlePhase())
         {
             switch (characterNumber)
@@ -202,25 +230,25 @@ class GameManager : SingleTon<GameManager>
                 case CharacterNumber.Character_1:
                     isFirstCharacterEnd = true;
                     if(!isSecondCharacterEnd)
-                        currCharacter = CharacterNumber.Character_2;
+                        next = CharacterNumber.Character_2;
                     else if (!isThirdCharacterEnd)
-                        currCharacter = CharacterNumber.Character_3;
+                        next = CharacterNumber.Character_3;
                     endTurnCount++;
                     break;
                 case CharacterNumber.Character_2:
                     isSecondCharacterEnd = true;
                     if(!isFirstCharacterEnd)
-                        currCharacter = CharacterNumber.Character_1;
+                        next = CharacterNumber.Character_1;
                     else if (!isThirdCharacterEnd)
-                        currCharacter = CharacterNumber.Character_3;
+                        next = CharacterNumber.Character_3;
                     endTurnCount++;
                     break;
                 case CharacterNumber.Character_3:
                     isThirdCharacterEnd = true;
                     if(!isFirstCharacterEnd)
-                        currCharacter = CharacterNumber.Character_1;
+                        next = CharacterNumber.Character_1;
                     else if (!isSecondCharacterEnd)
-                        currCharacter = CharacterNumber.Character_2;
+                        next = CharacterNumber.Character_2;
                     endTurnCount++;
                     break;
             }
@@ -232,13 +260,13 @@ class GameManager : SingleTon<GameManager>
                 case CharacterNumber.Character_1:
                     isFirstCharacterEnd = true;
                     isSecondCharacterEnd = false;
-                    currCharacter = CharacterNumber.Character_2;
+                    next = CharacterNumber.Character_2;
                     endTurnCount++;
                     break;
                 case CharacterNumber.Character_2:
                     isSecondCharacterEnd = true;
                     isThirdCharacterEnd = false;
-                    currCharacter = CharacterNumber.Character_3;
+                    next = CharacterNumber.Character_3;
                     endTurnCount++;
                     break;
                 case CharacterNumber.Character_3:
@@ -247,7 +275,8 @@ class GameManager : SingleTon<GameManager>
                     break;
             }
         }
-        
+
+        SetCurrentCharacter(next);
         CheckAllCharacterEndTurn();
 
     }
