@@ -333,7 +333,7 @@ public class NodePlayerController : MonoBehaviour
         {
             if (playerCondition.ConsumeActionPoint(1))
             {
-                if()
+                //if()
                 //실제 격발하는 로직
 
                 if (isAiming)
