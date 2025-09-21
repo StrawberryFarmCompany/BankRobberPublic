@@ -4,45 +4,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : IInteractable
+public class Window : IInteractable
 {
     public Vector3Int tile { get; set; }
-    public Transform tr;
-    public ILock lockModule;
+    private Vector3Int wayOne;
+    private Vector3Int wayTwo;
+    
     /// <summary>
     /// 
     /// </summary>
     /// <param name="tr">대상 문</param>
     /// <param name="type">도어락 타입</param>
     /// <param name="doorValue">키카드 == 카드 인덱스,락핏 == 문을 따는 최소 밸류</param>
-    public void Init(Vector3Int tile, Transform tr, DoorLockType type,int doorValue)
+    public void Init(Vector3Int tile,Vector3Int forward)
     {
         this.tile = tile;
-        this.tr = tr;
-        lockModule = ILock.Factory(type, doorValue);
-        RegistInteraction(OnInteraction);
+        wayOne = forward;
+        wayTwo = forward * -1;
     }
     public void OnInteraction(PlayerStats stat)
     {
-        if (lockModule.IsLock(stat))
+        //1이 아닌 방향을 구해야함
+
+        bool isForwardXAxis = wayOne.x == 1;
+        Vector3Int goal = Vector3Int.zero;
+        if (isForwardXAxis)
         {
-            //이동 가능 불가 여부 추후 추가 필요
-            tr.transform.DORotate(new Vector3(0f, 150f, 0f),0.7f);
-            ReleaseInteraction(OnInteraction);
-            RegistInteraction(UnInteraction);
+            goal = stat.currNode.GetCenter.x == (tile + wayOne).x ? tile + wayTwo : tile + wayOne;
         }
+        else
+        {
+            goal = stat.currNode.GetCenter.y == (tile + wayOne).y ? tile + wayTwo : tile + wayOne;
+        }
+        //TODO : 플레이어 강제 움직임 함수 받아서 goal넣어줘야함
     }
     public void UnInteraction(PlayerStats stat)
     {
-        //이동 가능 불가 여부 추후 추가 필요
-        tr.transform.DORotate(new Vector3(0f, 0f, 0f), 0.7f);
+        
     }
     public void RegistInteraction(Interaction interaction)
     {
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
-            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, lockModule.ToString() + InteractionType.Door.ToString());
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction,InteractionType.Window.ToString());
         }
     }
     public void ReleaseInteraction(Interaction interaction)
@@ -50,8 +55,7 @@ public class Door : IInteractable
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
-            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, lockModule.ToString() + InteractionType.Door.ToString());
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction,InteractionType.Window.ToString());
         }
     }
 }
-public enum DoorLockType{none,lockPick,keyCard}

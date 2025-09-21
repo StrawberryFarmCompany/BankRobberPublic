@@ -6,7 +6,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 public interface ILock
 {
-    public bool IsLock();
+    public bool IsLock(PlayerStats stat);
     public static ILock Factory(DoorLockType types,int value)
     {
         switch (types)
@@ -24,23 +24,29 @@ public interface ILock
 }
 public class NoneLock : ILock
 {
-    public bool IsLock() => true;
+    public bool IsLock(PlayerStats stat) => true;
 }
 public class LockPick : ILock
 {
     int unlockMin;
     bool isLocked;
-    public bool IsLock()
+    public bool IsLock(PlayerStats stat)
     {
         if (isLocked)
         {
             //TODO : 현재 선택된 캐릭터의 락핏 스텟
             
-            DiceManager.GetInstance.DelayedRoll(0, (result) =>
+            DiceManager.GetInstance.DelayedRoll(stat.sabotage, (result) =>
             {
-                if (unlockMin > result)
+                isLocked = unlockMin > result;
+                if (!isLocked)
                 {
-
+                    Debug.Log("해제 실패, 경고발동");
+                    ActivateWarning();
+                }
+                else
+                {
+                    Debug.Log("해제 성공");
                 }
 
             });
@@ -49,7 +55,7 @@ public class LockPick : ILock
     }
     public void ActivateWarning()
     {
-
+        //TODO : 여기에 넣어야됨
     }
     public LockPick(int unlockMin)
     {
@@ -60,12 +66,17 @@ public class LockPick : ILock
 public class KeyCardLock : ILock
 {
     int cardKeyIndex;
-    public bool IsLock()
+    public bool IsLock(PlayerStats stat)
     {
-        return GameManager.GetInstance.isPlayerGeyKeyCard[cardKeyIndex];
+        return GameManager.GetInstance.isPlayerGetKeyCard[cardKeyIndex];
     }
     public KeyCardLock(int cardKeyIndex)
     {
         this.cardKeyIndex = cardKeyIndex;
+        if (GameManager.GetInstance.isPlayerGetKeyCard == null) GameManager.GetInstance.isPlayerGetKeyCard = new List<bool>();
+        while (GameManager.GetInstance.isPlayerGetKeyCard.Count >= cardKeyIndex)
+        {
+            GameManager.GetInstance.isPlayerGetKeyCard.Add(false);
+        }
     }
 }

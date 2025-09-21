@@ -38,7 +38,7 @@ class GameManager : SingleTon<GameManager>
 
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
     private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
-    public List<bool> isPlayerGeyKeyCard = new List<bool>();
+    public List<bool> isPlayerGetKeyCard = new List<bool>();
     public int endTurnCount = 0;
 
     private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
@@ -78,8 +78,8 @@ class GameManager : SingleTon<GameManager>
         nodes.Clear();
         noneBattleTurn = null;
         noneBattleTurn = new NoneBattleTurnStateMachine();
-        isPlayerGeyKeyCard = null;
-        isPlayerGeyKeyCard = new List<bool>();
+        isPlayerGetKeyCard = null;
+        isPlayerGetKeyCard = new List<bool>();
     }
     public void RegistNode(Vector3Int vec, bool isWalkable = false)
     {

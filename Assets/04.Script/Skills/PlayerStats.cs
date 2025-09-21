@@ -1,3 +1,4 @@
+using NodeDefines;
 using System.Collections.Generic;
 
 public class PlayerStats
@@ -17,6 +18,7 @@ public class PlayerStats
     public int aggroControl;
     public int maxRerollCount;
     public int curRerollCount;
+    public Node currNode;
 
     private PassiveSkill equippedPassive;
 

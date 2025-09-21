@@ -6,14 +6,24 @@ using UnityEngine;
 public class KeyCard : IInteractable
 {
     public Vector3Int tile { get; set; }
-    public Transform tr;
-    public DoorLockType[] lockTypes;
+    private GameObject target;
+    private int keyValue;
 
-    public void OnInteraction()
+    public void Init(Vector3Int tile, Transform tr,int keyValue)
     {
-        
+        this.tile = tile;
+        target = tr.gameObject;
+        this.keyValue = keyValue;
+        RegistInteraction(OnInteraction);
     }
-    public void UnInteraction()
+
+    public void OnInteraction(PlayerStats stat)
+    {
+        target.SetActive(false);
+        GameManager.GetInstance.isPlayerGetKeyCard[keyValue] = true;
+        ReleaseInteraction(OnInteraction);
+    }
+    public void UnInteraction(PlayerStats stat)
     {
 
     }
@@ -22,7 +32,7 @@ public class KeyCard : IInteractable
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
-            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.Door.ToString());
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.KeyCard.ToString());
         }
     }
     public void ReleaseInteraction(Interaction interaction)
@@ -30,7 +40,7 @@ public class KeyCard : IInteractable
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
-            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.Door.ToString());
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.KeyCard.ToString());
         }
     }
 }
