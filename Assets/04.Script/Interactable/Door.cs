@@ -7,8 +7,18 @@ public class Door : IInteractable
 {
     public Vector3Int tile { get; set; }
     public Transform tr;
-    public DoorLockType[] lockTypes;
-
+    public ILock lockModule;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tr">대상 문</param>
+    /// <param name="type">도어락 타입</param>
+    /// <param name="doorValue">키카드 == 카드 인덱스,락핏 == 문을 따는 최소 밸류</param>
+    public void Init(Transform tr, DoorLockType type,int doorValue)
+    {
+        this.tr = tr;
+        lockModule = ILock.Factory(type, doorValue);
+    }
     public void OnInteraction()
     {
         
