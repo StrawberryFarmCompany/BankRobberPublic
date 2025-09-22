@@ -74,9 +74,9 @@ public class NeutralState : IStateBase
         switch (neutralStatesType)
         {
             case NeutralStates.CitizenIdleState:
-                return new CitizenIdleState();
+                return new CitizenIdleState(neutralNPC);
             case NeutralStates.CitizenCowerState:
-                return new CitizenCowerState();
+                return new CitizenCowerState(neutralNPC);
             case NeutralStates.CitizenFleeState:
                 return new CitizenFleeState(neutralNPC);
             case NeutralStates.CitizenDeadState:

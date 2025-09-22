@@ -6,6 +6,13 @@ using UnityEngine.AI;
 
 public class HoldEnemyInvestigateState : EnemyState
 {
+    public EnemyNPC holdEnemy;
+
+    public HoldEnemyInvestigateState(EnemyNPC holdEnemy)
+    {
+        this.holdEnemy = holdEnemy;
+    }
+
     public NavMeshAgent agent;
     public Vector3 pos;
     public override void Enter()

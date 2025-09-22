@@ -1,14 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
 
-public class HoldEnemy : MonoBehaviour
+public class HoldEnemy : EnemyNPC
 {
-    public EntityData entityData;
-    PlayerStats playerStats;
-    EnemyStateMachine efsm;
     bool isDetection = false;
     bool isHit = false;
     bool isNoise = false;
@@ -16,10 +10,10 @@ public class HoldEnemy : MonoBehaviour
     int alertLevel = 1;
     int countTurn = 0;
 
-    private void Awake()
+    protected override void Awake()
     {
-        playerStats = new PlayerStats(entityData);
-        efsm = new EnemyStateMachine(EnemyStates.HoldEnemyIdleState);
+        base.Awake();
+        efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
     }
 
     public void ChangeToIdle()
@@ -72,7 +66,7 @@ public class HoldEnemy : MonoBehaviour
 
     public void HoldEnemyBehaviour()
     {
-        if(playerStats.curHp<=0)//체력이 0보다 낮거나 같으면
+        if(stats.CurHp<=0)//체력이 0보다 낮거나 같으면
         {
             ChangeToDead();//사망
         }

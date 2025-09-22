@@ -1,19 +1,13 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PatrolEnemy : MonoBehaviour
+public class PatrolEnemy : EnemyNPC
 {
-    public EntityData baseData;
-    private PlayerStats stats;
-    private EnemyStateMachine efsm;
-
-    private void Awake()
+    protected override void Awake()
     {
-        // 직원마다 독립된 스탯 생성
-        stats = new PlayerStats(baseData);
-
+        base.Awake();
         // 상태머신 초기화 (기본 상태)
-        efsm = new EnemyStateMachine(EnemyStates.PatrolEnemyPatrolState);
+        efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
     }
 
     private void Update()
@@ -70,7 +64,7 @@ public class PatrolEnemy : MonoBehaviour
             
             efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyDamagedState));
 
-            if(stats.curHp <= 0)
+            if(stats.CurHp <= 0)
             {
                 Die();
             }

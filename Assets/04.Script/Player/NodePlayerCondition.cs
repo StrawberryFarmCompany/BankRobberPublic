@@ -49,12 +49,12 @@ public class NodePlayerCondition : MonoBehaviour
 
     public void Damaged(int damage)
     {
-        playerStats.curHp -= damage;
-        if (playerStats.curHp <= 0)
-        {
-            playerStats.curHp = 0;
-            Dead();
-        }
+        //playerStats.curHp -= damage;
+        //if (playerStats.curHp <= 0)
+        //{
+        //    playerStats.curHp = 0;
+        //    Dead();
+        //}
     }
 
     private void Dead()

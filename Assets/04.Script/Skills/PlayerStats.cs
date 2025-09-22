@@ -11,7 +11,7 @@ public class PlayerStats
     public int movement;
     public int maxHp;
     private int curHp;
-    public int CurHp 
+    public int CurHp
     { 
         get 
         { 
@@ -48,7 +48,7 @@ public class PlayerStats
         movementSpeed = baseStats.movementSpeed;
         movement = baseStats.movementPoint;
         maxHp = baseStats.maxHp;
-        curHp = baseStats.curHp;
+        CurHp = baseStats.curHp;
         evasionRate = baseStats.evasionRate;
         accuracyModifier = baseStats.accuracyModifier;
         attackRange = baseStats.attackRange;

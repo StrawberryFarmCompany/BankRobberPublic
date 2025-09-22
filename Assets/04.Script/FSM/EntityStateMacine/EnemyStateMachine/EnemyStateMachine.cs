@@ -27,12 +27,12 @@ public class EnemyStateMachine : IStateMachineBase<EnemyState>
         return enemyStates[statesType];
     }
 
-    public EnemyStateMachine(EnemyStates startType = EnemyStates.PatrolEnemyIdleRotationState)
+    public EnemyStateMachine(EnemyNPC enemyNPC, EnemyStates startType = EnemyStates.PatrolEnemyIdleRotationState)
     {
         enemyStates = new Dictionary<EnemyStates, EnemyState>();
         for (int i = 0; i < Enum.GetValues(typeof(EnemyStates)).Length; i++)
         {
-            enemyStates.TryAdd((EnemyStates)i, EnemyState.Factory((EnemyStates)i));
+            enemyStates.TryAdd((EnemyStates)i, EnemyState.Factory((EnemyStates)i,enemyNPC));
         }
         currentState = enemyStates[startType];
         currentState.Enter();
@@ -83,50 +83,50 @@ public class EnemyState : IStateBase
     {
         EndAction?.Invoke();
     }
-    public static EnemyState Factory(EnemyStates turnTypes)
+    public static EnemyState Factory(EnemyStates turnTypes,EnemyNPC enemyNPC)
     {
         switch (turnTypes)
         {
             case EnemyStates.PatrolEnemyIdleRotationState:
-                return new PatrolEnemyIdleRotationState();
+                return new PatrolEnemyIdleRotationState(enemyNPC);
             case EnemyStates.PatrolEnemyChaseState:
-                return new PatrolEnemyChaseState();
+                return new PatrolEnemyChaseState(enemyNPC);
             case EnemyStates.PatrolEnemyCombatState:
-                return new PatrolEnemyCombatState();
+                return new PatrolEnemyCombatState(enemyNPC);
             case EnemyStates.PatrolEnemyDamagedState:
-                return new PatrolEnemyDamagedState();
+                return new PatrolEnemyDamagedState(enemyNPC);
             case EnemyStates.PatrolEnemyDeadState:
-                return new PatrolEnemyDeadState();
+                return new PatrolEnemyDeadState(enemyNPC);
             case EnemyStates.PatrolEnemyInvestigateState:
-                return new PatrolEnemyInvestigateState();
+                return new PatrolEnemyInvestigateState(enemyNPC);
             case EnemyStates.PatrolEnemyLookAroundState:
-                return new PatrolEnemyLookAroundState();
+                return new PatrolEnemyLookAroundState(enemyNPC);
             case EnemyStates.PatrolEnemyPatrolState:
-                return new PatrolEnemyPatrolState();
+                return new PatrolEnemyPatrolState(enemyNPC);
             case EnemyStates.HoldEnemyChaseState:
-                return new HoldEnemyChaseState();
+                return new HoldEnemyChaseState(enemyNPC);
             case EnemyStates.HoldEnemyCombatState:
-                return new HoldEnemyCombatState();
+                return new HoldEnemyCombatState(enemyNPC);
             case EnemyStates.HoldEnemyDamagedState:
-                return new HoldEnemyDamagedState();
+                return new HoldEnemyDamagedState(enemyNPC);
             case EnemyStates.HoldEnemyDeadState:
-                return new HoldEnemyDeadState();
+                return new HoldEnemyDeadState(enemyNPC);
             case EnemyStates.HoldEnemyIdleRotationState:
-                return new HoldEnemyIdleRotationState();
+                return new HoldEnemyIdleRotationState(enemyNPC);
             case EnemyStates.HoldEnemyIdleState:
-                return new HoldEnemyIdleState();
+                return new HoldEnemyIdleState(enemyNPC);
             case EnemyStates.HoldEnemyInvestigateState:
-                return new HoldEnemyInvestigateState();
+                return new HoldEnemyInvestigateState(enemyNPC);
             case EnemyStates.HoldEnemyMoveReturnState:
-                return new HoldEnemyMoveReturnState();
+                return new HoldEnemyMoveReturnState(enemyNPC);
             case EnemyStates.CopEnemyChaseState:
-                return new CopEnemyChaseState();
+                return new CopEnemyChaseState(enemyNPC);
             case EnemyStates.CopEnemyCombatState:
-                return new CopEnemyCombatState();
+                return new CopEnemyCombatState(enemyNPC);
             case EnemyStates.CopEnemyDamagedState:
-                return new CopEnemyDamagedState();
+                return new CopEnemyDamagedState(enemyNPC);
             case EnemyStates.CopEnemyDeadState:
-                return new CopEnemyDeadState();
+                return new CopEnemyDeadState(enemyNPC);
             default:
                 return null;
         }
