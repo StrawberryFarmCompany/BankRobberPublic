@@ -5,7 +5,7 @@ public class CitizenNPC : NeutralNPC
 {
     bool isDetection = false;
     bool isHit = false;
-    int alertLevel = 1;
+    int securityLevel = 1;
 
     protected override void Awake()
     {
@@ -17,6 +17,7 @@ public class CitizenNPC : NeutralNPC
     {
 
     }
+
     public void ChangeToIdle()
     {
 
@@ -42,15 +43,15 @@ public class CitizenNPC : NeutralNPC
 
     public void CitizenBehaviour()
     {
-        if (isHit == true)
+        if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
         {
             ChangeToDead();
         }
-        else if (alertLevel >= 3)//경계수준이 3레벨 이상이면
+        else if (securityLevel >= 3)//경계수준이 3레벨 이상이면
         {
             ChangeToCowerState();
         }
-        else if (isDetection == true)
+        else if (isDetection == true)//플레이어 발각시
         {
             //ChangeToFlee(//도망갈 위치?);
         }
