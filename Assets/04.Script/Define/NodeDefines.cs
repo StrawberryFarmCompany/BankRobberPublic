@@ -13,16 +13,13 @@ namespace NodeDefines
         public Vector3Int GetCenter { get{ return centerPos; } }
 
         private Interaction NodeEvent;
-        private bool isWalkable;
-        public bool IsWalkable { get { return isWalkable; } }
+        public bool isWalkable;
 
         private bool isSecurityArea;
         public bool IsSecurityArea { get { return isSecurityArea; } set { isSecurityArea = value; } } //나중을 위한 보안 구역
 
         Dictionary<string, Interaction> nodeInteractions;
-
-        public PlayerStats standingCharactor;
-
+        public List<PlayerStats> standing;
         string[] GetInteractionID { get { return nodeInteractions.Keys.ToArray(); } }
 
         public Node(Vector3Int center,bool isWalkable)
@@ -30,11 +27,24 @@ namespace NodeDefines
             this.isWalkable = isWalkable;
             centerPos = center;
         }
+
+        public void AddCharacter(PlayerStats stat)
+        {
+            standing.Add(stat);
+            NodeEvent?.Invoke(stat);
+        }
+        public void RemoveCharacter(PlayerStats stat)
+        {
+            standing.Remove(stat);
+            if (standing.Count == 0) standing = new List<PlayerStats>();//더블링 해소
+        }
+
         public void RemoveInteraction(Interaction remove, string interactionName)
         {
             nodeInteractions.Remove(interactionName);
             if (nodeInteractions.Count == 0) nodeInteractions = null;
         }
+
         public void AddInteraction(Interaction add,string interactionName)
         {
             if (nodeInteractions == null) nodeInteractions = new Dictionary<string, Interaction>();
@@ -54,16 +64,20 @@ namespace NodeDefines
         public void AddEvent(Interaction add)
         {
             NodeEvent += add;
+            for (int i = 0; i < standing.Count; i++)
+            {
+                add(standing[i]);
+            }
         }
 
         public void ResetEvent()
         {
             NodeEvent = null;
         }
-        public void InvokeEvent()
+        public void InvokeEvent(PlayerStats stat)
         {
-            NodeEvent.Invoke();
+            NodeEvent.Invoke(stat);
         }
     }
-    public delegate void Interaction();
+    public delegate void Interaction(PlayerStats stat);
 }

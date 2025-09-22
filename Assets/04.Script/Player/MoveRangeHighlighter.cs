@@ -25,7 +25,7 @@ public class MoveRangeHighlighter : MonoBehaviour
                 Vector3Int current = start + new Vector3Int(x, 0, z);
 
                 Node node = GameManager.GetInstance.GetNode(current);
-                if (node == null || !node.IsWalkable)
+                if (node == null || !node.isWalkable)
                     continue;
 
                 HighlightNode(current);

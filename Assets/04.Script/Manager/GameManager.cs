@@ -18,10 +18,8 @@ class GameManager : SingleTon<GameManager>
     private NoneBattleTurnStateMachine noneBattleTurn;
     public NoneBattleTurnStateMachine NoneBattleTurn { get { return noneBattleTurn; } }
 
-    private NoneBattleTurnStateMachine battleTurn;
-    public NoneBattleTurnStateMachine BattleTurn { get { return battleTurn; } }
-
-    public BattleTurnStateMachine TurnMachine { get; private set; }
+    private BattleTurnStateMachine battleTurn;
+    public BattleTurnStateMachine BattleTurn { get { return battleTurn; } }
 
     public GamePhase CurrentPhase { get; private set; } = GamePhase.NoneBattle;
 
@@ -35,14 +33,8 @@ class GameManager : SingleTon<GameManager>
 
 
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
-    private readonly Vector3Int[] nearNode = new Vector3Int[8]
-    {
-        Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left,
-        new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1),
-        new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1)
-    };
-
-    public bool isPlayerGeyKeyCard;
+    private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
+    public List<bool> isPlayerGetKeyCard = new List<bool>();
     public int endTurnCount = 0;
 
     //private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
@@ -75,7 +67,6 @@ class GameManager : SingleTon<GameManager>
         base.Init();
         nodes = new Dictionary<Vector3Int, Node>();
         noneBattleTurn = new NoneBattleTurnStateMachine();
-        isPlayerGeyKeyCard = false;
     }
 
     protected override void Reset()
@@ -84,7 +75,8 @@ class GameManager : SingleTon<GameManager>
         nodes.Clear();
         noneBattleTurn = null;
         noneBattleTurn = new NoneBattleTurnStateMachine();
-        isPlayerGeyKeyCard = false;
+        isPlayerGetKeyCard = null;
+        isPlayerGetKeyCard = new List<bool>();
     }
 
     public void RegistNode(Vector3Int vec, bool isWalkable = false)
@@ -201,7 +193,7 @@ class GameManager : SingleTon<GameManager>
         }
         else
         {
-            battleTurn.ChangeState(battleTurn.FindState(TurnTypes.ally));
+            battleTurn.ChangeState();
             endTurnCount = 0;
 
             foreach (var player in NodePlayerManager.Instance.GetAllPlayers())
@@ -217,7 +209,7 @@ class GameManager : SingleTon<GameManager>
         if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
         else
-            battleTurn.ChangeState(battleTurn.FindState(TurnTypes.enemy));
+            battleTurn.ChangeState();
     }
 
     public bool IsNoneBattlePhase()

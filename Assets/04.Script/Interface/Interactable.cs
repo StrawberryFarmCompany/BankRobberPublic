@@ -7,8 +7,8 @@ using UnityEngine.InputSystem;
 public interface IInteractable
 {
     public Vector3Int tile { get; set; }
-    void OnInteraction();
-    void UnInteraction();
+    void OnInteraction(PlayerStats stat);
+    void UnInteraction(PlayerStats stat);
     void RegistInteraction(Interaction interaction);
     void ReleaseInteraction(Interaction interaction);
     static IInteractable Factory(InteractionType type)
@@ -17,8 +17,8 @@ public interface IInteractable
         {
             case InteractionType.AlamBTN:
                 return new AlarmButton();
-            case InteractionType.BankVault:
-                return new BankVault();
+            case InteractionType.Window:
+                return new Window();
             case InteractionType.Door:
                 return new Door();
             case InteractionType.GoldBar:
@@ -33,4 +33,4 @@ public interface IInteractable
 
     }
 }
-public enum InteractionType{AlamBTN,BankVault,Door,GoldBar,MoneyBag,KeyCard}
+public enum InteractionType{AlamBTN,Door,GoldBar,MoneyBag,KeyCard,Window}

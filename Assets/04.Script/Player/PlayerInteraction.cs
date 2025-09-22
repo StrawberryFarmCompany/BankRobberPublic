@@ -38,11 +38,11 @@ public class PlayerInteraction : MonoBehaviour
                 // 기존 타겟 해제
                 if (currentTarget != null && currentTarget != interactable)
                 {
-                    currentTarget.UnInteraction();
+                    currentTarget.UnInteraction(null);
                 }
 
                 currentTarget = interactable;
-                currentTarget.OnInteraction(); // NPC와 실제 상호작용
+                currentTarget.OnInteraction(null); // NPC와 실제 상호작용
             }
         }
         else
@@ -50,7 +50,7 @@ public class PlayerInteraction : MonoBehaviour
             // 바라보던 대상에서 벗어나면 UnInteraction
             if (currentTarget != null)
             {
-                currentTarget.UnInteraction();
+                currentTarget.UnInteraction(null);
                 currentTarget = null;
             }
         }
