@@ -14,7 +14,7 @@ public class ManagerNPC : MonoBehaviour
         stats = new PlayerStats(baseData);
 
         // 상태머신 초기화 (기본 상태 ManagerIdleState)
-        nfsm = new NeutralStateMachine(NeutralStates.ManagerIdleState);
+        nfsm = new NeutralStateMachine(this, NeutralStates.ManagerIdleState);
     }
 
     private void Update()
@@ -23,11 +23,10 @@ public class ManagerNPC : MonoBehaviour
         nfsm.Current?.Execute();
     }
 
-    // 데미지 입고 죽었을 때
-    public void TakeDamage(int damage)
+    // 피격시 사망
+    public void TakeDamage()
     {
-        stats.maxHp -= damage;
-        if (stats.maxHp <= 0)
+        // if (주사위에서 대미지 받는 매서드 받아오기) 
         {
             Die();
         }
@@ -35,6 +34,7 @@ public class ManagerNPC : MonoBehaviour
 
     public void Die()
     {
+        
         nfsm.ChangeState(nfsm.FindState(NeutralStates.ManagerDeadState));
     }
 

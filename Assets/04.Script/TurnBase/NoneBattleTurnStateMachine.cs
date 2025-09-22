@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static UnityEditor.VersionControl.Asset;
 
 /// <summary>
@@ -31,7 +32,7 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
     {
         return states[type];
     }
-    public NoneBattleTurnStateMachine(TurnTypes startType = TurnTypes.allay)
+    public NoneBattleTurnStateMachine(TurnTypes startType = TurnTypes.ally)
     {
         states = new Dictionary<TurnTypes, NoneBattleTurnStateBase>();
         for (int i = 0; i < Enum.GetValues(typeof(TurnTypes)).Length; i++)
@@ -113,12 +114,20 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
         }
     }
 
+    public TurnTypes GetNextTurn()
+    {
+        TurnTypes type = GetCurrState();
+        int num = (int)type;
+        num = (num + 1) % Enum.GetValues(typeof(TurnTypes)).Length;
+        return (TurnTypes) num;
+    }
+
 }
-public enum TurnTypes{allay,enemy,neutral}
+public enum TurnTypes{ally,enemy,neutral}
 public delegate void TurnBehaviour();
 public class NoneBattleTurnStateBase : IStateBase
 {
-    public virtual TurnTypes StateType() => TurnTypes.allay;
+    public virtual TurnTypes StateType() => TurnTypes.ally;
 
     public TurnBehaviour StartPointer;
     public TurnBehaviour EndPointer;
@@ -129,7 +138,7 @@ public class NoneBattleTurnStateBase : IStateBase
     {
         switch (turnTypes)
         {
-            case TurnTypes.allay:
+            case TurnTypes.ally:
                 return new AllayTurnState();
             case TurnTypes.enemy:
                 return new EnemyTurnState();
@@ -168,7 +177,7 @@ public class NeutralTurnState : NoneBattleTurnStateBase
 }
 public class AllayTurnState : NoneBattleTurnStateBase
 {
-    public override TurnTypes StateType() => TurnTypes.allay;
+    public override TurnTypes StateType() => TurnTypes.ally;
 
     public override void Enter() 
     { 

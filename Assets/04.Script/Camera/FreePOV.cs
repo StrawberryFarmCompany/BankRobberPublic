@@ -76,7 +76,7 @@ public class FreePOV : MonoBehaviour
     }
     public void OnWASDMove(InputAction.CallbackContext context)
     {
-        if (CameraManager.GetInstance.isFreeView == false) return;
+        if (CameraManager.GetInstance.isCompleteTransition == false) return;
         wasdMoveInput = context.ReadValue<Vector2>();
     }
 
@@ -104,11 +104,28 @@ public class FreePOV : MonoBehaviour
         transform.position = newPos;
     }
 
+    //private void ApplyRotation()
+    //{
+    //    yaw = Mathf.Repeat(yaw + rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier, 360f);
+    //    Quaternion rot = Quaternion.Euler(pitch, yaw, 0);
+    //    transform.rotation = rot;
+    //}
+
     private void ApplyRotation()
     {
-        yaw = Mathf.Repeat(yaw + rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier, 360f);
-        Quaternion rot = Quaternion.Euler(pitch, yaw, 0);
-        transform.rotation = rot;
+        // 입력값으로 yawDelta 계산
+        float yawDelta = rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier;
+
+        // yaw를 누적시키지 않고, 매번 상대 회전으로 곱해줌
+        Quaternion yawRot = Quaternion.AngleAxis(yawDelta, Vector3.up);
+        Quaternion pitchRot = Quaternion.Euler(pitch, 0f, 0f);
+
+        // 회전 누적
+        transform.rotation = yawRot * transform.rotation;
+
+        // Pitch는 항상 고정된 값 유지
+        Vector3 euler = transform.rotation.eulerAngles;
+        transform.rotation = Quaternion.Euler(pitch, euler.y, 0f);
     }
 
     // 회전 입력

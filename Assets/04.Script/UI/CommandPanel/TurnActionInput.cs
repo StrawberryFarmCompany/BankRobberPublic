@@ -21,14 +21,14 @@ public class TurnActionInput : MonoBehaviour
         onEnemyStart = () => SetCanAct(false);  // 적 턴 시작 → 입력 차단
         onNeutralStart = () => SetCanAct(false);  // 중립 턴 시작 → 입력 차단
 
-        SM.AddStartPointer(TurnTypes.allay, onAllyStart);
+        SM.AddStartPointer(TurnTypes.ally, onAllyStart);
         SM.AddStartPointer(TurnTypes.enemy, onEnemyStart);
         SM.AddStartPointer(TurnTypes.neutral, onNeutralStart);
     }
 
     void OnDestroy()
     {
-        SM.RemoveStartPointer(TurnTypes.allay, onAllyStart);
+        SM.RemoveStartPointer(TurnTypes.ally, onAllyStart);
         SM.RemoveStartPointer(TurnTypes.enemy, onEnemyStart);
         SM.RemoveStartPointer(TurnTypes.neutral, onNeutralStart);
     }

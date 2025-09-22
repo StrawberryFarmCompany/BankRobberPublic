@@ -45,13 +45,13 @@ public class Citizen : MonoBehaviour
         {
             ChangeToDead();
         }
-        else if (alertLevel >= 3)//경계수준이 3레벨 이상이면
+        else if (alertLevel >= 3)//�������� 3���� �̻��̸�
         {
             ChangeToCowerState();
         }
         else if (isDetection == true)
         {
-            //ChangeToFlee(//도망갈 위치?);
+            //ChangeToFlee(//������ ��ġ?);
         }
     }
 }
