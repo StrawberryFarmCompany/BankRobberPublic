@@ -20,7 +20,7 @@ public class ManagerNPC : NeutralNPC
     // 피격시 사망
     public void TakeDamage()
     {
-        // if (주사위에서 대미지 받는 매서드 받아오기) 
+        // if (주사위에서 대미지 받는 매서드 받아오기)
         {
             Die();
         }
@@ -28,13 +28,12 @@ public class ManagerNPC : NeutralNPC
 
     public void Die()
     {
-        
         nfsm.ChangeState(nfsm.FindState(NeutralStates.ManagerDeadState));
     }
 
     public void OnPlayerDetected()
     {
-        if (canSeeAlly)
+        if (canSeeAlly)  // 추후 플레이어 감지하면 canSeeAlly true로 바꾸는 로직 필요
         {
             nfsm.ChangeState(nfsm.FindState(NeutralStates.ManagerIdleCowerState));
         }

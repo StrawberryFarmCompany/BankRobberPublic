@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public class PlayerStats
@@ -8,7 +9,22 @@ public class PlayerStats
     public int movementSpeed;
     public int movement;
     public int maxHp;
-    public int curHp;
+    private int curHp;
+    public int CurHp 
+    { 
+        get 
+        { 
+            return curHp; 
+        } 
+        set 
+        { 
+            if(curHp > value)
+            {
+                OnDamaged.Invoke();
+            }
+            curHp = value; 
+        } 
+    }
     public int evasionRate;
     public int accuracyModifier;
     public float attackRange;
@@ -19,6 +35,8 @@ public class PlayerStats
     public int curRerollCount;
 
     private PassiveSkill equippedPassive;
+
+    public Action OnDamaged;
 
     public PlayerStats(EntityData baseStats)
     {
