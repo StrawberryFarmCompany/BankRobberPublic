@@ -1,19 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CopEnemy : MonoBehaviour
+public class CopEnemy : EnemyNPC
 {
-    public EntityData entityData;
-    PlayerStats playerStats;
-    EnemyStateMachine efsm;
     bool isDetection = false;
     bool isHit = false;
 
-    private void Awake()
+    protected override void Awake()
     {
-        playerStats = new PlayerStats(entityData);
-        efsm = new EnemyStateMachine(EnemyStates.CopEnemyChaseState);
+        base.Awake();
+        efsm = new EnemyStateMachine(this, EnemyStates.CopEnemyChaseState);
     }
 
     public void ChangeToChase()
