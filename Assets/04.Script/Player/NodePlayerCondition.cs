@@ -63,5 +63,10 @@ public class NodePlayerCondition : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    public void ResetForNewTurn()
+    {
+        playerStats.curActionPoint = playerStats.actionPoint;
+        playerStats.movement = playerStats.movementSpeed;
+    }
 
 }
