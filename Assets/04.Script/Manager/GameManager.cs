@@ -182,25 +182,24 @@ class GameManager : SingleTon<GameManager>
         if (IsNoneBattlePhase())
         {
             noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.ally));
-            endTurnCount = 0;
 
             // NodePlayerManager에서 모든 플레이어 초기화
-            foreach (var player in NodePlayerManager.Instance.GetAllPlayers())
+            foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
             {
-                player.ResetTurn();
+                player.playerCondition.ResetForNewTurn();
             }
-            NodePlayerManager.Instance.SwitchToPlayer(0);
+            NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
         else
         {
             battleTurn.ChangeState();
             endTurnCount = 0;
 
-            foreach (var player in NodePlayerManager.Instance.GetAllPlayers())
+            foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
             {
-                player.ResetTurn();
+                player.playerCondition.ResetForNewTurn();
             }
-            NodePlayerManager.Instance.SwitchToPlayer(0);
+            NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
     }
 
@@ -217,33 +216,23 @@ class GameManager : SingleTon<GameManager>
         return CurrentPhase == GamePhase.NoneBattle;
     }
 
-    /// <summary>
-    /// 특정 캐릭터 턴 종료 → NodePlayerManager를 통해 관리
-    /// </summary>
-    public void EndCharacterTurn(NodePlayerController player)
-    {
-        player.EndTurn();
-        endTurnCount++;
-
-        if (IsNoneBattlePhase())
-        {
-            // 잠입 페이즈는 아직 남은 애들을 자유롭게 선택 가능 → 다음 플레이어로 자동 전환하지 않음
-        }
-        else
-        {
-            // 배틀 페이즈는 순차적으로만 → 다음 플레이어로 전환
-            NodePlayerManager.Instance.SwitchToNextPlayer();
-        }
-
-        CheckAllCharacterEndTurn();
-    }
 
     public void CheckAllCharacterEndTurn()
     {
-        if (endTurnCount >= NodePlayerManager.Instance.GetAllPlayers().Count)
+
+        foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
         {
-            EndPlayerTurn();
-            endTurnCount = 0;
+            if (!player.isEndReady)
+                return;
+        } 
+
+        Debug.Log($"다 끝나고 플레이어 턴 엔드");
+
+        EndPlayerTurn();
+
+        foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
+        {
+            player.isEndReady = false;
         }
     }
 }
