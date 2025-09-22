@@ -27,7 +27,8 @@ public class Door : IInteractable
         if (lockModule.IsLock(stat))
         {
             //이동 가능 불가 여부 추후 추가 필요
-            tr.transform.DORotate(new Vector3(0f, 150f, 0f),0.7f);
+            tr.transform.DORotate(new Vector3(0f, 90f, 0f),0.7f);
+            GameManager.GetInstance.Nodes[tile].isWalkable = true;
             ReleaseInteraction(OnInteraction);
             RegistInteraction(UnInteraction);
         }
@@ -36,6 +37,8 @@ public class Door : IInteractable
     {
         //이동 가능 불가 여부 추후 추가 필요
         tr.transform.DORotate(new Vector3(0f, 0f, 0f), 0.7f);
+        GameManager.GetInstance.Nodes[tile].isWalkable = false;
+
     }
     public void RegistInteraction(Interaction interaction)
     {

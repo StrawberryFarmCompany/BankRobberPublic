@@ -58,6 +58,27 @@ public class BattleTurnStateMachine
         state.OnStart = null;
         turnStates.Remove(state);
     }
+    public void MergePlayerTurn()
+    {
+        TurnBehaviour start;
+        TurnBehaviour end;
+        int lastAlly = -1;
+        for (int i = 0; i < turnStates.Count; i++)
+        {
+
+            if (!turnStates[i].isEnemy)
+            {
+                if(lastAlly != -1 && i-1 == lastAlly)
+                {
+                    turnStates[lastAlly].OnStart += turnStates[i].OnStart;
+                    turnStates[lastAlly].OnEnd += turnStates[i].OnEnd;
+                    turnStates.RemoveAt(i);
+                    i--;
+                }
+                lastAlly = i;
+            }
+        }
+    }
 }
 public delegate void PictureUpdate(Sprite sprite);
 public class BattleTurnState : IStateBase

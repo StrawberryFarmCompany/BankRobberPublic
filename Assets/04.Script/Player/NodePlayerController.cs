@@ -409,7 +409,7 @@ public class NodePlayerController : MonoBehaviour
                 Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current);
-                if (node == null || !node.IsWalkable)
+                if (node == null || !node.isWalkable)
                     continue;
 
                 if(current == Pos) return true;
@@ -428,7 +428,7 @@ public class NodePlayerController : MonoBehaviour
                 Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current); //요쯤? 엔티티 검출되는지 확인하는 로직
-                if (node == null || !node.IsWalkable)
+                if (node == null || !node.isWalkable)
                     continue;
 
                 if (current == Pos) return true;
@@ -447,7 +447,7 @@ public class NodePlayerController : MonoBehaviour
                 Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current); //요쯤? 인터랙터블 검출되는지 확인하는 로직
-                if (node == null || !node.IsWalkable)
+                if (node == null || !node.isWalkable)
                     continue;
 
                 if (current == Pos) return true;
@@ -491,7 +491,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Vector3Int checkNode = targetNode + dir;
             Node node = GameManager.GetInstance.GetNode(checkNode);
-            if (node == null || !node.IsWalkable)
+            if (node == null || !node.isWalkable)
                 continue;
 
             float dist = Vector3.Distance(transform.position, checkNode);

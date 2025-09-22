@@ -13,8 +13,7 @@ namespace NodeDefines
         public Vector3Int GetCenter { get{ return centerPos; } }
 
         private Interaction NodeEvent;
-        private bool isWalkable;
-        public bool IsWalkable { get { return isWalkable; } }
+        public bool isWalkable;
 
         private bool isSecurityArea;
         public bool IsSecurityArea { get { return isSecurityArea; } set { isSecurityArea = value; } } //나중을 위한 보안 구역
