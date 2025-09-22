@@ -4,9 +4,9 @@ public class ManagerIdleCowerState : NeutralState
 {
     public ManagerNPC managerNPC;
 
-    public ManagerIdleCowerState(ManagerNPC managerNPC)
+    public ManagerIdleCowerState(NeutralNPC neutral)
     {
-        this.managerNPC = managerNPC;
+        managerNPC = neutral as ManagerNPC;
     }
 
     public override void Enter()

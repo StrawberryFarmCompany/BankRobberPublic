@@ -6,22 +6,19 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Citizen : MonoBehaviour
+public class CitizenNPC : NeutralNPC
 {
-    public EntityData entityData;
-    PlayerStats playerStats;
-    NeutralStateMachine nfsm;
     bool isDetection = false;
     bool isHit = false;
     int alertLevel = 1;
 
-    private void Awake()
+    protected override void Awake()
     {
-        playerStats = new PlayerStats(entityData);
-        //nfsm = new NeutralStateMachine(this,null,NeutralStates.CitizenIdleState);
+        base.Awake();
+        nfsm = new NeutralStateMachine(this, NeutralStates.CitizenIdleState);
     }
 
-    private void Update()
+    protected override void Update()
     {
 
     }
@@ -50,7 +47,7 @@ public class Citizen : MonoBehaviour
 
     public void CitizenBehaviour()
     {
-        if(isHit == true)
+        if (isHit == true)
         {
             ChangeToDead();
         }
