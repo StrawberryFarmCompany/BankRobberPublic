@@ -17,7 +17,7 @@ MonoBehaviour:
   Tag: 3
   maxActionPoint: 3
   curActionPoint: 3
-  movementSpeed: 2
+  movementSpeed: 5
   movementPoint: 5
   maxHp: 5
   curHp: 5

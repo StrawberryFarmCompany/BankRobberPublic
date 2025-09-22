@@ -1,29 +1,39 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class NodePlayerManager : MonoBehaviour
 {
-    public static NodePlayerManager Instance { get; private set; }
+
+    public static NodePlayerManager GetInstance { get; private set; }
 
     [SerializeField] private List<NodePlayerController> players = new List<NodePlayerController>();
-    private int currentPlayerIndex = 0;
+    public int currentPlayerIndex = 0;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (GetInstance == null)
         {
-            Destroy(this.gameObject);
-            return;
+            GetInstance = this;
         }
-        Instance = this;
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     // 플레이어 리스트 자동 등록 (씬에 배치된 모든 NodePlayerController)
     private void Start()
     {
-        if (players.Count == 0)
+        players.AddRange(FindObjectsOfType<NodePlayerController>());
+        SwitchToPlayer(0); // 첫 번째 플레이어로 시작
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
         {
-            players.AddRange(FindObjectsOfType<NodePlayerController>());
+            Debug.Log(GetCurrentPlayer()?.name);
         }
     }
 
@@ -37,11 +47,13 @@ public class NodePlayerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 다음 플레이어로 전환
+    /// 다음 플레이어로 전환 및 캐릭터 엔드 대기
     /// </summary>
     public void SwitchToNextPlayer()
     {
-        if (players.Count == 0) return;
+        if (players.Count == 0)
+            return;
+
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
     }
 
@@ -52,6 +64,33 @@ public class NodePlayerManager : MonoBehaviour
     {
         if (index < 0 || index >= players.Count) return;
         currentPlayerIndex = index;
+        GetCurrentPlayer().isEndReady = false;
+    }
+
+    public void OnFirst(InputAction.CallbackContext context)
+    {
+        if (context.started && GameManager.GetInstance.IsNoneBattlePhase())
+            SwitchToPlayer(0);
+    }
+
+    public void OnSecond(InputAction.CallbackContext context)
+    {
+        if (context.started && GameManager.GetInstance.IsNoneBattlePhase())
+            SwitchToPlayer(1);
+    }
+    public void OnThird(InputAction.CallbackContext context)
+    {
+        if (context.started && GameManager.GetInstance.IsNoneBattlePhase())
+            SwitchToPlayer(2);
+    }
+
+    public void OnEndTurn(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            NotifyPlayerEndTurn(GetCurrentPlayer());
+            Debug.Log($"End Start: {NodePlayerManager.GetInstance.GetCurrentPlayer()?.name}");
+        }
     }
 
     /// <summary>
@@ -93,27 +132,8 @@ public class NodePlayerManager : MonoBehaviour
     /// </summary>
     public void NotifyPlayerEndTurn(NodePlayerController player)
     {
-        // 만약 모든 플레이어가 턴을 종료했는지 확인하는 로직
-        bool allEnded = true;
-        foreach (var p in players)
-        {
-            if (!p.IsEndTurn) // NodePlayerController에 public bool IsEndTurn 프로퍼티 필요
-            {
-                allEnded = false;
-                break;
-            }
-        }
-
-        if (allEnded)
-        {
-            Debug.Log("모든 플레이어 턴 종료 → 다음 페이즈로 전환 가능");
-            // 여기서 GameManager 같은 상위 시스템에 페이즈 전환 알림
-        }
-        else
-        {
-            // 아직 남은 플레이어가 있다면 다음 플레이어 턴으로
-            SwitchToNextPlayer();
-            GetCurrentPlayer()?.StartTurn();
-        }
+        player.isEndReady = true;
+        GameManager.GetInstance.CheckAllCharacterEndTurn();
+        SwitchToNextPlayer();
     }
 }

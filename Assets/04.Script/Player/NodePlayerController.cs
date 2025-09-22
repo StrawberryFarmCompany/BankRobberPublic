@@ -29,13 +29,15 @@ public class NodePlayerController : MonoBehaviour
     public bool isHide;
     public bool isAiming;
 
+    public bool isEndReady;
+
     [Header("현재 플레이어의 액션 상태")]
     public bool isMoveMode;
     public bool isRunMode;
+    public bool isHideMode;
     public bool isSneakAttackMode;
     public bool isPickPocketMode;
     public bool isAimingMode;
-    public bool isMeleeMode;
     public bool isRangeAttackMode;
     public bool isPerkActionMode;
 
@@ -51,15 +53,22 @@ public class NodePlayerController : MonoBehaviour
         isHide = true;
         isEndTurn = false;
         vec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
-        TurnOnHighlighter(vec, playerCondition.moveRange);
+        StartMode(ref isMoveMode);
 
         // [변경됨] 매니저에 자기 자신 등록
-        NodePlayerManager.Instance.RegisterPlayer(this);
+        NodePlayerManager.GetInstance.RegisterPlayer(this);
     }
 
     void Update()
     {
+        if (IsMyTurn())
+        {
         TurnOnHighlighter(vec, playerCondition.moveRange);
+        }
+        else
+            {
+            TurnOffHighlighter();
+        }
     }
 
     // [변경됨] 매니저가 ID를 할당할 수 있도록 Setter 제공
@@ -72,6 +81,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn())
         {
+            Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
         }
     }
@@ -86,31 +96,47 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isRunMode)
         {
+            Debug.Log("달리기");
             playerCondition.ActiveRun();
+        }
+
+        if (context.started && IsMyTurn() && isHideMode)
+        {
+            Debug.Log("숨기");
+            HideMode();
         }
 
         if (context.started && IsMyTurn() && isSneakAttackMode)
         {
+            Debug.Log("기습 공격");
             Vector3 mousePos = Mouse.current.position.ReadValue();
             SneakAttack(mousePos);
         }
 
         if (context.started && IsMyTurn() && isPickPocketMode)
         {
+            Debug.Log("훔치기");
             Vector3 mousePos = Mouse.current.position.ReadValue();
             PickPocket(mousePos);
         }
 
         if (context.started && IsMyTurn() && isAimingMode)
         {
+            Debug.Log("조준");
             if (isAiming) RemoveAiming();
             else Aiming();
         }
 
         if (context.started && IsMyTurn() && isRangeAttackMode)
         {
+            Debug.Log("원거리 공격");
             Vector3 mousePos = Mouse.current.position.ReadValue();
             RangeAttack(mousePos);
+        }
+
+        if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode))
+        {
+            StartMode(ref isMoveMode);
         }
     }
 
@@ -148,6 +174,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            Debug.Log("달리기 모드 활성화");
             StartMode(ref isRunMode);
         }
     }
@@ -156,6 +183,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            Debug.Log("투척 모드 활성화");
             // 던지는 로직
         }
     }
@@ -164,11 +192,13 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && !isHide && isMoveMode)
         {
-            HideMode();
+            Debug.Log("숨기 모드 활성화");
+            StartMode(ref isHideMode);
         }
 
         if (context.started && IsMyTurn() && isHide && isMoveMode)
         {
+            Debug.Log("기습 공격 모드 활성화");
             StartMode(ref isSneakAttackMode);
         }
     }
@@ -235,6 +265,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode && isHide)
         {
+            Debug.Log("훔치기 모드 활성화");
             StartMode(ref isPickPocketMode);
         }
     }
@@ -275,6 +306,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            Debug.Log("조준 모드 활성화");
             StartMode(ref isAimingMode);
         }
     }
@@ -295,6 +327,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            Debug.Log("원거리 공격 모드 활성화");
             StartMode(ref isRangeAttackMode);
         }
     }
@@ -317,23 +350,19 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn())
         {
+            Debug.Log("특전 모드 활성화");
             // 특전 로직
         }
     }
 
-    public void OnEndTurn(InputAction.CallbackContext context)
-    {
-        if (context.started && IsMyTurn())
-        {
-            // [변경됨] GameManager 대신 PlayerManager로 턴 넘김
-            NodePlayerManager.Instance.SwitchToNextPlayer();
-        }
-    }
 
-    // [변경됨] 이제 캐릭터가 자기 턴인지 매니저에서 확인
+    /// <summary>
+    /// 플레이어의 턴, 해당 캐릭터의 턴인지를 판별하여 해당 캐릭터의 행동 조건을 판별
+    /// </summary>
+    /// <returns></returns>
     public bool IsMyTurn()
     {
-        return NodePlayerManager.Instance.GetCurrentPlayer() == this;
+        return (NodePlayerManager.GetInstance.GetCurrentPlayer() == this) && (GameManager.GetInstance.NoneBattleTurn.GetCurrState() == TurnTypes.ally || GameManager.GetInstance.BattleTurn.GetCurrState() == TurnTypes.ally);
     }
 
     private void TurnOnHighlighter(Vector3Int destination, int range)
@@ -353,11 +382,11 @@ public class NodePlayerController : MonoBehaviour
 
     private void StartMode(ref bool mode)
     {
+        isMoveMode = false;
         isSneakAttackMode = false;
         isAimingMode = false;
         isRunMode = false;
         isPickPocketMode = false;
-        isMeleeMode = false;
         isRangeAttackMode = false;
         isPerkActionMode = false;
 
@@ -371,7 +400,7 @@ public class NodePlayerController : MonoBehaviour
         {
             for (int z = -range; z <= range; z++)
             {
-                Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
+                Vector3Int current = start + new Vector3Int(x, 0, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current);
                 if (node == null || !node.isWalkable)
@@ -390,7 +419,7 @@ public class NodePlayerController : MonoBehaviour
         {
             for (int z = -range; z <= range; z++)
             {
-                Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
+                Vector3Int current = start + new Vector3Int(x, 0, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current); //요쯤? 엔티티 검출되는지 확인하는 로직
                 if (node == null || !node.isWalkable)
@@ -409,7 +438,7 @@ public class NodePlayerController : MonoBehaviour
         {
             for (int z = -range; z <= range; z++)
             {
-                Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
+                Vector3Int current = start + new Vector3Int(x, 0, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current); //요쯤? 인터랙터블 검출되는지 확인하는 로직
                 if (node == null || !node.isWalkable)
@@ -513,47 +542,5 @@ public class NodePlayerController : MonoBehaviour
 
         //return (/*3d6 다이스*/ (playerCondition.playerStats.attackRange + hitAdjustment - /*타겟 엔티티의 회피율*/)>)
     }
-    public void StartTurn()
-    {
-        isEndTurn = false;
-        characterTurn = true;
 
-        Debug.Log($"[Player {playerID}] 턴 시작");
-    }
-
-    /// <summary>
-    /// 턴 종료 시 호출
-    /// </summary>
-    public void EndTurn()
-    {
-        isEndTurn = true;
-        characterTurn = false;
-
-        TurnOffHighlighter();
-        NodePlayerManager.Instance.NotifyPlayerEndTurn(this);
-
-        Debug.Log($"[Player {playerID}] 턴 종료");
-    }
-
-    /// <summary>
-    /// 페이즈 시작 시, 모든 캐릭터의 상태 초기화
-    /// </summary>
-    public void ResetTurn()
-    {
-        isEndTurn = false;
-        characterTurn = false;
-
-        // 이동력, 행동력 풀 충전
-        playerCondition.ResetForNewTurn();
-
-        TurnOffHighlighter();
-    }
-
-    /// <summary>
-    /// 현재 캐릭터가 턴을 수행할 수 있는지 반환
-    /// </summary>
-    public bool CanAct()
-    {
-        return characterTurn && !isEndTurn;
-    }
 }
