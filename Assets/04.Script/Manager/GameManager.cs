@@ -45,30 +45,30 @@ class GameManager : SingleTon<GameManager>
     public bool isPlayerGeyKeyCard;
     public int endTurnCount = 0;
 
-    private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
+    //private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
     public NodePlayerController CurrentActor { get; private set; }
     public PlayerStats CurrentStats => CurrentActor != null ? CurrentActor.playerStats : null;
 
-    public void RegisterActor(NodePlayerController actor)
-    {
-        _actors[actor.characterNumber] = actor;
-        if (CurrentActor == null && actor.characterNumber == CurrCharacter)
-            SetCurrentCharacter(CurrCharacter);
-    }
+    //public void RegisterActor(NodePlayerController actor)
+    //{
+    //    _actors[actor.characterNumber] = actor;
+    //    if (CurrentActor == null && actor.characterNumber == CurrCharacter)
+    //        SetCurrentCharacter(CurrCharacter);
+    //}
 
-    public void UnregisterActor(NodePlayerController actor)
-    {
-        if (_actors.TryGetValue(actor.characterNumber, out var cur) && cur == actor)
-            _actors.Remove(actor.characterNumber);
-        if (CurrentActor == actor) CurrentActor = null;
-    }
+    //public void UnregisterActor(NodePlayerController actor)
+    //{
+    //    if (_actors.TryGetValue(actor.characterNumber, out var cur) && cur == actor)
+    //        _actors.Remove(actor.characterNumber);
+    //    if (CurrentActor == actor) CurrentActor = null;
+    //}
 
-    public void SetCurrentCharacter(CharacterNumber num)
-    {
-        CurrCharacter = num;
-        _actors.TryGetValue(num, out var actor);
-        CurrentActor = actor;
-    }
+    //public void SetCurrentCharacter(CharacterNumber num)
+    //{
+    //    CurrCharacter = num;
+    //    _actors.TryGetValue(num, out var actor);
+    //    CurrentActor = actor;
+    //}
 
     protected override void Init()
     {
