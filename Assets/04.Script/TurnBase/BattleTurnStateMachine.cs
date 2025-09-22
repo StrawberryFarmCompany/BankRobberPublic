@@ -37,14 +37,15 @@ public class BattleTurnStateMachine
     /// <summary>
     /// 유닛 사망, 전장 이탈 시 유닛 객체에서 필드로 BattleTurnState를 통해 이벤트 해제 및 삭제에 필요, 이벤트 등록은 유닛 등록 이후 유닛 객체에서 해결
     /// </summary>
-    /// <param name="sprite"></param>
-    /// <param name="isEnemy"></param>
+    /// <param name="isEnemy">적인지</param>
+    /// <param name="OnStarts">해당 유닛의 턴이 되었을때 실행 될 함수 묶음</param>
+    /// <param name="OnEnd">해당 유닛의 턴이 종료되었을때 실행 될 함수 묶음</param>
     /// <returns></returns>
-    public BattleTurnState AddUnit(Sprite sprite, bool isEnemy)
+    public BattleTurnState AddUnit(bool isEnemy, Action OnStarts, Action OnEnd)
     {
         BattleTurnState state = new BattleTurnState();
-        state.Init(isEnemy, sprite);
         turnStates.Add(state);
+        MergePlayerTurn();
         return state;
     }
     /// <summary>
@@ -53,10 +54,10 @@ public class BattleTurnStateMachine
     /// <param name="state"></param>
     public void RemoveUnit(BattleTurnState state)
     {
-        state.sprite = null;
         state.OnEnd = null;
         state.OnStart = null;
         turnStates.Remove(state);
+        MergePlayerTurn();
     }
     public void MergePlayerTurn()
     {
@@ -72,6 +73,10 @@ public class BattleTurnStateMachine
                 {
                     turnStates[lastAlly].OnStart += turnStates[i].OnStart;
                     turnStates[lastAlly].OnEnd += turnStates[i].OnEnd;
+                    if (lastAlly == 0)
+                    {
+                        turnStates[i].OnStart?.Invoke();
+                    }
                     turnStates.RemoveAt(i);
                     i--;
                 }
@@ -86,12 +91,10 @@ public class BattleTurnState : IStateBase
     public TurnBehaviour OnStart;
     public TurnBehaviour OnEnd;
     public bool isEnemy;
-    public Sprite sprite;
 
-    public void Init(bool isEnemy,Sprite sprite)
+    public void Init(bool isEnemy)
     {
         this.isEnemy = isEnemy;
-        this.sprite = sprite;
     }
 
     public void Enter() 
