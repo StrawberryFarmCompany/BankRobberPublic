@@ -49,29 +49,14 @@ public class CameraManager : MonoBehaviour
         brain = cam.GetComponent<CinemachineBrain>();
     }
 
-    public void OnPlayer1View(InputAction.CallbackContext context)
+    public void OnPlayerView(InputAction.CallbackContext context)
     {
         if (context.started && isCompleteTransition)
         {
-            StartCoroutine(FreeViewTransitionCoroutine(player1));
+            StartCoroutine(FreeViewTransitionCoroutine(NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject));
         }
     }
 
-    public void OnPlayer2View(InputAction.CallbackContext context)
-    {
-        if (context.started && isCompleteTransition)
-        {
-            StartCoroutine(FreeViewTransitionCoroutine(player2));
-        }
-    }
-
-    public void OnPlayer3View(InputAction.CallbackContext context)
-    {
-        if (context.started && isCompleteTransition)
-        {
-            StartCoroutine(FreeViewTransitionCoroutine(player3));
-        }
-    }
 
     private IEnumerator FreeViewTransitionCoroutine(GameObject player)
     {

@@ -18,10 +18,8 @@ class GameManager : SingleTon<GameManager>
     private NoneBattleTurnStateMachine noneBattleTurn;
     public NoneBattleTurnStateMachine NoneBattleTurn { get { return noneBattleTurn; } }
 
-    private NoneBattleTurnStateMachine battleTurn;
-    public NoneBattleTurnStateMachine BattleTurn { get { return battleTurn; } }
-
-    public BattleTurnStateMachine TurnMachine { get; private set; }
+    private BattleTurnStateMachine battleTurn;
+    public BattleTurnStateMachine BattleTurn { get { return battleTurn; } }
 
     public GamePhase CurrentPhase { get; private set; } = GamePhase.NoneBattle;
 
@@ -35,14 +33,8 @@ class GameManager : SingleTon<GameManager>
 
 
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
-    private readonly Vector3Int[] nearNode = new Vector3Int[8]
-    {
-        Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left,
-        new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1),
-        new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1)
-    };
-
-    public bool isPlayerGeyKeyCard;
+    private readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
+    public List<bool> isPlayerGetKeyCard = new List<bool>();
     public int endTurnCount = 0;
 
     //private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
@@ -75,7 +67,6 @@ class GameManager : SingleTon<GameManager>
         base.Init();
         nodes = new Dictionary<Vector3Int, Node>();
         noneBattleTurn = new NoneBattleTurnStateMachine();
-        isPlayerGeyKeyCard = false;
     }
 
     protected override void Reset()
@@ -84,7 +75,8 @@ class GameManager : SingleTon<GameManager>
         nodes.Clear();
         noneBattleTurn = null;
         noneBattleTurn = new NoneBattleTurnStateMachine();
-        isPlayerGeyKeyCard = false;
+        isPlayerGetKeyCard = null;
+        isPlayerGetKeyCard = new List<bool>();
     }
 
     public void RegistNode(Vector3Int vec, bool isWalkable = false)
@@ -190,25 +182,24 @@ class GameManager : SingleTon<GameManager>
         if (IsNoneBattlePhase())
         {
             noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.ally));
-            endTurnCount = 0;
 
             // NodePlayerManager에서 모든 플레이어 초기화
-            foreach (var player in NodePlayerManager.Instance.GetAllPlayers())
+            foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
             {
-                player.ResetTurn();
+                player.playerCondition.ResetForNewTurn();
             }
-            NodePlayerManager.Instance.SwitchToPlayer(0);
+            NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
         else
         {
-            battleTurn.ChangeState(battleTurn.FindState(TurnTypes.ally));
+            battleTurn.ChangeState();
             endTurnCount = 0;
 
-            foreach (var player in NodePlayerManager.Instance.GetAllPlayers())
+            foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
             {
-                player.ResetTurn();
+                player.playerCondition.ResetForNewTurn();
             }
-            NodePlayerManager.Instance.SwitchToPlayer(0);
+            NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
     }
 
@@ -217,7 +208,7 @@ class GameManager : SingleTon<GameManager>
         if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
         else
-            battleTurn.ChangeState(battleTurn.FindState(TurnTypes.enemy));
+            battleTurn.ChangeState();
     }
 
     public bool IsNoneBattlePhase()
@@ -225,33 +216,23 @@ class GameManager : SingleTon<GameManager>
         return CurrentPhase == GamePhase.NoneBattle;
     }
 
-    /// <summary>
-    /// 특정 캐릭터 턴 종료 → NodePlayerManager를 통해 관리
-    /// </summary>
-    public void EndCharacterTurn(NodePlayerController player)
-    {
-        player.EndTurn();
-        endTurnCount++;
-
-        if (IsNoneBattlePhase())
-        {
-            // 잠입 페이즈는 아직 남은 애들을 자유롭게 선택 가능 → 다음 플레이어로 자동 전환하지 않음
-        }
-        else
-        {
-            // 배틀 페이즈는 순차적으로만 → 다음 플레이어로 전환
-            NodePlayerManager.Instance.SwitchToNextPlayer();
-        }
-
-        CheckAllCharacterEndTurn();
-    }
 
     public void CheckAllCharacterEndTurn()
     {
-        if (endTurnCount >= NodePlayerManager.Instance.GetAllPlayers().Count)
+
+        foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
         {
-            EndPlayerTurn();
-            endTurnCount = 0;
+            if (!player.isEndReady)
+                return;
+        } 
+
+        Debug.Log($"다 끝나고 플레이어 턴 엔드");
+
+        EndPlayerTurn();
+
+        foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
+        {
+            player.isEndReady = false;
         }
     }
 }
