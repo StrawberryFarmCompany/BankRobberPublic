@@ -22,9 +22,6 @@ public class CameraManager : MonoBehaviour
     private CinemachineBrain brain;
     [SerializeField] private GameObject cam;
     [SerializeField] private CinemachineVirtualCamera freeViewCam;
-    //public CinemachineFreeLook player1Cam;
-    //public CinemachineFreeLook player2Cam;
-    //public CinemachineFreeLook player3Cam;
 
     [Header("플레이어 캐릭터")]
     public GameObject player1;
@@ -34,20 +31,7 @@ public class CameraManager : MonoBehaviour
     [Header("플레이어 위치로 이동 시 조정값")]
     public Vector3 offset = new Vector3(0, 6, -5);
 
-    //[Header("플레이어 추적 카메라")]
-    //public float rotateSpeed = 0.2f;
-    //[Header("X축 좌우 반전")]
-    //public bool xflip = true;
-    //[Header("Y축 좌우 반전")]
-    //public bool yflip = true;
-
-    //public int disablePriority = 5;
-    //public int activeProiority = 20;
-
-    //public float transitionDuration;
-
     public bool isCompleteTransition = true;
-    //public bool isFreeView = true;
 
     private bool isRotationMode = false;
     private bool canFollowMove = false;
@@ -63,22 +47,6 @@ public class CameraManager : MonoBehaviour
         }
 
         brain = cam.GetComponent<CinemachineBrain>();
-    }
-
-    private void Start()
-    {
-        //freeViewCam.Priority = activeProiority;
-
-        //transitionDuration = brain.m_DefaultBlend.m_Time;
-    }
-
-    public void OnFreeView(InputAction.CallbackContext context)
-    {
-        if (context.started && isCompleteTransition)
-        {
-            //freeViewCam.Priority = activeProiority;
-            //isFreeView = true;
-        }
     }
 
     public void OnPlayer1View(InputAction.CallbackContext context)
@@ -147,25 +115,4 @@ public class CameraManager : MonoBehaviour
         isCompleteTransition = true;
     }
 
-
-
-    //private IEnumerator transPlayerViewCoroutine(CinemachineFreeLook transTarget)
-    //{
-    //    isFreeView = false;
-    //    InitializePriority();
-    //    transTarget.Priority = activeProiority;
-    //    isCompleteTransition = false;
-    //    yield return new WaitForSeconds(transitionDuration);
-    //    freeViewCam.transform.position = transTarget.transform.position;
-    //    freeViewCam.transform.rotation = transTarget.transform.rotation;
-    //    isCompleteTransition = true;
-    //}
-
-    //private void InitializePriority()
-    //{
-    //    freeViewCam.Priority = disablePriority;
-    //    player1Cam.Priority = disablePriority;
-    //    player2Cam.Priority = disablePriority;
-    //    player3Cam.Priority = disablePriority;
-    //}
 }

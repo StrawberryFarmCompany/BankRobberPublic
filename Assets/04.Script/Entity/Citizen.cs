@@ -11,7 +11,7 @@ public class Citizen : MonoBehaviour
 
     private void Awake()
     {
-        neutralStateMachine = new NeutralStateMachine();
+        //neutralStateMachine = new NeutralStateMachine();
     }
 
     private void Update()
