@@ -12,7 +12,7 @@ public class PatrolEnemy : EnemyNPC
 
     private void Update()
     {
-        efsm.Current.Execute(); // 현재 상태 실행
+        efsm.Current?.Execute(); // 현재 상태 실행
     }
 
     // 순찰
@@ -53,6 +53,11 @@ public class PatrolEnemy : EnemyNPC
         //{
         //    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
         //}
+    }
+
+    public void Investigate()
+    {
+
     }
 
     // 대미지 입었을 때
