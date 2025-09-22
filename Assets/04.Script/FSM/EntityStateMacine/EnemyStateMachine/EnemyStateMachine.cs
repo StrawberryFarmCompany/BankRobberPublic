@@ -24,7 +24,6 @@ public class EnemyStateMachine : IStateMachineBase<EnemyState>
     }
     public EnemyState FindState(EnemyStates statesType)
     {
-        new EnemyStateMachine(EnemyStates.PatrolEnemyIdleRotationState);
         return enemyStates[statesType];
     }
 
@@ -68,6 +67,7 @@ public class EnemyState : IStateBase
 {
     public Action StartAction;
     public Action EndAction;
+    public float duration;
 
     public virtual void Enter()
     {
@@ -76,7 +76,7 @@ public class EnemyState : IStateBase
 
     public virtual void Execute()
     {
-        
+
     }
 
     public virtual void Exit()

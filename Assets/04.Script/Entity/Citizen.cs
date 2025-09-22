@@ -1,51 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEditor.Build;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Citizen : MonoBehaviour
 {
-    private NeutralStateMachine neutralStateMachine;
+    public EntityData entityData;
     PlayerStats playerStats;
+    NeutralStateMachine nfsm;
+    bool isDetection = false;
+    bool isHit = false;
+    int alertLevel = 1;
 
     private void Awake()
     {
-        neutralStateMachine = new NeutralStateMachine();
-    }
-
-    private void Update()
-    {
-
-    }
-    public void ChangeToIdle()
-    {
-
+        playerStats = new PlayerStats(entityData);
+        nfsm = new NeutralStateMachine(NeutralStates.CitizenIdleState);
     }
 
     public void ChangeToCowerState()
     {
-
+        nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenCowerState));
     }
 
     public void ChangeToDead()
     {
-        if(playerStats.curHp <= 0)
-        {
-
-        }
+        nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenDeadState));
     }
 
-    public void ChangeToFlee()
+    public void ChangeToFlee(Vector3 pos)
     {
-
-    }
-
-    public void MoveOrder(Vector3 pos)
-    {
-        CitizenFleeState fleeState = (CitizenFleeState)neutralStateMachine.FindState(NeutralStates.CitizenFleeState);
+        CitizenFleeState fleeState = (CitizenFleeState)nfsm.FindState(NeutralStates.CitizenFleeState);
         fleeState.agent = gameObject.GetComponent<NavMeshAgent>();
         fleeState.pos = pos;
-        neutralStateMachine.ChangeState(neutralStateMachine.FindState(NeutralStates.CitizenFleeState));
+        nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
+    }
+
+    public void CitizenBehaviour()
+    {
+        if(isHit == true)
+        {
+            ChangeToDead();
+        }
+        else if (alertLevel >= 3)//경계수준이 3레벨 이상이면
+        {
+            ChangeToCowerState();
+        }
+        else if (isDetection == true)
+        {
+            //ChangeToFlee(//도망갈 위치?);
+        }
     }
 }

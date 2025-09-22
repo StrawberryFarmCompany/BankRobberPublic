@@ -9,13 +9,4 @@ public class CopEnemyDeadState : EnemyState
 
     }
 
-    public override void Execute()
-    {
-
-    }
-
-    public override void Exit()
-    {
-
-    }
 }

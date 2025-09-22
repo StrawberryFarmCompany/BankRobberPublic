@@ -9,9 +9,4 @@ public class CitizenDeadState : NeutralState
         base.Enter();
     }
 
-    public override void Exit() 
-    {
-        base.Exit();
-    }
-
 }
