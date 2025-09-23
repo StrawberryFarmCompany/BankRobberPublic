@@ -15,6 +15,8 @@ public class NeutralStateMachine : IStateMachineBase<NeutralState>
         currentState?.Exit();
         currentState = next;
         currentState.Enter();
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration));
+        TaskManager.GetInstance.StartTask();
     }
 
     public void ForceSet(NeutralState next)
@@ -54,9 +56,13 @@ public enum NeutralStates
 
 public class NeutralState : IStateBase 
 {
+    Action StartAction;
+    Action EndAction;
+    public float duration;
+
     public virtual void Enter()
     {
-        
+        StartAction?.Invoke();
     }
 
     public virtual void Execute()
@@ -66,7 +72,7 @@ public class NeutralState : IStateBase
 
     public virtual void Exit()
     {
-
+        EndAction?.Invoke();
     }
 
     public static NeutralState Factory(NeutralStates neutralStatesType,NeutralNPC neutralNPC)
