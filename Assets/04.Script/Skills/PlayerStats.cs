@@ -34,6 +34,7 @@ public class PlayerStats
     public int aggroControl;
     public int maxRerollCount;
     public int curRerollCount;
+
     public Node currNode;
 
     private PassiveSkill equippedPassive;

@@ -1,11 +1,12 @@
+using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using NodeDefines;
 
 public class NodePlayerController : MonoBehaviour
 {
@@ -209,6 +210,12 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnClickNode(InputAction.CallbackContext context)
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            // UI 클릭 중이면 실행 안 함
+            return;
+        }
+
         if (context.started && IsMyTurn() && isMoveMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
@@ -514,7 +521,7 @@ public class NodePlayerController : MonoBehaviour
         highlighter.ClearHighlights();
     }
 
-    private void StartMode(ref bool mode)
+    public void StartMode(ref bool mode)
     {
         isMoveMode = false;
         isSneakAttackMode = false;
