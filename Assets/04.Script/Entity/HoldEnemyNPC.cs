@@ -4,18 +4,25 @@ using static UnityEditor.PlayerSettings;
 
 public class HoldEnemyNPC : EnemyNPC
 {
-    bool isDetection = false;
-    bool isHit = false;
+    bool isRangeDetection = false;
     bool isNoise = false;
     bool isNoisePlace = false;
     bool isHomePlace = true;
+    bool allySpottedStatus = false;
     int securityLevel = 1;
     int countTurn = 0;
+    [SerializeField] Vector3 homeLocation;
+    [SerializeField] Vector3 noiseLocation;
+    [SerializeField] Vector3 nearPlayerLocation;
 
     protected override void Awake()
     {
         base.Awake();
         efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
+    }
+    protected void Update()
+    {
+        CalculateBehaviour();
     }
 
     protected override void CalculateBehaviour()
@@ -34,13 +41,20 @@ public class HoldEnemyNPC : EnemyNPC
 
             else if (isNoise == false && isHomePlace == false)
             {
-                //ChangeToMoveReturn(여기에 HomePlace의 위치 값 넣고 이동력 따라서 턴마다 이동하게);
+                ChangeToMoveReturn(homeLocation);
+                if(this.gameObject.transform.position == homeLocation)
+                {
+                    isHomePlace = true;
+                }
             }
 
             else if (isNoise == true && isNoisePlace == false)
             {
-                //ChangeToInvestigate(//소음 발생지로 이동력 따라서 턴마다 이동);//소음 재 감지시 외부에서 isNoise를 true로 만들어주기
-                //소음 발생지 도착시 isNoise = false;
+                ChangeToInvestigate(noiseLocation);//소음 재 감지시 외부에서 isNoise를 true로 만들어주기
+                if (this.gameObject.transform.position == noiseLocation)
+                {
+                    isNoise = false;
+                }
             }
 
             else if (isNoise == false && isNoisePlace == true)//소음감지가 true 소음 발생지 도착시 외부에서 isNoisePlace를 트루로 만들어 주기
@@ -53,14 +67,16 @@ public class HoldEnemyNPC : EnemyNPC
 
         else if (securityLevel >= 2)
         {
-            if (securityLevel >= 2)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
+            if (securityLevel >= 2 && allySpottedStatus == true && isRangeDetection == true)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
             {
                 ChangeToCombat();//교전 총쏘기
+                Debug.Log("총쏜다");
             }
 
-            else if (securityLevel >= 2)
+            else if (securityLevel >= 2 && allySpottedStatus == true)
             {
-                //ChangeToChase(가까운 적 위치);
+                ChangeToChase(nearPlayerLocation);
+                Debug.Log("적 찾으러 간다");
                 //사거리 7이라고 가정하고 사거리내 raycast에 발각 스테이터스를 가진 얼라이 태그가 닿았는지와 // 기획한테 물어봐 
             }
         }
