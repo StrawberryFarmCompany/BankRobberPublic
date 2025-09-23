@@ -7,8 +7,7 @@ public enum EntityTag
     bankManager,    //은행매니저
     enemy,          //적 기물
     citizen,        //시민
-    ally,           //플레이어 기물
-    CCTV            //씨씨티비
+    ally            //플레이어 기물
 }
 
 [CreateAssetMenu(fileName = "Entity",menuName = "New Entity")]
