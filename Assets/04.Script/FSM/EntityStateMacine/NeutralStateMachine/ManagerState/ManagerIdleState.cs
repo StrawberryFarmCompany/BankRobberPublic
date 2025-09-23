@@ -3,7 +3,6 @@ using UnityEngine;
 public class ManagerIdleState : NeutralState
 {
     public ManagerNPC managerNPC;
-
     
     public ManagerIdleState(NeutralNPC neutral)
     {
