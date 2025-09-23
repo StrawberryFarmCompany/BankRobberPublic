@@ -362,7 +362,20 @@ public class NodePlayerController : MonoBehaviour
     /// <returns></returns>
     public bool IsMyTurn()
     {
-        return (NodePlayerManager.GetInstance.GetCurrentPlayer() == this) && (GameManager.GetInstance.NoneBattleTurn.GetCurrState() == TurnTypes.ally || GameManager.GetInstance.BattleTurn.GetCurrState() == TurnTypes.ally);
+        if(GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
+        {
+            return (NodePlayerManager.GetInstance.GetCurrentPlayer() == this) && (GameManager.GetInstance.NoneBattleTurn.GetCurrState() == TurnTypes.ally);
+        }
+        else if(GameManager.GetInstance.CurrentPhase == GamePhase.Battle)
+        {
+            return (NodePlayerManager.GetInstance.GetCurrentPlayer() == this); //캐릭터의 턴이 시작되었다는 것을 혹은 해당 기물의 턴이 시작되었다는 조건이 하나 더 붙어야함
+        }
+        else
+        {
+            Debug.Log("유효하지 않은 게임 페이즈입니다!");
+            return false;
+        }
+
     }
 
     private void TurnOnHighlighter(Vector3Int destination, int range)
