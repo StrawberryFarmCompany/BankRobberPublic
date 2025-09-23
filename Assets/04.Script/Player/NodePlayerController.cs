@@ -84,16 +84,16 @@ public class NodePlayerController : MonoBehaviour
     {
         if (!IsMyTurn() || _isVaulting) return;
 
-        Vector3 mousePos = Mouse.current.position.ReadValue();
-        Vector3Int cur = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+        Vector3 mousePos = Mouse.current.position.ReadValue();  //마우스 위치
+        Vector3Int cur = GameManager.GetInstance.GetNode(transform.position).GetCenter; //프레이어 위치
         Vector3Int click = GetNodeVector3ByRay(mousePos);
         if (click.x == -1) return;
 
         Vector3Int dir = AxialDir(cur, click);  //직선 이동만
         if (dir == Vector3Int.zero) return;
 
-        Vector3Int over = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z);
-        Vector3Int land = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z) + dir;
+        Vector3Int over = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z);  //창문,벽 있는 칸
+        Vector3Int land = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z) + dir;    //착지할 칸
         TryVault(over, land);
     }
 
@@ -104,20 +104,19 @@ public class NodePlayerController : MonoBehaviour
         var gm = GameManager.GetInstance;
         var overNode = gm.GetNode(overCell);
         var landNode = gm.GetNode(landCell);
-        if (overNode == null || landNode == null) { Debug.Log("유효하지 않은 노드"); return; }
+        if (overNode == null || landNode == null) { Debug.Log("유효하지 않은 위치"); return; }
 
         if (onlyOverWindow && SpecialNodeManager.GetInstance != null)
         {
             var queryPos = new Vector3Int(overCell.x, overCell.y - 1, overCell.z);
-            if (!SpecialNodeManager.GetInstance.TryGetSpecialNodeType(queryPos, out var type)
-                || type.ToString() != windowSpecialName)
+            if (!SpecialNodeManager.GetInstance.TryGetSpecialNodeType(queryPos, out var type) || type.ToString() != windowSpecialName)
             {
                 Debug.Log("창문 앞에서만 넘을 수 있습니다.");
                 return;
             }
         }
 
-        if (overNode.IsWalkable) { Debug.Log("앞칸이 창문/벽이 아님"); return; }
+        if (overNode.IsWalkable) { Debug.Log("앞칸이 창문,벽이 아님"); return; }
         if (!landNode.IsWalkable) { Debug.Log("착지칸이 보행 불가"); return; }
 
         //창문 너머 칸에 사람이 있을 시 방지 나중에 게임 매니저에서 판정 추가 필요
@@ -150,7 +149,7 @@ public class NodePlayerController : MonoBehaviour
             yield return null;
         }
 
-        //착지 스냅(위치 보정)
+        //착지 (위치 보정)
         if (Vector3.Distance(transform.position, targetWorld) > arriveTolerance)
             transform.position = targetWorld;
 
