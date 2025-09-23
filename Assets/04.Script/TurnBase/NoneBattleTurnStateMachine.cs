@@ -2,6 +2,7 @@ using IStateMachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEditor.VersionControl.Asset;
@@ -15,6 +16,12 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
     public TurnTypes GetCurrState() => currState.StateType();
     private Dictionary<TurnTypes,NoneBattleTurnStateBase> states;
     
+    public void ChangeState()
+    {
+        currState.Exit();
+        currState = states[(TurnTypes)((int)GetCurrState() % (Enum.GetValues(typeof(TurnTypes)).Length))];
+        currState.Enter();
+    }
     public void ChangeState(NoneBattleTurnStateBase next)
     {
         if (currState == next) return;
