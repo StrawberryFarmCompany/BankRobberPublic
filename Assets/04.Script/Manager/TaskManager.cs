@@ -5,10 +5,25 @@ using UnityEngine;
 
 public class TaskManager : MonoSingleTon<TaskManager>
 {
+    Coroutine coroutine;
     public Queue<TurnTask> task = new Queue<TurnTask>();
-    public void AddTurnBehaviour()
+    public void AddTurnBehaviour(TurnTask add)
     {
-        
+        task.Enqueue(add);
+    }
+    public void StartTask()
+    {
+        if (coroutine != null && task.Count == 0) StopCoroutine(coroutine);
+        coroutine = StartCoroutine(LoopTask());
+    }
+    public IEnumerator LoopTask()
+    {
+        while (task.Count > 0)
+        {
+            TurnTask currTask = task.Dequeue();
+            currTask.Action?.Invoke();
+            yield return new WaitForSeconds(currTask.time);
+        }
     }
 }
 public class TurnTask
