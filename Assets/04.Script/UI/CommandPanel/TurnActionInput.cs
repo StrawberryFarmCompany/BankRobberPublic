@@ -11,7 +11,12 @@ public class TurnActionInput : MonoBehaviour
 
     [SerializeField] CanvasGroup actionPanelGroup;
 
+    [SerializeField] GameObject actionPanel;
+    [SerializeField] GameObject cancelPanel;
+
     TurnBehaviour onAllyStart, onEnemyStart, onNeutralStart;
+
+    NodePlayerController playerController => NodePlayerManager.GetInstance.GetCurrentPlayer();
 
     NoneBattleTurnStateMachine SM => GameManager.GetInstance.NoneBattleTurn;
 
@@ -38,10 +43,10 @@ public class TurnActionInput : MonoBehaviour
         if (!canAct) return;
 
         if (Input.GetKeyDown(KeyCode.Z)) OnRunPressed();            //Run
-        if (Input.GetKeyDown(KeyCode.X)) OnMeleeAttackPressed();    //Melee Attack
+        if (Input.GetKeyDown(KeyCode.X)) OnThrowPressed();    //Melee Attack
         if (Input.GetKeyDown(KeyCode.C)) OnHidePressed();           //Hiding
         if (Input.GetKeyDown(KeyCode.V)) OnRangedAttackPressed();   //Ranged Attack
-        if (Input.GetKeyDown(KeyCode.R)) OnSpecialActionPressed();  //Special Action
+        if (Input.GetKeyDown(KeyCode.R)) OnPerkActionPressed();  //Special Action
     }
 
     void SetCanAct(bool allow)
@@ -58,26 +63,71 @@ public class TurnActionInput : MonoBehaviour
 
     public void OnRunPressed()
     {
-        Debug.Log("[Action] Run");
+        if(playerController.isMoveMode && playerController.IsMyTurn())
+        {
+            actionPanel.SetActive(false);
+            cancelPanel.SetActive(true);
+            playerController.StartMode(ref playerController.isRunMode);
+        }
     }
 
-    public void OnMeleeAttackPressed()
+    public void OnThrowPressed()
     {
-        Debug.Log("[Action] Melee Attack");
+        Debug.Log("[Action] Melee Attack"); //아직 안 만듦 ㅋㅋ
     }
 
     public void OnHidePressed()
     {
-        Debug.Log("[Action] Hide");
+        if ((playerController.IsMyTurn() && !playerController.isHide))
+        {
+            actionPanel.SetActive(false);
+            cancelPanel.SetActive(true);
+            playerController.StartMode(ref playerController.isHideMode);
+        }
+        else
+        {
+            actionPanel.SetActive(false);
+            cancelPanel.SetActive(true);
+            playerController.StartMode(ref playerController.isSneakAttackMode);
+        }
     }
 
     public void OnRangedAttackPressed()
     {
-        Debug.Log("[Action] Ranged Attack");
+        if (playerController.IsMyTurn() && playerController.isMoveMode)
+        {
+            actionPanel.SetActive(false);
+            cancelPanel.SetActive(true);
+            playerController.StartMode(ref playerController.isRangeAttackMode);
+        }
     }
 
-    public void OnSpecialActionPressed()
+    public void OnPerkActionPressed()
     {
-        Debug.Log("[Action] Special Action");
+        if (playerController.IsMyTurn() && playerController.isMoveMode)
+        {
+            actionPanel.SetActive(false);
+            cancelPanel.SetActive(true);
+            playerController.StartMode(ref playerController.isPerkActionMode);
+        }
+    }
+
+    public void OnCancelPressed()
+    {
+        if (playerController.IsMyTurn() && !playerController.isMoveMode)
+        {
+            actionPanel.SetActive(true);
+            cancelPanel.SetActive(false);
+            playerController.StartMode(ref playerController.isMoveMode);
+        }
+    }
+
+    public void OnEndPressed()
+    {
+        if (playerController.IsMyTurn() && playerController.isMoveMode)
+        {
+            NodePlayerManager.GetInstance.NotifyPlayerEndTurn(playerController);
+            //나중에 플레이어 턴 끝나면 패널 어떻게 처리할건지 논의
+        }
     }
 }
