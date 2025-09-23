@@ -5,7 +5,6 @@ using UnityEngine.AI;
 
 public class PatrolEnemyPatrolState : EnemyState
 {
-    public NavMeshAgent agent;
     public Vector3 pos;
 
     public EnemyNPC patrolEnemy;
@@ -17,7 +16,7 @@ public class PatrolEnemyPatrolState : EnemyState
 
     public override void Enter()
     {
-        agent.SetDestination(pos);
+        patrolEnemy.agent.SetDestination(pos);
     }
 
     public override void Execute()
