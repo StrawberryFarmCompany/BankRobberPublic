@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CitizenIdleState : NeutralState
 {
-    IdleState idleState;
+    //IdleState idleState;
 
     public NeutralNPC citizen;
     public CitizenIdleState(NeutralNPC citizen)
@@ -15,7 +15,7 @@ public class CitizenIdleState : NeutralState
 
     public override void Enter()
     {
-        idleState.Enter();
+        //idleState.Enter();
     }
 
     public override void Execute()
@@ -25,7 +25,7 @@ public class CitizenIdleState : NeutralState
 
     public override void Exit() 
     {
-        idleState.Exit();
+        //idleState.Exit();
     }
 
     public void Idle()
