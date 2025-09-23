@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using static UnityEditor.PlayerSettings;
 
-public class HoldEnemy : EnemyNPC
+public class HoldEnemyNPC : EnemyNPC
 {
     bool isDetection = false;
     bool isHit = false;
@@ -16,6 +16,54 @@ public class HoldEnemy : EnemyNPC
     {
         base.Awake();
         efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
+    }
+
+    protected override void CalculateBehaviour()
+    {
+        if (stats.CurHp <= 0)//체력이 0보다 낮거나 같으면
+        {
+            ChangeToDead();//사망
+        }
+
+        else if (securityLevel == 1)//경계수준 1레벨
+        {
+            if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
+            {
+                ChangeToIdle();//대기 상태
+            }
+
+            else if (isNoise == false && isHomePlace == false)
+            {
+                //ChangeToMoveReturn(여기에 HomePlace의 위치 값 넣고 이동력 따라서 턴마다 이동하게);
+            }
+
+            else if (isNoise == true && isNoisePlace == false)
+            {
+                //ChangeToInvestigate(//소음 발생지로 이동력 따라서 턴마다 이동);//소음 재 감지시 외부에서 isNoise를 true로 만들어주기
+                //소음 발생지 도착시 isNoise = false;
+            }
+
+            else if (isNoise == false && isNoisePlace == true)//소음감지가 true 소음 발생지 도착시 외부에서 isNoisePlace를 트루로 만들어 주기
+            {
+                ChangeToIdleRotation();
+                isNoisePlace = false;//한 턴 끝나고 isNoisPlace false만들기
+            }
+
+        }
+
+        else if (securityLevel >= 2)
+        {
+            if (securityLevel >= 2)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
+            {
+                ChangeToCombat();//교전 총쏘기
+            }
+
+            else if (securityLevel >= 2)
+            {
+                //ChangeToChase(가까운 적 위치);
+                //사거리 7이라고 가정하고 사거리내 raycast에 발각 스테이터스를 가진 얼라이 태그가 닿았는지와 // 기획한테 물어봐 
+            }
+        }
     }
 
     public void ChangeToIdle()
@@ -69,53 +117,5 @@ public class HoldEnemy : EnemyNPC
     public void ChangeToDead()
     {
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyDeadState));
-    }
-
-    public void HoldEnemyBehaviour()
-    {
-        if (stats.CurHp <= 0)//체력이 0보다 낮거나 같으면
-        {
-            ChangeToDead();//사망
-        }
-
-        else if (securityLevel == 1)//경계수준 1레벨
-        {
-            if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
-            {
-                ChangeToIdle();//대기 상태
-            }
-
-            else if (isNoise == false && isHomePlace == false)
-            {
-                //ChangeToMoveReturn(여기에 HomePlace의 위치 값 넣고 이동력 따라서 턴마다 이동하게);
-            }
-
-            else if (isNoise == true && isNoisePlace == false)
-            {
-                //ChangeToInvestigate(//소음 발생지로 이동력 따라서 턴마다 이동);//소음 재 감지시 외부에서 isNoise를 true로 만들어주기
-                //소음 발생지 도착시 isNoise = false;
-            }
-
-            else if (isNoise == false && isNoisePlace == true)//소음감지가 true 소음 발생지 도착시 외부에서 isNoisePlace를 트루로 만들어 주기
-            {
-                ChangeToIdleRotation();
-                isNoisePlace = false;//한 턴 끝나고 isNoisPlace false만들기
-            }
-                        
-        }
-
-        else if (securityLevel >= 2)
-        {
-            if (securityLevel >= 2)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
-            {
-                ChangeToCombat();//교전 총쏘기
-            }
-
-            else if (securityLevel >= 2)
-            {
-                //ChangeToChase(가까운 적 위치);
-                //사거리 7이라고 가정하고 사거리내 raycast에 발각 스테이터스를 가진 얼라이 태그가 닿았는지와 // 기획한테 물어봐 
-            }
-        }
     }
 }
