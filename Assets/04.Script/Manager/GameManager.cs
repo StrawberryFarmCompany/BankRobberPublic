@@ -67,6 +67,8 @@ class GameManager : SingleTon<GameManager>
         base.Init();
         nodes = new Dictionary<Vector3Int, Node>();
         noneBattleTurn = new NoneBattleTurnStateMachine();
+        //noneBattleTurn.AddStartPointer(TurnTypes.ally, StartPlayerTurn);
+        battleTurn = new BattleTurnStateMachine();
     }
 
     protected override void Reset()
@@ -203,14 +205,6 @@ class GameManager : SingleTon<GameManager>
         }
     }
 
-    public void EndPlayerTurn()
-    {
-        if (IsNoneBattlePhase())
-            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
-        else
-            battleTurn.ChangeState();
-    }
-
     public bool IsNoneBattlePhase()
     {
         return CurrentPhase == GamePhase.NoneBattle;
@@ -234,5 +228,13 @@ class GameManager : SingleTon<GameManager>
         {
             player.isEndReady = false;
         }
+    }
+
+    public void EndPlayerTurn()
+    {
+        if (IsNoneBattlePhase())
+            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
+        else
+            battleTurn.ChangeState();
     }
 }

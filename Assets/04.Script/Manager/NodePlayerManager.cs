@@ -27,6 +27,7 @@ public class NodePlayerManager : MonoBehaviour
     {
         players.AddRange(FindObjectsOfType<NodePlayerController>());
         SwitchToPlayer(0); // 첫 번째 플레이어로 시작
+        UIManager.GetInstance.pip.HideAndSneakText();
     }
 
     private void Update()
@@ -55,6 +56,7 @@ public class NodePlayerManager : MonoBehaviour
             return;
 
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+        UIManager.GetInstance.pip.HideAndSneakText();
     }
 
     /// <summary>
@@ -65,6 +67,7 @@ public class NodePlayerManager : MonoBehaviour
         if (index < 0 || index >= players.Count) return;
         currentPlayerIndex = index;
         GetCurrentPlayer().isEndReady = false;
+        UIManager.GetInstance.pip.HideAndSneakText();
     }
 
     public void OnFirst(InputAction.CallbackContext context)
