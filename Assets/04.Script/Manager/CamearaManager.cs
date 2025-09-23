@@ -35,6 +35,7 @@ public class CameraManager : MonoBehaviour
 
     private bool isRotationMode = false;
     private bool canFollowMove = false;
+    private bool IsReadyTransition;
     private void Awake()
     {
         if (instance == null)
@@ -51,15 +52,27 @@ public class CameraManager : MonoBehaviour
 
     public void OnPlayerView(InputAction.CallbackContext context)
     {
-        if (context.started && isCompleteTransition)
+        if (context.started && isCompleteTransition && IsReadyTransition)
         {
             StartCoroutine(FreeViewTransitionCoroutine(NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject));
         }
+
+        if (context.started && isCompleteTransition)
+        {
+            IsReadyTransition = true;
+            Invoke("IsReadyTransitionOff", 1f);
+        }
+    }
+
+    public void IsReadyTransitionOff()
+    {
+        IsReadyTransition = false;
     }
 
 
     private IEnumerator FreeViewTransitionCoroutine(GameObject player)
     {
+        IsReadyTransition = false;
         float duration = brain.m_DefaultBlend.m_Time;
         float elapsed = 0f;
 
