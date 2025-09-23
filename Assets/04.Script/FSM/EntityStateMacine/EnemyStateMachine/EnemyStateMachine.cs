@@ -15,6 +15,8 @@ public class EnemyStateMachine : IStateMachineBase<EnemyState>
         currentState?.Exit();
         currentState = next;
         currentState.Enter();
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration));
+        TaskManager.GetInstance.StartTask();
     }
 
     public void ForceSet(EnemyState next)
