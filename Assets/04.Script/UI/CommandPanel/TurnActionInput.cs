@@ -11,9 +11,6 @@ public class TurnActionInput : MonoBehaviour
 
     [SerializeField] CanvasGroup actionPanelGroup;
 
-    [SerializeField] GameObject actionPanel;
-    [SerializeField] GameObject cancelPanel;
-
     TurnBehaviour onAllyStart, onEnemyStart, onNeutralStart;
 
     NodePlayerController playerController => NodePlayerManager.GetInstance.GetCurrentPlayer();
@@ -29,6 +26,7 @@ public class TurnActionInput : MonoBehaviour
         SM.AddStartPointer(TurnTypes.ally, onAllyStart);
         SM.AddStartPointer(TurnTypes.enemy, onEnemyStart);
         SM.AddStartPointer(TurnTypes.neutral, onNeutralStart);
+
     }
 
     void OnDestroy()
@@ -36,17 +34,6 @@ public class TurnActionInput : MonoBehaviour
         SM.RemoveStartPointer(TurnTypes.ally, onAllyStart);
         SM.RemoveStartPointer(TurnTypes.enemy, onEnemyStart);
         SM.RemoveStartPointer(TurnTypes.neutral, onNeutralStart);
-    }
-
-    void Update()
-    {
-        if (!canAct) return;
-
-        if (Input.GetKeyDown(KeyCode.Z)) OnRunPressed();            //Run
-        if (Input.GetKeyDown(KeyCode.X)) OnThrowPressed();    //Melee Attack
-        if (Input.GetKeyDown(KeyCode.C)) OnHidePressed();           //Hiding
-        if (Input.GetKeyDown(KeyCode.V)) OnRangedAttackPressed();   //Ranged Attack
-        if (Input.GetKeyDown(KeyCode.R)) OnPerkActionPressed();  //Special Action
     }
 
     void SetCanAct(bool allow)
@@ -65,14 +52,27 @@ public class TurnActionInput : MonoBehaviour
     {
         if(playerController.isMoveMode && playerController.IsMyTurn())
         {
-            actionPanel.SetActive(false);
-            cancelPanel.SetActive(true);
+            UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isRunMode);
+        }
+    }
+
+    public void OnAimingPressed()
+    {
+        if (playerController.isMoveMode && playerController.IsMyTurn())
+        {
+            UIManager.GetInstance.ShowActionPanel(false);
+            playerController.StartMode(ref playerController.isAimingMode);
         }
     }
 
     public void OnThrowPressed()
     {
+        if ((playerController.IsMyTurn() && playerController.isMoveMode))
+        {
+            UIManager.GetInstance.ShowActionPanel(false);
+            playerController.StartMode(ref playerController.isHideMode);
+        }
         Debug.Log("[Action] Melee Attack"); //아직 안 만듦 ㅋㅋ
     }
 
@@ -80,14 +80,12 @@ public class TurnActionInput : MonoBehaviour
     {
         if ((playerController.IsMyTurn() && !playerController.isHide))
         {
-            actionPanel.SetActive(false);
-            cancelPanel.SetActive(true);
+            UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isHideMode);
         }
         else
         {
-            actionPanel.SetActive(false);
-            cancelPanel.SetActive(true);
+            UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isSneakAttackMode);
         }
     }
@@ -96,8 +94,7 @@ public class TurnActionInput : MonoBehaviour
     {
         if (playerController.IsMyTurn() && playerController.isMoveMode)
         {
-            actionPanel.SetActive(false);
-            cancelPanel.SetActive(true);
+            UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isRangeAttackMode);
         }
     }
@@ -106,8 +103,7 @@ public class TurnActionInput : MonoBehaviour
     {
         if (playerController.IsMyTurn() && playerController.isMoveMode)
         {
-            actionPanel.SetActive(false);
-            cancelPanel.SetActive(true);
+            UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isPerkActionMode);
         }
     }
@@ -116,8 +112,7 @@ public class TurnActionInput : MonoBehaviour
     {
         if (playerController.IsMyTurn() && !playerController.isMoveMode)
         {
-            actionPanel.SetActive(true);
-            cancelPanel.SetActive(false);
+            UIManager.GetInstance.ShowActionPanel(true);
             playerController.StartMode(ref playerController.isMoveMode);
         }
     }
@@ -126,6 +121,7 @@ public class TurnActionInput : MonoBehaviour
     {
         if (playerController.IsMyTurn() && playerController.isMoveMode)
         {
+            UIManager.GetInstance.ShowActionPanel(true);
             NodePlayerManager.GetInstance.NotifyPlayerEndTurn(playerController);
             //나중에 플레이어 턴 끝나면 패널 어떻게 처리할건지 논의
         }

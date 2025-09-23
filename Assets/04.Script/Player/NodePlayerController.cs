@@ -8,6 +8,18 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
+//public enum PlayerMode
+//{
+//    Move,
+//    Run,
+//    Throw,
+//    Hide,
+//    SneakAttack,
+//    PickPocket,
+//    Aiming,
+//    RangeAttack,
+//    PerkAction
+//}
 public class NodePlayerController : MonoBehaviour
 {
     public NodePlayerCondition playerCondition; // 플레이어 컨디션 (인스펙터에 할당)
@@ -47,6 +59,7 @@ public class NodePlayerController : MonoBehaviour
 
     private bool isEndTurn;
     public bool IsEndTurn { get { return isEndTurn; } }
+
 
     [Header("창문 넘기")]
     [SerializeField] string wallLayerName = "Wall"; // 충돌 무시할 레이어 이름
@@ -169,16 +182,21 @@ public class NodePlayerController : MonoBehaviour
         _isVaulting = false;
     }
 
-    void Start()
+    private void Awake()
     {
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         isHide = true;
         isEndTurn = false;
-        vec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
         StartMode(ref isMoveMode);
+    }
+
+    void Start()
+    {
+        vec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
 
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
+        GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
     }
 
     void Update()
@@ -205,6 +223,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
+            UIManager.GetInstance.ShowActionPanel(true);
         }
     }
 
@@ -225,13 +244,16 @@ public class NodePlayerController : MonoBehaviour
         if (context.started && IsMyTurn() && isRunMode)
         {
             Debug.Log("달리기");
+            UIManager.GetInstance.ShowActionPanel(true);
             playerCondition.ActiveRun();
+            isHighlightOn = false;
         }
 
         if (context.started && IsMyTurn() && isHideMode)
         {
             Debug.Log("숨기");
             HideMode();
+            UIManager.GetInstance.ShowActionPanel(true);
         }
 
         if (context.started && IsMyTurn() && isSneakAttackMode)
@@ -250,9 +272,22 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isAimingMode)
         {
+            if (!playerCondition.ConsumeActionPoint(1))
+            {
+                Debug.Log("행동력이 부족함");
+                return;
+            }
             Debug.Log("조준");
-            if (isAiming) RemoveAiming();
-            else Aiming();
+            if (isAiming)
+            {
+                UIManager.GetInstance.ShowActionPanel(true);
+                RemoveAiming();
+            }
+            else
+            {
+                UIManager.GetInstance.ShowActionPanel(true);
+                Aiming();
+            }
         }
 
         if (context.started && IsMyTurn() && isRangeAttackMode)
@@ -264,6 +299,7 @@ public class NodePlayerController : MonoBehaviour
 
         if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode))
         {
+            UIManager.GetInstance.ShowActionPanel(true);
             StartMode(ref isMoveMode);
         }
     }
@@ -302,6 +338,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("달리기 모드 활성화");
             StartMode(ref isRunMode);
         }
@@ -311,6 +348,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("투척 모드 활성화");
             // 던지는 로직
         }
@@ -320,12 +358,14 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && !isHide && isMoveMode)
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("숨기 모드 활성화");
             StartMode(ref isHideMode);
         }
 
         if (context.started && IsMyTurn() && isHide && isMoveMode)
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("기습 공격 모드 활성화");
             StartMode(ref isSneakAttackMode);
         }
@@ -333,11 +373,13 @@ public class NodePlayerController : MonoBehaviour
 
     private void HideMode()
     {
+        UIManager.GetInstance.pip.HideAndSneakText();
         isHide = true;
     }
 
     private void RemoveHideMode()
     {
+        UIManager.GetInstance.pip.HideAndSneakText();
         isHide = false;
     }
 
@@ -372,7 +414,7 @@ public class NodePlayerController : MonoBehaviour
             Debug.Log("인접 노드로 이동할 수 있는 이동력 부족!");
             return;
         }
-
+        UIManager.GetInstance.ShowActionPanel(true);
         if (playerCondition.ConsumeActionPoint(1))
         {
             RemoveHideMode();
@@ -393,6 +435,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode && isHide)
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("훔치기 모드 활성화");
             StartMode(ref isPickPocketMode);
         }
@@ -422,6 +465,7 @@ public class NodePlayerController : MonoBehaviour
 
         if (playerCondition.ConsumeActionPoint(1))
         {
+            UIManager.GetInstance.ShowActionPanel(true);
             Debug.Log("훔치기 성공!");
         }
         else
@@ -434,6 +478,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("조준 모드 활성화");
             StartMode(ref isAimingMode);
         }
@@ -455,6 +500,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("원거리 공격 모드 활성화");
             StartMode(ref isRangeAttackMode);
         }
@@ -466,6 +512,7 @@ public class NodePlayerController : MonoBehaviour
         {
             if (playerCondition.ConsumeActionPoint(1))
             {
+                UIManager.GetInstance.ShowActionPanel(true);
                 if (isAiming)
                 {
                     RemoveAiming();
@@ -478,6 +525,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn())
         {
+            UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("특전 모드 활성화");
             // 특전 로직
         }
@@ -506,6 +554,20 @@ public class NodePlayerController : MonoBehaviour
 
     }
 
+    public void ResetPlayer() 
+    {
+        List<NodePlayerController> temp = NodePlayerManager.GetInstance.GetAllPlayers();
+        int i = 0;
+
+        for (; i < temp.Count; i++)
+        {
+            if (temp[i] == this) break;
+        }
+
+        playerCondition.ResetForNewTurn();
+        NodePlayerManager.GetInstance.SwitchToPlayer(i);
+    }
+
     private void TurnOnHighlighter(Vector3Int destination, int range)
     {
         if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !isHighlightOn)
@@ -520,6 +582,85 @@ public class NodePlayerController : MonoBehaviour
         isHighlightOn = false;
         highlighter.ClearHighlights();
     }
+
+    //public void ActivateMode(PlayerMode mode)
+    //{
+    //    if (!IsMyTurn()) return;
+
+    //    switch (mode)
+    //    {
+    //        case PlayerMode.Move:
+    //            {
+    //                StartMode(ref isMoveMode);
+    //                break;
+    //            }
+
+    //        case PlayerMode.Run:
+    //            if (isMoveMode)
+    //            {
+    //                StartMode(ref isRunMode);
+    //                Debug.Log("달리기 모드 활성화");
+    //            }
+    //            break;
+
+    //        //case PlayerMode.Throw:
+    //        //    if (isMoveMode)
+    //        //    {
+    //        //        StartMode(ref isThrowMode);
+    //        //        Debug.Log("투척 모드 활성화");
+    //        //    }
+    //        //    break;
+
+    //        case PlayerMode.Hide:
+    //            if (isMoveMode && !isHide)
+    //            {
+    //                StartMode(ref isHideMode);
+    //                Debug.Log("숨기 모드 활성화");
+    //            }
+    //            else if (isMoveMode && isHide)
+    //            {
+    //                StartMode(ref isSneakAttackMode);
+    //                Debug.Log("기습 공격 모드 활성화");
+    //            }
+    //            break;
+
+    //        case PlayerMode.PickPocket:
+    //            if(isMoveMode && isHideMode)
+    //            {
+    //                StartMode(ref isPickPocketMode);
+    //                Debug.Log("훔치기 모드 활성화");
+    //            }
+    //            break;
+
+    //        case PlayerMode.Aiming:
+    //            if (isMoveMode)
+    //            {
+    //                StartMode(ref isAimingMode);
+    //                Debug.Log("조준 모드 활성화");
+    //            }
+    //            break;
+
+    //        case PlayerMode.RangeAttack:
+    //            if (isMoveMode)
+    //            {
+    //                StartMode(ref isRangeAttackMode);
+    //                Debug.Log("원거리 공격 모드 활성화");
+    //            }
+    //            break;
+
+    //        case PlayerMode.PerkAction:
+    //            if (isMoveMode)
+    //            {
+    //                StartMode(ref isPerkActionMode);
+    //                Debug.Log("특전 모드 활성화");
+    //            }
+    //            break;
+
+    //        default:
+    //            Debug.Log("지원하지 않는 모드");
+    //            break;
+    //    }
+    //}
 
     public void StartMode(ref bool mode)
     {
@@ -682,6 +823,11 @@ public class NodePlayerController : MonoBehaviour
         return true;
 
         //return (/*3d6 다이스*/ (playerCondition.playerStats.attackRange + hitAdjustment - /*타겟 엔티티의 회피율*/)>)
+    }
+
+    public void EndAction()
+    {
+        NodePlayerManager.GetInstance.NotifyPlayerEndTurn(this);
     }
 
 }

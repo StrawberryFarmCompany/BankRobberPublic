@@ -11,15 +11,20 @@ public class AutoPipBar : MonoBehaviour
     [SerializeField] GameObject compact;
     [SerializeField] TextMeshProUGUI movementText;
     [SerializeField] TextMeshProUGUI healthText;
+    [SerializeField] TextMeshProUGUI hideAndSneakAttackText;
     [SerializeField] Image portraitImage; // 캐릭터 초상화 이미지
 
     [SerializeField] private Image[] pipMovementImages; // 파이프 이미지 배열
     [SerializeField] private Image[] pipActionPointImages; // 파이프 이미지 배열
 
+    private void Start()
+    {
+        UIManager.GetInstance.pip = this;
+        
+    }
 
 
-
-    void Update()  //=====================================================================================요거  바꿔야함 호출식으로
+    public void Update()  //=====================================================================================요거  바꿔야함 호출식으로
     {
         RefreshMovement();
         RefreshActionPoint();
@@ -28,7 +33,7 @@ public class AutoPipBar : MonoBehaviour
 
     }
 
-    void RefreshMovement()
+    public void RefreshMovement()
     {
         Color fillMovementColor = new Color(0, 54, 255, 255);
 
@@ -56,7 +61,7 @@ public class AutoPipBar : MonoBehaviour
         }
     }
 
-    void RefreshActionPoint()
+    public void RefreshActionPoint()
     {
         Color fillActionPointColor = new Color(255, 196, 0, 255);
         Color emptyActionPointColor = new Color(88, 88, 88, 255);
@@ -73,19 +78,25 @@ public class AutoPipBar : MonoBehaviour
         }
     }
 
-    void UpdatePortrait()
+    public void UpdatePortrait()
     {
          portraitImage.sprite =  NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.portrait;
     }
 
-    void RefreshHealth()
+    public void RefreshHealth()
     {
         healthText.text = $"{NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.CurHp} / {NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.maxHp}";   
     }
 
-
-
-
-
-
+    public void HideAndSneakText()
+    {
+        if (NodePlayerManager.GetInstance.GetCurrentPlayer().isHide)
+        {
+            hideAndSneakAttackText.text = "Sneak\nAttack";
+        }
+        else
+        {   
+            hideAndSneakAttackText.text = "Hiding";
+        }
+    }
 }
