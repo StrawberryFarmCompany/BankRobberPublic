@@ -167,72 +167,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Look_Legacy",
-                    "type": "Value",
-                    "id": "24901308-4f31-4485-b753-c9fada66e07d",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "RotationMode_Legacy",
-                    "type": "Button",
-                    "id": "538fd96a-46f9-439d-ab75-5125f9ae13e9",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "UpDown_Legacy",
-                    "type": "Value",
-                    "id": "66373fe3-a99d-4d9d-b375-e71afe9dc643",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Reset",
-                    "type": "Button",
-                    "id": "9a9d36f4-744d-430e-8d01-41d11e25ebf0",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Player1Camera",
+                    "name": "PlayerCamera",
                     "type": "Button",
                     "id": "41ac796d-2848-4514-984f-2f0033da276f",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Player2Camera",
-                    "type": "Button",
-                    "id": "3fd70a3a-1f44-4c02-aafe-a172eeebe921",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Player3Camera",
-                    "type": "Button",
-                    "id": "9bf7967c-2491-45b9-850a-ffc9b9aeec22",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "FreeViewCamera",
-                    "type": "Button",
-                    "id": "8c5bfe8a-33e2-49ac-9aed-6a82569ca07a",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -342,67 +279,34 @@
                 },
                 {
                     "name": "",
-                    "id": "4d6d57c6-f78d-48d8-8158-b070dc99f5cc",
-                    "path": "<Keyboard>/r",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Reset",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "f2309d38-4f59-482a-be03-9f6a48bdb60a",
                     "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Player1Camera",
+                    "action": "PlayerCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "76e832a9-bff2-46a1-8122-91e49675ad06",
+                    "id": "be1eb4c4-47f1-4db4-85a6-d298e9f0dfad",
                     "path": "<Keyboard>/2",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Player2Camera",
+                    "action": "PlayerCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "ce033d8d-0a20-4a18-adbb-67608cb98075",
+                    "id": "3681094c-dbeb-4637-9e6a-e9fc08fa82e2",
                     "path": "<Keyboard>/3",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Player3Camera",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c90a316d-f564-4be5-b47d-37b39d494f6a",
-                    "path": "<Keyboard>/backquote",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "FreeViewCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "161d4188-46f4-4c0a-9605-59cbe639ff4f",
-                    "path": "<Mouse>/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Look_Legacy",
+                    "action": "PlayerCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -447,28 +351,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "CanMove",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c5308db4-ec6c-4c97-bae3-938df6bd34c8",
-                    "path": "<Mouse>/scroll",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "UpDown_Legacy",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "fa398a35-6207-4ea6-8638-36c443c8a78e",
-                    "path": "<Mouse>/middleButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "RotationMode_Legacy",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -637,15 +519,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "EndTurn",
-                    "type": "Button",
-                    "id": "46f50443-5985-4c76-88b5-ad5d8e581044",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -747,10 +620,87 @@
                     "action": "PerkAction",
                     "isComposite": false,
                     "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "NodePlayerManager",
+            "id": "45e21552-7006-4656-a1df-afe3a06484fa",
+            "actions": [
+                {
+                    "name": "Player1",
+                    "type": "Button",
+                    "id": "0c17c152-c897-4c5c-9ae9-b181ea75fa39",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Player2",
+                    "type": "Button",
+                    "id": "d8b05894-1676-4dc4-814b-df78e5757e28",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Player3",
+                    "type": "Button",
+                    "id": "dd90c57d-91d3-4d08-bb61-63f847d6f0af",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EndTurn",
+                    "type": "Button",
+                    "id": "c9daa350-dcbc-4f94-bdb9-bea03ffbf1cd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9f132e91-5f6e-4606-97a0-8d1ece87ff89",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Player1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "191965b6-95a6-43e5-b2b7-7deaf1c28123",
+                    "id": "941eecbb-4005-4044-983b-e3a954310fce",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Player2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "24e08222-0327-4f1b-a349-f77542034488",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Player3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dc3d0503-def7-42e1-9b85-a0557193073a",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",

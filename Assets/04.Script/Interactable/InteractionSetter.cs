@@ -9,15 +9,43 @@ public class InteractionSetter : MonoBehaviour
     [SerializeField] bool isWalkAble = false;
     private GameManager Manager {get{return GameManager.GetInstance; } }
 
-    [ConditionalHide("type", (int)InteractionType.BankVault, (int)InteractionType.Door)]//금고문,문
+    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard)]//금고문,문 카드키
     public Transform target;
+    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard)]//금고문,문 카드키
+    public int doorValue;
+    [ConditionalHide("type", (int)InteractionType.Door)]//금고문,문
+    public DoorLockType lockType;
     void Start()
     {
         interaction = IInteractable.Factory(type);
         Vector3Int pos = Manager.GetVecInt(transform.position);
-        Vector3Int[] nearPos = Manager.GetNearNodes(pos).ToArray();
         if (!Manager.Nodes.ContainsKey(pos)) Manager.RegistNode(pos, isWalkAble);
         interaction.tile = pos;
-        GameManager.GetInstance.RegistEvent(nearPos, interaction.OnInteraction , type.ToString());
+        switch (type)
+        {
+            case InteractionType.AlamBTN:
+                break;
+            case InteractionType.Window:
+                Window window = (Window)interaction;
+                Vector3Int forward = Manager.GetVecInt(transform.forward);
+                window.Init(pos,forward-pos);
+                break;
+            case InteractionType.Door:
+                Door door = (Door)interaction;
+                door.Init(pos,target, lockType, doorValue);
+                break;
+            case InteractionType.GoldBar:
+                break;
+            case InteractionType.MoneyBag:
+                break;
+            case InteractionType.KeyCard:
+                KeyCard keyCard = (KeyCard)interaction;
+                keyCard.Init(pos,target, doorValue);
+                break;
+            default:
+                break;
+        }
+        Destroy(this);
+        target = null;
     }
 }

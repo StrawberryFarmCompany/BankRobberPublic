@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class ManagerDeadState : NeutralState
 {
-    public ManagerNPC managerNPC;
+    public NeutralNPC managerNPC;
 
-    public ManagerDeadState(ManagerNPC managerNPC)
+    public ManagerDeadState(NeutralNPC managerNPC)
     {
         this.managerNPC = managerNPC;
     }

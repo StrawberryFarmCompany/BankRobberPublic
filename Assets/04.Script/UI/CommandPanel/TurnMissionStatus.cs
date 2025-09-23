@@ -27,14 +27,14 @@ public class TurnMissionStatus : MonoBehaviour
         onEnemyStart = OnEnemyStart;
         onNeutralStart = OnNeutralStart;
 
-        SM.AddStartPointer(TurnTypes.allay, onAllyStart);
+        SM.AddStartPointer(TurnTypes.ally, onAllyStart);
         SM.AddStartPointer(TurnTypes.enemy, onEnemyStart);
         SM.AddStartPointer(TurnTypes.neutral, onNeutralStart);
     }
 
     void OnDestroy()
     {
-        SM.RemoveStartPointer(TurnTypes.allay, onAllyStart);
+        SM.RemoveStartPointer(TurnTypes.ally, onAllyStart);
         SM.RemoveStartPointer(TurnTypes.enemy, onEnemyStart);
         SM.RemoveStartPointer(TurnTypes.neutral, onNeutralStart);
     }

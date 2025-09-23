@@ -4,9 +4,10 @@ public class ManagerIdleState : NeutralState
 {
     public ManagerNPC managerNPC;
 
-    public ManagerIdleState(ManagerNPC managerNPC)
+    
+    public ManagerIdleState(NeutralNPC neutral)
     {
-        this.managerNPC = managerNPC;
+        managerNPC = neutral as ManagerNPC;
     }
 
     public override void Enter()
@@ -14,10 +15,9 @@ public class ManagerIdleState : NeutralState
         Debug.Log("Manager 대기 상태");
     }
 
-    // 플레이어 발견시 상태 변경
     public override void Execute()
     {
-        managerNPC.OnPlayerDetected();
+
     }
 
     public override void Exit()

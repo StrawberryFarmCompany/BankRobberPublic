@@ -4,18 +4,15 @@ using UnityEngine;
 
 public class CopEnemyDeadState : EnemyState
 {
+    public EnemyNPC copEnemy;
+    public CopEnemyDeadState(EnemyNPC copEnemy)
+    {
+        this.copEnemy = copEnemy;
+    }
+
     public override void Enter()
     {
 
     }
 
-    public override void Execute()
-    {
-
-    }
-
-    public override void Exit()
-    {
-
-    }
 }

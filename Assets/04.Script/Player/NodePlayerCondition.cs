@@ -44,15 +44,17 @@ public class NodePlayerCondition : MonoBehaviour
 
     public void ActiveRun()
     {
-        if(ConsumeActionPoint(1)) playerStats.movement += playerStats.movementSpeed; // 달리기 활성화 시 이동력 증가
+        Debug.Log($"prevoius: {playerStats.movement}");
+        if (ConsumeActionPoint(1)) playerStats.movement += playerStats.movementSpeed; // 달리기 활성화 시 이동력 증가
+        Debug.Log($"Run Activated: {playerStats.movement}");
     }
 
     public void Damaged(int damage)
     {
-        playerStats.curHp -= damage;
-        if (playerStats.curHp <= 0)
+        playerStats.CurHp -= damage;
+        if (playerStats.CurHp <= 0)
         {
-            playerStats.curHp = 0;
+            playerStats.CurHp = 0;
             Dead();
         }
     }
@@ -63,5 +65,9 @@ public class NodePlayerCondition : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-
+    public void ResetForNewTurn()
+    {
+        playerStats.curActionPoint = playerStats.actionPoint;
+        playerStats.movement = playerStats.movementSpeed;
+    }
 }

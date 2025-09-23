@@ -7,23 +7,18 @@ using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using NodeDefines;
 
-public enum CharacterNumber
-{
-    Character_1,
-    Character_2,
-    Character_3
-}
-
 public class NodePlayerController : MonoBehaviour
 {
     public NodePlayerCondition playerCondition; // 플레이어 컨디션 (인스펙터에 할당)
-    public PlayerStats playerStats { get{ return playerCondition.playerStats; } } // 플레이어 스탯 (자동 생성)
+    public PlayerStats playerStats { get { return playerCondition.playerStats; } } // 플레이어 스탯 (자동 생성)
 
-    public CharacterNumber characterNumber; // 캐릭터 번호
+    // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
+    public int playerID { get; private set; }
 
     private Vector3Int vec;
     private bool isHighlightOn = false;
 
+    // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
     private bool characterTurn = false;
 
     [SerializeField] NavMeshAgent agent;
@@ -34,141 +29,23 @@ public class NodePlayerController : MonoBehaviour
     public bool isHide;
     public bool isAiming;
 
-    public bool isEndTurn;
+    public bool isEndReady;
 
     [Header("현재 플레이어의 액션 상태")]
     public bool isMoveMode;
     public bool isRunMode;
+    public bool isHideMode;
     public bool isSneakAttackMode;
     public bool isPickPocketMode;
     public bool isAimingMode;
-    public bool isMeleeMode;
     public bool isRangeAttackMode;
     public bool isPerkActionMode;
 
     [Header("명중 보정치")]
     public int hitBonus = 0;
 
-    [Header("창문 넘기")]
-    [SerializeField] string wallLayerName = "Wall"; // 충돌 무시할 레이어 이름
-    [SerializeField] float vaultSpeed = 8f;         //이동 속도
-    [SerializeField] float arriveTolerance = 0.05f; //위치 수정 용
-
-    [SerializeField] bool onlyOverWindow = true;
-    [SerializeField] string windowSpecialName = "Window";
-
-    bool _isVaulting;                                // 중복 실행 방지
-    int _wallLayer = -1, _selfLayer = -1;
-
-    void EnsureLayers()
-    {
-        if (_wallLayer < 0) _wallLayer = LayerMask.NameToLayer(wallLayerName);
-        if (_selfLayer < 0) _selfLayer = gameObject.layer;
-    }
-
-    //대각선 금지
-    Vector3Int AxialDir(Vector3Int from, Vector3Int to)
-    {
-        int dx = Mathf.Clamp(to.x - from.x, -1, 1);
-        int dz = Mathf.Clamp(to.z - from.z, -1, 1);
-        if (Mathf.Abs(dx) > Mathf.Abs(dz)) dz = 0;
-        else if (Mathf.Abs(dz) > Mathf.Abs(dx)) dx = 0;
-        else
-        {
-            dz = 0;
-        }
-        return new Vector3Int(dx, 0, dz);
-    }
-
-    public void VaultTowardMouse()
-    {
-        if (!IsMyTurn() || _isVaulting) return;
-
-        Vector3 mousePos = Mouse.current.position.ReadValue();  //마우스 위치
-        Vector3Int cur = GameManager.GetInstance.GetNode(transform.position).GetCenter; //프레이어 위치
-        Vector3Int click = GetNodeVector3ByRay(mousePos);
-        if (click.x == -1) return;
-
-        Vector3Int dir = AxialDir(cur, click);  //직선 이동만
-        if (dir == Vector3Int.zero) return;
-
-        Vector3Int over = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z);  //창문,벽 있는 칸
-        Vector3Int land = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z) + dir;    //착지할 칸
-        TryVault(over, land);
-    }
-
-    public void TryVault(Vector3Int overCell, Vector3Int landCell)
-    {
-        if (!IsMyTurn() || _isVaulting) return;
-
-        var gm = GameManager.GetInstance;
-        var overNode = gm.GetNode(overCell);
-        var landNode = gm.GetNode(landCell);
-        if (overNode == null || landNode == null) { Debug.Log("유효하지 않은 위치"); return; }
-
-        if (onlyOverWindow && SpecialNodeManager.GetInstance != null)
-        {
-            var queryPos = new Vector3Int(overCell.x, overCell.y - 1, overCell.z);
-            if (!SpecialNodeManager.GetInstance.TryGetSpecialNodeType(queryPos, out var type) || type.ToString() != windowSpecialName)
-            {
-                Debug.Log("창문 앞에서만 넘을 수 있습니다.");
-                return;
-            }
-        }
-
-        if (overNode.IsWalkable) { Debug.Log("앞칸이 창문,벽이 아님"); return; }
-        if (!landNode.IsWalkable) { Debug.Log("착지칸이 보행 불가"); return; }
-
-        //창문 너머 칸에 사람이 있을 시 방지 나중에 게임 매니저에서 판정 추가 필요
-        //if (gm.IsNodeOccupied(landCell)) { Debug.Log("착지칸 사람 존재"); return; }
-
-        TurnOffHighlighter();
-        StartCoroutine(Co_VaultMove((Vector3)landNode.GetCenter, landCell));
-    }
-
-    IEnumerator Co_VaultMove(Vector3 targetWorld, Vector3Int landCell)
-    {
-        _isVaulting = true;
-        EnsureLayers();
-
-        //NavMeshAgent 간섭 방지
-        if (agent) agent.enabled = false;
-
-        //벽 레이어 충돌 무시
-        if (_wallLayer >= 0) Physics.IgnoreLayerCollision(_selfLayer, _wallLayer, true);
-
-        Vector3 start = transform.position;
-        float flatDist = Vector3.Distance(new Vector3(start.x, 0, start.z), new Vector3(targetWorld.x, 0, targetWorld.z));
-        float duration = Mathf.Max(0.06f, flatDist / Mathf.Max(0.01f, vaultSpeed));
-
-        float t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime / duration;
-            transform.position = Vector3.Lerp(start, targetWorld, t);
-            yield return null;
-        }
-
-        //착지 (위치 보정)
-        if (Vector3.Distance(transform.position, targetWorld) > arriveTolerance)
-            transform.position = targetWorld;
-
-        //벽 충돌 무시 OFF
-        if (_wallLayer >= 0) Physics.IgnoreLayerCollision(_selfLayer, _wallLayer, false);
-
-        // NavMeshAgent 재활성 및 경로 초기화/동기화
-        if (agent)
-        {
-            agent.enabled = true;
-            agent.ResetPath();
-        }
-
-        // 내부 상태/하이라이트 갱신
-        vec = landCell;
-        TurnOnHighlighter(vec, playerCondition.moveRange);
-
-        _isVaulting = false;
-    }
+    private bool isEndTurn;
+    public bool IsEndTurn { get { return isEndTurn; } }
 
     void Start()
     {
@@ -176,85 +53,109 @@ public class NodePlayerController : MonoBehaviour
         isHide = true;
         isEndTurn = false;
         vec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
-        TurnOnHighlighter(vec, playerCondition.moveRange); 
-    }
+        StartMode(ref isMoveMode);
 
+        // [변경됨] 매니저에 자기 자신 등록
+        NodePlayerManager.GetInstance.RegisterPlayer(this);
+    }
 
     void Update()
     {
+        if (IsMyTurn())
+        {
         TurnOnHighlighter(vec, playerCondition.moveRange);
+        }
+        else
+            {
+            TurnOffHighlighter();
+        }
+    }
+
+    // [변경됨] 매니저가 ID를 할당할 수 있도록 Setter 제공
+    public void SetPlayerID(int id)
+    {
+        playerID = id;
     }
 
     public void OnCancel(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn())
         {
+            Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
         }
     }
 
     public void OnClickNode(InputAction.CallbackContext context)
     {
-        //무브에 관한 로직, 현재는 마우스 클릭으로 이동
         if (context.started && IsMyTurn() && isMoveMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
-
             Move(mousePos);
         }
 
-        if(context.started && IsMyTurn() && isRunMode)
+        if (context.started && IsMyTurn() && isRunMode)
         {
+            Debug.Log("달리기");
             playerCondition.ActiveRun();
         }
 
-        if(context.started && IsMyTurn() && isSneakAttackMode)
+        if (context.started && IsMyTurn() && isHideMode)
         {
-            Vector3 mousePos = Mouse.current.position.ReadValue();  //여기에 적 노드 좌표
+            Debug.Log("숨기");
+            HideMode();
+        }
+
+        if (context.started && IsMyTurn() && isSneakAttackMode)
+        {
+            Debug.Log("기습 공격");
+            Vector3 mousePos = Mouse.current.position.ReadValue();
             SneakAttack(mousePos);
         }
 
-        if(context.started && IsMyTurn() && isPickPocketMode)
+        if (context.started && IsMyTurn() && isPickPocketMode)
         {
-            Vector3 mousePos = Mouse.current.position.ReadValue();  //여기에 적 노드 좌표
+            Debug.Log("훔치기");
+            Vector3 mousePos = Mouse.current.position.ReadValue();
             PickPocket(mousePos);
         }
 
-        if(context.started && IsMyTurn() && isAimingMode)
+        if (context.started && IsMyTurn() && isAimingMode)
         {
-            if(isAiming) RemoveAiming();
-            else
-                Aiming();
+            Debug.Log("조준");
+            if (isAiming) RemoveAiming();
+            else Aiming();
         }
 
-        if(context.started && IsMyTurn() && isRangeAttackMode)
+        if (context.started && IsMyTurn() && isRangeAttackMode)
         {
-            Vector3 mousePos = Mouse.current.position.ReadValue();  //여기에 적 노드 좌표
+            Debug.Log("원거리 공격");
+            Vector3 mousePos = Mouse.current.position.ReadValue();
             RangeAttack(mousePos);
         }
 
+        if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode))
+        {
+            StartMode(ref isMoveMode);
+        }
     }
 
     private void Move(Vector3 mouseScreenPos)
     {
-        // 마우스 클릭 위치로 레이 발사
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            // 이동하려는 목표 노드의 중심 좌표
             Vector3Int targetNodeCenter = GameManager.GetInstance.GetNode(hit.point).GetCenter;
-            if(!CheckRange(targetNodeCenter, playerCondition.moveRange))
+            if (!CheckRange(targetNodeCenter, playerCondition.moveRange))
             {
                 Debug.Log("이동 범위를 벗어났습니다!");
                 return;
             }
 
-           int cost = CalculateMoveCost(targetNodeCenter);
+            int cost = CalculateMoveCost(targetNodeCenter);
 
-            // 현재 이동력이 충분한지 확인
             if (playerCondition.ConsumeMovement(cost))
             {
-                // 이동력이 충분할 경우만 이동
                 if (GameManager.GetInstance.IsExistNode(targetNodeCenter))
                 {
                     TurnOffHighlighter();
@@ -273,62 +174,61 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
+            Debug.Log("달리기 모드 활성화");
             StartMode(ref isRunMode);
         }
     }
 
-    public void OnThrow(InputAction.CallbackContext context) 
+    public void OnThrow(InputAction.CallbackContext context)
     {
-       if(context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && isMoveMode)
         {
-            //던지는 로직 1인칭 변환과 함께 투척가능 모션 생성
+            Debug.Log("투척 모드 활성화");
+            // 던지는 로직
         }
     }
 
-    public void OnHideAndSneakAttack(InputAction.CallbackContext context) 
+    public void OnHideAndSneakAttack(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn() && !isHide && isMoveMode)
         {
-            HideMode();
+            Debug.Log("숨기 모드 활성화");
+            StartMode(ref isHideMode);
         }
-        
-        if(context.started && IsMyTurn() && isHide && isMoveMode)
+
+        if (context.started && IsMyTurn() && isHide && isMoveMode)
         {
+            Debug.Log("기습 공격 모드 활성화");
             StartMode(ref isSneakAttackMode);
         }
     }
+
     private void HideMode()
     {
         isHide = true;
-        //하이드 모드에 진입하면 얻게 되는 이득에 관한 로직
     }
 
     private void RemoveHideMode()
     {
         isHide = false;
-        //하이드 모드에서 벗어나면 얻게 되는 패널티에 관한 로직
     }
 
     private void SneakAttack(Vector3 mouseScreenPos)
     {
-        // 클릭한 위치의 노드 좌표 가져오기
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
 
-        // 클릭한 위치가 유효하지 않을 경우 탈출
         if (targetNodeCenter == new Vector3Int(-1, -1, -1))
         {
             Debug.Log("유효하지 않은 좌표입니다!");
             return;
         }
 
-        // 지정한 범위(2칸) 내에 있고 적이 존재하는지 체크
         if (!CheckRangeAndEntity(targetNodeCenter, 2))
         {
             Debug.Log("해당 위치에 적이 없거나 범위를 벗어났습니다!");
             return;
         }
 
-        // 주변 인접 노드 중 가장 가까운 이동 가능한 노드 찾기
         Vector3Int bestNode = FindClosestWalkableAdjacentNode(targetNodeCenter);
 
         if (bestNode == new Vector3Int(-1, -1, -1))
@@ -339,24 +239,21 @@ public class NodePlayerController : MonoBehaviour
 
         int cost = CalculateMoveCost(bestNode);
 
-        if(!playerCondition.ConsumeMovement(cost))
+        if (!playerCondition.ConsumeMovement(cost))
         {
             Debug.Log("인접 노드로 이동할 수 있는 이동력 부족!");
             return;
         }
 
-        // 행동력 소모 및 이동 실행
         if (playerCondition.ConsumeActionPoint(1))
         {
-            // 은신 해제
             RemoveHideMode();
 
             agent.SetDestination(bestNode);
             vec = bestNode;
             TurnOffHighlighter();
 
-            // TODO: 여기서 실제 적 공격 로직 실행
-            Debug.Log("기습 공격 성공! 인접 노드로 이동 후 공격 실행");
+            Debug.Log("기습 공격 성공!");
         }
         else
         {
@@ -364,47 +261,39 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-
-    //============================================================================================================아직 전투 페이즈의 시체 파밍은 구현 안 됨
     public void OnPickPocket(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn() && isMoveMode && isHide)
         {
-            //소매치기 로직
+            Debug.Log("훔치기 모드 활성화");
             StartMode(ref isPickPocketMode);
         }
     }
 
     private void PickPocket(Vector3 mouseScreenPos)
     {
-        // 클릭한 노드에 위치한 적과 캐릭터와 최단거리에 있는 노드로 이동 후 노드에 있는 적 소매치기 로직
-        // 클릭한 위치의 노드 좌표 가져오기
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
 
-        // 클릭한 위치가 유효하지 않을 경우 탈출
         if (targetNodeCenter == new Vector3Int(-1, -1, -1))
         {
             Debug.Log("유효하지 않은 좌표입니다!");
             return;
         }
 
-        // 지정한 범위(1칸) 내에 있고 훔칠 대상이 존재하는지 체크
         if (!CheckRangeAndInteractable(targetNodeCenter, 1))
         {
             Debug.Log("해당 위치에 훔칠 대상이 없거나 범위를 벗어났습니다!");
             return;
         }
-        // 잠입 페이즈 확인
+
         if (!GameManager.GetInstance.IsNoneBattlePhase())
         {
             Debug.Log("배틀 페이즈에 행동할 수 없습니다!");
             return;
         }
 
-        // 행동력 소모 및 이동 실행
         if (playerCondition.ConsumeActionPoint(1))
         {
-            // TODO: 여기서 실제 훔치기 로직 실행
             Debug.Log("훔치기 성공!");
         }
         else
@@ -417,87 +306,87 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
-            //조준 로직
+            Debug.Log("조준 모드 활성화");
             StartMode(ref isAimingMode);
         }
     }
 
-    private void Aiming()                                                                                   //나중에 턴 시작 시 에이밍 초기화 필요
+    private void Aiming()
     {
         isAiming = true;
         hitBonus += 3;
-        //조준 상태로 있을 때 얻는 이득 로직
     }
 
     private void RemoveAiming()
     {
         isAiming = false;
         hitBonus -= 3;
-        //조준 상태에서 벗어날 때 패널티 로직
     }
 
     public void OnRangeAttack(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
-            //원거리 공격 로직
+            Debug.Log("원거리 공격 모드 활성화");
             StartMode(ref isRangeAttackMode);
         }
     }
 
     private void RangeAttack(Vector3 mouseScreenPos)
     {
-        // 클릭한 노드에 위치한 적 노드위치 계산 후 노드에 있는 적 공격하는 로직
         if (CheckRangeAndEntity(GetNodeVector3ByRay(mouseScreenPos), (int)playerStats.attackRange))
         {
             if (playerCondition.ConsumeActionPoint(1))
             {
-                //if (RangeAttackActionCheck(GetNodeVector3ByRay(mouseScreenPos)))
-                //{
-                   
-                //}
                 if (isAiming)
                 {
                     RemoveAiming();
                 }
-
             }
         }
     }
+
     public void OnPerkAction(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn())
         {
-            //특전 로직 아직 모르니까 보류
-        }
-    }
-    
-    
-    public void OnEndTurn(InputAction.CallbackContext context)
-    {
-        if (context.started && IsMyTurn())
-        {
-            GameManager.GetInstance.EndCharacterTurn(characterNumber);
+            Debug.Log("특전 모드 활성화");
+            // 특전 로직
         }
     }
 
+
     /// <summary>
-    /// 해당 캐릭터가 활동할 수 있는 조건인가를 반환
+    /// 플레이어의 턴, 해당 캐릭터의 턴인지를 판별하여 해당 캐릭터의 행동 조건을 판별
     /// </summary>
     /// <returns></returns>
     public bool IsMyTurn()
     {
-        return (GameManager.GetInstance.CurrCharacter == characterNumber) && GameManager.GetInstance.PlayerTurn && GameManager.GetInstance.IsCharacterTurn(characterNumber);
+        if(GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
+        {
+            return (NodePlayerManager.GetInstance.GetCurrentPlayer() == this) && (GameManager.GetInstance.NoneBattleTurn.GetCurrState() == TurnTypes.ally);
+        }
+        else if(GameManager.GetInstance.CurrentPhase == GamePhase.Battle)
+        {
+            return (NodePlayerManager.GetInstance.GetCurrentPlayer() == this); //캐릭터의 턴이 시작되었다는 것을 혹은 해당 기물의 턴이 시작되었다는 조건이 하나 더 붙어야함
+        }
+        else
+        {
+            Debug.Log("유효하지 않은 게임 페이즈입니다!");
+            return false;
+        }
+
     }
 
     private void TurnOnHighlighter(Vector3Int destination, int range)
     {
-        if(destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !isHighlightOn)
+        if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !isHighlightOn)
         {
             isHighlightOn = true;
             highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
         }
     }
+
     private void TurnOffHighlighter()
     {
         isHighlightOn = false;
@@ -506,14 +395,13 @@ public class NodePlayerController : MonoBehaviour
 
     private void StartMode(ref bool mode)
     {
+        isMoveMode = false;
         isSneakAttackMode = false;
         isAimingMode = false;
-        isRunMode= false;
+        isRunMode = false;
         isPickPocketMode = false;
-        isMeleeMode = false;
         isRangeAttackMode = false;
         isPerkActionMode = false;
-
 
         mode = true;
     }
@@ -525,10 +413,10 @@ public class NodePlayerController : MonoBehaviour
         {
             for (int z = -range; z <= range; z++)
             {
-                Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
+                Vector3Int current = start + new Vector3Int(x, 0, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current);
-                if (node == null || !node.IsWalkable)
+                if (node == null || !node.isWalkable)
                     continue;
 
                 if(current == Pos) return true;
@@ -544,10 +432,10 @@ public class NodePlayerController : MonoBehaviour
         {
             for (int z = -range; z <= range; z++)
             {
-                Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
+                Vector3Int current = start + new Vector3Int(x, 0, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current); //요쯤? 엔티티 검출되는지 확인하는 로직
-                if (node == null || !node.IsWalkable)
+                if (node == null || !node.isWalkable)
                     continue;
 
                 if (current == Pos) return true;
@@ -563,10 +451,10 @@ public class NodePlayerController : MonoBehaviour
         {
             for (int z = -range; z <= range; z++)
             {
-                Vector3Int current = start + new Vector3Int(x, -1, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
+                Vector3Int current = start + new Vector3Int(x, 0, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current); //요쯤? 인터랙터블 검출되는지 확인하는 로직
-                if (node == null || !node.IsWalkable)
+                if (node == null || !node.isWalkable)
                     continue;
 
                 if (current == Pos) return true;
@@ -610,7 +498,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Vector3Int checkNode = targetNode + dir;
             Node node = GameManager.GetInstance.GetNode(checkNode);
-            if (node == null || !node.IsWalkable)
+            if (node == null || !node.isWalkable)
                 continue;
 
             float dist = Vector3.Distance(transform.position, checkNode);
@@ -648,11 +536,11 @@ public class NodePlayerController : MonoBehaviour
         {
             hitAdjustment = 0;
         }
-        else if(CheckRange(targetPos, 9))
+        else if (CheckRange(targetPos, 9))
         {
             hitAdjustment = -2;
         }
-        else if(CheckRange(targetPos, 20))
+        else if (CheckRange(targetPos, 20))
         {
             hitAdjustment = -5;
         }
@@ -667,4 +555,5 @@ public class NodePlayerController : MonoBehaviour
 
         //return (/*3d6 다이스*/ (playerCondition.playerStats.attackRange + hitAdjustment - /*타겟 엔티티의 회피율*/)>)
     }
+
 }

@@ -1,3 +1,5 @@
+using System;
+using NodeDefines;
 using System.Collections.Generic;
 
 public class PlayerStats
@@ -8,7 +10,22 @@ public class PlayerStats
     public int movementSpeed;
     public int movement;
     public int maxHp;
-    public int curHp;
+    private int curHp;
+    public int CurHp
+    { 
+        get 
+        { 
+            return curHp; 
+        } 
+        set 
+        { 
+            if(curHp > value)
+            {
+                OnDamaged.Invoke();
+            }
+            curHp = value; 
+        } 
+    }
     public int evasionRate;
     public int accuracyModifier;
     public float attackRange;
@@ -17,8 +34,11 @@ public class PlayerStats
     public int aggroControl;
     public int maxRerollCount;
     public int curRerollCount;
+    public Node currNode;
 
     private PassiveSkill equippedPassive;
+
+    public Action OnDamaged;
 
     public PlayerStats(EntityData baseStats)
     {
@@ -28,7 +48,7 @@ public class PlayerStats
         movementSpeed = baseStats.movementSpeed;
         movement = baseStats.movementPoint;
         maxHp = baseStats.maxHp;
-        curHp = baseStats.curHp;
+        CurHp = baseStats.curHp;
         evasionRate = baseStats.evasionRate;
         accuracyModifier = baseStats.accuracyModifier;
         attackRange = baseStats.attackRange;

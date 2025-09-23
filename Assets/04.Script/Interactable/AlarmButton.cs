@@ -6,11 +6,11 @@ using UnityEngine;
 public class AlarmButton : IInteractable
 {
     public Vector3Int tile { get; set; }
-    public void OnInteraction()
+    public void OnInteraction(PlayerStats stat)
     {
         
     }
-    public void UnInteraction()
+    public void UnInteraction(PlayerStats stat)
     {
 
     }

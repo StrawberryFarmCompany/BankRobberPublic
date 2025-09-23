@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class HoldEnemyCombatState : EnemyState
 {
+    public EnemyNPC holdEnemy;
+
+    public HoldEnemyCombatState(EnemyNPC holdEnemy)
+    {
+        this.holdEnemy = holdEnemy;
+    }
+
     public override void Enter()
     {
 

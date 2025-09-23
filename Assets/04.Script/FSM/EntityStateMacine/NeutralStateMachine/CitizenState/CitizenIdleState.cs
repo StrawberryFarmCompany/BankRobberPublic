@@ -6,6 +6,13 @@ using UnityEngine;
 public class CitizenIdleState : NeutralState
 {
     IdleState idleState;
+
+    public NeutralNPC citizen;
+    public CitizenIdleState(NeutralNPC citizen)
+    {
+        this.citizen = citizen;
+    }
+
     public override void Enter()
     {
         idleState.Enter();

@@ -1,18 +1,121 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using static UnityEditor.PlayerSettings;
 
-public class HoldEnemy : MonoBehaviour
+public class HoldEnemy : EnemyNPC
 {
-    // Start is called before the first frame update
-    void Start()
+    bool isDetection = false;
+    bool isHit = false;
+    bool isNoise = false;
+    bool isNoisePlace = false;
+    bool isHomePlace = true;
+    int securityLevel = 1;
+    int countTurn = 0;
+
+    protected override void Awake()
     {
-        
+        base.Awake();
+        efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangeToIdle()
     {
-        
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleState));
+    }
+
+    public void ChangeToInvestigate(Vector3 pos)
+    {
+        HoldEnemyInvestigateState investigateState = (HoldEnemyInvestigateState)efsm.FindState(EnemyStates.HoldEnemyInvestigateState);
+        investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
+        investigateState.pos = pos;
+        float eta = investigateState.agent.remainingDistance / investigateState.agent.speed;
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
+    }
+
+    public void ChangeToIdleRotation()
+    {
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleRotationState));
+    }
+
+    public void ChangeToMoveReturn(Vector3 pos)
+    {
+        HoldEnemyMoveReturnState moveReturnState = (HoldEnemyMoveReturnState)efsm.FindState(EnemyStates.HoldEnemyMoveReturnState);
+        moveReturnState.agent = gameObject.GetComponent<NavMeshAgent>();
+        moveReturnState.pos = pos;
+        float eta = moveReturnState.agent.remainingDistance / moveReturnState.agent.speed;
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyMoveReturnState));
+    }
+
+    public void ChangeToChase(Vector3 pos)
+    {
+        HoldEnemyChaseState chaseState = (HoldEnemyChaseState)efsm.FindState(EnemyStates.HoldEnemyChaseState);
+        chaseState.agent = gameObject.GetComponent<NavMeshAgent>();
+        chaseState.pos = pos;
+        float eta = chaseState.agent.remainingDistance / chaseState.agent.speed;
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
+    }
+
+    public void ChangeToCombat()
+    {
+        //여기 시간 주기 1초?
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyCombatState));
+    }
+
+    public void ChangeToDamaged()
+    {
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyDamagedState));
+    }
+
+    public void ChangeToDead()
+    {
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyDeadState));
+    }
+
+    public void HoldEnemyBehaviour()
+    {
+        if (stats.CurHp <= 0)//체력이 0보다 낮거나 같으면
+        {
+            ChangeToDead();//사망
+        }
+
+        else if (securityLevel == 1)//경계수준 1레벨
+        {
+            if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
+            {
+                ChangeToIdle();//대기 상태
+            }
+
+            else if (isNoise == false && isHomePlace == false)
+            {
+                //ChangeToMoveReturn(여기에 HomePlace의 위치 값 넣고 이동력 따라서 턴마다 이동하게);
+            }
+
+            else if (isNoise == true && isNoisePlace == false)
+            {
+                //ChangeToInvestigate(//소음 발생지로 이동력 따라서 턴마다 이동);//소음 재 감지시 외부에서 isNoise를 true로 만들어주기
+                //소음 발생지 도착시 isNoise = false;
+            }
+
+            else if (isNoise == false && isNoisePlace == true)//소음감지가 true 소음 발생지 도착시 외부에서 isNoisePlace를 트루로 만들어 주기
+            {
+                ChangeToIdleRotation();
+                isNoisePlace = false;//한 턴 끝나고 isNoisPlace false만들기
+            }
+                        
+        }
+
+        else if (securityLevel >= 2)
+        {
+            if (securityLevel >= 2)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
+            {
+                ChangeToCombat();//교전 총쏘기
+            }
+
+            else if (securityLevel >= 2)
+            {
+                //ChangeToChase(가까운 적 위치);
+                //사거리 7이라고 가정하고 사거리내 raycast에 발각 스테이터스를 가진 얼라이 태그가 닿았는지와 // 기획한테 물어봐 
+            }
+        }
     }
 }
