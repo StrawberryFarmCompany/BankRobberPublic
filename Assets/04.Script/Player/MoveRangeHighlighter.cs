@@ -14,8 +14,14 @@ public class MoveRangeHighlighter : MonoBehaviour
     public void ShowMoveRange(Vector3Int start, int range)
     {
         ClearHighlights();
+        HashSet<Vector3Int> map = new HashSet<Vector3Int>();
+        GetPath(start, start, map, range);
 
-        for (int x = -range; x <= range; x++)
+        foreach (Vector3Int item in map)
+        {
+            HighlightNode(item);
+        }
+/*        for (int x = -range; x <= range; x++)
         {
             for (int z = -range; z <= range; z++)
             {
@@ -27,6 +33,21 @@ public class MoveRangeHighlighter : MonoBehaviour
 
                 HighlightNode(current);
             }
+        }*/
+    }
+    private void GetPath(Vector3Int startPos,Vector3Int currPos,HashSet<Vector3Int> map,int maxRange)
+    {
+        if (Mathf.Abs(startPos.x - currPos.x) > maxRange|| Mathf.Abs(startPos.z - currPos.z) > maxRange) return;
+
+        if (!GameManager.GetInstance.Nodes.ContainsKey(currPos)) return;
+        else if (!GameManager.GetInstance.Nodes[currPos].isWalkable) return;
+
+        if (map.Contains(currPos)) return;
+
+        map.Add(currPos);
+        for (int i = 0; i < GameManager.GetInstance.nearNode.Length; i++)
+        {
+            GetPath(startPos, GameManager.GetInstance.nearNode[i] + currPos, map, maxRange);
         }
     }
 
