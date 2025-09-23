@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PatrolEnemy : EnemyNPC
+public class PatrolEnemyNPC : EnemyNPC
 {
     public int securityLevel = 1;
     public bool departurePoint = true;       // 출발 지점
@@ -22,9 +22,9 @@ public class PatrolEnemy : EnemyNPC
     }
 
     // 턴마다 실행될 매서드
-    public void OnTurnStart()
+    protected override void CalculateBehaviour()
     {
-        if(stats.CurHp <= 0)
+        if (stats.CurHp <= 0)
         {
             Die();
         }
@@ -90,7 +90,7 @@ public class PatrolEnemy : EnemyNPC
     {
         PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
         NavMeshPath path = new NavMeshPath();
-        if (agent.CalculatePath(pos,path))
+        if (agent.CalculatePath(pos, path))
         {
             patrolState.pos = pos;
 
@@ -138,10 +138,10 @@ public class PatrolEnemy : EnemyNPC
         // if (주사위에서 대미지 받는 매서드 받아오기)
         {
             //stats.curHp -= dice.dmg;   // 주사위에서 받은 대미지 값 필요
-            
+
             efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyDamagedState));
 
-            if(stats.CurHp <= 0)
+            if (stats.CurHp <= 0)
             {
                 Die();
             }

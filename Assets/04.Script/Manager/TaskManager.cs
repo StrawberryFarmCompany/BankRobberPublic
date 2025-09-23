@@ -30,4 +30,10 @@ public class TurnTask
 {
     public TurnBehaviour Action;
     public float time = 0;
+
+    public TurnTask(TurnBehaviour action, float time) 
+    {
+        Action = action;
+        this.time = time;
+    }
 }
