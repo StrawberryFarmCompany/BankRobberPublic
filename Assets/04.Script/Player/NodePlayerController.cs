@@ -184,7 +184,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (IsMyTurn())
         {
-        TurnOnHighlighter(vec, playerCondition.moveRange);
+        TurnOnHighlighter(vec, playerCondition.playerStats.movement);
         }
         else
             {
@@ -267,7 +267,7 @@ public class NodePlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Vector3Int targetNodeCenter = GameManager.GetInstance.GetNode(hit.point).GetCenter;
-            if (!CheckRange(targetNodeCenter, playerCondition.moveRange))
+            if (!CheckRange(targetNodeCenter, playerCondition.playerStats.movement))
             {
                 Debug.Log("이동 범위를 벗어났습니다!");
                 return;
