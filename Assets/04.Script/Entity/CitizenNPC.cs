@@ -32,6 +32,8 @@ public class CitizenNPC : NeutralNPC
         {
             //ChangeToFlee(//도망갈 위치?);
         }
+
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(base.CalculateBehaviour, 0.1f));
     }
 
     public void ChangeToIdle()

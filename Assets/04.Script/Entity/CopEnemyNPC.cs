@@ -23,6 +23,8 @@ public class CopEnemyNPC : EnemyNPC
         //    ChangeToChase(가까운 적 위치);
         //    
         //}
+
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(base.CalculateBehaviour, 0.1f));
     }
 
     public void ChangeToChase()

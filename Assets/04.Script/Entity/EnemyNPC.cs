@@ -9,6 +9,7 @@ public class EnemyNPC : MonoBehaviour
     protected PlayerStats stats;
     protected EnemyStateMachine efsm;
     public NavMeshAgent agent;
+
     protected virtual void Awake()
     {
         stats = new PlayerStats(entityData);
@@ -17,6 +18,7 @@ public class EnemyNPC : MonoBehaviour
     }
     protected virtual void CalculateBehaviour()
     {
-
+        GameManager.GetInstance.BattleTurn.ChangeState();
+        //TODO: 추후 배틀턴 구분 변수 생기면 구분 지어줘야 함.!!!.!.
     }
 }
