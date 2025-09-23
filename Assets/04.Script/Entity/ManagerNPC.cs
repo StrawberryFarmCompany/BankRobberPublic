@@ -20,8 +20,7 @@ public class ManagerNPC : NeutralNPC
         nfsm.Current?.Execute();
     }
 
-    // 턴 마다 실행될 매서드
-    public void OnTurnStart()
+    protected override void CalculateBehaviour()
     {
         // 피격시 사망
         if (stats.CurHp != stats.maxHp)

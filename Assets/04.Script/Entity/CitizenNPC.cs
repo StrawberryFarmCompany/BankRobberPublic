@@ -18,6 +18,22 @@ public class CitizenNPC : NeutralNPC
 
     }
 
+    protected override void CalculateBehaviour()
+    {
+        if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
+        {
+            ChangeToDead();
+        }
+        else if (securityLevel >= 3)//경계수준이 3레벨 이상이면
+        {
+            ChangeToCowerState();
+        }
+        else if (isDetection == true)//플레이어 발각시
+        {
+            //ChangeToFlee(//도망갈 위치?);
+        }
+    }
+
     public void ChangeToIdle()
     {
 
@@ -41,19 +57,4 @@ public class CitizenNPC : NeutralNPC
         nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
     }
 
-    public void CitizenBehaviour()
-    {
-        if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
-        {
-            ChangeToDead();
-        }
-        else if (securityLevel >= 3)//경계수준이 3레벨 이상이면
-        {
-            ChangeToCowerState();
-        }
-        else if (isDetection == true)//플레이어 발각시
-        {
-            //ChangeToFlee(//도망갈 위치?);
-        }
-    }
 }
