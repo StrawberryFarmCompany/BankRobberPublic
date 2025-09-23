@@ -9,9 +9,6 @@ public class MoveRangeHighlighter : MonoBehaviour
     [SerializeField] private GameObject securityAreaHighlighter;
     [SerializeField] private GameObject interactableHighlighter;
 
-    [Header("범위 (나중에 플레이어 데이터로 대체)")]
-    [SerializeField] private int range = 2;
-
     private List<GameObject> activeHighlights = new();
 
     public void ShowMoveRange(Vector3Int start, int range)
