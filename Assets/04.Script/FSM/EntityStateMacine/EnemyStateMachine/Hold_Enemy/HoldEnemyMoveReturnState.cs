@@ -6,6 +6,9 @@ using UnityEngine.AI;
 public class HoldEnemyMoveReturnState : EnemyState
 {
     public EnemyNPC holdEnemy;
+    public NavMeshAgent agent;
+    public Vector3 pos;
+    
     public HoldEnemyMoveReturnState(EnemyNPC holdEnemy)
     {
         this.holdEnemy = holdEnemy;
@@ -13,7 +16,7 @@ public class HoldEnemyMoveReturnState : EnemyState
 
     public override void Enter()
     {
-
+        agent.SetDestination(pos);
     }
 
     public override void Execute()

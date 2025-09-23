@@ -17,7 +17,7 @@ public class PatrolEnemyPatrolState : EnemyState
 
     public override void Enter()
     {
-
+        agent.SetDestination(pos);
     }
 
     public override void Execute()

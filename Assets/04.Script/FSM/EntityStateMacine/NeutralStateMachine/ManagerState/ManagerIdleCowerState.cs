@@ -14,10 +14,9 @@ public class ManagerIdleCowerState : NeutralState
         
     }
 
-    // 대미지 받았을 시
     public override void Execute()
     {
-        managerNPC.TakeDamage();
+
     }
 
     public override void Exit()
