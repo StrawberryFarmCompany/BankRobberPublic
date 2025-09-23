@@ -11,8 +11,13 @@ public class NeutralNPC : MonoBehaviour
     protected virtual void Awake()
     {
         stats = new PlayerStats(entityData);
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
+        //각 산출된 행동을 여기에 담아 실행TaskManager.GetInstance.AddTurnBehaviour(/*추가할 행동 함수*/);
     }
+    protected virtual void CalculateBehaviour()
+    {
 
+    }
     protected virtual void Start()
     {
         
