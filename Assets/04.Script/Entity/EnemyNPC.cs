@@ -16,6 +16,7 @@ public class EnemyNPC : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
     }
+
     protected virtual void CalculateBehaviour()
     {
         GameManager.GetInstance.BattleTurn.ChangeState();
