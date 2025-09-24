@@ -1,6 +1,8 @@
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Profiling.Memory.Experimental;
@@ -17,7 +19,7 @@ public class NodePlayerController : MonoBehaviour
     // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
     public int playerID { get; private set; }
 
-    private Vector3Int vec;
+    private Vector3Int playerVec;
     private bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
@@ -38,6 +40,7 @@ public class NodePlayerController : MonoBehaviour
     public bool isRunMode;
     public bool isHideMode;
     public bool isSneakAttackMode;
+    public bool isThrowMode;
     public bool isPickPocketMode;
     public bool isAimingMode;
     public bool isRangeAttackMode;
@@ -170,8 +173,8 @@ public class NodePlayerController : MonoBehaviour
         }
 
         // 내부 상태/하이라이트 갱신
-        vec = landCell;
-        TurnOnHighlighter(vec, playerCondition.moveRange);
+        playerVec = landCell;
+        TurnOnHighlighter(playerVec, playerCondition.moveRange);
 
         _isVaulting = false;
     }
@@ -186,7 +189,7 @@ public class NodePlayerController : MonoBehaviour
 
     void Start()
     {
-        vec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+        playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
 
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
@@ -197,7 +200,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (IsMyTurn())
         {
-        TurnOnHighlighter(vec, playerCondition.playerStats.movement);
+        TurnOnHighlighter(playerVec, playerCondition.playerStats.movement);
         }
         else
             {
@@ -224,6 +227,7 @@ public class NodePlayerController : MonoBehaviour
             Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
             UIManager.GetInstance.ShowActionPanel(true);
+            TurnOnHighlighter(playerCondition.playerStats.movement);
         }
     }
 
@@ -339,10 +343,11 @@ public class NodePlayerController : MonoBehaviour
 
             if (pathQueue.Count > 0)
             {
+                playerVec = pathQueue.Last();
+                TurnOffHighlighter();
                 //최종 이동 구현
                 isMoving = true;
                 canNextMove = true;
-                TurnOffHighlighter();
             }
         }
     }
@@ -435,7 +440,6 @@ public class NodePlayerController : MonoBehaviour
         // 모든 경로 소모 시 이동 종료
         if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
         {
-            
             isMoving = false;
         }
     }
@@ -452,13 +456,48 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnThrow(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+
+
+        if (context.canceled && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            Debug.Log("투척 모드 활성화");
-            // 던지는 로직
+            StartMode(ref isThrowMode);
+            TurnOnHighlighter(6);
         }
     }
+
+    private void CheckThrow(Vector3 mouseScreenPos)
+    {
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
+
+        if (targetNodeCenter == new Vector3Int(-1, -1, -1))
+        {
+            Debug.Log("유효하지 않은 좌표입니다!");
+            return;
+        }
+
+        if (!CheckRange(targetNodeCenter, 6)) //========================================================================임의로 6범위
+        {
+            Debug.Log("해당 위치에 적이 없거나 범위를 벗어났습니다!");
+            return;
+        }
+
+        UIManager.GetInstance.ShowActionPanel(true);
+        if (playerCondition.ConsumeActionPoint(1))
+        {
+            Throw();
+        }
+        else
+        {
+            Debug.Log("행동력이 부족합니다!");
+        }
+    }
+
+    private void Throw()
+    {
+        
+    }
+
 
     public void OnHideAndSneakAttack(InputAction.CallbackContext context)
     {
@@ -526,7 +565,7 @@ public class NodePlayerController : MonoBehaviour
             RemoveHideMode();
 
             agent.SetDestination(bestNode);
-            vec = bestNode;
+            playerVec = bestNode;
             TurnOffHighlighter();
 
             Debug.Log("기습 공격 성공!");
@@ -683,6 +722,13 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
+    private void TurnOnHighlighter(int range)
+    {
+            isHighlightOn = true;
+            highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
+        
+    }
+
     private void TurnOffHighlighter()
     {
         isHighlightOn = false;
@@ -698,6 +744,7 @@ public class NodePlayerController : MonoBehaviour
         isPickPocketMode = false;
         isRangeAttackMode = false;
         isPerkActionMode = false;
+        isThrowMode = false;
 
         mode = true;
     }
