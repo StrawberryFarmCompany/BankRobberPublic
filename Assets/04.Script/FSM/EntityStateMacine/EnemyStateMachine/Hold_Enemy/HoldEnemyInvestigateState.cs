@@ -8,15 +8,24 @@ public class HoldEnemyInvestigateState : EnemyState
 {
     public EnemyNPC holdEnemy;
     public NavMeshAgent agent;
-    public Vector3 pos;
+    public Queue<Vector3> pos;
     public HoldEnemyInvestigateState(EnemyNPC holdEnemy)
     {
         this.holdEnemy = holdEnemy;
+        pos = new Queue<Vector3>();
     }
     
     public override void Enter()
     {
-        agent.SetDestination(pos);
+        if(pos.TryDequeue(out Vector3 current))
+        {
+            agent.SetDestination(current);
+        }
+
+        else
+        {
+            Debug.LogError("이동경로 없음");
+        }
     }
 
     public override void Execute()
