@@ -28,10 +28,10 @@ public class ManagerNPC : NeutralNPC
             Die();
         }
 
-        // 경계레벨이 2이하 또는 플레이어 발각시
-        else if (canSeeAlly == true && securityLevel <= 2)
+        // 플레이어 발각시
+        else if (canSeeAlly == true)
         {
-            // Status에서 2턴의 목격자 Status를 받아옴. (경계수준 2미만일 경우 라고 되어 있는데 오타 인지 기획자 한테 물어보기)
+            // Status에서 3턴의 목격자 Status를 받아옴.
             // 턴 끝날 때 마다 목격자 status -= 1 해주기.
 
             // if (status가 다시 0이 된다면)
