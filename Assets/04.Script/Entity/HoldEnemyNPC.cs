@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
 
 public class HoldEnemyNPC : EnemyNPC
 {
@@ -11,9 +10,9 @@ public class HoldEnemyNPC : EnemyNPC
     bool allySpottedStatus = false;
     int securityLevel = 1;
     int countTurn = 0;
-    [SerializeField] Vector3 homeLocation;
-    [SerializeField] Vector3 noiseLocation;
-    [SerializeField] Vector3 nearPlayerLocation;
+    [SerializeField] private Vector3 homeLocation;
+    [SerializeField] private Vector3 noiseLocation;
+    [SerializeField] private Vector3 nearPlayerLocation;
 
     protected override void Awake()
     {
@@ -92,8 +91,14 @@ public class HoldEnemyNPC : EnemyNPC
     public void ChangeToInvestigate(Vector3 pos)
     {
         HoldEnemyInvestigateState investigateState = (HoldEnemyInvestigateState)efsm.FindState(EnemyStates.HoldEnemyInvestigateState);
-        investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
-        investigateState.pos = pos;
+
+        if(investigateState.agent == null)
+        {
+            investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
+        }
+
+        investigateState.pos.Enqueue(pos);
+
         float eta = investigateState.agent.remainingDistance / investigateState.agent.speed;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
     }
