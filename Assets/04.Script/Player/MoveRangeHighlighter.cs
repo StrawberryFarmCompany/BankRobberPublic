@@ -9,6 +9,8 @@ public class MoveRangeHighlighter : MonoBehaviour
     [SerializeField] private GameObject securityAreaHighlighter;
     [SerializeField] private GameObject interactableHighlighter;
 
+    [SerializeField] private GameObject ParentTransform;
+
     private List<GameObject> activeHighlights = new();
 
     public void ShowMoveRange(Vector3Int start, int range)
@@ -88,7 +90,7 @@ public class MoveRangeHighlighter : MonoBehaviour
                 prefab = interactableHighlighter;
         }
 
-        GameObject obj = Instantiate(prefab, pos, Quaternion.identity);
+        GameObject obj = Instantiate(prefab, pos, Quaternion.identity, ParentTransform.transform);
         activeHighlights.Add(obj);
     }
 
