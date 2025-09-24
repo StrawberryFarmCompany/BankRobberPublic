@@ -9,18 +9,6 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-//public enum PlayerMode
-//{
-//    Move,
-//    Run,
-//    Throw,
-//    Hide,
-//    SneakAttack,
-//    PickPocket,
-//    Aiming,
-//    RangeAttack,
-//    PerkAction
-//}
 public class NodePlayerController : MonoBehaviour
 {
     public NodePlayerCondition playerCondition; // 플레이어 컨디션 (인스펙터에 할당)
@@ -316,38 +304,6 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    //private void Move(Vector3 mouseScreenPos)
-    //{
-    //    Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
-    //    if (Physics.Raycast(ray, out RaycastHit hit))
-    //    {
-    //        Vector3Int targetNodeCenter = GameManager.GetInstance.GetNode(hit.point).GetCenter;
-    //        if (!CheckRange(targetNodeCenter, playerCondition.playerStats.movement))
-    //        {
-    //            Debug.Log("이동 범위를 벗어났습니다!");
-    //            return;
-    //        }
-
-    //        int cost = CalculateMoveCost(targetNodeCenter);
-
-    //        if (playerCondition.ConsumeMovement(cost))
-    //        {
-    //            if (GameManager.GetInstance.IsExistNode(targetNodeCenter))
-    //            {
-    //                TurnOffHighlighter();
-    //                agent.SetDestination(targetNodeCenter);
-    //                vec = targetNodeCenter;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("이동력이 부족합니다!");
-    //        }
-    //    }
-    //}
-
-    
-
     /// <summary>
     /// Move 함수: 목표 좌표까지 체비셰프 방식으로 경로를 생성하고 이동 시작
     /// </summary>
@@ -387,7 +343,6 @@ public class NodePlayerController : MonoBehaviour
                 isMoving = true;
                 canNextMove = true;
                 TurnOffHighlighter();
-
             }
         }
     }
@@ -733,85 +688,6 @@ public class NodePlayerController : MonoBehaviour
         isHighlightOn = false;
         highlighter.ClearHighlights();
     }
-
-    //public void ActivateMode(PlayerMode mode)
-    //{
-    //    if (!IsMyTurn()) return;
-
-    //    switch (mode)
-    //    {
-    //        case PlayerMode.Move:
-    //            {
-    //                StartMode(ref isMoveMode);
-    //                break;
-    //            }
-
-    //        case PlayerMode.Run:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isRunMode);
-    //                Debug.Log("달리기 모드 활성화");
-    //            }
-    //            break;
-
-    //        //case PlayerMode.Throw:
-    //        //    if (isMoveMode)
-    //        //    {
-    //        //        StartMode(ref isThrowMode);
-    //        //        Debug.Log("투척 모드 활성화");
-    //        //    }
-    //        //    break;
-
-    //        case PlayerMode.Hide:
-    //            if (isMoveMode && !isHide)
-    //            {
-    //                StartMode(ref isHideMode);
-    //                Debug.Log("숨기 모드 활성화");
-    //            }
-    //            else if (isMoveMode && isHide)
-    //            {
-    //                StartMode(ref isSneakAttackMode);
-    //                Debug.Log("기습 공격 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.PickPocket:
-    //            if(isMoveMode && isHideMode)
-    //            {
-    //                StartMode(ref isPickPocketMode);
-    //                Debug.Log("훔치기 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.Aiming:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isAimingMode);
-    //                Debug.Log("조준 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.RangeAttack:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isRangeAttackMode);
-    //                Debug.Log("원거리 공격 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.PerkAction:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isPerkActionMode);
-    //                Debug.Log("특전 모드 활성화");
-    //            }
-    //            break;
-
-    //        default:
-    //            Debug.Log("지원하지 않는 모드");
-    //            break;
-    //    }
-    //}
 
     public void StartMode(ref bool mode)
     {
