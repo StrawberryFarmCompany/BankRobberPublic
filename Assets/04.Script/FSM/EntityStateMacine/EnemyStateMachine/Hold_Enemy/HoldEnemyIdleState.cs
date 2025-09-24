@@ -14,7 +14,7 @@ public class HoldEnemyIdleState : EnemyState
 
     public override void Enter()
     {
-
+        Debug.Log("대기중");
     }
 
     public override void Execute()
