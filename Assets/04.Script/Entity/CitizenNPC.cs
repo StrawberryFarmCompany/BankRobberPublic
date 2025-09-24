@@ -34,6 +34,8 @@ public class CitizenNPC : NeutralNPC
             Debug.Log("존나 튀는 상태");
             ChangeToFlee(exitArea);
         }
+
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(base.CalculateBehaviour, 0.1f));
     }
 
     public void ChangeToIdle()
