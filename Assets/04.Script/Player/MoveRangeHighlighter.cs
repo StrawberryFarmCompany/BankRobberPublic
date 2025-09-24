@@ -14,8 +14,15 @@ public class MoveRangeHighlighter : MonoBehaviour
     public void ShowMoveRange(Vector3Int start, int range)
     {
         ClearHighlights();
+        HashSet<Vector3Int> map = new HashSet<Vector3Int>();
+        //start위치까지 포함하여야 하고 음수처리 때문에 값 비교 array는 (range*2)+1
+        GetPath(start, start, map,new int[(range*2)+1, (range * 2) + 1], range);
 
-        for (int x = -range; x <= range; x++)
+        foreach (Vector3Int item in map)
+        {
+            HighlightNode(item);
+        }
+/*        for (int x = -range; x <= range; x++)
         {
             for (int z = -range; z <= range; z++)
             {
@@ -27,6 +34,36 @@ public class MoveRangeHighlighter : MonoBehaviour
 
                 HighlightNode(current);
             }
+        }*/
+    }
+    private void GetPath(Vector3Int startPos,Vector3Int currPos,HashSet<Vector3Int> map,int[,] costMap,int maxRange,int curr = 0)
+    {
+        int x = startPos.x - currPos.x;
+        int z = startPos.z - currPos.z;
+        if (Mathf.Abs(startPos.x - currPos.x) > maxRange|| Mathf.Abs(startPos.z - currPos.z) > maxRange) return;
+
+        if (!GameManager.GetInstance.Nodes.ContainsKey(currPos)) return;
+        else if (!GameManager.GetInstance.Nodes[currPos].isWalkable) return;
+
+        if (curr > maxRange) return;
+        x = 0 >= x ? Mathf.Abs(x) : x + maxRange;
+        z = 0 >= z ? Mathf.Abs(z) : z + maxRange;
+        if (map.Contains(currPos))
+        {
+            if (costMap[x, z] <= curr)
+            {
+                return;
+            }
+        }
+
+
+        costMap[x, z] = curr;
+
+        map.Add(currPos);
+        //추후 층계산 필요
+        for (int i = 0; i < GameManager.GetInstance.nearNode.Length; i++)
+        {
+            GetPath(startPos, GameManager.GetInstance.nearNode[i] + currPos, map,costMap, maxRange,curr+1);
         }
     }
 

@@ -58,7 +58,7 @@ public class NodeBaker : MonoBehaviour
                     Vector3 worldPos = new Vector3(min.x + x , min.y + y , min.z + z );
 
                     // NavMesh 위에 있는지 검사
-                    if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.5f, NavMesh.AllAreas))
+                    if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.3f, NavMesh.AllAreas))
                     {
                         vectors.Add(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y)-1, Mathf.CeilToInt(worldPos.z)));
                     }
