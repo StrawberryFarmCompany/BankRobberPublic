@@ -20,7 +20,11 @@ public class InteractionSetter : MonoBehaviour
         interaction = IInteractable.Factory(type);
         Vector3Int pos = Manager.GetVecInt(transform.position);
         if (!Manager.Nodes.ContainsKey(pos)) Manager.RegistNode(pos, isWalkAble);
-        interaction.tile = pos;
+        else
+        {
+            Manager.Nodes[pos].isWalkable = false;
+        }
+            interaction.tile = pos;
         switch (type)
         {
             case InteractionType.AlamBTN:
