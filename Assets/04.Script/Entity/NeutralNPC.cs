@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NeutralNPC : MonoBehaviour
@@ -8,7 +5,6 @@ public class NeutralNPC : MonoBehaviour
     public EntityData entityData;
     protected PlayerStats stats;
     protected NeutralStateMachine nfsm;
-    protected Action neutralEntityState;
 
     protected virtual void Awake()
     {
