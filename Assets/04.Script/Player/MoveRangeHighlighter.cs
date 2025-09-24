@@ -45,7 +45,8 @@ public class MoveRangeHighlighter : MonoBehaviour
         if (!GameManager.GetInstance.Nodes.ContainsKey(currPos)) return;
         else if (!GameManager.GetInstance.Nodes[currPos].isWalkable) return;
         else if (GameManager.GetInstance.Nodes[currPos] == null) return;
-        else if (GameManager.GetInstance.Nodes[currPos].standing.Count > 0) return;
+        else if (GameManager.GetInstance.Nodes[currPos].standing != null)
+            if(GameManager.GetInstance.Nodes[currPos].standing.Count > 0) return;
 
         if (curr > maxRange) return;
         x = 0 >= x ? Mathf.Abs(x) : x + maxRange;

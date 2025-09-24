@@ -9,18 +9,6 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-//public enum PlayerMode
-//{
-//    Move,
-//    Run,
-//    Throw,
-//    Hide,
-//    SneakAttack,
-//    PickPocket,
-//    Aiming,
-//    RangeAttack,
-//    PerkAction
-//}
 public class NodePlayerController : MonoBehaviour
 {
     public NodePlayerCondition playerCondition; // 플레이어 컨디션 (인스펙터에 할당)
@@ -316,38 +304,6 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    //private void Move(Vector3 mouseScreenPos)
-    //{
-    //    Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
-    //    if (Physics.Raycast(ray, out RaycastHit hit))
-    //    {
-    //        Vector3Int targetNodeCenter = GameManager.GetInstance.GetNode(hit.point).GetCenter;
-    //        if (!CheckRange(targetNodeCenter, playerCondition.playerStats.movement))
-    //        {
-    //            Debug.Log("이동 범위를 벗어났습니다!");
-    //            return;
-    //        }
-
-    //        int cost = CalculateMoveCost(targetNodeCenter);
-
-    //        if (playerCondition.ConsumeMovement(cost))
-    //        {
-    //            if (GameManager.GetInstance.IsExistNode(targetNodeCenter))
-    //            {
-    //                TurnOffHighlighter();
-    //                agent.SetDestination(targetNodeCenter);
-    //                vec = targetNodeCenter;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("이동력이 부족합니다!");
-    //        }
-    //    }
-    //}
-
-    
-
     /// <summary>
     /// Move 함수: 목표 좌표까지 체비셰프 방식으로 경로를 생성하고 이동 시작
     /// </summary>
@@ -387,29 +343,74 @@ public class NodePlayerController : MonoBehaviour
                 isMoving = true;
                 canNextMove = true;
                 TurnOffHighlighter();
-
             }
         }
     }
 
-    /// <summary>
-    /// 체비셰프 경로 생성 함수
-    /// 현재 위치에서 목표 위치까지 (dx, dy)를 -1~1 단위로 줄이며 경로 리스트를 반환
-    /// </summary>
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
     {
-        List<Vector3Int> path = new List<Vector3Int>();
-        Vector3Int current = start;
+        // BFS 탐색을 위한 큐
+        Queue<Vector3Int> open = new Queue<Vector3Int>();
+        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
 
-        while (current != end)
+        open.Enqueue(start);
+        cameFrom[start] = start;
+
+        while (open.Count > 0)
         {
-            int dx = Mathf.Clamp(end.x - current.x, -1, 1);
-            int dz = Mathf.Clamp(end.z - current.z, -1, 1);
+            Vector3Int current = open.Dequeue();
 
-            current += new Vector3Int(dx, 0, dz);
-            path.Add(current);
+            // 목표에 도달하면 역추적해서 경로 반환
+            if (current == end)
+            {
+                return ReconstructPath(cameFrom, start, end);
+            }
+
+            // 인접 노드 탐색 (대각선 포함 체비셰프)
+            foreach (var dir in GameManager.GetInstance.nearNode)
+            {
+                Vector3Int next = current + dir;
+
+                // 1) 노드 존재 여부 확인
+                if (!GameManager.GetInstance.Nodes.ContainsKey(next)) continue;
+
+                var node = GameManager.GetInstance.Nodes[next];
+
+                // 2) 이동 가능한지 체크
+                if (node == null) continue;
+                if (!node.isWalkable) continue;
+                if(node.standing != null)
+                    if (node.standing.Count > 0) continue;
+
+                // 3) 방문한 적 없는 경우만 추가
+                if (!cameFrom.ContainsKey(next))
+                {
+                    cameFrom[next] = current;
+                    open.Enqueue(next);
+                }
+            }
         }
 
+        // 경로를 찾지 못한 경우
+        Debug.Log("경로를 찾지 못했습니다.");
+        return new List<Vector3Int>();
+    }
+
+    /// <summary>
+    /// BFS 탐색 후 start→end까지 역추적
+    /// </summary>
+    private List<Vector3Int> ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int start, Vector3Int end)
+    {
+        List<Vector3Int> path = new List<Vector3Int>();
+        Vector3Int current = end;
+
+        while (current != start)
+        {
+            path.Add(current);
+            current = cameFrom[current];
+        }
+
+        path.Reverse();
         return path;
     }
 
@@ -687,85 +688,6 @@ public class NodePlayerController : MonoBehaviour
         isHighlightOn = false;
         highlighter.ClearHighlights();
     }
-
-    //public void ActivateMode(PlayerMode mode)
-    //{
-    //    if (!IsMyTurn()) return;
-
-    //    switch (mode)
-    //    {
-    //        case PlayerMode.Move:
-    //            {
-    //                StartMode(ref isMoveMode);
-    //                break;
-    //            }
-
-    //        case PlayerMode.Run:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isRunMode);
-    //                Debug.Log("달리기 모드 활성화");
-    //            }
-    //            break;
-
-    //        //case PlayerMode.Throw:
-    //        //    if (isMoveMode)
-    //        //    {
-    //        //        StartMode(ref isThrowMode);
-    //        //        Debug.Log("투척 모드 활성화");
-    //        //    }
-    //        //    break;
-
-    //        case PlayerMode.Hide:
-    //            if (isMoveMode && !isHide)
-    //            {
-    //                StartMode(ref isHideMode);
-    //                Debug.Log("숨기 모드 활성화");
-    //            }
-    //            else if (isMoveMode && isHide)
-    //            {
-    //                StartMode(ref isSneakAttackMode);
-    //                Debug.Log("기습 공격 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.PickPocket:
-    //            if(isMoveMode && isHideMode)
-    //            {
-    //                StartMode(ref isPickPocketMode);
-    //                Debug.Log("훔치기 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.Aiming:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isAimingMode);
-    //                Debug.Log("조준 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.RangeAttack:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isRangeAttackMode);
-    //                Debug.Log("원거리 공격 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.PerkAction:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isPerkActionMode);
-    //                Debug.Log("특전 모드 활성화");
-    //            }
-    //            break;
-
-    //        default:
-    //            Debug.Log("지원하지 않는 모드");
-    //            break;
-    //    }
-    //}
 
     public void StartMode(ref bool mode)
     {
