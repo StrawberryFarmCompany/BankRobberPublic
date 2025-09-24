@@ -197,17 +197,26 @@ public class NodePlayerController : MonoBehaviour
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
         GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
+        TryUpdateInteractionUI();
     }
 
     void Update()
     {
         if (IsMyTurn())
         {
-        TurnOnHighlighter(vec, playerCondition.playerStats.movement);
+            TurnOnHighlighter(vec, playerCondition.playerStats.movement);
         }
         else
-            {
+        {
             TurnOffHighlighter();
+        }
+
+        if (IsMyTurn() && agent != null)
+        {
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance && !agent.hasPath)
+            {
+                TryUpdateInteractionUI();
+            }
         }
     }
 
@@ -531,6 +540,13 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (!context.started) return;
+        if (!IsMyTurn()) return;
+
+        PerformInteraction();
+    }
 
     /// <summary>
     /// 플레이어의 턴, 해당 캐릭터의 턴인지를 판별하여 해당 캐릭터의 행동 조건을 판별
@@ -553,7 +569,7 @@ public class NodePlayerController : MonoBehaviour
         }
 
     }
-
+    
     public void ResetPlayer() 
     {
         List<NodePlayerController> temp = NodePlayerManager.GetInstance.GetAllPlayers();
@@ -566,6 +582,7 @@ public class NodePlayerController : MonoBehaviour
 
         playerCondition.ResetForNewTurn();
         NodePlayerManager.GetInstance.SwitchToPlayer(i);
+        TryUpdateInteractionUI();
     }
 
     private void TurnOnHighlighter(Vector3Int destination, int range)
@@ -828,6 +845,19 @@ public class NodePlayerController : MonoBehaviour
     public void EndAction()
     {
         NodePlayerManager.GetInstance.NotifyPlayerEndTurn(this);
+        UIManager.GetInstance.HideInteractionCanvas();
     }
 
+    private void TryUpdateInteractionUI()
+    {
+        var node = GameManager.GetInstance.GetNode(transform.position);
+        UIManager.GetInstance.TryUpdateInteractionFromNode(node);
+    }
+
+    private void PerformInteraction()
+    {
+        var node = GameManager.GetInstance.GetNode(transform.position);
+        node?.InvokeEvent(playerStats);
+        UIManager.GetInstance.HideInteractionCanvas();
+    }
 }

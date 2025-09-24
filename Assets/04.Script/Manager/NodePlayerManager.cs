@@ -52,6 +52,7 @@ public class NodePlayerManager : MonoBehaviour
     /// </summary>
     public void SwitchToNextPlayer()
     {
+        if (UIManager.GetInstance != null && UIManager.GetInstance.SelectionLocked) return;
         if (players.Count == 0)
             return;
 
@@ -64,6 +65,7 @@ public class NodePlayerManager : MonoBehaviour
     /// </summary>
     public void SwitchToPlayer(int index)
     {
+        if (UIManager.GetInstance != null && UIManager.GetInstance.SelectionLocked) return;
         if (index < 0 || index >= players.Count) return;
         currentPlayerIndex = index;
         GetCurrentPlayer().isEndReady = false;
