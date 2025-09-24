@@ -18,13 +18,18 @@ public class InteractionSetter : MonoBehaviour
     void Start()
     {
         interaction = IInteractable.Factory(type);
-        Vector3Int pos = Manager.GetVecInt(transform.position);
+        Vector3Int pos = Manager.GetVecInt(transform.localPosition);
+        if (type == InteractionType.Door)
+        {
+            pos = Manager.GetVecInt(target.localPosition + (target.forward/2f)+ (transform.right / -2f));
+        }
+
         if (!Manager.Nodes.ContainsKey(pos)) Manager.RegistNode(pos, isWalkAble);
         else
         {
-            Manager.Nodes[pos].isWalkable = false;
+            Manager.Nodes[pos].isWalkable = isWalkAble;
         }
-            interaction.tile = pos;
+        interaction.tile = pos;
         switch (type)
         {
             case InteractionType.AlamBTN:
