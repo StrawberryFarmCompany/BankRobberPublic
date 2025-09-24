@@ -237,4 +237,20 @@ class GameManager : SingleTon<GameManager>
         else
             battleTurn.ChangeState();
     }
+
+    public void EndEnemyTurn()
+    {
+        if(IsNoneBattlePhase())
+            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.neutral));
+        else
+            battleTurn.ChangeState();
+    }
+
+    public void EndNeutralTurn()
+    {
+        if(IsNoneBattlePhase())
+            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.ally));
+        else 
+            battleTurn.ChangeState();
+    }
 }
