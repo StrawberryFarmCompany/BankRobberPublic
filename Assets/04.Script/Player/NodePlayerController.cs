@@ -392,24 +392,70 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 체비셰프 경로 생성 함수
-    /// 현재 위치에서 목표 위치까지 (dx, dy)를 -1~1 단위로 줄이며 경로 리스트를 반환
-    /// </summary>
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
     {
-        List<Vector3Int> path = new List<Vector3Int>();
-        Vector3Int current = start;
+        // BFS 탐색을 위한 큐
+        Queue<Vector3Int> open = new Queue<Vector3Int>();
+        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
 
-        while (current != end)
+        open.Enqueue(start);
+        cameFrom[start] = start;
+
+        while (open.Count > 0)
         {
-            int dx = Mathf.Clamp(end.x - current.x, -1, 1);
-            int dz = Mathf.Clamp(end.z - current.z, -1, 1);
+            Vector3Int current = open.Dequeue();
 
-            current += new Vector3Int(dx, 0, dz);
-            path.Add(current);
+            // 목표에 도달하면 역추적해서 경로 반환
+            if (current == end)
+            {
+                return ReconstructPath(cameFrom, start, end);
+            }
+
+            // 인접 노드 탐색 (대각선 포함 체비셰프)
+            foreach (var dir in GameManager.GetInstance.nearNode)
+            {
+                Vector3Int next = current + dir;
+
+                // 1) 노드 존재 여부 확인
+                if (!GameManager.GetInstance.Nodes.ContainsKey(next)) continue;
+
+                var node = GameManager.GetInstance.Nodes[next];
+
+                // 2) 이동 가능한지 체크
+                if (node == null) continue;
+                if (!node.isWalkable) continue;
+                if(node.standing != null)
+                    if (node.standing.Count > 0) continue;
+
+                // 3) 방문한 적 없는 경우만 추가
+                if (!cameFrom.ContainsKey(next))
+                {
+                    cameFrom[next] = current;
+                    open.Enqueue(next);
+                }
+            }
         }
 
+        // 경로를 찾지 못한 경우
+        Debug.Log("경로를 찾지 못했습니다.");
+        return new List<Vector3Int>();
+    }
+
+    /// <summary>
+    /// BFS 탐색 후 start→end까지 역추적
+    /// </summary>
+    private List<Vector3Int> ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int start, Vector3Int end)
+    {
+        List<Vector3Int> path = new List<Vector3Int>();
+        Vector3Int current = end;
+
+        while (current != start)
+        {
+            path.Add(current);
+            current = cameFrom[current];
+        }
+
+        path.Reverse();
         return path;
     }
 
