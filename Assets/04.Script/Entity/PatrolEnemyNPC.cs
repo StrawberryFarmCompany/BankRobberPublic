@@ -91,14 +91,15 @@ public class PatrolEnemyNPC : EnemyNPC
     public void Patrol(Vector3 pos)
     {
         PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
-        NavMeshPath path = new NavMeshPath();
-        if (agent.CalculatePath(pos, path))
+        if (patrolState.agent == null)
         {
-            patrolState.pos = pos;
-
-            float eta = agent.remainingDistance / agent.speed;
-            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+            patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
         }
+        patrolState.pos.Enqueue(pos);
+
+        float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
+        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+        
     }
 
     // 두리번
