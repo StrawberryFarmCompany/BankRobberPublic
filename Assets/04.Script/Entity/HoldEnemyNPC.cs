@@ -61,7 +61,6 @@ public class HoldEnemyNPC : EnemyNPC
                 ChangeToIdleRotation();
                 isNoisePlace = false;//한 턴 끝나고 isNoisPlace false만들기
             }
-
         }
 
         else if (securityLevel >= 2)
@@ -105,14 +104,33 @@ public class HoldEnemyNPC : EnemyNPC
 
     public void ChangeToIdleRotation()
     {
+        float firstLookAngle = Random.Range(-180,180); // 첫 번째 각도 확인
+        float secondLookAngle = Random.Range(-180,180); // 두 번째 각도 확인
+        Quaternion originalRotation = transform.rotation;
+
+        transform.rotation = Quaternion.Euler(0, firstLookAngle , 0);
+        Debug.Log("첫 번째 랜덤 각도 두리번");
+
+        transform.rotation = Quaternion.Euler(0, secondLookAngle , 0);
+        Debug.Log("두 번째 랜덤 각도 두리번");
+
+        // 정면 복귀
+        transform.rotation = originalRotation;
+        Debug.Log("정면 복귀");
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleRotationState));
     }
 
     public void ChangeToMoveReturn(Vector3 pos)
     {
         HoldEnemyMoveReturnState moveReturnState = (HoldEnemyMoveReturnState)efsm.FindState(EnemyStates.HoldEnemyMoveReturnState);
-        moveReturnState.agent = gameObject.GetComponent<NavMeshAgent>();
-        moveReturnState.pos = pos;
+
+        if (moveReturnState.agent == null)
+        {
+            moveReturnState.agent = gameObject.GetComponent<NavMeshAgent>();
+        }
+
+        moveReturnState.pos.Enqueue(pos);
+
         float eta = moveReturnState.agent.remainingDistance / moveReturnState.agent.speed;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyMoveReturnState));
     }
@@ -120,8 +138,14 @@ public class HoldEnemyNPC : EnemyNPC
     public void ChangeToChase(Vector3 pos)
     {
         HoldEnemyChaseState chaseState = (HoldEnemyChaseState)efsm.FindState(EnemyStates.HoldEnemyChaseState);
-        chaseState.agent = gameObject.GetComponent<NavMeshAgent>();
-        chaseState.pos = pos;
+
+        if (chaseState.agent == null)
+        {
+            chaseState.agent = gameObject.GetComponent<NavMeshAgent>();
+        }
+
+        chaseState.pos.Enqueue(pos);
+
         float eta = chaseState.agent.remainingDistance / chaseState.agent.speed;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
     }

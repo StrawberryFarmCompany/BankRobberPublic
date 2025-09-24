@@ -7,16 +7,25 @@ public class HoldEnemyMoveReturnState : EnemyState
 {
     public EnemyNPC holdEnemy;
     public NavMeshAgent agent;
-    public Vector3 pos;
+    public Queue<Vector3> pos;
     
     public HoldEnemyMoveReturnState(EnemyNPC holdEnemy)
     {
         this.holdEnemy = holdEnemy;
+        pos = new Queue<Vector3>();
     }
 
     public override void Enter()
     {
-        agent.SetDestination(pos);
+        if (pos.TryDequeue(out Vector3 current))
+        {
+            agent.SetDestination(current);
+        }
+
+        else
+        {
+            Debug.LogError("이동 경로 없음");
+        }        
     }
 
     public override void Execute()
