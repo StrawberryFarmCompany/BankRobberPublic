@@ -18,7 +18,7 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
     public void ChangeState()
     {
         currState.Exit();
-        currState = states[(TurnTypes)((int)GetCurrState() % (Enum.GetValues(typeof(TurnTypes)).Length))];
+        currState = states[(TurnTypes)((int)GetCurrState()+1 % (Enum.GetValues(typeof(TurnTypes)).Length))];
         currState.Enter();
     }
     public void ChangeState(NoneBattleTurnStateBase next)
