@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -71,6 +72,11 @@ public class NodePlayerController : MonoBehaviour
 
     bool _isVaulting;                                // 중복 실행 방지
     int _wallLayer = -1, _selfLayer = -1;
+
+    private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
+    Vector3Int curTargetPos;
+    public bool isMoving;
+    public bool canNextMove;
 
     void EnsureLayers()
     {
@@ -209,6 +215,12 @@ public class NodePlayerController : MonoBehaviour
             {
             TurnOffHighlighter();
         }
+
+        if (isMoving)
+        {
+            SequentialMove();
+        }
+
     }
 
     // [변경됨] 매니저가 ID를 할당할 수 있도록 Setter 제공
@@ -304,33 +316,126 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    private void Move(Vector3 mouseScreenPos)
+    //private void Move(Vector3 mouseScreenPos)
+    //{
+    //    Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
+    //    if (Physics.Raycast(ray, out RaycastHit hit))
+    //    {
+    //        Vector3Int targetNodeCenter = GameManager.GetInstance.GetNode(hit.point).GetCenter;
+    //        if (!CheckRange(targetNodeCenter, playerCondition.playerStats.movement))
+    //        {
+    //            Debug.Log("이동 범위를 벗어났습니다!");
+    //            return;
+    //        }
+
+    //        int cost = CalculateMoveCost(targetNodeCenter);
+
+    //        if (playerCondition.ConsumeMovement(cost))
+    //        {
+    //            if (GameManager.GetInstance.IsExistNode(targetNodeCenter))
+    //            {
+    //                TurnOffHighlighter();
+    //                agent.SetDestination(targetNodeCenter);
+    //                vec = targetNodeCenter;
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("이동력이 부족합니다!");
+    //        }
+    //    }
+    //}
+
+    
+
+    /// <summary>
+    /// Move 함수: 목표 좌표까지 체비셰프 방식으로 경로를 생성하고 이동 시작
+    /// </summary>
+    /// <param name="targetPos">목표 좌표</param>
+    /// <returns>이동을 시작했으면 true, 이동력이 부족하면 false</returns>
+    public void Move(Vector3 mouseScreenPos)
     {
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Vector3Int targetNodeCenter = GameManager.GetInstance.GetNode(hit.point).GetCenter;
-            if (!CheckRange(targetNodeCenter, playerCondition.playerStats.movement))
-            {
-                Debug.Log("이동 범위를 벗어났습니다!");
-                return;
-            }
+            // 현재 좌표 (정수 격자 기준)
+            Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+            Vector3Int targetPos = GameManager.GetInstance.GetNode(hit.point).GetCenter;
 
-            int cost = CalculateMoveCost(targetNodeCenter);
+            // 경로 배열 생성
+            List<Vector3Int> path = GenerateChebyshevPath(start, targetPos);
 
-            if (playerCondition.ConsumeMovement(cost))
+            pathQueue.Clear();
+
+            // 이동력만큼만 큐에 넣기
+            foreach (var step in path)
             {
-                if (GameManager.GetInstance.IsExistNode(targetNodeCenter))
+                if (playerCondition.ConsumeMovement(1))
                 {
-                    TurnOffHighlighter();
-                    agent.SetDestination(targetNodeCenter);
-                    vec = targetNodeCenter;
+                    pathQueue.Enqueue((Vector3Int)step);
+                }
+                else
+                {
+                    Debug.Log($"이동 도중 이동력 부족. {step} 여기서 멈춤");
+                    break;
                 }
             }
-            else
+
+            if (pathQueue.Count > 0)
             {
-                Debug.Log("이동력이 부족합니다!");
+                //최종 이동 구현
+                isMoving = true;
+                canNextMove = true;
+                TurnOffHighlighter();
+
             }
+        }
+    }
+
+    /// <summary>
+    /// 체비셰프 경로 생성 함수
+    /// 현재 위치에서 목표 위치까지 (dx, dy)를 -1~1 단위로 줄이며 경로 리스트를 반환
+    /// </summary>
+    private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
+    {
+        List<Vector3Int> path = new List<Vector3Int>();
+        Vector3Int current = start;
+
+        while (current != end)
+        {
+            int dx = Mathf.Clamp(end.x - current.x, -1, 1);
+            int dz = Mathf.Clamp(end.z - current.z, -1, 1);
+
+            current += new Vector3Int(dx, 0, dz);
+            path.Add(current);
+        }
+
+        return path;
+    }
+
+    public void SequentialMove()
+    {
+        // 아직 목표가 없으면 다음 큐 꺼내기
+        if (!isMoving) return;
+
+        // 도착 판정 (== 대신 거리로 체크)
+        if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        {
+            canNextMove = true;
+        }
+
+        if (canNextMove && pathQueue.Count > 0)
+        {
+            canNextMove = false;
+            curTargetPos = pathQueue.Dequeue();
+            agent.SetDestination(curTargetPos);
+        }
+
+        // 모든 경로 소모 시 이동 종료
+        if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        {
+            
+            isMoving = false;
         }
     }
 
