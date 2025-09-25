@@ -67,13 +67,11 @@ public enum EnemyStates
 
 public class EnemyState : IStateBase
 {
-    public Action StartAction;
-    public Action EndAction;
     public float duration;
 
     public virtual void Enter()
     {
-         StartAction?.Invoke();
+
     }
 
     public virtual void Execute()
@@ -83,7 +81,7 @@ public class EnemyState : IStateBase
 
     public virtual void Exit()
     {
-        EndAction?.Invoke();
+
     }
     public static EnemyState Factory(EnemyStates turnTypes,EnemyNPC enemyNPC)
     {

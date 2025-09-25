@@ -1,25 +1,16 @@
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-//public enum PlayerMode
-//{
-//    Move,
-//    Run,
-//    Throw,
-//    Hide,
-//    SneakAttack,
-//    PickPocket,
-//    Aiming,
-//    RangeAttack,
-//    PerkAction
-//}
 public class NodePlayerController : MonoBehaviour
 {
     public NodePlayerCondition playerCondition; // 플레이어 컨디션 (인스펙터에 할당)
@@ -28,7 +19,7 @@ public class NodePlayerController : MonoBehaviour
     // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
     public int playerID { get; private set; }
 
-    private Vector3Int vec;
+    private Vector3Int playerVec;
     private bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
@@ -49,6 +40,7 @@ public class NodePlayerController : MonoBehaviour
     public bool isRunMode;
     public bool isHideMode;
     public bool isSneakAttackMode;
+    public bool isThrowMode;
     public bool isPickPocketMode;
     public bool isAimingMode;
     public bool isRangeAttackMode;
@@ -71,6 +63,11 @@ public class NodePlayerController : MonoBehaviour
 
     bool _isVaulting;                                // 중복 실행 방지
     int _wallLayer = -1, _selfLayer = -1;
+
+    private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
+    Vector3Int curTargetPos;
+    public bool isMoving;
+    public bool canNextMove;
 
     void EnsureLayers()
     {
@@ -176,8 +173,8 @@ public class NodePlayerController : MonoBehaviour
         }
 
         // 내부 상태/하이라이트 갱신
-        vec = landCell;
-        TurnOnHighlighter(vec, playerCondition.moveRange);
+        playerVec = landCell;
+        TurnOnHighlighter(playerVec, playerCondition.moveRange);
 
         _isVaulting = false;
     }
@@ -192,32 +189,29 @@ public class NodePlayerController : MonoBehaviour
 
     void Start()
     {
-        vec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+        playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
 
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
         GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
-        TryUpdateInteractionUI();
     }
 
     void Update()
     {
         if (IsMyTurn())
         {
-            TurnOnHighlighter(vec, playerCondition.playerStats.movement);
+        TurnOnHighlighter(playerVec, playerCondition.playerStats.movement);
         }
         else
-        {
+            {
             TurnOffHighlighter();
         }
 
-        if (IsMyTurn() && agent != null)
+        if (isMoving)
         {
-            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance && !agent.hasPath)
-            {
-                TryUpdateInteractionUI();
-            }
+            SequentialMove();
         }
+
     }
 
     // [변경됨] 매니저가 ID를 할당할 수 있도록 Setter 제공
@@ -233,6 +227,7 @@ public class NodePlayerController : MonoBehaviour
             Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
             UIManager.GetInstance.ShowActionPanel(true);
+            TurnOnHighlighter(playerCondition.playerStats.movement);
         }
     }
 
@@ -313,33 +308,139 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    private void Move(Vector3 mouseScreenPos)
+    /// <summary>
+    /// Move 함수: 목표 좌표까지 체비셰프 방식으로 경로를 생성하고 이동 시작
+    /// </summary>
+    /// <param name="targetPos">목표 좌표</param>
+    /// <returns>이동을 시작했으면 true, 이동력이 부족하면 false</returns>
+    public void Move(Vector3 mouseScreenPos)
     {
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Vector3Int targetNodeCenter = GameManager.GetInstance.GetNode(hit.point).GetCenter;
-            if (!CheckRange(targetNodeCenter, playerCondition.playerStats.movement))
-            {
-                Debug.Log("이동 범위를 벗어났습니다!");
-                return;
-            }
+            // 현재 좌표 (정수 격자 기준)
+            Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+            Vector3Int targetPos = GameManager.GetInstance.GetNode(hit.point).GetCenter;
 
-            int cost = CalculateMoveCost(targetNodeCenter);
+            // 경로 배열 생성
+            List<Vector3Int> path = GenerateChebyshevPath(start, targetPos);
 
-            if (playerCondition.ConsumeMovement(cost))
+            pathQueue.Clear();
+
+            // 이동력만큼만 큐에 넣기
+            foreach (var step in path)
             {
-                if (GameManager.GetInstance.IsExistNode(targetNodeCenter))
+                if (playerCondition.ConsumeMovement(1))
                 {
-                    TurnOffHighlighter();
-                    agent.SetDestination(targetNodeCenter);
-                    vec = targetNodeCenter;
+                    pathQueue.Enqueue((Vector3Int)step);
+                }
+                else
+                {
+                    Debug.Log($"이동 도중 이동력 부족. {step} 여기서 멈춤");
+                    break;
                 }
             }
-            else
+
+            if (pathQueue.Count > 0)
             {
-                Debug.Log("이동력이 부족합니다!");
+                playerVec = pathQueue.Last();
+                TurnOffHighlighter();
+                //최종 이동 구현
+                isMoving = true;
+                canNextMove = true;
             }
+        }
+    }
+
+    private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
+    {
+        // BFS 탐색을 위한 큐
+        Queue<Vector3Int> open = new Queue<Vector3Int>();
+        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
+
+        open.Enqueue(start);
+        cameFrom[start] = start;
+
+        while (open.Count > 0)
+        {
+            Vector3Int current = open.Dequeue();
+
+            // 목표에 도달하면 역추적해서 경로 반환
+            if (current == end)
+            {
+                return ReconstructPath(cameFrom, start, end);
+            }
+
+            // 인접 노드 탐색 (대각선 포함 체비셰프)
+            foreach (var dir in GameManager.GetInstance.nearNode)
+            {
+                Vector3Int next = current + dir;
+
+                // 1) 노드 존재 여부 확인
+                if (!GameManager.GetInstance.Nodes.ContainsKey(next)) continue;
+
+                var node = GameManager.GetInstance.Nodes[next];
+
+                // 2) 이동 가능한지 체크
+                if (node == null) continue;
+                if (!node.isWalkable) continue;
+                if(node.standing != null)
+                    if (node.standing.Count > 0) continue;
+
+                // 3) 방문한 적 없는 경우만 추가
+                if (!cameFrom.ContainsKey(next))
+                {
+                    cameFrom[next] = current;
+                    open.Enqueue(next);
+                }
+            }
+        }
+
+        // 경로를 찾지 못한 경우
+        Debug.Log("경로를 찾지 못했습니다.");
+        return new List<Vector3Int>();
+    }
+
+    /// <summary>
+    /// BFS 탐색 후 start→end까지 역추적
+    /// </summary>
+    private List<Vector3Int> ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int start, Vector3Int end)
+    {
+        List<Vector3Int> path = new List<Vector3Int>();
+        Vector3Int current = end;
+
+        while (current != start)
+        {
+            path.Add(current);
+            current = cameFrom[current];
+        }
+
+        path.Reverse();
+        return path;
+    }
+
+    public void SequentialMove()
+    {
+        // 아직 목표가 없으면 다음 큐 꺼내기
+        if (!isMoving) return;
+
+        // 도착 판정 (== 대신 거리로 체크)
+        if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        {
+            canNextMove = true;
+        }
+
+        if (canNextMove && pathQueue.Count > 0)
+        {
+            canNextMove = false;
+            curTargetPos = pathQueue.Dequeue();
+            agent.SetDestination(curTargetPos);
+        }
+
+        // 모든 경로 소모 시 이동 종료
+        if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        {
+            isMoving = false;
         }
     }
 
@@ -355,13 +456,48 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnThrow(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+
+
+        if (context.canceled && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            Debug.Log("투척 모드 활성화");
-            // 던지는 로직
+            StartMode(ref isThrowMode);
+            TurnOnHighlighter(6);
         }
     }
+
+    private void CheckThrow(Vector3 mouseScreenPos)
+    {
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
+
+        if (targetNodeCenter == new Vector3Int(-1, -1, -1))
+        {
+            Debug.Log("유효하지 않은 좌표입니다!");
+            return;
+        }
+
+        if (!CheckRange(targetNodeCenter, 6)) //========================================================================임의로 6범위
+        {
+            Debug.Log("해당 위치에 적이 없거나 범위를 벗어났습니다!");
+            return;
+        }
+
+        UIManager.GetInstance.ShowActionPanel(true);
+        if (playerCondition.ConsumeActionPoint(1))
+        {
+            Throw();
+        }
+        else
+        {
+            Debug.Log("행동력이 부족합니다!");
+        }
+    }
+
+    private void Throw()
+    {
+        
+    }
+
 
     public void OnHideAndSneakAttack(InputAction.CallbackContext context)
     {
@@ -429,7 +565,7 @@ public class NodePlayerController : MonoBehaviour
             RemoveHideMode();
 
             agent.SetDestination(bestNode);
-            vec = bestNode;
+            playerVec = bestNode;
             TurnOffHighlighter();
 
             Debug.Log("기습 공격 성공!");
@@ -540,13 +676,6 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    public void OnInteract(InputAction.CallbackContext context)
-    {
-        if (!context.started) return;
-        if (!IsMyTurn()) return;
-
-        PerformInteraction();
-    }
 
     /// <summary>
     /// 플레이어의 턴, 해당 캐릭터의 턴인지를 판별하여 해당 캐릭터의 행동 조건을 판별
@@ -569,7 +698,7 @@ public class NodePlayerController : MonoBehaviour
         }
 
     }
-    
+
     public void ResetPlayer() 
     {
         List<NodePlayerController> temp = NodePlayerManager.GetInstance.GetAllPlayers();
@@ -582,7 +711,6 @@ public class NodePlayerController : MonoBehaviour
 
         playerCondition.ResetForNewTurn();
         NodePlayerManager.GetInstance.SwitchToPlayer(i);
-        TryUpdateInteractionUI();
     }
 
     private void TurnOnHighlighter(Vector3Int destination, int range)
@@ -594,90 +722,18 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
+    private void TurnOnHighlighter(int range)
+    {
+            isHighlightOn = true;
+            highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
+        
+    }
+
     private void TurnOffHighlighter()
     {
         isHighlightOn = false;
         highlighter.ClearHighlights();
     }
-
-    //public void ActivateMode(PlayerMode mode)
-    //{
-    //    if (!IsMyTurn()) return;
-
-    //    switch (mode)
-    //    {
-    //        case PlayerMode.Move:
-    //            {
-    //                StartMode(ref isMoveMode);
-    //                break;
-    //            }
-
-    //        case PlayerMode.Run:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isRunMode);
-    //                Debug.Log("달리기 모드 활성화");
-    //            }
-    //            break;
-
-    //        //case PlayerMode.Throw:
-    //        //    if (isMoveMode)
-    //        //    {
-    //        //        StartMode(ref isThrowMode);
-    //        //        Debug.Log("투척 모드 활성화");
-    //        //    }
-    //        //    break;
-
-    //        case PlayerMode.Hide:
-    //            if (isMoveMode && !isHide)
-    //            {
-    //                StartMode(ref isHideMode);
-    //                Debug.Log("숨기 모드 활성화");
-    //            }
-    //            else if (isMoveMode && isHide)
-    //            {
-    //                StartMode(ref isSneakAttackMode);
-    //                Debug.Log("기습 공격 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.PickPocket:
-    //            if(isMoveMode && isHideMode)
-    //            {
-    //                StartMode(ref isPickPocketMode);
-    //                Debug.Log("훔치기 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.Aiming:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isAimingMode);
-    //                Debug.Log("조준 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.RangeAttack:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isRangeAttackMode);
-    //                Debug.Log("원거리 공격 모드 활성화");
-    //            }
-    //            break;
-
-    //        case PlayerMode.PerkAction:
-    //            if (isMoveMode)
-    //            {
-    //                StartMode(ref isPerkActionMode);
-    //                Debug.Log("특전 모드 활성화");
-    //            }
-    //            break;
-
-    //        default:
-    //            Debug.Log("지원하지 않는 모드");
-    //            break;
-    //    }
-    //}
 
     public void StartMode(ref bool mode)
     {
@@ -688,6 +744,7 @@ public class NodePlayerController : MonoBehaviour
         isPickPocketMode = false;
         isRangeAttackMode = false;
         isPerkActionMode = false;
+        isThrowMode = false;
 
         mode = true;
     }
@@ -845,19 +902,6 @@ public class NodePlayerController : MonoBehaviour
     public void EndAction()
     {
         NodePlayerManager.GetInstance.NotifyPlayerEndTurn(this);
-        UIManager.GetInstance.HideInteractionCanvas();
     }
 
-    private void TryUpdateInteractionUI()
-    {
-        var node = GameManager.GetInstance.GetNode(transform.position);
-        UIManager.GetInstance.TryUpdateInteractionFromNode(node);
-    }
-
-    private void PerformInteraction()
-    {
-        var node = GameManager.GetInstance.GetNode(transform.position);
-        node?.InvokeEvent(playerStats);
-        UIManager.GetInstance.HideInteractionCanvas();
-    }
 }
