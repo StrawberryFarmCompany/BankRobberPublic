@@ -575,8 +575,8 @@ public class NodePlayerController : MonoBehaviour
             RemoveHideMode();
 
             DiceManager.GetInstance.DelayedRoll(0, RollDice);
-            if (diceResult + hitBonus /*- 대상의 회피율*/ > 0)
-                SneakAttack(bestNode);
+            if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
+                SneakAttack(bestNode, targetNodeCenter);
 
             Debug.Log("기습 공격 성공!");
         }
@@ -586,11 +586,13 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    private void SneakAttack(Vector3Int pos)
+    private void SneakAttack(Vector3Int movePos, Vector3Int targetPos)
     {
-        agent.SetDestination(pos);
-        playerVec = pos;
+        agent.SetDestination(movePos);
+        playerVec = movePos;
         TurnOffHighlighter();
+        DiceManager.GetInstance.DelayedRoll(0, RollDice);
+        GameManager.GetInstance.GetEntityAt(targetPos).Damaged(diceResult);
 
 
     }
