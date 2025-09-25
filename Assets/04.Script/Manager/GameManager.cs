@@ -41,6 +41,9 @@ class GameManager : SingleTon<GameManager>
     public NodePlayerController CurrentActor { get; private set; }
     public PlayerStats CurrentStats => CurrentActor != null ? CurrentActor.playerStats : null;
 
+    // 좌표 → 엔티티 매핑
+    private Dictionary<Vector3Int, NodePlayerCondition> entityMap = new Dictionary<Vector3Int, NodePlayerCondition>();
+
     //public void RegisterActor(NodePlayerController actor)
     //{
     //    _actors[actor.characterNumber] = actor;
@@ -252,5 +255,37 @@ class GameManager : SingleTon<GameManager>
             noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.ally));
         else 
             battleTurn.ChangeState();
+    }
+
+    /// <summary>
+    /// 엔티티 포지션과 엔티티의 상태 입력
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="entity"></param>
+    public void RegisterEntity(Vector3Int pos, NodePlayerCondition entity)
+    {
+        if (!entityMap.ContainsKey(pos))
+            entityMap.Add(pos, entity);
+        else
+            entityMap[pos] = entity; // 중복이면 갱신
+    }
+
+    public void UnregisterEntity(Vector3Int pos)
+    {
+        if (entityMap.ContainsKey(pos))
+            entityMap.Remove(pos);
+    }
+
+    public NodePlayerCondition GetEntityAt(Vector3Int pos)
+    {
+        if (entityMap.TryGetValue(pos, out var entity))
+            return entity;
+        return null;
+    }
+
+    public void UpdateEntityPosition(Vector3Int oldPos, Vector3Int newPos, NodePlayerCondition entity)
+    {
+        UnregisterEntity(oldPos);
+        RegisterEntity(newPos, entity);
     }
 }
