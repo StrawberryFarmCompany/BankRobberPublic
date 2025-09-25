@@ -39,4 +39,5 @@ public class EntityData : ScriptableObject
     public int curRerollCount;     //현재 리롤 횟수
 
     public int moveRange;
+    public Sprite portrait;
 }

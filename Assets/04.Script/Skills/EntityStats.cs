@@ -1,8 +1,9 @@
-using System;
 using NodeDefines;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class PlayerStats
+public class EntityStats
 {
     public string characterName;
     public int actionPoint;
@@ -35,6 +36,7 @@ public class PlayerStats
     public int maxRerollCount;
     public int curRerollCount;
     public int moveRange;
+    public Sprite portrait;
 
     public Node currNode;
 
@@ -42,7 +44,7 @@ public class PlayerStats
 
     public Action OnDamaged;
 
-    public PlayerStats(EntityData baseStats)
+    public EntityStats(EntityData baseStats)
     {
         characterName = baseStats.displayName;
         actionPoint = baseStats.maxActionPoint;
@@ -60,6 +62,7 @@ public class PlayerStats
         maxRerollCount = baseStats.maxRerollCount;
         curRerollCount = baseStats.curRerollCount;
         moveRange = baseStats.moveRange;
+        portrait = baseStats.portrait;
     }
 
     public void EquipPassive(PassiveSkill skill)
@@ -83,12 +86,65 @@ public class PlayerStats
         }
     }
 
-    public bool IsHit(float diceSum, float weaponRangeBonus, PlayerStats target)
+    public bool IsHit(float diceSum, float weaponRangeBonus, EntityStats target)
     {
         return GetShotRate(diceSum, weaponRangeBonus, target) >= 0;
     }
-    public float GetShotRate(float diceSum,float weaponRangeBonus,PlayerStats target)
+    public float GetShotRate(float diceSum,float weaponRangeBonus,EntityStats target)
     {
         return diceSum + accuracyModifier - weaponRangeBonus - target.evasionRate;
     }
+
+    
+
+    public bool ConsumeActionPoint(int amount)
+    {
+        if (curActionPoint >= amount)
+        {
+            curActionPoint -= amount;
+            return true; // 행동 성공
+        }
+        return false; // 행동 실패, 행동력이 부족함
+    }
+
+    public bool ConsumeMovement(int amount)
+    {
+        if (movement >= amount)
+        {
+            movement -= amount;
+            return true; // 이동 성공
+        }
+        return false; // 이동 실패, 이동력이 부족함
+    }
+
+    public void ActiveRun()
+    {
+        Debug.Log($"prevoius: {movement}");
+        if (ConsumeActionPoint(1)) movement += movementSpeed; // 달리기 활성화 시 이동력 증가
+        Debug.Log($"Run Activated: {movement}");
+    }
+
+    public void Damaged(int damage)
+    {
+        CurHp -= damage;
+        if (CurHp <= 0)
+        {
+            CurHp = 0;
+            Dead();
+        }
+    }
+
+    private void Dead()
+    {
+        //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
+        //Destroy(this.gameObject);
+    }
+
+    public void ResetForNewTurn()
+    {
+        curActionPoint = actionPoint;
+        movement = movementSpeed;
+    }
+
+
 }

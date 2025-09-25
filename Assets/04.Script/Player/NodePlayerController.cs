@@ -13,8 +13,8 @@ using UnityEngine.InputSystem;
 
 public class NodePlayerController : MonoBehaviour
 {
-    public NodePlayerCondition playerCondition; // 플레이어 컨디션 (인스펙터에 할당)
-    public PlayerStats playerStats { get { return playerCondition.playerStats; } } // 플레이어 스탯 (자동 생성)
+    public EntityData playerData;
+    public EntityStats playerStats;
 
     // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
     public int playerID { get; private set; }
@@ -177,13 +177,14 @@ public class NodePlayerController : MonoBehaviour
 
         // 내부 상태/하이라이트 갱신
         playerVec = landCell;
-        TurnOnHighlighter(playerVec, playerCondition.playerStats.moveRange);
+        TurnOnHighlighter(playerVec, playerStats.moveRange);
 
         _isVaulting = false;
     }
 
     private void Awake()
     {
+        playerStats = new EntityStats(playerData);
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         isHide = true;
         isEndTurn = false;
@@ -203,7 +204,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (IsMyTurn())
         {
-        TurnOnHighlighter(playerVec, playerCondition.playerStats.movement);
+        TurnOnHighlighter(playerVec, playerStats.movement);
         }
         else
             {
@@ -230,7 +231,7 @@ public class NodePlayerController : MonoBehaviour
             Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
             UIManager.GetInstance.ShowActionPanel(true);
-            TurnOnHighlighter(playerCondition.playerStats.movement);
+            TurnOnHighlighter(playerStats.movement);
         }
     }
 
@@ -252,7 +253,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log("달리기");
             UIManager.GetInstance.ShowActionPanel(true);
-            playerCondition.ActiveRun();
+            playerStats.ActiveRun();
             isHighlightOn = false;
         }
 
@@ -287,7 +288,7 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isAimingMode)
         {
-            if (!playerCondition.ConsumeActionPoint(1))
+            if (!playerStats.ConsumeActionPoint(1))
             {
                 Debug.Log("행동력이 부족함");
                 return;
@@ -341,7 +342,7 @@ public class NodePlayerController : MonoBehaviour
             // 이동력만큼만 큐에 넣기
             foreach (var step in path)
             {
-                if (playerCondition.ConsumeMovement(1))
+                if (playerStats.ConsumeMovement(1))
                 {
                     pathQueue.Enqueue((Vector3Int)step);
                 }
@@ -494,7 +495,7 @@ public class NodePlayerController : MonoBehaviour
         }
 
         UIManager.GetInstance.ShowActionPanel(true);
-        if (playerCondition.ConsumeActionPoint(1))
+        if (playerStats.ConsumeActionPoint(1))
         {
             
            ThrowSystem.GetInstance.ExecuteCoinThrow(this, targetNodeCenter);
@@ -563,13 +564,13 @@ public class NodePlayerController : MonoBehaviour
 
         int cost = CalculateMoveCost(bestNode);
 
-        if (!playerCondition.ConsumeMovement(cost))
+        if (!playerStats.ConsumeMovement(cost))
         {
             Debug.Log("인접 노드로 이동할 수 있는 이동력 부족!");
             return;
         }
         UIManager.GetInstance.ShowActionPanel(true);
-        if (playerCondition.ConsumeActionPoint(1))
+        if (playerStats.ConsumeActionPoint(1))
         {
             RemoveHideMode();
 
@@ -626,7 +627,7 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
-        if (playerCondition.ConsumeActionPoint(1))
+        if (playerStats.ConsumeActionPoint(1))
         {
             UIManager.GetInstance.ShowActionPanel(true);
             Debug.Log("훔치기 성공!");
@@ -673,7 +674,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (CheckRangeAndEntity(GetNodeVector3ByRay(mouseScreenPos), (int)playerStats.attackRange))
         {
-            if (playerCondition.ConsumeActionPoint(1))
+            if (playerStats.ConsumeActionPoint(1))
             {
                 UIManager.GetInstance.ShowActionPanel(true);
                 if (isAiming)
@@ -727,7 +728,7 @@ public class NodePlayerController : MonoBehaviour
             if (temp[i] == this) break;
         }
 
-        playerCondition.ResetForNewTurn();
+        playerStats.ResetForNewTurn();
         NodePlayerManager.GetInstance.SwitchToPlayer(i);
     }
 
