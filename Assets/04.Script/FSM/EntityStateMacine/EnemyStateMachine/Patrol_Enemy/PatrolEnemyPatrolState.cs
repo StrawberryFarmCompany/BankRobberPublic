@@ -20,6 +20,7 @@ public class PatrolEnemyPatrolState : EnemyState
         if(pos.TryDequeue(out Vector3 current))
         {
             agent.SetDestination(current);
+            Debug.Log("이동함?");
         }
 
         else

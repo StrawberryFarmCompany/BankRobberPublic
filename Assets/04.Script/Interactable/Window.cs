@@ -22,7 +22,7 @@ public class Window : IInteractable
         wayOne = forward;
         wayTwo = forward * -1;
     }
-    public void OnInteraction(PlayerStats stat)
+    public void OnInteraction(EntityStats stat)
     {
         //1이 아닌 방향을 구해야함
 
@@ -38,7 +38,7 @@ public class Window : IInteractable
         }
         //TODO : 플레이어 강제 움직임 함수 받아서 goal넣어줘야함
     }
-    public void UnInteraction(PlayerStats stat)
+    public void UnInteraction(EntityStats stat)
     {
         
     }

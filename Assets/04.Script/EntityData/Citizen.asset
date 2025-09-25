@@ -17,15 +17,16 @@ MonoBehaviour:
   Tag: 2
   maxActionPoint: 0
   curActionPoint: 0
-  movementSpeed: 0
-  movementPoint: 0
-  maxHp: 0
-  curHp: 0
-  evasionRate: 0
+  movementSpeed: 6
+  movementPoint: 6
+  maxHp: 1
+  curHp: 1
+  evasionRate: 4
   accuracyModifier: 0
-  detectingDistance: 0
+  attackRange: 0
+  detectingDistance: 5
+  isCombat: 0
   sabotage: 0
   aggroControl: 0
   maxRerollCount: 0
   curRerollCount: 0
-  isCombat: 0

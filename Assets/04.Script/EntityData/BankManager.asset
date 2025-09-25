@@ -19,12 +19,12 @@ MonoBehaviour:
   curActionPoint: 0
   movementSpeed: 0
   movementPoint: 0
-  maxHp: 0
-  curHp: 0
-  evasionRate: 0
+  maxHp: 1
+  curHp: 1
+  evasionRate: 4
   accuracyModifier: 0
   attackRange: 0
-  detectingDistance: 0
+  detectingDistance: 5
   isCombat: 0
   sabotage: 0
   aggroControl: 0
