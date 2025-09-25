@@ -574,7 +574,7 @@ public class NodePlayerController : MonoBehaviour
         {
             RemoveHideMode();
 
-            DiceManager.GetInstance.DelayedRoll(0, RollDice);
+            DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
             if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
                 SneakAttack(bestNode, targetNodeCenter);
 
@@ -591,7 +591,7 @@ public class NodePlayerController : MonoBehaviour
         agent.SetDestination(movePos);
         playerVec = movePos;
         TurnOffHighlighter();
-        DiceManager.GetInstance.DelayedRoll(0, RollDice);
+        DiceManager.GetInstance.DelayedRoll(0,6,3, RollDice);
         GameManager.GetInstance.GetEntityAt(targetPos).Damaged(diceResult);
 
 
