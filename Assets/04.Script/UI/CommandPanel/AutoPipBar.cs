@@ -37,11 +37,11 @@ public class AutoPipBar : MonoBehaviour
     {
         Color fillMovementColor = new Color(0, 54, 255, 255);
 
-        if (NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.movement > 5)
+        if (NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.movement > 5)
         {
             expanded.SetActive(false);
             compact.SetActive(true);
-            movementText.text = $"x {NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.movement}";
+            movementText.text = $"x {NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.movement}";
         }
         else
         {
@@ -49,7 +49,7 @@ public class AutoPipBar : MonoBehaviour
             compact.SetActive(false);
             for (int i = 0; i < pipMovementImages.Length; i++)
             {
-                if (i < NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.movement)
+                if (i < NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.movement)
                 {
                     pipMovementImages[i].color = fillMovementColor;
                 }
@@ -67,7 +67,7 @@ public class AutoPipBar : MonoBehaviour
         Color emptyActionPointColor = new Color(88, 88, 88, 255);
         for (int i = 0; i < pipActionPointImages.Length; i++)
         {
-            if (i < NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.curActionPoint)
+            if (i < NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.curActionPoint)
             {
                 pipActionPointImages[i].color = fillActionPointColor;
             }
@@ -80,12 +80,12 @@ public class AutoPipBar : MonoBehaviour
 
     public void UpdatePortrait()
     {
-         portraitImage.sprite =  NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.portrait;
+         portraitImage.sprite =  NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.portrait;
     }
 
     public void RefreshHealth()
     {
-        healthText.text = $"{NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.CurHp} / {NodePlayerManager.GetInstance.GetCurrentPlayer().playerCondition.playerStats.maxHp}";   
+        healthText.text = $"{NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.CurHp} / {NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.maxHp}";   
     }
 
     public void HideAndSneakText()

@@ -4,13 +4,13 @@ using UnityEngine;
 public class NeutralNPC : MonoBehaviour
 {
     public EntityData entityData;
-    protected PlayerStats stats;
+    protected EntityStats stats;
     protected NeutralStateMachine nfsm;
     public Node currNode;
 
     protected virtual void Awake()
     {
-        stats = new PlayerStats(entityData);
+        stats = new EntityStats(entityData);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
     }
 

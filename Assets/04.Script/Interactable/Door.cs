@@ -22,7 +22,7 @@ public class Door : IInteractable
         lockModule = ILock.Factory(type, doorValue);
         RegistInteraction(OnInteraction);
     }
-    public void OnInteraction(PlayerStats stat)
+    public void OnInteraction(EntityStats stat)
     {
         if (lockModule.IsLock(stat))
         {
@@ -33,7 +33,7 @@ public class Door : IInteractable
             RegistInteraction(UnInteraction);
         }
     }
-    public void UnInteraction(PlayerStats stat)
+    public void UnInteraction(EntityStats stat)
     {
         //이동 가능 불가 여부 추후 추가 필요
         tr.transform.DORotate(new Vector3(0f, 0f, 0f), 0.7f);

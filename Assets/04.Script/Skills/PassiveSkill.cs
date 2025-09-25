@@ -25,7 +25,7 @@ public class PassiveSkill
         this.increaseAggroControl = increaseAggroControl;
     }
 
-    public void Apply(PlayerStats target)
+    public void Apply(EntityStats target)
     {
         target.actionPoint += increaseActionPoint;
         target.movementSpeed += increaseMovementSpeed;
@@ -37,7 +37,7 @@ public class PassiveSkill
         target.aggroControl += increaseAggroControl;
     }
 
-    public void Remove(PlayerStats target)
+    public void Remove(EntityStats target)
     {
         target.actionPoint -= increaseActionPoint;
         target.movementSpeed -= increaseMovementSpeed;

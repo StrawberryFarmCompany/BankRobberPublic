@@ -17,13 +17,13 @@ public class KeyCard : IInteractable
         RegistInteraction(OnInteraction);
     }
 
-    public void OnInteraction(PlayerStats stat)
+    public void OnInteraction(EntityStats stat)
     {
         target.SetActive(false);
         GameManager.GetInstance.isPlayerGetKeyCard[keyValue] = true;
         ReleaseInteraction(OnInteraction);
     }
-    public void UnInteraction(PlayerStats stat)
+    public void UnInteraction(EntityStats stat)
     {
 
     }
