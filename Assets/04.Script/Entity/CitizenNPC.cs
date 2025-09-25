@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,12 +24,10 @@ public class CitizenNPC : NeutralNPC
         if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
         {
             Debug.Log("죽은상태");
-            ChangeToDead();
         }
         else if (securityLevel >= 3)//경계수준이 3레벨 이상이면
         {
             Debug.Log("개쫄은상태");
-            ChangeToCowerState();
         }
         else if (isDetection == true)//플레이어 발각시
         {
@@ -57,9 +56,12 @@ public class CitizenNPC : NeutralNPC
     public void ChangeToFlee(Vector3 pos)
     {
         CitizenFleeState fleeState = (CitizenFleeState)nfsm.FindState(NeutralStates.CitizenFleeState);
-        fleeState.agent = gameObject.GetComponent<NavMeshAgent>();
-        fleeState.pos = pos;
-        nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
+        if (fleeState.agent == null)
+        {
+            fleeState.agent = gameObject.GetComponent<NavMeshAgent>();
+        }
+        fleeState.pos.Enqueue(pos);
+        nfsm.ChangeState(nfsm.FindState (NeutralStates.CitizenFleeState));
     }
 
 }

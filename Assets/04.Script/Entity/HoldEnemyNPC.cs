@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
 
 public class HoldEnemyNPC : EnemyNPC
 {
@@ -11,9 +10,9 @@ public class HoldEnemyNPC : EnemyNPC
     bool allySpottedStatus = false;
     int securityLevel = 1;
     int countTurn = 0;
-    [SerializeField] Vector3 homeLocation;
-    [SerializeField] Vector3 noiseLocation;
-    [SerializeField] Vector3 nearPlayerLocation;
+    [SerializeField] private Vector3 homeLocation;
+    [SerializeField] private Vector3 noiseLocation;
+    [SerializeField] private Vector3 nearPlayerLocation;
 
     protected override void Awake()
     {
@@ -62,7 +61,6 @@ public class HoldEnemyNPC : EnemyNPC
                 ChangeToIdleRotation();
                 isNoisePlace = false;//한 턴 끝나고 isNoisPlace false만들기
             }
-
         }
 
         else if (securityLevel >= 2)
@@ -92,22 +90,47 @@ public class HoldEnemyNPC : EnemyNPC
     public void ChangeToInvestigate(Vector3 pos)
     {
         HoldEnemyInvestigateState investigateState = (HoldEnemyInvestigateState)efsm.FindState(EnemyStates.HoldEnemyInvestigateState);
-        investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
-        investigateState.pos = pos;
+
+        if(investigateState.agent == null)
+        {
+            investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
+        }
+
+        investigateState.pos.Enqueue(pos);
+
         float eta = investigateState.agent.remainingDistance / investigateState.agent.speed;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
     }
 
     public void ChangeToIdleRotation()
     {
+        float firstLookAngle = Random.Range(-180,180); // 첫 번째 각도 확인
+        float secondLookAngle = Random.Range(-180,180); // 두 번째 각도 확인
+        Quaternion originalRotation = transform.rotation;
+
+        transform.rotation = Quaternion.Euler(0, firstLookAngle , 0);
+        Debug.Log("첫 번째 랜덤 각도 두리번");
+
+        transform.rotation = Quaternion.Euler(0, secondLookAngle , 0);
+        Debug.Log("두 번째 랜덤 각도 두리번");
+
+        // 정면 복귀
+        transform.rotation = originalRotation;
+        Debug.Log("정면 복귀");
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleRotationState));
     }
 
     public void ChangeToMoveReturn(Vector3 pos)
     {
         HoldEnemyMoveReturnState moveReturnState = (HoldEnemyMoveReturnState)efsm.FindState(EnemyStates.HoldEnemyMoveReturnState);
-        moveReturnState.agent = gameObject.GetComponent<NavMeshAgent>();
-        moveReturnState.pos = pos;
+
+        if (moveReturnState.agent == null)
+        {
+            moveReturnState.agent = gameObject.GetComponent<NavMeshAgent>();
+        }
+
+        moveReturnState.pos.Enqueue(pos);
+
         float eta = moveReturnState.agent.remainingDistance / moveReturnState.agent.speed;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyMoveReturnState));
     }
@@ -115,8 +138,14 @@ public class HoldEnemyNPC : EnemyNPC
     public void ChangeToChase(Vector3 pos)
     {
         HoldEnemyChaseState chaseState = (HoldEnemyChaseState)efsm.FindState(EnemyStates.HoldEnemyChaseState);
-        chaseState.agent = gameObject.GetComponent<NavMeshAgent>();
-        chaseState.pos = pos;
+
+        if (chaseState.agent == null)
+        {
+            chaseState.agent = gameObject.GetComponent<NavMeshAgent>();
+        }
+
+        chaseState.pos.Enqueue(pos);
+
         float eta = chaseState.agent.remainingDistance / chaseState.agent.speed;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
     }
