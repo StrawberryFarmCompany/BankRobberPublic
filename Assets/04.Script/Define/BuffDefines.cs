@@ -18,8 +18,210 @@ public class BuffData
     public int Duration { get { return duration; } }
     private int statusValue;
     public int StatusValue { get { return statusValue; } }
+    private BuffType statusType;
+    public BuffType StatusType { get { return statusType; } }
     private BuffColorType colorType;
     public BuffColorType ColorType { get { return colorType; } }
 }
 public enum BuffColorType { green,red,yellow,cyan,none}
 public enum BuffType { moveBonus,rallyCopCall,rallySecCall,securityLevel,aiming,witness,spotted,healBan,heal}
+
+public class MoveBonus : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public MoveBonus(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class RallyCopCall : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public RallyCopCall(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class RallySecCall : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public RallySecCall(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class RecurityLevel : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public RecurityLevel(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class Aiming : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public Aiming(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class Witness : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public Witness(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class SpottedBonus : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public SpottedBonus(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class HealBan : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public HealBan(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
+public class Heal : IBuff
+{
+    private BuffData data;
+    public BuffData Data { get { return data; } }
+    private EntityStats target;
+    public EntityStats Target { get { return target; } }
+
+    public Heal(BuffData data, EntityStats target)
+    {
+        this.data = data;
+        this.target = target;
+    }
+    public void RegistBuff()
+    {
+        
+    }
+
+    public void ReleaseBuff()
+    {
+        
+    }
+}
