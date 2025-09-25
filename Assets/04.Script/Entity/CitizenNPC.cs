@@ -24,15 +24,25 @@ public class CitizenNPC : NeutralNPC
         if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
         {
             Debug.Log("죽은상태");
+            ChangeToDead();
         }
+
         else if (securityLevel >= 3)//경계수준이 3레벨 이상이면
         {
             Debug.Log("개쫄은상태");
+            ChangeToCowerState();
         }
+
         else if (isDetection == true)//플레이어 발각시
         {
             Debug.Log("존나 튀는 상태");
             ChangeToFlee(exitArea);
+        }
+
+        else 
+        {
+            Debug.Log("대기상태");
+            ChangeToIdle();
         }
 
         TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(base.CalculateBehaviour, 0.1f));

@@ -25,6 +25,7 @@ namespace NodeDefines
         public Node(Vector3Int center,bool isWalkable)
         {
             this.isWalkable = isWalkable;
+            standing = new List<PlayerStats>();
             centerPos = center;
         }
 
