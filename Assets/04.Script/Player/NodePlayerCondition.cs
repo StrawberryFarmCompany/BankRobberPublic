@@ -13,13 +13,10 @@ public class NodePlayerCondition : MonoBehaviour
     [SerializeField] private EntityData playerData; // 플레이어 데이터 (인스펙터에 할당)
     public Sprite portrait;
 
-    public int moveRange;        //이동 범위
-
     private void Awake()
     {
         playerStats = new PlayerStats(playerData);
 
-        moveRange = 2; // 기본 이동 범위 설정
     }
 
 

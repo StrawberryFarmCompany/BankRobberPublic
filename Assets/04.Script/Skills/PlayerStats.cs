@@ -34,6 +34,7 @@ public class PlayerStats
     public int aggroControl;
     public int maxRerollCount;
     public int curRerollCount;
+    public int moveRange;
 
     public Node currNode;
 
@@ -58,6 +59,7 @@ public class PlayerStats
         aggroControl = baseStats.aggroControl;
         maxRerollCount = baseStats.maxRerollCount;
         curRerollCount = baseStats.curRerollCount;
+        moveRange = baseStats.moveRange;
     }
 
     public void EquipPassive(PassiveSkill skill)
