@@ -19,6 +19,12 @@ public class HoldEnemyNPC : EnemyNPC
         base.Awake();
         efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
     }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+    }
+
     protected void Update()
     {
         CalculateBehaviour();

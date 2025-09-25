@@ -6,12 +6,18 @@ public class NeutralNPC : MonoBehaviour
     public EntityData entityData;
     protected PlayerStats stats;
     protected NeutralStateMachine nfsm;
-    public Node node;
+    public Node currNode;
 
     protected virtual void Awake()
     {
         stats = new PlayerStats(entityData);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        currNode.RemoveCharacter(stats);
+        currNode.AddCharacter(stats);
     }
 
     protected virtual void CalculateBehaviour()
@@ -25,9 +31,6 @@ public class NeutralNPC : MonoBehaviour
         {
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0.1f));
         }
-
-        //node.AddCharacter(stats);
-        //node.RemoveCharacter(stats);
     }
 
     protected virtual void Start()
