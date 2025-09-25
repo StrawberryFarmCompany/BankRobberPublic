@@ -39,7 +39,7 @@ class GameManager : SingleTon<GameManager>
 
     //private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
     public NodePlayerController CurrentActor { get; private set; }
-    public PlayerStats CurrentStats => CurrentActor != null ? CurrentActor.playerStats : null;
+    public EntityStats CurrentStats => CurrentActor != null ? CurrentActor.playerStats : null;
 
     //public void RegisterActor(NodePlayerController actor)
     //{
@@ -61,6 +61,9 @@ class GameManager : SingleTon<GameManager>
     //    _actors.TryGetValue(num, out var actor);
     //    CurrentActor = actor;
     //}
+
+    // 좌표 → 엔티티 매핑
+    private Dictionary<Vector3Int, EntityStats> entityMap = new Dictionary<Vector3Int, EntityStats>();
 
     protected override void Init()
     {
@@ -188,7 +191,7 @@ class GameManager : SingleTon<GameManager>
             // NodePlayerManager에서 모든 플레이어 초기화
             foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
             {
-                player.playerCondition.ResetForNewTurn();
+                player.playerStats.ResetForNewTurn();
             }
             NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
@@ -199,7 +202,7 @@ class GameManager : SingleTon<GameManager>
 
             foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
             {
-                player.playerCondition.ResetForNewTurn();
+                player.playerStats.ResetForNewTurn();
             }
             NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
@@ -238,19 +241,32 @@ class GameManager : SingleTon<GameManager>
             battleTurn.ChangeState();
     }
 
-    public void EndEnemyTurn()
+    
+
+    public void RegisterEntity(Vector3Int pos, EntityStats entity)
     {
-        if(IsNoneBattlePhase())
-            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.neutral));
+        if (!entityMap.ContainsKey(pos))
+            entityMap.Add(pos, entity);
         else
-            battleTurn.ChangeState();
+            entityMap[pos] = entity; // 중복이면 갱신
     }
 
-    public void EndNeutralTurn()
+    public void UnregisterEntity(Vector3Int pos)
     {
-        if(IsNoneBattlePhase())
-            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.ally));
-        else 
-            battleTurn.ChangeState();
+        if (entityMap.ContainsKey(pos))
+            entityMap.Remove(pos);
+    }
+
+    public EntityStats GetEntityAt(Vector3Int pos)
+    {
+        if (entityMap.TryGetValue(pos, out var entity))
+            return entity;
+        return null;
+    }
+
+    public void UpdateEntityPosition(Vector3Int oldPos, Vector3Int newPos, EntityStats entity)
+    {
+        UnregisterEntity(oldPos);
+        RegisterEntity(newPos, entity);
     }
 }

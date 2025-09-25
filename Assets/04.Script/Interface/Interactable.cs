@@ -7,8 +7,8 @@ using UnityEngine.InputSystem;
 public interface IInteractable
 {
     public Vector3Int tile { get; set; }
-    void OnInteraction(PlayerStats stat);
-    void UnInteraction(PlayerStats stat);
+    void OnInteraction(EntityStats stat);
+    void UnInteraction(EntityStats stat);
     void RegistInteraction(Interaction interaction);
     void ReleaseInteraction(Interaction interaction);
     static IInteractable Factory(InteractionType type)

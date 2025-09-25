@@ -6,11 +6,11 @@ using UnityEngine;
 public class GoldBar : IInteractable
 {
     public Vector3Int tile { get; set; }
-    public void OnInteraction(PlayerStats stat)
+    public void OnInteraction(EntityStats stat)
     {
         ReleaseInteraction(OnInteraction);
     }
-    public void UnInteraction(PlayerStats stat)
+    public void UnInteraction(EntityStats stat)
     {
         
     }

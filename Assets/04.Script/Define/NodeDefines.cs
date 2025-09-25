@@ -19,38 +19,25 @@ namespace NodeDefines
         public bool IsSecurityArea { get { return isSecurityArea; } set { isSecurityArea = value; } } //나중을 위한 보안 구역
 
         Dictionary<string, Interaction> nodeInteractions;
-        public List<PlayerStats> standing;
+        public List<EntityStats> standing;
         string[] GetInteractionID { get { return nodeInteractions.Keys.ToArray(); } }
 
         public Node(Vector3Int center,bool isWalkable)
         {
             this.isWalkable = isWalkable;
+            standing = new List<EntityStats>();
             centerPos = center;
         }
 
-        public bool HasAnyInteraction()
-        {
-            return (NodeEvent != null) || (nodeInteractions != null && nodeInteractions.Count > 0);
-        }
-
-        public string GetPrimaryImageKey()
-        {
-            if (nodeInteractions != null && nodeInteractions.Count > 0)
-            {
-                foreach (var k in nodeInteractions.Keys) return k;
-            }
-            return null;
-        }
-
-        public void AddCharacter(PlayerStats stat)
+        public void AddCharacter(EntityStats stat)
         {
             standing.Add(stat);
             NodeEvent?.Invoke(stat);
         }
-        public void RemoveCharacter(PlayerStats stat)
+        public void RemoveCharacter(EntityStats stat)
         {
             standing.Remove(stat);
-            if (standing.Count == 0) standing = new List<PlayerStats>();//더블링 해소
+            if (standing.Count == 0) standing = new List<EntityStats>();//더블링 해소
         }
 
         public void RemoveInteraction(Interaction remove, string interactionName)
@@ -88,10 +75,10 @@ namespace NodeDefines
         {
             NodeEvent = null;
         }
-        public void InvokeEvent(PlayerStats stat)
+        public void InvokeEvent(EntityStats stat)
         {
             NodeEvent.Invoke(stat);
         }
     }
-    public delegate void Interaction(PlayerStats stat);
+    public delegate void Interaction(EntityStats stat);
 }

@@ -7,12 +7,12 @@ public class MoneyBag : IInteractable
 {
     public Vector3Int tile { get; set; }
 
-    public void OnInteraction(PlayerStats stat)
+    public void OnInteraction(EntityStats stat)
     {
         
     }
 
-    public void UnInteraction(PlayerStats stat)
+    public void UnInteraction(EntityStats stat)
     {
         
     }

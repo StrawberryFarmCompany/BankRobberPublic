@@ -13,8 +13,8 @@ using UnityEngine.InputSystem;
 
 public class NodePlayerController : MonoBehaviour
 {
-    public NodePlayerCondition playerCondition; // 플레이어 컨디션 (인스펙터에 할당)
-    public PlayerStats playerStats { get { return playerCondition.playerStats; } } // 플레이어 스탯 (자동 생성)
+    public EntityData playerData;
+    public EntityStats playerStats;
 
     // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
     public int playerID { get; private set; }
@@ -48,6 +48,9 @@ public class NodePlayerController : MonoBehaviour
 
     [Header("명중 보정치")]
     public int hitBonus = 0;
+
+    [Header("행동판정")]
+    public int diceResult;
 
     private bool isEndTurn;
     public bool IsEndTurn { get { return isEndTurn; } }
@@ -174,13 +177,14 @@ public class NodePlayerController : MonoBehaviour
 
         // 내부 상태/하이라이트 갱신
         playerVec = landCell;
-        TurnOnHighlighter(playerVec, playerCondition.moveRange);
+        TurnOnHighlighter(playerVec, playerStats.moveRange);
 
         _isVaulting = false;
     }
 
     private void Awake()
     {
+        playerStats = new EntityStats(playerData);
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         isHide = true;
         isEndTurn = false;
@@ -200,7 +204,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (IsMyTurn())
         {
-        TurnOnHighlighter(playerVec, playerCondition.playerStats.movement);
+        TurnOnHighlighter(playerVec, playerStats.movement);
         }
         else
             {
@@ -227,7 +231,7 @@ public class NodePlayerController : MonoBehaviour
             Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
             UIManager.GetInstance.ShowActionPanel(true);
-            TurnOnHighlighter(playerCondition.playerStats.movement);
+            TurnOnHighlighter(playerStats.movement);
         }
     }
 
@@ -249,7 +253,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log("달리기");
             UIManager.GetInstance.ShowActionPanel(true);
-            playerCondition.ActiveRun();
+            playerStats.ActiveRun();
             isHighlightOn = false;
         }
 
@@ -260,11 +264,19 @@ public class NodePlayerController : MonoBehaviour
             UIManager.GetInstance.ShowActionPanel(true);
         }
 
+        if(context.started && IsMyTurn() && isThrowMode)
+        {
+            Debug.Log("던지기");
+            Vector3 mousePos = Mouse.current.position.ReadValue();
+            CheckThrow(mousePos);
+            UIManager.GetInstance.ShowActionPanel(true);
+        }
+
         if (context.started && IsMyTurn() && isSneakAttackMode)
         {
             Debug.Log("기습 공격");
             Vector3 mousePos = Mouse.current.position.ReadValue();
-            SneakAttack(mousePos);
+            CheckSneakAttack(mousePos);
         }
 
         if (context.started && IsMyTurn() && isPickPocketMode)
@@ -276,7 +288,7 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isAimingMode)
         {
-            if (!playerCondition.ConsumeActionPoint(1))
+            if (!playerStats.ConsumeActionPoint(1))
             {
                 Debug.Log("행동력이 부족함");
                 return;
@@ -330,7 +342,7 @@ public class NodePlayerController : MonoBehaviour
             // 이동력만큼만 큐에 넣기
             foreach (var step in path)
             {
-                if (playerCondition.ConsumeMovement(1))
+                if (playerStats.ConsumeMovement(1))
                 {
                     pathQueue.Enqueue((Vector3Int)step);
                 }
@@ -470,7 +482,7 @@ public class NodePlayerController : MonoBehaviour
     {
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
 
-        if (targetNodeCenter == new Vector3Int(-1, -1, -1))
+        if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
             Debug.Log("유효하지 않은 좌표입니다!");
             return;
@@ -483,19 +495,17 @@ public class NodePlayerController : MonoBehaviour
         }
 
         UIManager.GetInstance.ShowActionPanel(true);
-        if (playerCondition.ConsumeActionPoint(1))
+        if (playerStats.ConsumeActionPoint(1))
         {
-            Throw();
+            
+           ThrowSystem.GetInstance.ExecuteCoinThrow(this, targetNodeCenter);
+            StartMode(ref isMoveMode);
+            TurnOffHighlighter();
         }
         else
         {
             Debug.Log("행동력이 부족합니다!");
         }
-    }
-
-    private void Throw()
-    {
-        
     }
 
 
@@ -528,11 +538,11 @@ public class NodePlayerController : MonoBehaviour
         isHide = false;
     }
 
-    private void SneakAttack(Vector3 mouseScreenPos)
+    private void CheckSneakAttack(Vector3 mouseScreenPos)
     {
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
 
-        if (targetNodeCenter == new Vector3Int(-1, -1, -1))
+        if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
             Debug.Log("유효하지 않은 좌표입니다!");
             return;
@@ -546,7 +556,7 @@ public class NodePlayerController : MonoBehaviour
 
         Vector3Int bestNode = FindClosestWalkableAdjacentNode(targetNodeCenter);
 
-        if (bestNode == new Vector3Int(-1, -1, -1))
+        if (bestNode == new Vector3Int(-999, -999, -999))
         {
             Debug.Log("이동할 수 있는 인접 노드를 찾지 못했습니다.");
             return;
@@ -554,19 +564,19 @@ public class NodePlayerController : MonoBehaviour
 
         int cost = CalculateMoveCost(bestNode);
 
-        if (!playerCondition.ConsumeMovement(cost))
+        if (!playerStats.ConsumeMovement(cost))
         {
             Debug.Log("인접 노드로 이동할 수 있는 이동력 부족!");
             return;
         }
         UIManager.GetInstance.ShowActionPanel(true);
-        if (playerCondition.ConsumeActionPoint(1))
+        if (playerStats.ConsumeActionPoint(1))
         {
             RemoveHideMode();
 
-            agent.SetDestination(bestNode);
-            playerVec = bestNode;
-            TurnOffHighlighter();
+            DiceManager.GetInstance.DelayedRoll(0, RollDice);
+            if (diceResult + hitBonus /*- 대상의 회피율*/ > 0)
+                SneakAttack(bestNode);
 
             Debug.Log("기습 공격 성공!");
         }
@@ -574,6 +584,15 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log("행동력이 부족합니다!");
         }
+    }
+
+    private void SneakAttack(Vector3Int pos)
+    {
+        agent.SetDestination(pos);
+        playerVec = pos;
+        TurnOffHighlighter();
+
+
     }
 
     public void OnPickPocket(InputAction.CallbackContext context)
@@ -590,7 +609,7 @@ public class NodePlayerController : MonoBehaviour
     {
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
 
-        if (targetNodeCenter == new Vector3Int(-1, -1, -1))
+        if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
             Debug.Log("유효하지 않은 좌표입니다!");
             return;
@@ -608,7 +627,7 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
-        if (playerCondition.ConsumeActionPoint(1))
+        if (playerStats.ConsumeActionPoint(1))
         {
             UIManager.GetInstance.ShowActionPanel(true);
             Debug.Log("훔치기 성공!");
@@ -655,7 +674,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (CheckRangeAndEntity(GetNodeVector3ByRay(mouseScreenPos), (int)playerStats.attackRange))
         {
-            if (playerCondition.ConsumeActionPoint(1))
+            if (playerStats.ConsumeActionPoint(1))
             {
                 UIManager.GetInstance.ShowActionPanel(true);
                 if (isAiming)
@@ -709,7 +728,7 @@ public class NodePlayerController : MonoBehaviour
             if (temp[i] == this) break;
         }
 
-        playerCondition.ResetForNewTurn();
+        playerStats.ResetForNewTurn();
         NodePlayerManager.GetInstance.SwitchToPlayer(i);
     }
 
@@ -814,7 +833,7 @@ public class NodePlayerController : MonoBehaviour
             return GameManager.GetInstance.GetNode(hit.point).GetCenter;
         }
         Debug.Log("유효하지 않은 좌표입니다!");
-        return new Vector3Int(-1, -1, -1); //유효하지 않은 좌표 반환
+        return new Vector3Int(-999, -999, -999); //유효하지 않은 좌표 반환
     }
 
     /// <summary>
@@ -834,7 +853,7 @@ public class NodePlayerController : MonoBehaviour
         new Vector3Int(-1, -1, -1)
         };
 
-        Vector3Int bestNode = new Vector3Int(-1, -1, -1);
+        Vector3Int bestNode = new Vector3Int(-999, -999, -999);
         float bestDist = float.MaxValue;
 
         foreach (var dir in directions)
@@ -904,4 +923,8 @@ public class NodePlayerController : MonoBehaviour
         NodePlayerManager.GetInstance.NotifyPlayerEndTurn(this);
     }
 
+    private void RollDice(int result)
+    {
+        diceResult = result;
+    }
 }

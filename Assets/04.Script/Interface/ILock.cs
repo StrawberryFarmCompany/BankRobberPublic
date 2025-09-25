@@ -6,7 +6,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 public interface ILock
 {
-    public bool IsLock(PlayerStats stat);
+    public bool IsLock(EntityStats stat);
     public static ILock Factory(DoorLockType types,int value)
     {
         switch (types)
@@ -24,13 +24,13 @@ public interface ILock
 }
 public class NoneLock : ILock
 {
-    public bool IsLock(PlayerStats stat) => true;
+    public bool IsLock(EntityStats stat) => true;
 }
 public class LockPick : ILock
 {
     int unlockMin;
     bool isLocked;
-    public bool IsLock(PlayerStats stat)
+    public bool IsLock(EntityStats stat)
     {
         if (isLocked)
         {
@@ -66,7 +66,7 @@ public class LockPick : ILock
 public class KeyCardLock : ILock
 {
     int cardKeyIndex;
-    public bool IsLock(PlayerStats stat)
+    public bool IsLock(EntityStats stat)
     {
         return GameManager.GetInstance.isPlayerGetKeyCard[cardKeyIndex];
     }

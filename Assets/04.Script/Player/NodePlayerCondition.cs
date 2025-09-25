@@ -1,74 +1,72 @@
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
+//using System;
+//using System.Collections;
+//using System.Collections.Concurrent;
+//using System.Collections.Generic;
+//using Unity.VisualScripting;
+//using UnityEngine;
 
-public class NodePlayerCondition : MonoBehaviour
-{
-    public NodePlayerController nodePlayerController;
-    public PlayerStats playerStats;
+//[Serializable]
 
+//public class NodePlayerCondition : MonoBehaviour
+//{
+//    public PlayerStats playerStats;
 
-    [SerializeField] private EntityData playerData; // 플레이어 데이터 (인스펙터에 할당)
-    public Sprite portrait;
+//    [SerializeField] private EntityData playerData; // 플레이어 데이터 (인스펙터에 할당)
+//    public Sprite portrait;
 
-    public int moveRange;        //이동 범위
+//    private void Awake()
+//    {
+//        playerStats = new PlayerStats(playerData);
 
-    private void Awake()
-    {
-        playerStats = new PlayerStats(playerData);
-
-        moveRange = 2; // 기본 이동 범위 설정
-    }
+//    }
 
 
-    public bool ConsumeActionPoint(int amount)
-    {
-        if (playerStats.curActionPoint >= amount)
-        {
-            playerStats.curActionPoint -= amount;
-            return true; // 행동 성공
-        }
-        return false; // 행동 실패, 행동력이 부족함
-    }
+//    public bool ConsumeActionPoint(int amount)
+//    {
+//        if (playerStats.curActionPoint >= amount)
+//        {
+//            playerStats.curActionPoint -= amount;
+//            return true; // 행동 성공
+//        }
+//        return false; // 행동 실패, 행동력이 부족함
+//    }
 
-    public bool ConsumeMovement(int amount)
-    {
-        if (playerStats.movement >= amount)
-        {
-            playerStats.movement -= amount;
-            return true; // 이동 성공
-        }
-        return false; // 이동 실패, 이동력이 부족함
-    }
+//    public bool ConsumeMovement(int amount)
+//    {
+//        if (playerStats.movement >= amount)
+//        {
+//            playerStats.movement -= amount;
+//            return true; // 이동 성공
+//        }
+//        return false; // 이동 실패, 이동력이 부족함
+//    }
 
-    public void ActiveRun()
-    {
-        Debug.Log($"prevoius: {playerStats.movement}");
-        if (ConsumeActionPoint(1)) playerStats.movement += playerStats.movementSpeed; // 달리기 활성화 시 이동력 증가
-        Debug.Log($"Run Activated: {playerStats.movement}");
-    }
+//    public void ActiveRun()
+//    {
+//        Debug.Log($"prevoius: {playerStats.movement}");
+//        if (ConsumeActionPoint(1)) playerStats.movement += playerStats.movementSpeed; // 달리기 활성화 시 이동력 증가
+//        Debug.Log($"Run Activated: {playerStats.movement}");
+//    }
 
-    public void Damaged(int damage)
-    {
-        playerStats.CurHp -= damage;
-        if (playerStats.CurHp <= 0)
-        {
-            playerStats.CurHp = 0;
-            Dead();
-        }
-    }
+//    public void Damaged(int damage)
+//    {
+//        playerStats.CurHp -= damage;
+//        if (playerStats.CurHp <= 0)
+//        {
+//            playerStats.CurHp = 0;
+//            Dead();
+//        }
+//    }
 
-    private void Dead()
-    {
-        //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
-        Destroy(this.gameObject);
-    }
+//    private void Dead()
+//    {
+//        //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
+//        //Destroy(this.gameObject);
+//    }
 
-    public void ResetForNewTurn()
-    {
-        playerStats.curActionPoint = playerStats.actionPoint;
-        playerStats.movement = playerStats.movementSpeed;
-    }
-}
+//    public void ResetForNewTurn()
+//    {
+//        playerStats.curActionPoint = playerStats.actionPoint;
+//        playerStats.movement = playerStats.movementSpeed;
+//    }
+//}
