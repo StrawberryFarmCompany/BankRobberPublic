@@ -23,7 +23,7 @@ public class EntityStats
         { 
             if(curHp > value)
             {
-                OnDamaged.Invoke();
+                OnDamaged?.Invoke();
             }
             curHp = value; 
         } 
@@ -65,6 +65,7 @@ public class EntityStats
         curRerollCount = baseStats.curRerollCount;
         moveRange = baseStats.moveRange;
         portrait = baseStats.portrait;
+
     }
 
     public void EquipPassive(PassiveSkill skill)
@@ -146,7 +147,16 @@ public class EntityStats
     {
         curActionPoint = actionPoint;
         movement = movementSpeed;
+
     }
 
+    public void SetCurrentNode(Vector3Int pos)
+    {
+        currNode = GameManager.GetInstance.GetNode(pos);
+    }
+    public void SetCurrentNode(Vector3 pos)
+    {
+        currNode = GameManager.GetInstance.GetNode(pos);
+    }
 
 }
