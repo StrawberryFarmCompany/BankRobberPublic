@@ -4,8 +4,8 @@ using UnityEngine;
 
 public interface IBuff
 {
-    public BuffData data { get; set; }
-    public EntityStats target { get; set; }
+    public BuffData Data { get;}
+    public EntityStats Target { get;}
     
     public void RegistBuff();
     public void ReleaseBuff();
