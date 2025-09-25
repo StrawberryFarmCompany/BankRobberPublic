@@ -189,6 +189,7 @@ public class NodePlayerController : MonoBehaviour
         isHide = true;
         isEndTurn = false;
         StartMode(ref isMoveMode);
+        //playerStats.OnDamaged += 추후 애니메이션 구현시 데미지 스테이트로 변환되도록
     }
 
     void Start()
@@ -198,6 +199,8 @@ public class NodePlayerController : MonoBehaviour
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
         GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
+        playerStats.SetCurrentNode(transform.position);
+        GameManager.GetInstance.RegisterEntity(playerStats);
     }
 
     void Update()
@@ -330,6 +333,12 @@ public class NodePlayerController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
+            if(!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetNode(hit.point) == null || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
+            {
+                Debug.Log("갈 수 없는 곳이거나, 노드가 아니거나, 엔티티가 있다.");
+                return;
+            }
+
             // 현재 좌표 (정수 격자 기준)
             Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
             Vector3Int targetPos = GameManager.GetInstance.GetNode(hit.point).GetCenter;
@@ -550,7 +559,7 @@ public class NodePlayerController : MonoBehaviour
 
         if (!CheckRangeAndEntity(targetNodeCenter, 2))
         {
-            Debug.Log("해당 위치에 적이 없거나 범위를 벗어났습니다!");
+            Debug.Log("해당 위치에 엔티티가 없거나 범위를 벗어났습니다!");
             return;
         }
 
@@ -573,10 +582,9 @@ public class NodePlayerController : MonoBehaviour
         if (playerStats.ConsumeActionPoint(1))
         {
             RemoveHideMode();
-
-            DiceManager.GetInstance.DelayedRoll(0, RollDice);
-            if (diceResult + hitBonus /*- 대상의 회피율*/ > 0)
-                SneakAttack(bestNode);
+            DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
+            if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
+                SneakAttack(bestNode, targetNodeCenter);
 
             Debug.Log("기습 공격 성공!");
         }
@@ -586,11 +594,13 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    private void SneakAttack(Vector3Int pos)
+    private void SneakAttack(Vector3Int movePos, Vector3Int targetPos)
     {
-        agent.SetDestination(pos);
-        playerVec = pos;
+        agent.SetDestination(movePos);
+        playerVec = movePos;
         TurnOffHighlighter();
+        DiceManager.GetInstance.DelayedRoll(0,6,3, RollDice);
+        GameManager.GetInstance.GetEntityAt(targetPos).Damaged(diceResult);
 
 
     }
@@ -797,7 +807,7 @@ public class NodePlayerController : MonoBehaviour
                 Vector3Int current = start + new Vector3Int(x, 0, z); //y값이 안 맞을 수도 있으니까 나중에 버그나면 이놈 탓
 
                 Node node = GameManager.GetInstance.GetNode(current); //요쯤? 엔티티 검출되는지 확인하는 로직
-                if (node == null || !node.isWalkable)
+                if (node == null || !node.isWalkable || GameManager.GetInstance.GetEntityAt(current) == null)
                     continue;
 
                 if (current == Pos) return true;
@@ -843,14 +853,15 @@ public class NodePlayerController : MonoBehaviour
     {
         Vector3Int[] directions = new Vector3Int[]
         {
-        new Vector3Int(1, -1, 0),
-        new Vector3Int(-1, -1, 0),
-        new Vector3Int(0, -1, 1),
-        new Vector3Int(0, -1, -1),
-        new Vector3Int(1, -1, 1),
-        new Vector3Int(-1, -1, 1),
-        new Vector3Int(1, -1, -1),
-        new Vector3Int(-1, -1, -1)
+        new Vector3Int(1, 0, -1),
+        new Vector3Int(-1, 0, 0),
+        new Vector3Int(0, 0, 1),
+        new Vector3Int(0, 0, -1),
+        new Vector3Int(1, 0, 1),
+        new Vector3Int(-1, 0, 1),
+        new Vector3Int(1, 0, 0),
+        new Vector3Int(-1, 0,-1),
+        new Vector3Int(0, 0,0)
         };
 
         Vector3Int bestNode = new Vector3Int(-999, -999, -999);

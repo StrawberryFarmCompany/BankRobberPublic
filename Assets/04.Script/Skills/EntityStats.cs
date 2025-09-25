@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EntityStats
 {
+    public EntityTag entityTag;
     public string characterName;
     public int actionPoint;
     public int curActionPoint;
@@ -22,7 +23,7 @@ public class EntityStats
         { 
             if(curHp > value)
             {
-                OnDamaged.Invoke();
+                OnDamaged?.Invoke();
             }
             curHp = value; 
         } 
@@ -46,6 +47,7 @@ public class EntityStats
 
     public EntityStats(EntityData baseStats)
     {
+        entityTag = baseStats.Tag;
         characterName = baseStats.displayName;
         actionPoint = baseStats.maxActionPoint;
         curActionPoint = baseStats.curActionPoint;
@@ -63,6 +65,7 @@ public class EntityStats
         curRerollCount = baseStats.curRerollCount;
         moveRange = baseStats.moveRange;
         portrait = baseStats.portrait;
+
     }
 
     public void EquipPassive(PassiveSkill skill)
@@ -144,7 +147,16 @@ public class EntityStats
     {
         curActionPoint = actionPoint;
         movement = movementSpeed;
+
     }
 
+    public void SetCurrentNode(Vector3Int pos)
+    {
+        currNode = GameManager.GetInstance.GetNode(pos);
+    }
+    public void SetCurrentNode(Vector3 pos)
+    {
+        currNode = GameManager.GetInstance.GetNode(pos);
+    }
 
 }
