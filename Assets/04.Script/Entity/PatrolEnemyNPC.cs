@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
 
 public class PatrolEnemyNPC : EnemyNPC
 {
@@ -23,14 +22,19 @@ public class PatrolEnemyNPC : EnemyNPC
         efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
     }
 
-    private void Update()
-    {
-        //efsm.Current?.Execute(); // 현재 상태 실행
-    }
-
     private void Start()
     {
         //StartIdleRotation();
+    }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+    }
+
+    private void Update()
+    {
+        //efsm.Current?.Execute(); // 현재 상태 실행
     }
 
     // 턴마다 실행될 매서드

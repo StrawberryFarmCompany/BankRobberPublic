@@ -11,6 +11,11 @@ public class CopEnemyNPC : EnemyNPC
         efsm = new EnemyStateMachine(this, EnemyStates.CopEnemyChaseState);
     }
 
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+    }
+
     protected override void CalculateBehaviour()
     {
         //if (사거리 내에 발각 스테이터스를 가진 얼라이 태그가 있다면)사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다

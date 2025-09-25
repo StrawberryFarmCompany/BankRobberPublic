@@ -14,6 +14,11 @@ public class ManagerNPC : NeutralNPC
         stats.OnDamaged += TakeDamage;
     }
 
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+    }
+
     protected override void Update()
     {
         //현재 상태 실행

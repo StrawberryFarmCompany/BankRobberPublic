@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,6 +11,11 @@ public class CitizenNPC : NeutralNPC
     {
         base.Awake();
         nfsm = new NeutralStateMachine(this, NeutralStates.CitizenIdleState);
+    }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
     }
 
     protected override void Update()
