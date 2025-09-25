@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EntityStats
 {
+    public EntityTag entityTag;
     public string characterName;
     public int actionPoint;
     public int curActionPoint;
@@ -46,6 +47,7 @@ public class EntityStats
 
     public EntityStats(EntityData baseStats)
     {
+        entityTag = baseStats.Tag;
         characterName = baseStats.displayName;
         actionPoint = baseStats.maxActionPoint;
         curActionPoint = baseStats.curActionPoint;

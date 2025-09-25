@@ -62,8 +62,8 @@ class GameManager : SingleTon<GameManager>
     //    CurrentActor = actor;
     //}
 
-    // 좌표 → 엔티티 매핑
-    private Dictionary<Vector3Int, EntityStats> entityMap = new Dictionary<Vector3Int, EntityStats>();
+    // 
+    private List<EntityStats> entities = new List<EntityStats>();
 
     protected override void Init()
     {
@@ -241,32 +241,41 @@ class GameManager : SingleTon<GameManager>
             battleTurn.ChangeState();
     }
 
-    
 
-    public void RegisterEntity(Vector3Int pos, EntityStats entity)
+
+    public void RegisterEntity(EntityStats entity)
     {
-        if (!entityMap.ContainsKey(pos))
-            entityMap.Add(pos, entity);
-        else
-            entityMap[pos] = entity; // 중복이면 갱신
+        if (!entities.Contains(entity))
+            entities.Add(entity);
     }
 
-    public void UnregisterEntity(Vector3Int pos)
+    public void UnregisterEntity(EntityStats entity)
     {
-        if (entityMap.ContainsKey(pos))
-            entityMap.Remove(pos);
+        if (entities.Contains(entity))
+            entities.Remove(entity);
     }
 
+    // 특정 좌표에 있는 엔티티 찾기
     public EntityStats GetEntityAt(Vector3Int pos)
     {
-        if (entityMap.TryGetValue(pos, out var entity))
-            return entity;
+        foreach (var e in entities)
+        {
+            if (e.currNode.GetCenter == pos)
+                return e;
+        }
         return null;
     }
 
-    public void UpdateEntityPosition(Vector3Int oldPos, Vector3Int newPos, EntityStats entity)
+    // 범위 내 엔티티들 반환 (예: 스킬 범위 공격)
+    public List<EntityStats> GetEntitiesInRange(Vector3Int center, int range)
     {
-        UnregisterEntity(oldPos);
-        RegisterEntity(newPos, entity);
+        List<EntityStats> result = new List<EntityStats>();
+        foreach (var e in entities)
+        {
+            int dist = Mathf.Abs(center.x - e.currNode.GetCenter.x) +
+                       Mathf.Abs(center.z - e.currNode.GetCenter.z);
+            if (dist <= range) result.Add(e);
+        }
+        return result;
     }
 }
