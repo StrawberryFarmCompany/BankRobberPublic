@@ -40,7 +40,7 @@ public class PatrolEnemyNPC : EnemyNPC
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
     {
-        if(isdoridori==true)
+        if (isdoridori==true)
         {
             IdleRotation();
         }

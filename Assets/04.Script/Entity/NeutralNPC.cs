@@ -16,8 +16,13 @@ public class NeutralNPC : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        currNode.RemoveCharacter(stats);
-        currNode.AddCharacter(stats);
+        GameManager.GetInstance.GetVecInt(transform.position);
+
+        if(currNode.GetCenter != GameManager.GetInstance.GetVecInt(transform.position))
+        {
+            currNode.RemoveCharacter(stats);
+            currNode.AddCharacter(stats);
+        }
     }
 
     protected virtual void CalculateBehaviour()
