@@ -7,7 +7,6 @@ using UnityEngine.Tilemaps;
 using UnityEditor.Build.Pipeline;
 public class DiceManager : MonoSingleTon<DiceManager>
 {
-    sbyte[] diceValues = new sbyte[3];
     sbyte diceMaxValue = 6;
     Coroutine coroutine;
     bool isCoroutineRun = false;
@@ -15,21 +14,40 @@ public class DiceManager : MonoSingleTon<DiceManager>
     /// 주사위 굴리기
     /// </summary>
     /// <param name="factor">보정치</param>
-    private void Roll()
+    private sbyte[] Roll(int diceCount,sbyte max)
     {
+        sbyte[] diceValues = new sbyte[diceCount];
         for (sbyte i = 0; i < diceValues.Length; i++)
         {
-            diceValues[i] = (sbyte)(UnityEngine.Random.Range(0, diceMaxValue));
+            diceValues[i] = (sbyte)(UnityEngine.Random.Range(0, max+1));
         }
+        return diceValues;
     }
 
 
-    public void DelayedRoll(int factor,Action<int> action)
+    public void DelayedRoll(int factor,sbyte max,int diceCount,Action<int> action)
     {
-        coroutine = StartCoroutine(RollCallback(factor, (r) =>
+        coroutine = StartCoroutine(RollCallback(factor, max,diceCount, (r) =>
         {
             action.Invoke(r);
         }));
+    }
+    public int DirrectRoll(int factor,sbyte max,int diceCount)
+    {
+        sbyte[] diceValues = Roll(diceCount, max);
+        int result = 0;
+        if (diceValues.All(x => diceValues[0] == x))
+        {
+            result = 7777;
+        }
+        else
+        {
+            for (int i = 0; i < diceValues.Length; i++)
+            {
+                result += diceValues[i];
+            }
+        }
+        return result;
     }
 
     /// <summary>
@@ -37,23 +55,25 @@ public class DiceManager : MonoSingleTon<DiceManager>
     /// </summary>
     /// <param name="action">콜백 실행 로직을 여기에 두면됨</param>
     /// <returns></returns>
-    private IEnumerator RollCallback(int factor,Action<int> action)
+    private IEnumerator RollCallback(int factor,sbyte max,int diceCount,Action<int> action)
     {
         yield return new WaitUntil(() => isCoroutineRun);
         StopCoroutine(coroutine);
         isCoroutineRun = true;
         float timer = 0;
-        Roll();
+        sbyte[] diceValues = Roll(diceCount, max);
         int result = 0;
         if (diceValues.All(x => diceValues[0] == x))
         {
-            result = 77;
+            result = 7777;
         }
-        for (int i = 0; i < diceValues.Length; i++)
+        else
         {
-            result += diceValues[i];
+            for (int i = 0; i < diceValues.Length; i++)
+            {
+                result += diceValues[i];
+            }
         }
-
         while (timer < 5)
         {
             timer += Time.deltaTime;
