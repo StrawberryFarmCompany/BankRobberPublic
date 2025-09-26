@@ -19,6 +19,7 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
     {
         currState.Exit();
         currState = states[(TurnTypes)(((int)GetCurrState()+1) % (Enum.GetValues(typeof(TurnTypes)).Length))];
+        Debug.Log(GetCurrState());
         currState.Enter();
     }
     public void ChangeState(NoneBattleTurnStateBase next)
@@ -45,7 +46,15 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
         {
             states.TryAdd((TurnTypes)i, NoneBattleTurnStateBase.Factory((TurnTypes)i));
         }
+        states[TurnTypes.enemy].StartPointer += NPCDefaultEnterPoint;
+        states[TurnTypes.neutral].StartPointer += NPCDefaultEnterPoint;
         currState = states[startType];
+    }
+    public void NPCDefaultEnterPoint()
+    {
+        TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
+        TaskManager.GetInstance.StartTask();
     }
     /// <summary>
     /// 턴 시작 이벤트를 추가하는 함수

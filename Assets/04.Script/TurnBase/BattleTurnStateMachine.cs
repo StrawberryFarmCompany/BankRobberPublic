@@ -28,6 +28,9 @@ public class BattleTurnStateMachine
             RemoveUnit(last);
             turnStates.Add(last);
             turnStates[0].Enter();
+            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
+            TaskManager.GetInstance.StartTask();
         }
         else
         {

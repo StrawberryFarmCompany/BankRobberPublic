@@ -236,7 +236,7 @@ class GameManager : SingleTon<GameManager>
     public void EndPlayerTurn()
     {
         if (IsNoneBattlePhase())
-            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
+            noneBattleTurn.ChangeState();
         else
             battleTurn.ChangeState();
     }

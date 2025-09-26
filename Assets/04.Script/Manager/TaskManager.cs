@@ -15,20 +15,21 @@ public class TaskManager : MonoSingleTon<TaskManager>
     public void RemoveTurnBehaviour(TurnTask remove)
     {
         Debug.Log($"메소드 이름{remove.Action.Method.Name}");
-        TurnTask[] tasks = task.ToArray();
-        tasks = tasks.Where(x => x.Action.Method.Name != remove.Action.Method.Name).ToArray();
+        TurnTask[] tasks = task.ToArray().Where(x => x.Action.Method.Name != remove.Action.Method.Name).ToArray();
         task = new Queue<TurnTask>(tasks);
     }
     public void StartTask()
     {
-        if (coroutine != null && task.Count == 0) StopCoroutine(coroutine);
+        if (coroutine != null) return;
         coroutine = StartCoroutine(LoopTask());
     }
     public IEnumerator LoopTask()
     {
-        while (task.Count > 0)
+        while (true)
         {
+            if (task.Count <= 0) yield return new WaitUntil(()=> task.Count > 0);
             TurnTask currTask = task.Dequeue();
+            Debug.Log($"실행된 액션 명 {currTask.Action.Method.Name}");
             currTask.Action?.Invoke();
             yield return new WaitForSeconds(currTask.time);
         }
