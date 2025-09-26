@@ -14,6 +14,7 @@ public class TaskManager : MonoSingleTon<TaskManager>
     }
     public void RemoveTurnBehaviour(TurnTask remove)
     {
+        Debug.Log($"메소드 이름{remove.Action.Method.Name}");
         TurnTask[] tasks = task.ToArray();
         tasks = tasks.Where(x => x.Action.Method.Name != remove.Action.Method.Name).ToArray();
         task = new Queue<TurnTask>(tasks);
