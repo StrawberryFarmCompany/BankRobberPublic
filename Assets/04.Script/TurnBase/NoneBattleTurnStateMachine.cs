@@ -53,8 +53,8 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
     public void NPCDefaultEnterPoint()
     {
         TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-        TaskManager.GetInstance.StartTask();
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
     }
     /// <summary>
     /// 턴 시작 이벤트를 추가하는 함수

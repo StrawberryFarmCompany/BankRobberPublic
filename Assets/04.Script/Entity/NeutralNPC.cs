@@ -26,18 +26,17 @@ public class NeutralNPC : MonoBehaviour
 
     protected virtual void CalculateBehaviour()
     {
-        Debug.Log("ㅁㄴㅇㄹ");
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.StartTask();
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
         else
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.StartTask();
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
         }
     }
 
