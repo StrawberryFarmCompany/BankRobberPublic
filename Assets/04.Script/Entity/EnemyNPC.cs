@@ -32,6 +32,7 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual void CalculateBehaviour()
     {
+        Debug.Log("ㅁㄴㅇㄹ");
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
@@ -40,7 +41,7 @@ public class EnemyNPC : MonoBehaviour
 
         else
         {
-            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
+            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0.1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0.1f));
         }
     }
