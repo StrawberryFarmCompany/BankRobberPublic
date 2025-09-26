@@ -1,7 +1,9 @@
 using NodeDefines;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class EntityStats
 {
@@ -157,6 +159,19 @@ public class EntityStats
     public void SetCurrentNode(Vector3 pos)
     {
         currNode = GameManager.GetInstance.GetNode(pos);
+    }
+
+    public void NodeUpdates(Vector3 pos)
+    {
+        GameManager.GetInstance.GetVecInt(pos);
+        Vector3Int tempPos = GameManager.GetInstance.GetVecInt(pos);
+
+        if (currNode.GetCenter != tempPos)
+        {
+            currNode.RemoveCharacter(this);
+            currNode = GameManager.GetInstance.GetNode(tempPos);
+            currNode.AddCharacter(this);
+        }
     }
 
 }
