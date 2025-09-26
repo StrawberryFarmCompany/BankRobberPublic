@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TaskManager : MonoSingleTon<TaskManager>
@@ -10,6 +11,12 @@ public class TaskManager : MonoSingleTon<TaskManager>
     public void AddTurnBehaviour(TurnTask add)
     {
         task.Enqueue(add);
+    }
+    public void RemoveTurnBehaviour(TurnTask remove)
+    {
+        TurnTask[] tasks = task.ToArray();
+        tasks = tasks.Where(x => x.Action.Method.Name != remove.Action.Method.Name).ToArray();
+        task = new Queue<TurnTask>(tasks);
     }
     public void StartTask()
     {
