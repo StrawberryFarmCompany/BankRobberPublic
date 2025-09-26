@@ -119,7 +119,7 @@ public class TurnActionInput : MonoBehaviour
 
     public void OnEndPressed()
     {
-        if (playerController.IsMyTurn() && playerController.isMoveMode)
+        //if (playerController.IsMyTurn() && playerController.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(true);
             NodePlayerManager.GetInstance.NotifyPlayerEndTurn(playerController);

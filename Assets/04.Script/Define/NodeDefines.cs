@@ -20,7 +20,6 @@ namespace NodeDefines
 
         Dictionary<string, Interaction> nodeInteractions;
         public List<EntityStats> standing;
-        string[] GetInteractionID { get { return nodeInteractions.Keys.ToArray(); } }
 
         public Node(Vector3Int center,bool isWalkable)
         {
@@ -92,6 +91,38 @@ namespace NodeDefines
         public void InvokeEvent(EntityStats stat)
         {
             NodeEvent.Invoke(stat);
+        }
+
+        //노드에 등록된 상호작용 키 열거
+        public IEnumerable<string> EnumerateInteractionKeys()
+        {
+            if (nodeInteractions == null) yield break;
+            foreach (var k in nodeInteractions.Keys) yield return k;
+        }
+
+        //특정 키의 상호작용 실행
+        public bool TryInvokeInteraction(string key, EntityStats actor)
+        {
+            if (nodeInteractions == null) return false;
+            if (!nodeInteractions.TryGetValue(key, out var del) || del == null) return false;
+            del.Invoke(actor);
+            return true;
+        }
+
+        //매칭
+        public bool HasInteractionKey(string key)
+        {
+            if (nodeInteractions == null) return false;
+            return nodeInteractions.ContainsKey(key);
+        }
+
+        //키 포함 여부
+        public bool HasInteractionKeyLike(string part)
+        {
+            if (nodeInteractions == null) return false;
+            foreach (var k in nodeInteractions.Keys)
+                if (k.IndexOf(part, StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            return false;
         }
     }
     public delegate void Interaction(EntityStats stat);
