@@ -1,0 +1,156 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using NodeDefines;
+
+public class Gun : MonoBehaviour
+{
+    [SerializeField] private GunData gunData;
+
+    [Header("현재 총기 정보")]
+    public string gunName;
+    public string gunDescription;
+    public GunType type;
+    public int maxRounds;
+    public int curRounds;
+    public int useRoundsPerShot;
+    public int bulletPerOneShot;
+    public int noise;
+    public float damagePerOneBulletMultiplier;
+    public int accuracy;
+    //public int minBullerSpread;         //최소 탄 퍼짐 정도
+    //public int maxBulletSpread;         // min = 1, max =3 이라면 명중치가 -1 ~ -3 사이 값을 적용된다.
+    public int firstRange;
+    public int firstRangeAccuracy;
+    public int secondRange;
+    public int secondRangeAccuracy;
+    public int thirdrange;
+    public int thirdrangeAccuracy;
+    public int awayRangeAccuracy;
+
+
+    private void Start()
+    {
+        SetGun();
+    }
+
+    public void SetGun()
+    {
+        gunName = gunData.gunName;
+        gunDescription = gunData.gunDescription;
+        type = gunData.type;
+        maxRounds = gunData.maxRounds;
+        curRounds = maxRounds;
+        useRoundsPerShot = gunData.useRoundsPerShot;
+        bulletPerOneShot = gunData.bulletPerOneShot;
+        noise = gunData.noise;
+        damagePerOneBulletMultiplier = gunData.damagePerOneBulletMultiplier;
+        accuracy = gunData.accuracy;
+        //minBullerSpread = gunData.minBullerSpread;
+        //maxBulletSpread = gunData.maxBulletSpread;
+        firstRange = gunData.firstRange;
+        firstRangeAccuracy = gunData.firstRangeAccuracy;
+        secondRange = gunData.secondRange;
+        secondRangeAccuracy = gunData.secondRangeAccuracy;
+        thirdrange = gunData.thirdRange;
+        thirdrangeAccuracy = gunData.thirdRangeAccuracy;
+        awayRangeAccuracy = gunData.awayRangeAccuracy;
+    }
+
+    public void Reload()
+    {
+        curRounds = maxRounds;
+    }
+
+    /// <summary>
+    /// 행동 판정까지 들어감 그러니까 따로 다이스 굴려서 안 해도 됨
+    /// </summary>
+    /// <param name="targetPos"></param>
+    /// <param name="hitBonus"></param>
+    public void Shoot(Vector3Int targetPos, int hitBonus)
+    {
+        if(!ConsumeRounds(useRoundsPerShot))
+        {
+            Debug.Log("잔탄수 부족, 불발");
+            return;
+        }
+
+        EntityStats entityStats = GameManager.GetInstance.GetEntityAt(targetPos);
+
+        if (entityStats == null)
+        {
+            Debug.Log("검출되는 엔티티가 없음");
+            return;
+        }
+
+        Debug.Log($"{entityStats.characterName}에게 격발 데미지를 가했음");
+        // for문 돌려서 불렛 마다 판정해주기
+        //      if(CheckBulletHit(targetPos, hitBonus))
+        //          entityStats.OnDamaged? Damaged? (2d6 * 데미지 계수)
+
+    }
+
+    //public int GetBulletSpread()
+    //{
+    //    return Random.Range(minBullerSpread, maxBulletSpread) * (-1);
+    //}
+
+
+    public bool CheckBulletHit(Vector3Int targetPos, int hitBonus)
+    {
+        int hitAdjustment;
+        if (CheckRange(targetPos, firstRange))
+        {
+            hitAdjustment = firstRangeAccuracy;
+        }
+        else if (CheckRange(targetPos, secondRange))
+        {
+            hitAdjustment = secondRangeAccuracy;
+        }
+        else if (CheckRange(targetPos, thirdrange))
+        {
+            hitAdjustment = thirdrangeAccuracy;
+        }
+        else
+        {
+            hitAdjustment = awayRangeAccuracy;
+        }
+
+        hitAdjustment += hitBonus;
+
+        return true;
+        // if(/*3d6 다이스*/ + hitAdjustment + GameManager.GetInstance.GetEntityAt(targetPos).evasionRate)
+        //      return true
+        // else
+        //      return false
+    }
+    public bool CheckRange(Vector3Int Pos, int range)
+    {
+        Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+        for (int x = -range; x <= range; x++)
+        {
+            for (int z = -range; z <= range; z++)
+            {
+                Vector3Int current = start + new Vector3Int(x, 0, z);
+
+                Node node = GameManager.GetInstance.GetNode(current);
+                if (node == null || !node.isWalkable)
+                    continue;
+
+                if (current == Pos) return true;
+            }
+        }
+        return false;
+    }
+
+    public bool ConsumeRounds(int needRounds)
+    {
+        if (curRounds >= needRounds)
+        {
+            curRounds -= needRounds;
+            return true;
+        }
+        return false;
+    }
+
+}
