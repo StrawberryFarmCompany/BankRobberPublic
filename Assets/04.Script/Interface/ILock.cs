@@ -36,7 +36,7 @@ public class LockPick : ILock
         {
             //TODO : 현재 선택된 캐릭터의 락핏 스텟
             
-            DiceManager.GetInstance.DelayedRoll(stat.sabotage, (result) =>
+            DiceManager.GetInstance.DelayedRoll(stat.sabotage,6,3, (result) =>
             {
                 isLocked = unlockMin > result;
                 if (!isLocked)
