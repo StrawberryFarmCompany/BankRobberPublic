@@ -88,15 +88,11 @@ public class PatrolEnemyNPC : EnemyNPC
         else if (securityLevel >= 2)
         {
             TryAttack();
-            if (securityLevel >= 2)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
-            {
-                Combat();//교전 총쏘기
-            }
 
-            else if (securityLevel >= 2)
+            // 공격이 실패했거나 행동력이 남았으면 추적
+            if (stats.movement > 0)
             {
                 Chase(nearPlayerLocation);
-                //사거리 7이라고 가정하고 사거리내 raycast에 발각 스테이터스를 가진 얼라이 태그가 닿았는지와 // 기획한테 물어봐
             }
         }
         base.CalculateBehaviour();
