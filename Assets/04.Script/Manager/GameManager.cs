@@ -274,7 +274,11 @@ class GameManager : SingleTon<GameManager>
         {
             int dist = Mathf.Abs(center.x - e.currNode.GetCenter.x) +
                        Mathf.Abs(center.z - e.currNode.GetCenter.z);
-            if (dist <= range) result.Add(e);
+            if (dist <= range)
+            {
+                result.Add(e);
+                Debug.Log("result.Add");
+            }
         }
         return result;
     }

@@ -88,6 +88,7 @@ public class PatrolEnemyNPC : EnemyNPC
         else if (securityLevel >= 2)
         {
             TryAttack();
+            Debug.Log("죽어잇!");
 
             // 공격이 실패했거나 행동력이 남았으면 추적
             if (stats.movement > 0)
