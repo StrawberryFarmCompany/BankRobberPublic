@@ -19,26 +19,28 @@ public class EnemyNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
     }
 
+    protected virtual void Start()
+    {
+        stats.currNode = GameManager.GetInstance.GetNode(transform.position);
+    }
+
     protected virtual void FixedUpdate()
     {
-        GameManager.GetInstance.GetNode(transform.position);
-
-        if (stats.currNode.GetCenter != GameManager.GetInstance.GetVecInt(transform.position))
-        {
-            currNode.RemoveCharacter(stats);
-            currNode.AddCharacter(stats);
-        }
+        stats.NodeUpdates(transform.position);
     }
+
 
     protected virtual void CalculateBehaviour()
     {
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
         {
+            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
         }
 
         else
         {
+            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0.1f));
         }
     }

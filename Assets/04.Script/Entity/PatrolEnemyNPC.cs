@@ -22,9 +22,9 @@ public class PatrolEnemyNPC : EnemyNPC
         efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
     }
 
-    private void Start()
+    protected override void Start()
     {
-        //StartIdleRotation();
+        base.Start();
     }
 
     protected override void FixedUpdate()
@@ -87,6 +87,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
         else if (securityLevel >= 2)
         {
+            TryAttack();
             if (securityLevel >= 2)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
             {
                 Combat();//교전 총쏘기

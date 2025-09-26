@@ -6,7 +6,6 @@ public class NeutralNPC : MonoBehaviour
     public EntityData entityData;
     protected EntityStats stats;
     protected NeutralStateMachine nfsm;
-    public Node currNode;
 
     protected virtual void Awake()
     {
@@ -14,34 +13,30 @@ public class NeutralNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
     }
 
+    protected virtual void Start()
+    {
+        stats.currNode = GameManager.GetInstance.GetNode(transform.position);
+    }
     protected virtual void FixedUpdate()
     {
-        GameManager.GetInstance.GetVecInt(transform.position);
-
-        if(currNode.GetCenter != GameManager.GetInstance.GetVecInt(transform.position))
-        {
-            currNode.RemoveCharacter(stats);
-            currNode.AddCharacter(stats);
-        }
+        stats.NodeUpdates(transform.position);
     }
 
     protected virtual void CalculateBehaviour()
     {
-        if(GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
+        if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
         {
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState,0.1f));
+            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
         }
 
-        else 
+        else
         {
+            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0.1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0.1f));
         }
     }
 
-    protected virtual void Start()
-    {
-        
-    }
 
     protected virtual void Update()
     {
