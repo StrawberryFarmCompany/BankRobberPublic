@@ -8,7 +8,7 @@ public class HoldEnemyNPC : EnemyNPC
     bool isNoisePlace = false;
     bool isHomePlace = true;
     bool allySpottedStatus = false;
-    int securityLevel = 1;
+    public int securityLevel = 1;
     int countTurn = 0;
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 noiseLocation;
@@ -71,17 +71,13 @@ public class HoldEnemyNPC : EnemyNPC
 
         else if (securityLevel >= 2)
         {
-            if (securityLevel >= 2 && allySpottedStatus == true && isRangeDetection == true)//사거리내 발각 스테이터스 true를 가진 얼라이 태그가 있다면//발각시 스테이터스에 3을 초기화해줌 int값의 발각 스테이터스 321 이런식으로 턴마다 마이너스 해준다
-            {
-                ChangeToCombat();//교전 총쏘기
-                Debug.Log("총쏜다");
-            }
+            TryAttack();
+            Debug.Log("죽자 준게이야");
 
-            else if (securityLevel >= 2 && allySpottedStatus == true)
+            // 공격이 실패했거나 행동력이 남았으면 추적
+            if (stats.movement > 0)
             {
                 ChangeToChase(nearPlayerLocation);
-                Debug.Log("적 찾으러 간다");
-                //사거리 7이라고 가정하고 사거리내 raycast에 발각 스테이터스를 가진 얼라이 태그가 닿았는지와 // 기획한테 물어봐 
             }
         }
     }
