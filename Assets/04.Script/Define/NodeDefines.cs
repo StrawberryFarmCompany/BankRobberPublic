@@ -29,6 +29,20 @@ namespace NodeDefines
             centerPos = center;
         }
 
+        public bool HasAnyInteraction()
+        {
+            return (NodeEvent != null) || (nodeInteractions != null && nodeInteractions.Count > 0);
+        }
+
+        public string GetPrimaryImageKey()
+        {
+            if (nodeInteractions != null && nodeInteractions.Count > 0)
+            {
+                foreach (var k in nodeInteractions.Keys) return k;
+            }
+            return null;
+        }
+
         public void AddCharacter(EntityStats stat)
         {
             standing.Add(stat);
