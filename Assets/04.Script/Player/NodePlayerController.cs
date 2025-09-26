@@ -313,7 +313,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log("원거리 공격");
             Vector3 mousePos = Mouse.current.position.ReadValue();
-            RangeAttack(mousePos);
+            CheckRangeAttack(mousePos);
         }
 
         if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode))
@@ -682,12 +682,28 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    private void RangeAttack(Vector3 mouseScreenPos)
+    private void CheckRangeAttack(Vector3 mouseScreenPos)
     {
         if (CheckRangeAndEntity(GetNodeVector3ByRay(mouseScreenPos), (int)playerStats.attackRange))
         {
             if (playerStats.ConsumeActionPoint(1))
             {
+                //다이스 판정 시스템
+                /*DiceManager.GetInstance.DelayedRoll(stat.sabotage, (result) =>
+                {
+                    isLocked = unlockMin > result;
+                    if (!isLocked)
+                    {
+                        Debug.Log("해제 실패, 경고발동");
+                        ActivateWarning();
+                    }
+                    else
+                    {
+                        Debug.Log("해제 성공");
+                    }
+
+                });*/
+
                 UIManager.GetInstance.ShowActionPanel(true);
                 if (isAiming)
                 {
