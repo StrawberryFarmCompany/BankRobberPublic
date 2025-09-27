@@ -62,6 +62,7 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public MoveBonus(BuffData data, EntityStats target)
         {
             this.data = data;
@@ -70,12 +71,23 @@ namespace BuffDefine
 
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class RallyCopCall : IBuff
@@ -85,19 +97,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public RallyCopCall(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class RallySecCall : IBuff
@@ -107,19 +132,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public RallySecCall(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class SecurityLevel : IBuff
@@ -129,19 +167,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public SecurityLevel(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class Aiming : IBuff
@@ -151,19 +202,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public Aiming(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class Witness : IBuff
@@ -173,19 +237,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public Witness(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class Spotted : IBuff
@@ -195,19 +272,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public Spotted(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class HealBan : IBuff
@@ -217,19 +307,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public HealBan(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     }
     public class Heal : IBuff
@@ -239,19 +342,32 @@ namespace BuffDefine
         private EntityStats target;
         public EntityStats Target { get { return target; } }
 
+        private int duration;
         public Heal(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
         }
+
         public void RegistBuff()
         {
-
+            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
         }
 
         public void ReleaseBuff()
         {
+            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+        }
 
+        public void CountDuration()
+        {
+            duration -= 1;
+            if (duration <= 0)
+            {
+                ReleaseBuff();
+            }
         }
     } 
 }
