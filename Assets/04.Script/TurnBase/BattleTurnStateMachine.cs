@@ -13,7 +13,17 @@ public class BattleTurnStateMachine
     //Queue와 동일하게 구현
     public BattleTurnStateMachine()
     {
+        ReleasePointers();
         turnStates = new List<BattleTurnState>();
+    }
+    private void ReleasePointers()
+    {
+        for (int i = 0; i < turnStates.Count; i++)
+        {
+            if (turnStates[i] == null) continue;
+            turnStates[i].OnEnd = null;
+            turnStates[i].OnStart = null;
+        }
     }
     public void ChangeState()
     {
@@ -63,8 +73,6 @@ public class BattleTurnStateMachine
     }
     public void MergePlayerTurn()
     {
-        TurnBehaviour start;
-        TurnBehaviour end;
         int lastAlly = -1;
         for (int i = 0; i < turnStates.Count; i++)
         {
@@ -79,6 +87,8 @@ public class BattleTurnStateMachine
                     {
                         turnStates[i].OnStart?.Invoke();
                     }
+                    turnStates[i].OnStart = null;
+                    turnStates[i].OnEnd = null;
                     turnStates.RemoveAt(i);
                     i--;
                 }
