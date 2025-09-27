@@ -56,6 +56,8 @@ public class NoneBattleTurnStateMachine
     }
     private void ReleaseDelegateChain()
     {
+        if (states == null) return;
+
         for (int i = 0; i < states.Length; i++)
         {
             if (states[i] == null) continue;
