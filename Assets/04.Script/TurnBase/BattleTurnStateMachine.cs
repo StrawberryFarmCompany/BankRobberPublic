@@ -18,6 +18,8 @@ public class BattleTurnStateMachine
     }
     private void ReleasePointers()
     {
+        if (turnStates == null) return;
+
         for (int i = 0; i < turnStates.Count; i++)
         {
             if (turnStates[i] == null) continue;
