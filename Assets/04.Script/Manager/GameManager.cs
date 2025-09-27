@@ -77,13 +77,22 @@ class GameManager : SingleTon<GameManager>
     protected override void Reset()
     {
         base.Reset();
+
         nodes.Clear();
         noneBattleTurn = null;
         noneBattleTurn = new NoneBattleTurnStateMachine();
+        battleTurn = new BattleTurnStateMachine();
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();
     }
-
+    public void OnNodeReset()
+    {
+        foreach (Node item in nodes.Values)
+        {
+            item.ResetEvent();
+            item.ResetInteraction();
+        }
+    }
     public void RegistNode(Vector3Int vec, bool isWalkable = false)
     {
         nodes.TryAdd(vec, new Node(vec, isWalkable));
@@ -186,7 +195,7 @@ class GameManager : SingleTon<GameManager>
     {
         if (IsNoneBattlePhase())
         {
-            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.ally));
+            noneBattleTurn.ForceSet((int)TurnTypes.ally);
 
             // NodePlayerManager에서 모든 플레이어 초기화
             foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
@@ -236,7 +245,7 @@ class GameManager : SingleTon<GameManager>
     public void EndPlayerTurn()
     {
         if (IsNoneBattlePhase())
-            noneBattleTurn.ChangeState(noneBattleTurn.FindState(TurnTypes.enemy));
+            noneBattleTurn.ChangeState();
         else
             battleTurn.ChangeState();
     }

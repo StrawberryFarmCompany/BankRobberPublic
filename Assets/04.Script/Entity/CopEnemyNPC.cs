@@ -22,12 +22,12 @@ public class CopEnemyNPC : EnemyNPC
         //{
         //    ChangeToCombat();//교전 총쏘기
         //}
-
         //else if (사거리 내에 발각 스테이터스를 가진 얼라이 태그가 없다면)사거리 7이라고 가정하고 사거리내 raycast에 발각 스테이터스를 가진 얼라이 태그가 닿았는지와 // 기획한테 물어봐 
         //{
         //    ChangeToChase(가까운 적 위치);
         //    
         //}
+        base.CalculateBehaviour();
     }
 
     public void ChangeToChase()
