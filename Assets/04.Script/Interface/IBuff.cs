@@ -8,9 +8,10 @@ namespace BuffDefine
     {
         public BuffData Data { get; }
         public EntityStats Target { get; }
-
+        
         public void RegistBuff();
         public void ReleaseBuff();
+        public void CountDuration();
         public static IBuff Factory(BuffData data, EntityStats stat, BuffType type)
         {
             switch (type)
