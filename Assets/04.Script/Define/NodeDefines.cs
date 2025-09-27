@@ -89,6 +89,14 @@ namespace NodeDefines
         {
             NodeEvent = null;
         }
+        public void ResetInteraction()
+        {
+            string[] keys = nodeInteractions.Keys.ToArray();
+            for (int i = 0; i < keys.Length; i++)
+            {
+                nodeInteractions[keys[i]] = null;
+            }
+        }
         public void InvokeEvent(EntityStats stat)
         {
             NodeEvent.Invoke(stat);

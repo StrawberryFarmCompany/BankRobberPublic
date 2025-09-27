@@ -50,6 +50,7 @@ public class ManagerNPC : NeutralNPC
         {
             OnPlayerDetected();
         }
+        base.CalculateBehaviour();
     }
 
     // 피격시 사망 // 위에서 Action에 추가 되어 있는데 추후에 해결하기.
