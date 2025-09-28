@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class FreePOV : MonoBehaviour
 {
-    public CinemachineVirtualCamera vcam;
+    public CinemachineFreeLook fcam;
     public Transform followTarget;
 
     [Header("Move Settings")]
@@ -24,9 +24,16 @@ public class FreePOV : MonoBehaviour
 
     public float speedMultiplier = 1.5f;
     private float currSpeedMultiplier = 1f;
+
+    [SerializeField] private float scrollSpeed = 0.1f;
+
+    [SerializeField, Range(0f, 1f)] private float yMin = 0f;
+    [SerializeField, Range(0f, 1f)] private float yMax = 1f;
+
+
     void Start()
     {
-        if (vcam == null) vcam = GetComponent<CinemachineVirtualCamera>();
+        if (fcam == null) fcam = GetComponent<CinemachineFreeLook>();
        // 초기 카메라 방향 설정
         ApplyRotation();
     }
@@ -77,6 +84,8 @@ public class FreePOV : MonoBehaviour
     public void OnWASDMove(InputAction.CallbackContext context)
     {
         if (CameraManager.GetInstance.isCompleteTransition == false) return;
+        if(fcam.Follow != followTarget) fcam.Follow = followTarget;
+        if (fcam.LookAt != followTarget) fcam.LookAt = followTarget;
         wasdMoveInput = context.ReadValue<Vector2>();
     }
 
@@ -104,28 +113,23 @@ public class FreePOV : MonoBehaviour
         transform.position = newPos;
     }
 
-    //private void ApplyRotation()
-    //{
-    //    yaw = Mathf.Repeat(yaw + rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier, 360f);
-    //    Quaternion rot = Quaternion.Euler(pitch, yaw, 0);
-    //    transform.rotation = rot;
-    //}
-
     private void ApplyRotation()
     {
         // 입력값으로 yawDelta 계산
         float yawDelta = rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier;
 
-        // yaw를 누적시키지 않고, 매번 상대 회전으로 곱해줌
-        Quaternion yawRot = Quaternion.AngleAxis(yawDelta, Vector3.up);
-        Quaternion pitchRot = Quaternion.Euler(pitch, 0f, 0f);
+        // FreeLook 카메라의 수평축(XAxis) 값 회전
+        fcam.m_XAxis.Value += yawDelta;
 
-        // 회전 누적
-        transform.rotation = yawRot * transform.rotation;
+        if (followTarget != null)
+        {
+            // followTarget의 Y축 회전과 동기화
+            followTarget.Rotate(Vector3.up, yawDelta, Space.World);
 
-        // Pitch는 항상 고정된 값 유지
-        Vector3 euler = transform.rotation.eulerAngles;
-        transform.rotation = Quaternion.Euler(pitch, euler.y, 0f);
+            // 카메라 자체 위치를 따라가도록 align
+            Vector3 euler = followTarget.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, euler.y, 0f);
+        }
     }
 
     // 회전 입력
@@ -179,5 +183,16 @@ public class FreePOV : MonoBehaviour
         {
             currSpeedMultiplier = 1;
         }
+    }
+
+    public void OnScroll(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+
+        float scrollValue = context.ReadValue<Vector2>().y;
+        fcam.m_YAxis.Value += scrollValue * scrollSpeed * Time.deltaTime;
+
+        // 값 범위 제한
+        fcam.m_YAxis.Value = Mathf.Clamp(fcam.m_YAxis.Value, yMin, yMax);
     }
 }
