@@ -13,12 +13,14 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
+    Gun gun;
 
     protected override void Awake()
     {
         base.Awake();
         // 상태머신 초기화 (기본 상태)
         efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
+        gun = GetComponent<Gun>();
     }
 
     protected override void Start()
@@ -64,6 +66,7 @@ public class PatrolEnemyNPC : EnemyNPC
             else if (departurePoint == true && destinationPoint == false)
             {
                 Patrol(firstLocation);
+                //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
                 if (this.gameObject.transform.position == firstLocation)
                 {
                     LookAround();
@@ -89,7 +92,7 @@ public class PatrolEnemyNPC : EnemyNPC
             TryAttack();
             Debug.Log("죽어잇!");
 
-            // 공격이 실패했거나 행동력이 남았으면 추적
+            // 공격이 실패했거나 이동력이 남았으면 추적
             if (stats.movement > 0)
             {
                 Chase(nearPlayerLocation);
@@ -124,8 +127,8 @@ public class PatrolEnemyNPC : EnemyNPC
         Debug.Log("두리번");
 
         // 정면 복귀
-        transform.rotation = originalRotation;
-        Debug.Log("정면 복귀");
+        //transform.rotation = originalRotation;
+        //Debug.Log("정면 복귀");
     }
 
     public void StartIdleRotation()
