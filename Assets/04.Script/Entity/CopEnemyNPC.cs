@@ -4,11 +4,13 @@ public class CopEnemyNPC : EnemyNPC
 {
     bool isDetection = false;
     bool isHit = false;
+    Gun gun;
 
     protected override void Awake()
     {
         base.Awake();
         efsm = new EnemyStateMachine(this, EnemyStates.CopEnemyChaseState);
+        gun = GetComponent<Gun>();
     }
 
     protected override void FixedUpdate()
