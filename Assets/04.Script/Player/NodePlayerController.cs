@@ -16,11 +16,8 @@ public class NodePlayerController : MonoBehaviour
     public EntityData playerData;
     public EntityStats playerStats;
 
-    // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
-    public int playerID { get; private set; }
-
     private Vector3Int playerVec;
-    private bool isHighlightOn = false;
+    public bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
     private bool characterTurn = false;
@@ -58,25 +55,28 @@ public class NodePlayerController : MonoBehaviour
 
 
     [Header("창문 넘기")]
-    [SerializeField] string wallLayerName = "Wall"; // 충돌 무시할 레이어 이름
     [SerializeField] float vaultSpeed = 8f;         //이동 속도
     [SerializeField] float arriveTolerance = 0.05f; //위치 수정 용
 
-    [SerializeField] bool onlyOverWindow = true;
-    [SerializeField] string windowSpecialName = "Window";
-
     bool _isVaulting;                                // 중복 실행 방지
-    int _wallLayer = -1, _selfLayer = -1;
 
     private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
     public bool isMoving;
     public bool canNextMove;
 
-    void EnsureLayers()
+    private bool IsWindowCell(Vector3Int overCell)
     {
-        if (_wallLayer < 0) _wallLayer = LayerMask.NameToLayer(wallLayerName);
-        if (_selfLayer < 0) _selfLayer = gameObject.layer;
+        var node = GameManager.GetInstance.Nodes.TryGetValue(overCell, out var n) ? n : null;
+        if (node == null) return false;
+        if (!node.HasAnyInteraction()) return false;
+
+        // 네가 쓰는 키가 InteractionType.Window.ToString() 라면 정확 매칭
+        // (혹은 부분 문자열로 포함 검사: k.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0)
+        foreach (var k in node.EnumerateInteractionKeys())
+            if (k == InteractionType.Window.ToString()) return true;
+
+        return false;
     }
 
     //대각선 금지
@@ -119,21 +119,11 @@ public class NodePlayerController : MonoBehaviour
         var landNode = gm.GetNode(landCell);
         if (overNode == null || landNode == null) { Debug.Log("유효하지 않은 위치"); return; }
 
-        if (onlyOverWindow && SpecialNodeManager.GetInstance != null)
-        {
-            var queryPos = new Vector3Int(overCell.x, overCell.y - 1, overCell.z);
-            if (!SpecialNodeManager.GetInstance.TryGetSpecialNodeType(queryPos, out var type) || type.ToString() != windowSpecialName)
-            {
-                Debug.Log("창문 앞에서만 넘을 수 있습니다.");
-                return;
-            }
-        }
+        // ← 창문 판정은 노드의 상호작용 키로
+        if (!IsWindowCell(overCell)) { Debug.Log("여기는 창문이 아님"); return; }
 
-        if (overNode.isWalkable) { Debug.Log("앞칸이 창문,벽이 아님"); return; }
-        if (!landNode.isWalkable) { Debug.Log("착지칸이 보행 불가"); return; }
-
-        //창문 너머 칸에 사람이 있을 시 방지 나중에 게임 매니저에서 판정 추가 필요
-        //if (gm.IsNodeOccupied(landCell)) { Debug.Log("착지칸 사람 존재"); return; }
+        if (overNode.isWalkable) { Debug.Log("앞칸이 벽/창문이 아님"); return; }
+        if (!landNode.isWalkable) { Debug.Log("착지칸 불가"); return; }
 
         TurnOffHighlighter();
         StartCoroutine(Co_VaultMove((Vector3)landNode.GetCenter, landCell));
@@ -142,13 +132,9 @@ public class NodePlayerController : MonoBehaviour
     IEnumerator Co_VaultMove(Vector3 targetWorld, Vector3Int landCell)
     {
         _isVaulting = true;
-        EnsureLayers();
 
         //NavMeshAgent 간섭 방지
         if (agent) agent.enabled = false;
-
-        //벽 레이어 충돌 무시
-        if (_wallLayer >= 0) Physics.IgnoreLayerCollision(_selfLayer, _wallLayer, true);
 
         Vector3 start = transform.position;
         float flatDist = Vector3.Distance(new Vector3(start.x, 0, start.z), new Vector3(targetWorld.x, 0, targetWorld.z));
@@ -162,25 +148,24 @@ public class NodePlayerController : MonoBehaviour
             yield return null;
         }
 
-        //착지 (위치 보정)
         if (Vector3.Distance(transform.position, targetWorld) > arriveTolerance)
             transform.position = targetWorld;
 
-        //벽 충돌 무시 OFF
-        if (_wallLayer >= 0) Physics.IgnoreLayerCollision(_selfLayer, _wallLayer, false);
-
-        // NavMeshAgent 재활성 및 경로 초기화/동기화
+        //NavMeshAgent 재활성
         if (agent)
         {
             agent.enabled = true;
             agent.ResetPath();
         }
 
-        // 내부 상태/하이라이트 갱신
+        //상태/하이라이트 갱신
         playerVec = landCell;
         TurnOnHighlighter(playerVec, playerStats.movement);
 
         _isVaulting = false;
+
+        //도착했으니 현재 노드 기준 인터랙션 패널 갱신
+        UIManager.GetInstance.TryUpdateInteractionFromNode(GameManager.GetInstance.GetNode(transform.position), playerStats);
     }
 
     private void Awake()
@@ -201,6 +186,7 @@ public class NodePlayerController : MonoBehaviour
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
         GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
+
         playerStats.SetCurrentNode(transform.position);
         GameManager.GetInstance.RegisterEntity(playerStats);
     }
@@ -221,13 +207,9 @@ public class NodePlayerController : MonoBehaviour
             SequentialMove();
         }
 
+        
     }
 
-    // [변경됨] 매니저가 ID를 할당할 수 있도록 Setter 제공
-    public void SetPlayerID(int id)
-    {
-        playerID = id;
-    }
 
     public void OnCancel(InputAction.CallbackContext context)
     {
@@ -458,6 +440,7 @@ public class NodePlayerController : MonoBehaviour
             canNextMove = false;
             curTargetPos = pathQueue.Dequeue();
             agent.SetDestination(curTargetPos);
+            playerStats.NodeUpdates(curTargetPos);
         }
 
         // 모든 경로 소모 시 이동 종료
@@ -479,9 +462,7 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnThrow(InputAction.CallbackContext context)
     {
-
-
-        if (context.canceled && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(ref isThrowMode);
@@ -584,8 +565,8 @@ public class NodePlayerController : MonoBehaviour
         if (playerStats.ConsumeActionPoint(1))
         {
             RemoveHideMode();
-            DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
-            if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
+            //DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
+            //if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
                 SneakAttack(bestNode, targetNodeCenter);
 
             Debug.Log("기습 공격 성공!");
@@ -599,6 +580,7 @@ public class NodePlayerController : MonoBehaviour
     private void SneakAttack(Vector3Int movePos, Vector3Int targetPos)
     {
         agent.SetDestination(movePos);
+        playerStats.NodeUpdates(movePos);
         playerVec = movePos;
         TurnOffHighlighter();
         DiceManager.GetInstance.DelayedRoll(0,6,3, RollDice);
