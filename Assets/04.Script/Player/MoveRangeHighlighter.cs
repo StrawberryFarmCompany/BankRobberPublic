@@ -19,10 +19,9 @@ public class MoveRangeHighlighter : MonoBehaviour
         HashSet<Vector3Int> map = new HashSet<Vector3Int>();
         //start위치까지 포함하여야 하고 음수처리 때문에 값 비교 array는 (range*2)+1
         GetPath(start, start, map,new int[(range*2)+1, (range * 2) + 1], range);
-        Debug.Log("됨");
+        Debug.Log($"{map.Count}");
         foreach (Vector3Int item in map)
         {
-            Debug.Log("생성");
             HighlightNode(item);
         }
 /*        for (int x = -range; x <= range; x++)
@@ -49,7 +48,8 @@ public class MoveRangeHighlighter : MonoBehaviour
         else if (!GameManager.GetInstance.Nodes[currPos].isWalkable) return;
         else if (GameManager.GetInstance.Nodes[currPos] == null) return;
         else if (GameManager.GetInstance.Nodes[currPos].standing != null)
-            if(GameManager.GetInstance.Nodes[currPos].standing.Count > 0) return;
+            if(startPos != currPos)
+                if(GameManager.GetInstance.Nodes[currPos].standing.Count > 0) return;
 
         if (curr > maxRange) return;
         x = 0 >= x ? Mathf.Abs(x) : x + maxRange;
