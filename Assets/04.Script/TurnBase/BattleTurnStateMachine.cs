@@ -8,12 +8,15 @@ using UnityEngine;
 public class BattleTurnStateMachine
 {
     public List<BattleTurnState> turnStates;
-    public PictureUpdate UnitPicUpdate;
-    //리스트로 담긴 했으나
-    //Queue와 동일하게 구현
+    public Action BuffCount;
+    private int currIndex;
+    private int roundCount;
+    public int GetRound { get { return roundCount; } }
     public BattleTurnStateMachine()
     {
         ReleasePointers();
+        roundCount = 1;
+        currIndex = 0;
         turnStates = new List<BattleTurnState>();
     }
     private void ReleasePointers()
@@ -35,11 +38,17 @@ public class BattleTurnStateMachine
             {
                 //TODO : 전투 패배 이벤트 실행 필요
             }
-            BattleTurnState last = turnStates[0];
-            last.Exit();
-            RemoveUnit(last);
-            turnStates.Add(last);
-            turnStates[0].Enter();
+
+            turnStates[currIndex].Exit();
+            currIndex = (currIndex + 1);
+            if(currIndex >= turnStates.Count)
+            {
+                currIndex %= turnStates.Count;
+                roundCount++;
+            }
+            BuffCount?.Invoke();
+            turnStates[currIndex].Enter();
+
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
         }
@@ -55,11 +64,29 @@ public class BattleTurnStateMachine
     /// <param name="OnStarts">해당 유닛의 턴이 되었을때 실행 될 함수 묶음</param>
     /// <param name="OnEnd">해당 유닛의 턴이 종료되었을때 실행 될 함수 묶음</param>
     /// <returns></returns>
-    public BattleTurnState AddUnit(bool isEnemy, Action OnStarts, Action OnEnd)
+    public BattleTurnState AddUnit(bool isEnemy, TurnBehaviour OnStarts, TurnBehaviour OnEnd)
     {
         BattleTurnState state = new BattleTurnState();
+        state.OnStart += OnStarts;
+        state.OnEnd += OnStarts;
         turnStates.Add(state);
-        MergePlayerTurn();
+        if (!isEnemy) MergePlayerTurn();
+        return state;
+    }
+    public BattleTurnState InsertUnit(bool isEnemy, TurnBehaviour OnStarts, TurnBehaviour OnEnd,int order)
+    {
+        BattleTurnState state = new BattleTurnState();
+
+        state.OnStart += OnStarts;
+        state.OnEnd += OnStarts;
+
+        turnStates.Insert(order, state);
+
+        int targetIndex = turnStates.IndexOf(state);
+
+        if (targetIndex <= currIndex) currIndex -= 1;
+
+        if(!isEnemy)MergePlayerTurn();
         return state;
     }
     /// <summary>
@@ -70,6 +97,8 @@ public class BattleTurnStateMachine
     {
         state.OnEnd = null;
         state.OnStart = null;
+        int targetIndex = turnStates.IndexOf(state);
+        if (targetIndex <= currIndex) currIndex -= 1;
         turnStates.Remove(state);
         MergePlayerTurn();
     }
