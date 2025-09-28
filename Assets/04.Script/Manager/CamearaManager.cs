@@ -21,12 +21,10 @@ public class CameraManager : MonoBehaviour
     }
     private CinemachineBrain brain;
     [SerializeField] private GameObject cam;
-    [SerializeField] private CinemachineVirtualCamera freeViewCam;
+    [SerializeField] private CinemachineFreeLook fcam;
 
-    [Header("플레이어 캐릭터")]
-    public GameObject player1;
-    public GameObject player2;
-    public GameObject player3;
+    [Header("팔로우 타겟")]
+    [SerializeField] private Transform followTarget; 
 
     [Header("플레이어 위치로 이동 시 조정값")]
     public Vector3 offset = new Vector3(0, 6, -5);
@@ -54,7 +52,10 @@ public class CameraManager : MonoBehaviour
     {
         if (context.started && isCompleteTransition && IsReadyTransition)
         {
-            StartCoroutine(FreeViewTransitionCoroutine(NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject));
+            fcam.Follow = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform;
+            fcam.LookAt = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform;
+            followTarget.position = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform.position;
+            //StartCoroutine(FreeViewTransitionCoroutine(NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject));
         }
 
         if (context.started && isCompleteTransition)
@@ -76,9 +77,9 @@ public class CameraManager : MonoBehaviour
         float duration = brain.m_DefaultBlend.m_Time;
         float elapsed = 0f;
 
-        Vector3 startPos = freeViewCam.transform.position;
+        Vector3 startPos = fcam.transform.position;
         Vector3 targetPos = player.transform.position + offset;
-        Quaternion startRot = freeViewCam.transform.rotation;
+        Quaternion startRot = fcam.transform.rotation;
 
         isCompleteTransition = false;
 
@@ -88,28 +89,28 @@ public class CameraManager : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / duration);
 
             // 위치 보간
-            freeViewCam.transform.position = Vector3.Lerp(startPos, targetPos, t);
+            fcam.transform.position = Vector3.Lerp(startPos, targetPos, t);
 
             // 회전 보간 (x축은 고정, y축만 보간)
-            Vector3 lookDir = player.transform.position - freeViewCam.transform.position;
+            Vector3 lookDir = player.transform.position - fcam.transform.position;
             if (lookDir.sqrMagnitude > 0.001f)
             {
                 Quaternion targetRot = Quaternion.LookRotation(lookDir, Vector3.up);
 
                 // x축 고정: targetRot의 EulerAngles에서 x를 현재 rotation.x로 유지
                 Vector3 targetEuler = targetRot.eulerAngles;
-                targetEuler.x = freeViewCam.transform.rotation.eulerAngles.x;
+                targetEuler.x = fcam.transform.rotation.eulerAngles.x;
 
                 Quaternion fixedTargetRot = Quaternion.Euler(targetEuler);
 
-                freeViewCam.transform.rotation = Quaternion.Slerp(startRot, fixedTargetRot, t);
+                fcam.transform.rotation = Quaternion.Slerp(startRot, fixedTargetRot, t);
             }
 
             yield return null;
         }
 
         // 보정 (마지막에 정확히 위치 고정)
-        freeViewCam.transform.position = targetPos;
+        fcam.transform.position = targetPos;
         isCompleteTransition = true;
     }
 

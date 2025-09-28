@@ -16,11 +16,8 @@ public class NodePlayerController : MonoBehaviour
     public EntityData playerData;
     public EntityStats playerStats;
 
-    // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
-    public int playerID { get; private set; }
-
     private Vector3Int playerVec;
-    private bool isHighlightOn = false;
+    public bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
     private bool characterTurn = false;
@@ -201,6 +198,7 @@ public class NodePlayerController : MonoBehaviour
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
         GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
+
         playerStats.SetCurrentNode(transform.position);
         GameManager.GetInstance.RegisterEntity(playerStats);
     }
@@ -221,13 +219,9 @@ public class NodePlayerController : MonoBehaviour
             SequentialMove();
         }
 
+        
     }
 
-    // [변경됨] 매니저가 ID를 할당할 수 있도록 Setter 제공
-    public void SetPlayerID(int id)
-    {
-        playerID = id;
-    }
 
     public void OnCancel(InputAction.CallbackContext context)
     {
@@ -458,6 +452,7 @@ public class NodePlayerController : MonoBehaviour
             canNextMove = false;
             curTargetPos = pathQueue.Dequeue();
             agent.SetDestination(curTargetPos);
+            playerStats.NodeUpdates(curTargetPos);
         }
 
         // 모든 경로 소모 시 이동 종료
@@ -479,9 +474,7 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnThrow(InputAction.CallbackContext context)
     {
-
-
-        if (context.canceled && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(ref isThrowMode);
@@ -584,8 +577,8 @@ public class NodePlayerController : MonoBehaviour
         if (playerStats.ConsumeActionPoint(1))
         {
             RemoveHideMode();
-            DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
-            if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
+            //DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
+            //if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
                 SneakAttack(bestNode, targetNodeCenter);
 
             Debug.Log("기습 공격 성공!");
@@ -599,6 +592,7 @@ public class NodePlayerController : MonoBehaviour
     private void SneakAttack(Vector3Int movePos, Vector3Int targetPos)
     {
         agent.SetDestination(movePos);
+        playerStats.NodeUpdates(movePos);
         playerVec = movePos;
         TurnOffHighlighter();
         DiceManager.GetInstance.DelayedRoll(0,6,3, RollDice);
