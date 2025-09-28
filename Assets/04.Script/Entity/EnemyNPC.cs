@@ -20,6 +20,11 @@ public class EnemyNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
     }
 
+    public void Update()
+    {
+        
+    }
+
     protected virtual void Start()
     {
         stats.currNode = GameManager.GetInstance.GetNode(transform.position);
@@ -118,7 +123,7 @@ public class EnemyNPC : MonoBehaviour
         Vector3 start = transform.position + Vector3.up * 1.5f;
         Vector3 end = target.currNode.GetCenter + Vector3.up * 1.5f;
         Vector3 dir = (end - start).normalized;
-
+        Debug.DrawRay(start, dir * Vector3.Distance(start, end), Color.red, 10f);//씬창 확인용
         if (Physics.Raycast(start, dir, out RaycastHit hit, Vector3.Distance(start, end), obstacleMask))
         {
             // 맞은 게 플레이어면 Line of Sight OK
