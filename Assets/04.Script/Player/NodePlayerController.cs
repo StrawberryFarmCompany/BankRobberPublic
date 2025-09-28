@@ -178,7 +178,7 @@ public class NodePlayerController : MonoBehaviour
 
         // 내부 상태/하이라이트 갱신
         playerVec = landCell;
-        TurnOnHighlighter(playerVec, playerStats.moveRange);
+        TurnOnHighlighter(playerVec, playerStats.movement);
 
         _isVaulting = false;
     }
