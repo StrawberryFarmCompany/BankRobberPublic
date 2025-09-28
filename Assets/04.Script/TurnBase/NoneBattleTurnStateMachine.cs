@@ -9,79 +9,105 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// 잠입턴 스테이트머신
 /// </summary>
-public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateBase>
+public class NoneBattleTurnStateMachine
 {
     NoneBattleTurnStateBase currState;
     public TurnTypes GetCurrState() => currState.StateType();
-    private Dictionary<TurnTypes,NoneBattleTurnStateBase> states;
-    
+    private NoneBattleTurnStateBase[] states;
+    public Action BuffCount;
+    private int round = 1;
+    public int currRound { get { return round; } }
     public void ChangeState()
     {
         currState.Exit();
-        currState = states[(TurnTypes)(((int)GetCurrState()+1) % (Enum.GetValues(typeof(TurnTypes)).Length))];
+        int typeLen = Enum.GetValues(typeof(TurnTypes)).Length;
+        if ((int)GetCurrState() + 1 > typeLen) round++;
+        currState = states[(((int)GetCurrState()+1) % (typeLen))];
+        Debug.Log(GetCurrState());
+        BuffCount?.Invoke();
         currState.Enter();
     }
-    public void ChangeState(NoneBattleTurnStateBase next)
+    public void ForceSet(int index)
     {
-        if (currState == next) return;
+        round++;
         currState.Exit();
-        currState = next;
+        currState = states[index];
         currState.Enter();
     }
-    public void ForceSet(NoneBattleTurnStateBase next)
+    /// <summary>
+    /// 스크립트를 Reset함는 함수
+    /// </summary>
+    public void OnSceneChange()
     {
-        currState.Exit();
-        currState = next;
-        currState.Enter();
-    }
-    public NoneBattleTurnStateBase FindState(TurnTypes type)
-    {
-        return states[type];
+        round = 1;
     }
     public NoneBattleTurnStateMachine(TurnTypes startType = TurnTypes.ally)
     {
-        states = new Dictionary<TurnTypes, NoneBattleTurnStateBase>();
-        for (int i = 0; i < Enum.GetValues(typeof(TurnTypes)).Length; i++)
+        ReleaseDelegateChain();
+        states = new NoneBattleTurnStateBase[Enum.GetValues(typeof(TurnTypes)).Length];
+        for (int i = 0; i < states.Length; i++)
         {
-            states.TryAdd((TurnTypes)i, NoneBattleTurnStateBase.Factory((TurnTypes)i));
+            states[i] = (NoneBattleTurnStateBase.Factory((TurnTypes)i));
         }
-        currState = states[startType];
+        states[(int)TurnTypes.enemy].StartPointer += NPCDefaultEnterPoint;
+        states[(int)TurnTypes.neutral].StartPointer += NPCDefaultEnterPoint;
+        currState = states[(int)startType];
+        OnSceneChange();
+    }
+    private void ReleaseDelegateChain()
+    {
+        if (states == null) return;
+
+        for (int i = 0; i < states.Length; i++)
+        {
+            if (states[i] == null) continue;
+            states[i].EndPointer = null;
+            states[i].StartPointer = null;
+        }
+    }
+    
+    public void NPCDefaultEnterPoint()
+    {
+        TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
     }
     /// <summary>
     /// 턴 시작 이벤트를 추가하는 함수
     /// </summary>
-    /// <param name="startType">대상 팀</param>
+    /// <param name="targetType">대상 팀</param>
     /// <param name="pointer">대상 함수</param>
-    public void AddStartPointer(TurnTypes startType,TurnBehaviour pointer)
+    public void AddStartPointer(TurnTypes targetType,TurnBehaviour pointer)
     {
-        if (states.ContainsKey(startType))
+        if (states[(int)targetType].StateType() == targetType)
         {
-            if (GetCurrState() == startType)
+            if (GetCurrState() == targetType)
             {
                 pointer?.Invoke();
             }
-            states[startType].StartPointer += pointer;
+            states[(int)targetType].StartPointer += pointer;
         }
         else
         {
-            Debug.LogError($"{startType} 해당 타입이 딕셔너리에 있지 않습니다");
+            Debug.LogError($"{targetType} 해당 타입과 인덱스가 일치하지 않습니다");
         }
     }
 
     /// <summary>
     /// 턴 종료 이벤트를 추가하는 함수
     /// </summary>
-    /// <param name="startType">대상 팀</param>
+    /// <param name="targetType">대상 팀</param>
     /// <param name="pointer">대상 함수</param>
-    public void AddEndPointer(TurnTypes startType,TurnBehaviour pointer)
+    public void AddEndPointer(TurnTypes targetType,TurnBehaviour pointer)
     {
-        if (states.ContainsKey(startType))
+        
+        if (states[(int)targetType].StateType() == targetType)
         {
-            states[startType].EndPointer += pointer;
+            states[(int)targetType].EndPointer += pointer;
         }
         else
         {
-            Debug.LogError($"{startType} 해당 타입이 딕셔너리에 있지 않습니다");
+            Debug.LogError($"{targetType} 해당 타입과 인덱스가 일치하지 않습니다");
         }
     }
 
@@ -90,15 +116,15 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
     /// </summary>
     /// <param name="startType">대상 팀</param>
     /// <param name="pointer">대상 함수</param>
-    public void RemoveStartPointer(TurnTypes startType,TurnBehaviour pointer)
+    public void RemoveStartPointer(TurnTypes targetType,TurnBehaviour pointer)
     {
-        if (states.ContainsKey(startType))
+        if (states[(int)targetType].StateType() == targetType)
         {
-            states[startType].StartPointer -= pointer;
+            states[(int)targetType].StartPointer -= pointer;
         }
         else
         {
-            Debug.LogError($"{startType} 해당 타입이 딕셔너리에 있지 않습니다");
+            Debug.LogError($"{targetType} 해당 타입과 인덱스가 일치하지 않습니다");
         }
     }
 
@@ -108,15 +134,15 @@ public class NoneBattleTurnStateMachine : IStateMachineBase<NoneBattleTurnStateB
     /// </summary>
     /// <param name="startType">대상 팀</param>
     /// <param name="pointer">대상 함수</param>
-    public void RemoveEndPointer(TurnTypes startType,TurnBehaviour pointer)
+    public void RemoveEndPointer(TurnTypes targetType, TurnBehaviour pointer)
     {
-        if (states.ContainsKey(startType))
+        if (states[(int)targetType].StateType() == targetType)
         {
-            states[startType].EndPointer -= pointer;
+            states[(int)targetType].EndPointer -= pointer;
         }
         else
         {
-            Debug.LogError($"{startType} 해당 타입이 딕셔너리에 있지 않습니다");
+            Debug.LogError($"{targetType} 해당 타입과 인덱스가 일치하지 않습니다");
         }
     }
 

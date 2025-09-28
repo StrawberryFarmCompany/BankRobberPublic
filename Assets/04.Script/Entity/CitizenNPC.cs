@@ -48,8 +48,7 @@ public class CitizenNPC : NeutralNPC
             Debug.Log("대기상태");
             ChangeToIdle();
         }
-
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(base.CalculateBehaviour, 0.1f));
+        base.CalculateBehaviour();
     }
 
     public void ChangeToIdle()

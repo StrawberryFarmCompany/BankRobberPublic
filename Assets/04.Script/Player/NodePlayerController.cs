@@ -29,6 +29,7 @@ public class NodePlayerController : MonoBehaviour
     [SerializeField] Camera mainCamera;
 
     [SerializeField] private MoveRangeHighlighter highlighter;
+    [SerializeField] private Gun gun;
 
     public bool isHide;
     public bool isAiming;
@@ -174,6 +175,7 @@ public class NodePlayerController : MonoBehaviour
     {
         playerStats = new EntityStats(playerData);
         if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (gun == null)  gun = GetComponent<Gun>();
         isHide = true;
         isEndTurn = false;
         StartMode(ref isMoveMode);
@@ -301,7 +303,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log("원거리 공격");
             Vector3 mousePos = Mouse.current.position.ReadValue();
-            RangeAttack(mousePos);
+            CheckRangeAttack(mousePos);
         }
 
         if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode))
@@ -665,23 +667,46 @@ public class NodePlayerController : MonoBehaviour
             UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("원거리 공격 모드 활성화");
             StartMode(ref isRangeAttackMode);
+            TurnOnHighlighter(0);
         }
     }
 
-    private void RangeAttack(Vector3 mouseScreenPos)
+    private void CheckRangeAttack(Vector3 mouseScreenPos)
     {
-        if (CheckRangeAndEntity(GetNodeVector3ByRay(mouseScreenPos), (int)playerStats.attackRange))
+        Vector3Int targetPos = GetNodeVector3ByRay(mouseScreenPos);
+
+        Vector3 start = transform.position;
+        Vector3 target = targetPos;
+
+        if (NavMesh.Raycast(start, target, out NavMeshHit hit, NavMesh.AllAreas))
         {
-            if (playerStats.ConsumeActionPoint(1))
-            {
-                UIManager.GetInstance.ShowActionPanel(true);
-                if (isAiming)
-                {
-                    RemoveAiming();
-                }
-            }
+            Debug.Log("무언가로 막혀있음");
+            return;
         }
+
+        if (!CheckRangeAndEntity(targetPos, (int)playerStats.attackRange))
+        {
+            Debug.Log("엔티티가 없엉");
+            return;
+            
+        }
+
+        if (!playerStats.ConsumeActionPoint(1))
+        {
+            Debug.Log("행동 포인트가 부족");
+            return;
+        }
+
+        gun.Shoot(targetPos, hitBonus);
+        UIManager.GetInstance.ShowActionPanel(true);
+        if (isAiming)
+        {
+            RemoveAiming();
+        }
+        TurnOffHighlighter();
     }
+        
+    
 
     public void OnPerkAction(InputAction.CallbackContext context)
     {
@@ -713,7 +738,6 @@ public class NodePlayerController : MonoBehaviour
             Debug.Log("유효하지 않은 게임 페이즈입니다!");
             return false;
         }
-
     }
 
     public void ResetPlayer() 
@@ -888,33 +912,6 @@ public class NodePlayerController : MonoBehaviour
         int cost = Mathf.Max(dx, dz);
 
         return cost;
-    }
-
-    public bool RangeAttackActionCheck(Vector3Int targetPos /*, 타겟 엔티티*/)
-    {
-        int hitAdjustment;
-        if (CheckRange(targetPos, 5))
-        {
-            hitAdjustment = 0;
-        }
-        else if (CheckRange(targetPos, 9))
-        {
-            hitAdjustment = -2;
-        }
-        else if (CheckRange(targetPos, 20))
-        {
-            hitAdjustment = -5;
-        }
-        else
-        {
-            hitAdjustment = -13;
-        }
-
-        hitAdjustment += hitBonus;
-
-        return true;
-
-        //return (/*3d6 다이스*/ (playerCondition.playerStats.attackRange + hitAdjustment - /*타겟 엔티티의 회피율*/)>)
     }
 
     public void EndAction()

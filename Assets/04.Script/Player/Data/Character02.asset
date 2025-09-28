@@ -23,7 +23,7 @@ MonoBehaviour:
   curHp: 5
   evasionRate: 3
   accuracyModifier: 3
-  attackRange: 2
+  attackRange: 50
   detectingDistance: 0
   isCombat: 0
   sabotage: 1
