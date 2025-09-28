@@ -4,7 +4,6 @@ using UnityEngine.AI;
 public class CitizenNPC : NeutralNPC
 {
     public bool isDetection = false;
-    public int securityLevel = 1;
     [SerializeField] private Vector3 exitArea;
 
     protected override void Awake()
@@ -31,7 +30,7 @@ public class CitizenNPC : NeutralNPC
             ChangeToDead();
         }
 
-        else if (securityLevel >= 3)//경계수준이 3레벨 이상이면
+        else if (GameManager.GetInstance.securityData.GetSecLevel >= 3)//경계수준이 3레벨 이상이면
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();

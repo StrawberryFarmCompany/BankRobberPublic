@@ -4,7 +4,6 @@ using UnityEngine.AI;
 
 public class PatrolEnemyNPC : EnemyNPC
 {
-    public int securityLevel = 1;
     public bool departurePoint = true;       // 출발 지점
     public bool destinationPoint = false;    // 도착 지점
     public bool isNoise = false;             // 소음 감지
@@ -44,7 +43,7 @@ public class PatrolEnemyNPC : EnemyNPC
         {
             IdleRotation();
         }
-        if (securityLevel == 1)
+        if (GameManager.GetInstance.securityData.GetSecLevel == 1)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
@@ -85,7 +84,7 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        else if (securityLevel >= 2)
+        else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
         {
             TryAttack();
             Debug.Log("죽어잇!");
