@@ -34,6 +34,8 @@ public class CameraManager : MonoBehaviour
     private bool isRotationMode = false;
     private bool canFollowMove = false;
     private bool IsReadyTransition;
+
+    public bool isFreeView;
     private void Awake()
     {
         if (instance == null)
@@ -54,7 +56,7 @@ public class CameraManager : MonoBehaviour
         {
             fcam.Follow = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform;
             fcam.LookAt = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform;
-            followTarget.position = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform.position;
+            isFreeView = false;
             //StartCoroutine(FreeViewTransitionCoroutine(NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject));
         }
 
