@@ -171,8 +171,7 @@ public class EntityStats
 
     public void NodeUpdates(Vector3 pos)
     {
-        GameManager.GetInstance.GetVecInt(pos);
-        Vector3Int tempPos = GameManager.GetInstance.GetVecInt(pos);
+        Vector3Int tempPos = GameManager.GetInstance.GetNode(GameManager.GetInstance.GetVecInt(pos)).GetCenter;
 
         if (currNode.GetCenter != tempPos)
         {
@@ -181,5 +180,4 @@ public class EntityStats
             currNode.AddCharacter(this);
         }
     }
-
 }
