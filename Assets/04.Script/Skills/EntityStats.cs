@@ -15,8 +15,8 @@ public class EntityStats
     public int movementSpeed;
     public int movement;
     public int maxHp;
-    private int curHp;
-    public int CurHp
+    private float curHp;
+    public float CurHp
     { 
         get 
         { 
@@ -137,7 +137,7 @@ public class EntityStats
         Debug.Log($"Run Activated: {movement}");
     }
 
-    public void Damaged(int damage)
+    public void Damaged(float damage)
     {
         CurHp -= damage;
         if (CurHp <= 0)
