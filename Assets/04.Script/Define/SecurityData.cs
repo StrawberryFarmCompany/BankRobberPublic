@@ -6,7 +6,6 @@ public class SecurityData
 {
     private int secLevel;
     public int GetSecLevel { get { return secLevel; } }
-
     private static IBuff battleSec;
     IBuff currSec;
 

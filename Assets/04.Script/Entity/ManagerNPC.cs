@@ -1,13 +1,14 @@
 using UnityEngine;
-
+using System.Collections;
 public class ManagerNPC : NeutralNPC
 {
     public bool canSeeAlly;
     public int SecLv;
 
-    protected override void Awake()
+    protected override IEnumerator Start()
     {
-        base.Awake();
+        StartCoroutine(base.Start());
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태 ManagerIdleState)
         nfsm = new NeutralStateMachine(this, NeutralStates.ManagerIdleState);
 
@@ -47,7 +48,7 @@ public class ManagerNPC : NeutralNPC
 
         // 경계레벨이 3일 때
         //else if (GameManager.GetInstance.securityData.GetSecLevel == 3)
-        else if (SecLv == 3)
+        else if (stats.secData.GetSecLevel == 3)
         {
             OnPlayerDetected();
         }
