@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class HoldEnemyNPC : EnemyNPC
 {
@@ -13,9 +14,10 @@ public class HoldEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
     Gun gun;
-    protected override void Awake()
+    protected override IEnumerator Start()
     {
-        base.Awake();
+        StartCoroutine(base.Start());
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
         gun = GetComponent<Gun>();
     }
@@ -37,7 +39,7 @@ public class HoldEnemyNPC : EnemyNPC
             ChangeToDead();//사망
         }
 
-        else if (GameManager.GetInstance.securityData.GetSecLevel == 1)//경계수준 1레벨
+        else if (stats.secData.GetSecLevel == 1)//경계수준 1레벨
         {
             if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
             {
@@ -68,8 +70,7 @@ public class HoldEnemyNPC : EnemyNPC
                 isNoisePlace = false;//한 턴 끝나고 isNoisPlace false만들기
             }
         }
-
-        else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
+        else if (stats.secData.GetSecLevel >= 2)
         {
             TryAttack();
             Debug.Log("죽자 준게이야");

@@ -194,7 +194,6 @@ namespace BuffDefine
             {
                 level = 3;
             }
-            GameManager.GetInstance.securityData.SetSecLevel(level);
         }
 
         public void CountDuration()
