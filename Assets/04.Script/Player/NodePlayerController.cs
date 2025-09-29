@@ -231,7 +231,7 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && isMoveMode && !isMoving)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             Move(mousePos);
@@ -318,9 +318,15 @@ public class NodePlayerController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetNode(hit.point) == null || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
+            if (GameManager.GetInstance.GetNode(hit.point) == null)
             {
-                Debug.Log("갈 수 없는 곳이거나, 노드가 아니거나, 엔티티가 있다.");
+                Debug.Log("노드가 아니다.");
+                return;
+            }
+
+            if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
+            {
+                Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
                 return;
             }
 

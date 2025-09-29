@@ -137,7 +137,7 @@ public class FreePOV : MonoBehaviour
     {
         if (context.performed)
         {
-            yawDirection = -1;
+            yawDirection = 1;
         }
 
         if (context.canceled)
@@ -150,7 +150,7 @@ public class FreePOV : MonoBehaviour
     {
         if (context.performed)
         {
-            yawDirection = 1;
+            yawDirection = -1;
         }
 
         if(context.canceled)
