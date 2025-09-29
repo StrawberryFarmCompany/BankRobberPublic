@@ -17,12 +17,14 @@ public class ManagerNPC : NeutralNPC
 
     protected override void FixedUpdate()
     {
+        if (entityData == null) return;
         base.FixedUpdate();
     }
 
     protected override void Update()
     {
         //현재 상태 실행
+        if (nfsm == null) return;
         nfsm.Current?.Execute();
     }
 

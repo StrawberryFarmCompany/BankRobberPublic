@@ -24,7 +24,7 @@ public class ResourceManager : SingleTon<ResourceManager>
     }
     protected void SetBuffData()
     {
-        LoadAsync<TextAsset>("Sheet", (cb) =>
+        LoadAsync<TextAsset>("BuffStatus", (cb) =>
         {
             DataWrapper<ParsingBuffData> data = JsonUtility.FromJson<DataWrapper<ParsingBuffData>>(cb.text);
             buffDatas = new Dictionary<ushort, BuffData>();

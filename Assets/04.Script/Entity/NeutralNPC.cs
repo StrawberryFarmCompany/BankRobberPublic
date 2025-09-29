@@ -17,6 +17,7 @@ public class NeutralNPC : MonoBehaviour
     }
     protected virtual void FixedUpdate()
     {
+        if (stats == null) return;
         stats.NodeUpdates(transform.position);
     }
 
