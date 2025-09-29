@@ -73,12 +73,17 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
+            target.movementSpeed += Data.StatusValue;
+            target.movement += Data.StatusValue;
         }
 
         public void ReleaseBuff()
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            target.movementSpeed -= Data.StatusValue;
+            target.movement -= Data.StatusValue;
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -114,6 +119,8 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -149,6 +156,7 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -164,35 +172,34 @@ namespace BuffDefine
     {
         private BuffData data;
         public BuffData Data { get { return data; } }
-        private EntityStats target;
-        public EntityStats Target { get { return target; } }
-
-        private int duration;
+        public EntityStats Target { get { return null; } }
         public SecurityLevel(BuffData data, EntityStats target)
         {
             this.data = data;
-            this.target = target;
         }
 
         public void RegistBuff()
         {
-            GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
-            GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
+
         }
 
         public void ReleaseBuff()
         {
-            GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
-            GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            ushort level = 0;
+            if (data.StatusValue < ushort.MaxValue)
+            {
+                level = (ushort)data.StatusValue;
+            }
+            else
+            {
+                level = 3;
+            }
+            GameManager.GetInstance.securityData.SetSecLevel(level);
         }
 
         public void CountDuration()
         {
-            duration -= 1;
-            if (duration <= 0)
-            {
-                ReleaseBuff();
-            }
+            
         }
     }
     public class Aiming : IBuff
@@ -213,12 +220,14 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount += CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount += CountDuration;
+            
         }
 
         public void ReleaseBuff()
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -254,6 +263,7 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -289,6 +299,7 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -324,6 +335,7 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -359,6 +371,7 @@ namespace BuffDefine
         {
             GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
+            target.RemoveBuff(this);
         }
 
         public void CountDuration()

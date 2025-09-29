@@ -19,11 +19,10 @@ public class GunData : ScriptableObject
     public GunType type;
 
     public int maxRounds;
-    public int useRoundsPerShot;    //한 번 쏠 때 쓰는 탄환 양
+    //public int useRoundsPerShot;    //한 번 쏠 때 쓰는 탄환 양
     public int bulletPerOneShot;        //격발 시 발사되는 탄환수
     public int noise;
     public float damagePerOneBulletMultiplier; //발당 데미지: 2d6 * 계수, 총데미지: 2d6 * 계수 * 탄환수
-    public int accuracy;                // 임시 명중률 쓸지 안 쓸지는 보류
     //public int minBullerSpread;         //최소 탄 퍼짐 정도
     //public int maxBulletSpread;         // min = 1, max =3 이라면 명중치가 -1 ~ -3 사이 값을 적용된다.
 
@@ -34,4 +33,5 @@ public class GunData : ScriptableObject
     public int thirdRange;
     public int thirdRangeAccuracy;
     public int awayRangeAccuracy;
+
 }

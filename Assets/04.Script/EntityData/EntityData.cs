@@ -38,6 +38,5 @@ public class EntityData : ScriptableObject
     public int maxRerollCount;     //최대 리롤 횟수
     public int curRerollCount;     //현재 리롤 횟수
 
-    public int moveRange;
     public Sprite portrait;
 }

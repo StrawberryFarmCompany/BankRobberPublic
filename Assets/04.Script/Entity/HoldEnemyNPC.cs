@@ -8,7 +8,6 @@ public class HoldEnemyNPC : EnemyNPC
     bool isNoisePlace = false;
     bool isHomePlace = true;
     bool allySpottedStatus = false;
-    public int securityLevel = 1;
     int countTurn = 0;
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 noiseLocation;
@@ -38,7 +37,7 @@ public class HoldEnemyNPC : EnemyNPC
             ChangeToDead();//사망
         }
 
-        else if (securityLevel == 1)//경계수준 1레벨
+        else if (GameManager.GetInstance.securityData.GetSecLevel == 1)//경계수준 1레벨
         {
             if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
             {
@@ -70,7 +69,7 @@ public class HoldEnemyNPC : EnemyNPC
             }
         }
 
-        else if (securityLevel >= 2)
+        else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
         {
             TryAttack();
             Debug.Log("죽자 준게이야");

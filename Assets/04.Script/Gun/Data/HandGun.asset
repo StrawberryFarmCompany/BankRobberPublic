@@ -17,9 +17,13 @@ MonoBehaviour:
     \uC804\uC124\uC758 \uCD1D"
   type: 0
   maxRounds: 5
-  noise: 3
-  damageMultiplier: 1
-  Accuracy: 3
   bulletPerOneShot: 1
-  minBullerSpread: 0
-  maxBulletSpread: 0
+  noise: 3
+  damagePerOneBulletMultiplier: 1
+  firstRange: 5
+  firstRangeAccuracy: 0
+  secondRange: 9
+  secondRangeAccuracy: -2
+  thirdRange: 20
+  thirdRangeAccuracy: -5
+  awayRangeAccuracy: -13
