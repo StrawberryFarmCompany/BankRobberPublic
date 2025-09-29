@@ -20,13 +20,13 @@ public class EnemyNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
     }
 
-    public void Update()
+    protected virtual void Update()
     {
-        
+
     }
 
     protected virtual void Start()
-    {
+    {        
         stats.currNode = GameManager.GetInstance.GetNode(transform.position);
     }
 
@@ -148,4 +148,6 @@ public class EnemyNPC : MonoBehaviour
             Debug.Log($"{stats.characterName} → {target.characterName} 빗나감!");
         }
     }
+
+
 }
