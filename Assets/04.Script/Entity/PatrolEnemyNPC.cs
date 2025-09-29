@@ -10,6 +10,7 @@ public class PatrolEnemyNPC : EnemyNPC
     public bool isNoise = false;             // 소음 감지
     public bool isArrivedNoisePlace = false; // 소음 발생 지역 도착
     public bool isdoridori = false;
+    public NavMeshAgent agent;
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
@@ -222,7 +223,7 @@ public class PatrolEnemyNPC : EnemyNPC
     }
     public void Move(Vector3 pos)
     {
-
+        if (isMoving) return;
         Vector3Int targetPos = GameManager.GetInstance.GetVecInt(pos);
 
         if (GameManager.GetInstance.GetNode(targetPos) == null)
@@ -248,9 +249,6 @@ public class PatrolEnemyNPC : EnemyNPC
         // 이동력만큼만 큐에 넣기
         foreach (var step in path)
         {
-            Debug.Log("이동");
-            Debug.Log($"{stats.movement}");
-
             if (stats.ConsumeMovement(1))
             {
                 pathQueue.Enqueue((Vector3Int)step);
@@ -353,7 +351,7 @@ public class PatrolEnemyNPC : EnemyNPC
         {
             canNextMove = false;
             curTargetPos = pathQueue.Dequeue();
-            patrolState.agent.SetDestination(curTargetPos);
+            agent.SetDestination(curTargetPos);
             stats.NodeUpdates(curTargetPos);
         }
 
