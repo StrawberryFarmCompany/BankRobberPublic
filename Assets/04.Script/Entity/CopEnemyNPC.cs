@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections;
 public class CopEnemyNPC : EnemyNPC
 {
     bool isDetection = false;
@@ -8,7 +8,6 @@ public class CopEnemyNPC : EnemyNPC
 
     protected override IEnumerator Start()
     {
-        base.Awake();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, EnemyStates.CopEnemyChaseState);

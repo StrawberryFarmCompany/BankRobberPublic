@@ -9,6 +9,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using BuffDefine;
 public class ResourceManager : SingleTon<ResourceManager>
 {
+    public bool IsLoaded { get { return preloaded != null && buffDatas != null; } }
     private Dictionary<string, object> preloaded;
     public Dictionary<string, object> GetPreLoad { get { return preloaded; } }
     private Dictionary<ushort, BuffData> buffDatas;
@@ -19,13 +20,15 @@ public class ResourceManager : SingleTon<ResourceManager>
         base.Init();
         preloaded = new Dictionary<string, object>();
         buffDatas = new Dictionary<ushort, BuffData>();
+        SetBuffData();
     }
     protected void SetBuffData()
     {
         LoadAsync<TextAsset>("Sheet", (cb) =>
         {
-            ParsingBuffData[] data = JsonUtility.FromJson<ParsingBuffData[]>(cb.text);
-            foreach (ParsingBuffData item in data)
+            DataWrapper<ParsingBuffData> data = JsonUtility.FromJson<DataWrapper<ParsingBuffData>>(cb.text);
+            buffDatas = new Dictionary<ushort, BuffData>();
+            foreach (ParsingBuffData item in data.data)
             {
                 buffDatas.Add(item.key, new BuffData(item));
             }
@@ -178,4 +181,8 @@ public class ResourceManager : SingleTon<ResourceManager>
         }
     }
     #endregion
+}
+public class DataWrapper<T>
+{
+    public T[] data;
 }

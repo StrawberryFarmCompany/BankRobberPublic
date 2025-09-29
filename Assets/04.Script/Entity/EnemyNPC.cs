@@ -20,6 +20,7 @@ public class EnemyNPC : MonoBehaviour
         stats = new EntityStats(entityData);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
+        stats.currNode = GameManager.GetInstance.GetNode(transform.position);
     }
 
     protected virtual void Update()
@@ -27,10 +28,6 @@ public class EnemyNPC : MonoBehaviour
 
     }
 
-    protected virtual void Start()
-    {        
-        stats.currNode = GameManager.GetInstance.GetNode(transform.position);
-    }
 
     protected virtual void FixedUpdate()
     {
