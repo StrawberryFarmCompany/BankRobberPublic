@@ -1,26 +1,23 @@
 using NodeDefines;
 using UnityEngine;
-
+using System.Collections;
 public class NeutralNPC : MonoBehaviour
 {
     public EntityData entityData;
     protected EntityStats stats;
     protected NeutralStateMachine nfsm;
 
-    protected virtual void Awake()
+    protected virtual IEnumerator Start()
     {
+        yield return new WaitUntil(()=> ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
-
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
-    }
-
-    protected virtual void Start()
-    {
         stats.currNode = GameManager.GetInstance.GetNode(transform.position);
     }
     protected virtual void FixedUpdate()
     {
+        if (stats == null) return;
         stats.NodeUpdates(transform.position);
     }
 
