@@ -79,7 +79,7 @@ class GameManager : SingleTon<GameManager>
     protected override void Reset()
     {
         base.Reset();
-
+        SecurityData.Reset();
         nodes.Clear();
         noneBattleTurn.OnSceneChange();
         battleTurn = new BattleTurnStateMachine();

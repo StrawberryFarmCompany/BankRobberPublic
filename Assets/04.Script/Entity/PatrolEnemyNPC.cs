@@ -23,17 +23,13 @@ public class PatrolEnemyNPC : EnemyNPC
     bool isMoving;
     bool canNextMove;
 
-    protected override void Awake()
+    protected override IEnumerator Start()
     {
-        base.Awake();
+        StartCoroutine(base.Start());
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
         efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
         gun = GetComponent<Gun>();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
     }
 
     protected override void FixedUpdate()
