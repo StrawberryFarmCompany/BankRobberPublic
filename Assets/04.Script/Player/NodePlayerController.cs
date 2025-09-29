@@ -216,7 +216,6 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.started && IsMyTurn())
         {
-            Debug.Log("취소 버튼 눌림");
             StartMode(ref isMoveMode);
             UIManager.GetInstance.ShowActionPanel(true);
             TurnOnHighlighter(playerStats.movement);
@@ -239,7 +238,6 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isRunMode)
         {
-            Debug.Log("달리기");
             UIManager.GetInstance.ShowActionPanel(true);
             playerStats.ActiveRun();
             isHighlightOn = false;
@@ -247,14 +245,12 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isHideMode)
         {
-            Debug.Log("숨기");
             HideMode();
             UIManager.GetInstance.ShowActionPanel(true);
         }
 
         if(context.started && IsMyTurn() && isThrowMode)
         {
-            Debug.Log("던지기");
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckThrow(mousePos);
             UIManager.GetInstance.ShowActionPanel(true);
@@ -262,14 +258,12 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isSneakAttackMode)
         {
-            Debug.Log("기습 공격");
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckSneakAttack(mousePos);
         }
 
         if (context.started && IsMyTurn() && isPickPocketMode)
         {
-            Debug.Log("훔치기");
             Vector3 mousePos = Mouse.current.position.ReadValue();
             PickPocket(mousePos);
         }
@@ -278,10 +272,8 @@ public class NodePlayerController : MonoBehaviour
         {
             if (!playerStats.ConsumeActionPoint(1))
             {
-                Debug.Log("행동력이 부족함");
                 return;
             }
-            Debug.Log("조준");
             if (isAiming)
             {
                 UIManager.GetInstance.ShowActionPanel(true);
@@ -296,7 +288,6 @@ public class NodePlayerController : MonoBehaviour
 
         if (context.started && IsMyTurn() && isRangeAttackMode)
         {
-            Debug.Log("원거리 공격");
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckRangeAttack(mousePos);
         }
@@ -320,13 +311,11 @@ public class NodePlayerController : MonoBehaviour
         {
             if (GameManager.GetInstance.GetNode(hit.point) == null)
             {
-                Debug.Log("노드가 아니다.");
                 return;
             }
 
             if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
             {
-                Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
                 return;
             }
 
@@ -349,7 +338,6 @@ public class NodePlayerController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log($"이동 도중 이동력 부족. {step} 여기서 멈춤");
                     break;
                 }
             }
@@ -409,7 +397,6 @@ public class NodePlayerController : MonoBehaviour
         }
 
         // 경로를 찾지 못한 경우
-        Debug.Log("경로를 찾지 못했습니다.");
         return new List<Vector3Int>();
     }
 
@@ -462,7 +449,6 @@ public class NodePlayerController : MonoBehaviour
         if (context.started && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            Debug.Log("달리기 모드 활성화");
             StartMode(ref isRunMode);
         }
     }
@@ -483,13 +469,11 @@ public class NodePlayerController : MonoBehaviour
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
-            Debug.Log("유효하지 않은 좌표입니다!");
             return;
         }
 
         if (!CheckRange(targetNodeCenter, 6)) //========================================================================임의로 6범위
         {
-            Debug.Log("해당 위치에 적이 없거나 범위를 벗어났습니다!");
             return;
         }
 
@@ -503,7 +487,6 @@ public class NodePlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log("행동력이 부족합니다!");
         }
     }
 
@@ -513,14 +496,12 @@ public class NodePlayerController : MonoBehaviour
         if (context.started && IsMyTurn() && !isHide && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            Debug.Log("숨기 모드 활성화");
             StartMode(ref isHideMode);
         }
 
         if (context.started && IsMyTurn() && isHide && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            Debug.Log("기습 공격 모드 활성화");
             StartMode(ref isSneakAttackMode);
         }
     }
@@ -543,13 +524,11 @@ public class NodePlayerController : MonoBehaviour
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
-            Debug.Log("유효하지 않은 좌표입니다!");
             return;
         }
 
         if (!CheckRangeAndEntity(targetNodeCenter, 2))
         {
-            Debug.Log("해당 위치에 엔티티가 없거나 범위를 벗어났습니다!");
             return;
         }
 
@@ -557,7 +536,6 @@ public class NodePlayerController : MonoBehaviour
 
         if (bestNode == new Vector3Int(-999, -999, -999))
         {
-            Debug.Log("이동할 수 있는 인접 노드를 찾지 못했습니다.");
             return;
         }
 
@@ -565,7 +543,6 @@ public class NodePlayerController : MonoBehaviour
 
         if (!playerStats.ConsumeMovement(cost))
         {
-            Debug.Log("인접 노드로 이동할 수 있는 이동력 부족!");
             return;
         }
         UIManager.GetInstance.ShowActionPanel(true);
@@ -576,11 +553,9 @@ public class NodePlayerController : MonoBehaviour
             if (result + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
             SneakAttack(bestNode, targetNodeCenter);
 
-            Debug.Log("기습 공격 성공!");
         }
         else
         {
-            Debug.Log("행동력이 부족합니다!");
         }
     }
 
@@ -602,7 +577,6 @@ public class NodePlayerController : MonoBehaviour
         if (context.started && IsMyTurn() && isMoveMode && isHide)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            Debug.Log("훔치기 모드 활성화");
             StartMode(ref isPickPocketMode);
         }
     }
