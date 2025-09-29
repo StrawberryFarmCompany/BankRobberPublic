@@ -19,7 +19,6 @@ public class MoveRangeHighlighter : MonoBehaviour
         HashSet<Vector3Int> map = new HashSet<Vector3Int>();
         //start위치까지 포함하여야 하고 음수처리 때문에 값 비교 array는 (range*2)+1
         GetPath(start, start, map,new int[(range*2)+1, (range * 2) + 1], range);
-        Debug.Log($"{map.Count}");
         foreach (Vector3Int item in map)
         {
             HighlightNode(item);
