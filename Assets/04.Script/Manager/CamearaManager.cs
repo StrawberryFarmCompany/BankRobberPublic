@@ -33,7 +33,10 @@ public class CameraManager : MonoBehaviour
 
     private bool isRotationMode = false;
     private bool canFollowMove = false;
+
     private bool IsReadyTransition;
+    private float lastTapTime = 0f;
+    [SerializeField] private float doubleTapThreshold = 0.3f; // 두 번 누를 최대 간격
 
     public bool isFreeView;
     private void Awake()
@@ -52,26 +55,23 @@ public class CameraManager : MonoBehaviour
 
     public void OnPlayerView(InputAction.CallbackContext context)
     {
-        if (context.started && isCompleteTransition && IsReadyTransition)
+        if (!context.started || !isCompleteTransition) return;
+
+        float currentTime = Time.time;
+
+        if (currentTime - lastTapTime <= doubleTapThreshold && IsReadyTransition)
         {
             fcam.Follow = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform;
             fcam.LookAt = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform;
             isFreeView = false;
-            //StartCoroutine(FreeViewTransitionCoroutine(NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject));
+            IsReadyTransition = false; // 리셋
         }
-
-        if (context.started && isCompleteTransition)
+        else
         {
             IsReadyTransition = true;
-            Invoke("IsReadyTransitionOff", 1f);
+            lastTapTime = currentTime;
         }
     }
-
-    public void IsReadyTransitionOff()
-    {
-        IsReadyTransition = false;
-    }
-
 
     private IEnumerator FreeViewTransitionCoroutine(GameObject player)
     {
