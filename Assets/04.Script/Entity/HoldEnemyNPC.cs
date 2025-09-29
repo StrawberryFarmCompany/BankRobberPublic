@@ -14,9 +14,11 @@ public class HoldEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
     Gun gun;
-    protected override void Awake()
+    protected override IEnumerator Start()
     {
         base.Awake();
+        StartCoroutine(base.Start());
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
         gun = GetComponent<Gun>();
     }
@@ -39,7 +41,7 @@ public class HoldEnemyNPC : EnemyNPC
         }
 
         // else if (GameManager.GetInstance.securityData.GetSecLevel >= 2) // 나중에 윤님 완성 되시면 사용
-        else if (SecLv >= 2) // 나중에 윤님 완성 되시면 위에꺼 사용
+        else if (stats.secData.GetSecLevel == 1) // 나중에 윤님 완성 되시면 위에꺼 사용
         {
             if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
             {
@@ -72,7 +74,7 @@ public class HoldEnemyNPC : EnemyNPC
         }
 
         //else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
-        else if (SecLv >= 2)
+        else if (stats.secData.GetSecLevel >= 2)
         {
             TryAttack();
             Debug.Log("죽자 준게이야");
