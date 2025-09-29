@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using BuffDefine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class EntityStats
@@ -14,8 +15,8 @@ public class EntityStats
     public int movementSpeed;
     public int movement;
     public int maxHp;
-    private int curHp;
-    public int CurHp
+    private float curHp;
+    public float CurHp
     { 
         get 
         { 
@@ -38,13 +39,11 @@ public class EntityStats
     public int aggroControl;
     public int maxRerollCount;
     public int curRerollCount;
-    public int moveRange;
     public Sprite portrait;
-
     public Node currNode;
 
     private PassiveSkill equippedPassive;
-
+    private List<IBuff> buffs;
     public Action OnDamaged;
 
     public EntityStats(EntityData baseStats)
@@ -65,9 +64,18 @@ public class EntityStats
         aggroControl = baseStats.aggroControl;
         maxRerollCount = baseStats.maxRerollCount;
         curRerollCount = baseStats.curRerollCount;
-        moveRange = baseStats.moveRange;
         portrait = baseStats.portrait;
-
+        buffs = new List<IBuff>();
+    }
+    public void RegistBuff(BuffData data)
+    {
+        IBuff buff = IBuff.Factory(data, this, data.StatusType);
+        buffs.Add(buff);
+        buff.RegistBuff();
+    }
+    public void RemoveBuff(IBuff data)
+    {
+        buffs.Remove(data);
     }
 
     public void EquipPassive(PassiveSkill skill)
@@ -81,7 +89,7 @@ public class EntityStats
         equippedPassive = skill;
         equippedPassive.Apply(this);
     }
-
+    
     public void UnequipPassive(PassiveSkill skill)
     {
         if (equippedPassive != null)
@@ -129,7 +137,7 @@ public class EntityStats
         Debug.Log($"Run Activated: {movement}");
     }
 
-    public void Damaged(int damage)
+    public void Damaged(float damage)
     {
         CurHp -= damage;
         if (CurHp <= 0)
@@ -163,8 +171,7 @@ public class EntityStats
 
     public void NodeUpdates(Vector3 pos)
     {
-        GameManager.GetInstance.GetVecInt(pos);
-        Vector3Int tempPos = GameManager.GetInstance.GetVecInt(pos);
+        Vector3Int tempPos = GameManager.GetInstance.GetNode(GameManager.GetInstance.GetVecInt(pos)).GetCenter;
 
         if (currNode.GetCenter != tempPos)
         {
@@ -173,5 +180,4 @@ public class EntityStats
             currNode.AddCharacter(this);
         }
     }
-
 }

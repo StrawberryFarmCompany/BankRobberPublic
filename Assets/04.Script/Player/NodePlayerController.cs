@@ -16,11 +16,8 @@ public class NodePlayerController : MonoBehaviour
     public EntityData playerData;
     public EntityStats playerStats;
 
-    // [변경됨] 캐릭터 고유 번호 대신, 매니저가 관리하는 ID 사용
-    public int playerID { get; private set; }
-
     private Vector3Int playerVec;
-    private bool isHighlightOn = false;
+    public bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
     private bool characterTurn = false;
@@ -163,7 +160,7 @@ public class NodePlayerController : MonoBehaviour
 
         //상태/하이라이트 갱신
         playerVec = landCell;
-        TurnOnHighlighter(playerVec, playerStats.moveRange);
+        TurnOnHighlighter(playerVec, playerStats.movement);
 
         _isVaulting = false;
 
@@ -189,7 +186,9 @@ public class NodePlayerController : MonoBehaviour
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
         GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
+
         playerStats.SetCurrentNode(transform.position);
+        playerStats.NodeUpdates(transform.position);
         GameManager.GetInstance.RegisterEntity(playerStats);
     }
 
@@ -209,13 +208,9 @@ public class NodePlayerController : MonoBehaviour
             SequentialMove();
         }
 
+        
     }
 
-    // [변경됨] 매니저가 ID를 할당할 수 있도록 Setter 제공
-    public void SetPlayerID(int id)
-    {
-        playerID = id;
-    }
 
     public void OnCancel(InputAction.CallbackContext context)
     {
@@ -236,7 +231,7 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && isMoveMode && !isMoving)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             Move(mousePos);
@@ -323,11 +318,18 @@ public class NodePlayerController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if(!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetNode(hit.point) == null || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
+            if (GameManager.GetInstance.GetNode(hit.point) == null)
             {
-                Debug.Log("갈 수 없는 곳이거나, 노드가 아니거나, 엔티티가 있다.");
+                Debug.Log("노드가 아니다.");
                 return;
             }
+
+            if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
+            {
+                Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
+                return;
+            }
+
 
             // 현재 좌표 (정수 격자 기준)
             Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
@@ -395,8 +397,7 @@ public class NodePlayerController : MonoBehaviour
                 // 2) 이동 가능한지 체크
                 if (node == null) continue;
                 if (!node.isWalkable) continue;
-                if(node.standing != null)
-                    if (node.standing.Count > 0) continue;
+                if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
 
                 // 3) 방문한 적 없는 경우만 추가
                 if (!cameFrom.ContainsKey(next))
@@ -446,6 +447,7 @@ public class NodePlayerController : MonoBehaviour
             canNextMove = false;
             curTargetPos = pathQueue.Dequeue();
             agent.SetDestination(curTargetPos);
+            playerStats.NodeUpdates(curTargetPos);
         }
 
         // 모든 경로 소모 시 이동 종료
@@ -467,9 +469,7 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnThrow(InputAction.CallbackContext context)
     {
-
-
-        if (context.canceled && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(ref isThrowMode);
@@ -572,9 +572,9 @@ public class NodePlayerController : MonoBehaviour
         if (playerStats.ConsumeActionPoint(1))
         {
             RemoveHideMode();
-            DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
-            if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
-                SneakAttack(bestNode, targetNodeCenter);
+            int result = DiceManager.GetInstance.DirrectRoll(0, 6, 3);
+            if (result + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
+            SneakAttack(bestNode, targetNodeCenter);
 
             Debug.Log("기습 공격 성공!");
         }
@@ -587,10 +587,12 @@ public class NodePlayerController : MonoBehaviour
     private void SneakAttack(Vector3Int movePos, Vector3Int targetPos)
     {
         agent.SetDestination(movePos);
+        playerStats.NodeUpdates(movePos);
         playerVec = movePos;
         TurnOffHighlighter();
-        DiceManager.GetInstance.DelayedRoll(0,6,3, RollDice);
-        GameManager.GetInstance.GetEntityAt(targetPos).Damaged(diceResult);
+        int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
+        Debug.Log($"{result}의 데미지를 상대에게 줌");
+        GameManager.GetInstance.GetEntityAt(targetPos).Damaged(result);
 
 
     }
@@ -863,6 +865,11 @@ public class NodePlayerController : MonoBehaviour
     /// </summary>
     private Vector3Int FindClosestWalkableAdjacentNode(Vector3Int targetNode)
     {
+        if(CheckRangeAndEntity(targetNode, 1))
+        {
+            return GameManager.GetInstance.GetVecInt(transform.position);
+        }
+
         Vector3Int[] directions = new Vector3Int[]
         {
         new Vector3Int(1, 0, -1),
@@ -885,6 +892,7 @@ public class NodePlayerController : MonoBehaviour
             Node node = GameManager.GetInstance.GetNode(checkNode);
             if (node == null || !node.isWalkable)
                 continue;
+            if (GameManager.GetInstance.GetEntityAt(checkNode) != null) continue;
 
             float dist = Vector3.Distance(transform.position, checkNode);
             if (dist < bestDist)
@@ -917,10 +925,5 @@ public class NodePlayerController : MonoBehaviour
     public void EndAction()
     {
         NodePlayerManager.GetInstance.NotifyPlayerEndTurn(this);
-    }
-
-    private void RollDice(int result)
-    {
-        diceResult = result;
     }
 }

@@ -43,10 +43,10 @@ public class BattleTurnStateMachine
             currIndex = (currIndex + 1);
             if(currIndex >= turnStates.Count)
             {
+                BuffCount?.Invoke();
                 currIndex %= turnStates.Count;
                 roundCount++;
             }
-            BuffCount?.Invoke();
             turnStates[currIndex].Enter();
 
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));

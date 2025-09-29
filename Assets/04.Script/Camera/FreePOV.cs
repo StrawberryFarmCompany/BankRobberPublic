@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class FreePOV : MonoBehaviour
 {
-    public CinemachineVirtualCamera vcam;
+    public CinemachineFreeLook fcam;
     public Transform followTarget;
 
     [Header("Move Settings")]
@@ -24,9 +24,23 @@ public class FreePOV : MonoBehaviour
 
     public float speedMultiplier = 1.5f;
     private float currSpeedMultiplier = 1f;
+
+    [SerializeField] private float scrollSpeed = 0.1f;
+
+    [SerializeField, Range(0f, 1f)] private float scrollMin = 0f;
+    [SerializeField, Range(0f, 1f)] private float scrollMax = 1f;
+
+    [SerializeField] private float minX;
+    [SerializeField] private float maxX;
+    [SerializeField] private float minY;
+    [SerializeField] private float maxY;
+    [SerializeField] private float minZ;
+    [SerializeField] private float maxZ;
+
+
     void Start()
     {
-        if (vcam == null) vcam = GetComponent<CinemachineVirtualCamera>();
+        if (fcam == null) fcam = GetComponent<CinemachineFreeLook>();
        // 초기 카메라 방향 설정
         ApplyRotation();
     }
@@ -35,7 +49,7 @@ public class FreePOV : MonoBehaviour
     {
         if (wasdMoveInput != Vector2.zero)
         {
-            Movement(wasdMoveInput);
+            WasdMovement(wasdMoveInput);
         }
         if(moveInput != Vector2.zero)
         { 
@@ -50,82 +64,73 @@ public class FreePOV : MonoBehaviour
         ApplyRotation();
     }
 
-    private void Movement(Vector2 direction)
+    private void WasdMovement(Vector2 direction)
     {
         if (direction == Vector2.zero) return;
 
-        // 회전 기준 벡터를 평면에 투영해서 Y값 제거
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
         Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
 
-        // XZ 이동
         Vector3 move = (right * direction.x + forward * direction.y) * wasdMoveSpeed * Time.deltaTime * currSpeedMultiplier;
 
         Transform target = transform;
         Vector3 newPos = target.position + move;
 
-        if (bound != null)
-        {
-            Bounds b = bound.bounds;
-            newPos.x = Mathf.Clamp(newPos.x, b.min.x, b.max.x);
-            newPos.y = Mathf.Clamp(newPos.y, b.min.y, b.max.y);
-            newPos.z = Mathf.Clamp(newPos.z, b.min.z, b.max.z);
-        }
+        // min/max xyz로 이동 제한
+        newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+        newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+        newPos.z = Mathf.Clamp(newPos.z, minZ, maxZ);
 
         target.position = newPos;
     }
+
     public void OnWASDMove(InputAction.CallbackContext context)
     {
+        if (!CameraManager.GetInstance.isFreeView)
+        {
+            followTarget.position = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform.position;
+            CameraManager.GetInstance.isFreeView = true;
+        }
+
         if (CameraManager.GetInstance.isCompleteTransition == false) return;
+        if(fcam.Follow != followTarget) fcam.Follow = followTarget;
+        if (fcam.LookAt != followTarget) fcam.LookAt = followTarget;
         wasdMoveInput = context.ReadValue<Vector2>();
     }
 
     private void MoveCamera(Vector2 delta)
     {
-        // 현재 카메라의 좌우/앞뒤 벡터 (XZ 평면)
         Vector3 right = transform.right;
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
 
-        // 마우스 델타 기반 위치 이동 (Y축은 화면상 위/아래로 이동)
         Vector3 move = (right * delta.x + Vector3.up * delta.y) * moveSpeed * currSpeedMultiplier;
         Vector3 newPos = transform.position + move;
 
-        // bound 안으로 제한
-        if (bound != null)
-        {
-            Vector3 min = bound.bounds.min;
-            Vector3 max = bound.bounds.max;
-
-            newPos.x = Mathf.Clamp(newPos.x, min.x, max.x);
-            newPos.y = Mathf.Clamp(newPos.y, min.y, max.y);
-            newPos.z = Mathf.Clamp(newPos.z, min.z, max.z);
-        }
+        // min/max xyz로 이동 제한
+        newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+        newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+        newPos.z = Mathf.Clamp(newPos.z, minZ, maxZ);
 
         transform.position = newPos;
     }
-
-    //private void ApplyRotation()
-    //{
-    //    yaw = Mathf.Repeat(yaw + rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier, 360f);
-    //    Quaternion rot = Quaternion.Euler(pitch, yaw, 0);
-    //    transform.rotation = rot;
-    //}
 
     private void ApplyRotation()
     {
         // 입력값으로 yawDelta 계산
         float yawDelta = rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier;
 
-        // yaw를 누적시키지 않고, 매번 상대 회전으로 곱해줌
-        Quaternion yawRot = Quaternion.AngleAxis(yawDelta, Vector3.up);
-        Quaternion pitchRot = Quaternion.Euler(pitch, 0f, 0f);
+        // FreeLook 카메라의 수평축(XAxis) 값 회전
+        fcam.m_XAxis.Value += yawDelta;
 
-        // 회전 누적
-        transform.rotation = yawRot * transform.rotation;
+        if (followTarget != null)
+        {
+            // followTarget의 Y축 회전과 동기화
+            followTarget.Rotate(Vector3.up, yawDelta, Space.World);
 
-        // Pitch는 항상 고정된 값 유지
-        Vector3 euler = transform.rotation.eulerAngles;
-        transform.rotation = Quaternion.Euler(pitch, euler.y, 0f);
+            // 카메라 자체 위치를 따라가도록 align
+            Vector3 euler = followTarget.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, euler.y, 0f);
+        }
     }
 
     // 회전 입력
@@ -133,7 +138,7 @@ public class FreePOV : MonoBehaviour
     {
         if (context.performed)
         {
-            yawDirection = -1;
+            yawDirection = 1;
         }
 
         if (context.canceled)
@@ -146,7 +151,7 @@ public class FreePOV : MonoBehaviour
     {
         if (context.performed)
         {
-            yawDirection = 1;
+            yawDirection = -1;
         }
 
         if(context.canceled)
@@ -179,5 +184,35 @@ public class FreePOV : MonoBehaviour
         {
             currSpeedMultiplier = 1;
         }
+    }
+
+    public void OnScroll(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+
+        float scrollValue = context.ReadValue<Vector2>().y;
+        fcam.m_YAxis.Value += scrollValue * scrollSpeed * Time.deltaTime;
+
+        // 값 범위 제한
+        fcam.m_YAxis.Value = Mathf.Clamp(fcam.m_YAxis.Value, scrollMin, scrollMax);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+
+        // min/max 좌표를 기반으로 박스 표시
+        Vector3 center = new Vector3(
+            (minX + maxX) / 2f,
+            (minY + maxY) / 2f,
+            (minZ + maxZ) / 2f
+        );
+        Vector3 size = new Vector3(
+            Mathf.Abs(maxX - minX),
+            Mathf.Abs(maxY - minY),
+            Mathf.Abs(maxZ - minZ)
+        );
+
+        Gizmos.DrawWireCube(center, size);
     }
 }

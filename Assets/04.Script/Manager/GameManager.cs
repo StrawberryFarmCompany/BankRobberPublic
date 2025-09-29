@@ -26,10 +26,12 @@ class GameManager : SingleTon<GameManager>
     private bool playerTurn;
     public bool PlayerTurn { get { return playerTurn; } set { playerTurn = value; } } //현재 플레이어의 턴인가?
 
+
     // 캐릭터 턴 종료 여부 대신 → NodePlayerController 내부 상태로 관리
     // private bool isFirstCharacterEnd;
     // private bool isSecondCharacterEnd;
     // private bool isThirdCharacterEnd;
+    public SecurityData securityData;
 
 
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
@@ -79,8 +81,7 @@ class GameManager : SingleTon<GameManager>
         base.Reset();
 
         nodes.Clear();
-        noneBattleTurn = null;
-        noneBattleTurn = new NoneBattleTurnStateMachine();
+        noneBattleTurn.OnSceneChange();
         battleTurn = new BattleTurnStateMachine();
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();

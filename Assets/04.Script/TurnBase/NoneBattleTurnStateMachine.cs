@@ -21,10 +21,13 @@ public class NoneBattleTurnStateMachine
     {
         currState.Exit();
         int typeLen = Enum.GetValues(typeof(TurnTypes)).Length;
-        if ((int)GetCurrState() + 1 > typeLen) round++;
         currState = states[(((int)GetCurrState()+1) % (typeLen))];
+        if ((int)GetCurrState() + 1 > typeLen)
+        {
+            round++;
+            BuffCount?.Invoke();
+        }
         Debug.Log(GetCurrState());
-        BuffCount?.Invoke();
         currState.Enter();
     }
     public void ForceSet(int index)
@@ -40,6 +43,8 @@ public class NoneBattleTurnStateMachine
     public void OnSceneChange()
     {
         round = 1;
+        BuffCount = null;
+        ReleaseDelegateChain();
     }
     public NoneBattleTurnStateMachine(TurnTypes startType = TurnTypes.ally)
     {

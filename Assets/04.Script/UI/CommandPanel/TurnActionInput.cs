@@ -56,6 +56,15 @@ public class TurnActionInput : MonoBehaviour
             playerController.StartMode(ref playerController.isRunMode);
         }
     }
+    public void OnThrowPressed()
+    {
+        if ((playerController.IsMyTurn() && playerController.isMoveMode))
+        {
+            UIManager.GetInstance.ShowActionPanel(false);
+            playerController.StartMode(ref playerController.isHideMode);
+        }
+        Debug.Log("[Action] Melee Attack"); //아직 안 만듦 ㅋㅋ
+    }
 
     public void OnAimingPressed()
     {
@@ -66,15 +75,7 @@ public class TurnActionInput : MonoBehaviour
         }
     }
 
-    public void OnThrowPressed()
-    {
-        if ((playerController.IsMyTurn() && playerController.isMoveMode))
-        {
-            UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isHideMode);
-        }
-        Debug.Log("[Action] Melee Attack"); //아직 안 만듦 ㅋㅋ
-    }
+    
 
     public void OnHidePressed()
     {
