@@ -318,10 +318,6 @@ public class NodePlayerController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Debug.Log($"{GameManager.GetInstance.GetNode(hit.point).standing.Count}");
-            Debug.Log($"{GameManager.GetInstance.GetNode(hit.point).GetCenter}");
-            Debug.Log($"{GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter)}");
-
             if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetNode(hit.point) == null || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
             {
                 Debug.Log("갈 수 없는 곳이거나, 노드가 아니거나, 엔티티가 있다.");
@@ -884,6 +880,7 @@ public class NodePlayerController : MonoBehaviour
             Node node = GameManager.GetInstance.GetNode(checkNode);
             if (node == null || !node.isWalkable)
                 continue;
+            if (GameManager.GetInstance.GetEntityAt(checkNode) != null) continue;
 
             float dist = Vector3.Distance(transform.position, checkNode);
             if (dist < bestDist)
