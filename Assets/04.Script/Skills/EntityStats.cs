@@ -41,7 +41,7 @@ public class EntityStats
     public int curRerollCount;
     public Sprite portrait;
     public Node currNode;
-
+    public SecurityData secData;
     private PassiveSkill equippedPassive;
     private List<IBuff> buffs;
     public Action OnDamaged;
@@ -66,6 +66,7 @@ public class EntityStats
         curRerollCount = baseStats.curRerollCount;
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
+        secData = new SecurityData();
     }
     public void RegistBuff(BuffData data)
     {
