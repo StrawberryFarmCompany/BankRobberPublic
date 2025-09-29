@@ -120,15 +120,15 @@ public class PatrolEnemyNPC : EnemyNPC
     // 순찰
     public void Patrol(Vector3 pos)
     {
-        PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
-        if (patrolState.agent == null)
-        {
-            patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
-        }
-        patrolState.pos.Enqueue(pos);
+        //PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
+        //if (patrolState.agent == null)
+        //{
+        //    patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
+        //}
+        //patrolState.pos.Enqueue(pos);
 
-        float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+        //float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
+        //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
     }
 
     // 두리번
