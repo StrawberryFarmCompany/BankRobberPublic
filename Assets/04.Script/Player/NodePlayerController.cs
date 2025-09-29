@@ -572,9 +572,9 @@ public class NodePlayerController : MonoBehaviour
         if (playerStats.ConsumeActionPoint(1))
         {
             RemoveHideMode();
-            //DiceManager.GetInstance.DelayedRoll(0, 6, 3, RollDice);
-            //if (diceResult + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
-                SneakAttack(bestNode, targetNodeCenter);
+            int result = DiceManager.GetInstance.DirrectRoll(0, 6, 3);
+            if (result + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
+            SneakAttack(bestNode, targetNodeCenter);
 
             Debug.Log("기습 공격 성공!");
         }
@@ -590,8 +590,9 @@ public class NodePlayerController : MonoBehaviour
         playerStats.NodeUpdates(movePos);
         playerVec = movePos;
         TurnOffHighlighter();
-        DiceManager.GetInstance.DelayedRoll(0,6,3, RollDice);
-        GameManager.GetInstance.GetEntityAt(targetPos).Damaged(diceResult);
+        int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
+        Debug.Log($"{result}의 데미지를 상대에게 줌");
+        GameManager.GetInstance.GetEntityAt(targetPos).Damaged(result);
 
 
     }
@@ -864,6 +865,11 @@ public class NodePlayerController : MonoBehaviour
     /// </summary>
     private Vector3Int FindClosestWalkableAdjacentNode(Vector3Int targetNode)
     {
+        if(CheckRangeAndEntity(targetNode, 1))
+        {
+            return GameManager.GetInstance.GetVecInt(transform.position);
+        }
+
         Vector3Int[] directions = new Vector3Int[]
         {
         new Vector3Int(1, 0, -1),
@@ -919,10 +925,5 @@ public class NodePlayerController : MonoBehaviour
     public void EndAction()
     {
         NodePlayerManager.GetInstance.NotifyPlayerEndTurn(this);
-    }
-
-    private void RollDice(int result)
-    {
-        diceResult = result;
     }
 }
