@@ -1,5 +1,6 @@
 using NodeDefines;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,8 +14,9 @@ public class EnemyNPC : MonoBehaviour
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
     public LayerMask obstacleMask;  // 장애물 레이어 (Raycast에 사용)
 
-    protected virtual void Awake()
+    protected virtual IEnumerator Start()
     {
+         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
@@ -32,6 +34,7 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        if (stats == null) return;
         stats.NodeUpdates(transform.position);
     }
 
@@ -42,13 +45,13 @@ public class EnemyNPC : MonoBehaviour
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)   
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 0.5f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
         else
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(()=> { }, 1f));
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 0.5f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
         }
     }
