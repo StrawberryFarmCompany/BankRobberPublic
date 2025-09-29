@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,23 +10,26 @@ public class PatrolEnemyNPC : EnemyNPC
     public bool isNoise = false;             // 소음 감지
     public bool isArrivedNoisePlace = false; // 소음 발생 지역 도착
     public bool isdoridori = false;
+    public NavMeshAgent agent;
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
+    public int SecLv = 0;
     Gun gun;
 
-    protected override void Awake()
+    Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
+    Vector3Int curTargetPos;
+    bool isMoving;
+    bool canNextMove;
+
+    protected override IEnumerator Start()
     {
-        base.Awake();
+        StartCoroutine(base.Start());
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
         efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
         gun = GetComponent<Gun>();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
     }
 
     protected override void FixedUpdate()
@@ -33,9 +37,12 @@ public class PatrolEnemyNPC : EnemyNPC
         base.FixedUpdate();
     }
 
-    private void Update()
+    protected override void Update()
     {
-        //efsm.Current?.Execute(); // 현재 상태 실행
+        if (isMoving)
+        {
+            SequentialMove();
+        }
     }
 
     // 턴마다 실행될 매서드
@@ -45,10 +52,12 @@ public class PatrolEnemyNPC : EnemyNPC
         {
             IdleRotation();
         }
-        if (GameManager.GetInstance.securityData.GetSecLevel == 1)
+        //if (GameManager.GetInstance.securityData.GetSecLevel == 1)
+        if(SecLv == 1)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
+                Debug.Log("조사");
                 Investigate(noiseLocation);
                 if (this.gameObject.transform.position == noiseLocation)
                 {
@@ -58,6 +67,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (isNoise == true && isArrivedNoisePlace == true)
             {
+                Debug.Log("두리번두리번");
                 IdleRotation();
                 isNoise = false;
                 isArrivedNoisePlace = false;
@@ -65,7 +75,8 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == true && destinationPoint == false)
             {
-                Patrol(firstLocation);
+
+                Move(firstLocation);
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
                 if (this.gameObject.transform.position == firstLocation)
                 {
@@ -77,7 +88,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == false && destinationPoint == true)
             {
-                Patrol(homeLocation);
+                Move(homeLocation);
                 if (this.gameObject.transform.position == homeLocation)
                 {
                     LookAround();
@@ -87,7 +98,8 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
+        //else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
+        else if(SecLv >= 2)
         {
             TryAttack();
             Debug.Log("죽어잇!");
@@ -104,16 +116,15 @@ public class PatrolEnemyNPC : EnemyNPC
     // 순찰
     public void Patrol(Vector3 pos)
     {
-        PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
-        if (patrolState.agent == null)
-        {
-            patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
-        }
-        patrolState.pos.Enqueue(pos);
+        //PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
+        //if (patrolState.agent == null)
+        //{
+        //    patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
+        //}
+        //patrolState.pos.Enqueue(pos);
 
-        float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
-
+        //float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
+        //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
     }
 
     // 두리번
@@ -205,5 +216,145 @@ public class PatrolEnemyNPC : EnemyNPC
     public void Die()
     {
         efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyDeadState));
+    }
+    public void Move(Vector3 pos)
+    {
+        if (isMoving) return;
+        Vector3Int targetPos = GameManager.GetInstance.GetVecInt(pos);
+
+        if (GameManager.GetInstance.GetNode(targetPos) == null)
+        {
+            Debug.Log("노드가 아니다.");
+            return;
+        }
+
+        if (!GameManager.GetInstance.GetNode(targetPos).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(targetPos).GetCenter) != null)
+        {
+            Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
+            return;
+        }
+
+        // 현재 좌표 (정수 격자 기준)
+        Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+        targetPos = GameManager.GetInstance.GetNode(targetPos).GetCenter;
+        // 경로 배열 생성
+        List<Vector3Int> path = GenerateChebyshevPath(start, targetPos);
+
+        pathQueue.Clear();
+
+        // 이동력만큼만 큐에 넣기
+        foreach (var step in path)
+        {
+            if (stats.ConsumeMovement(1))
+            {
+                pathQueue.Enqueue((Vector3Int)step);
+            }
+            else
+            {
+                Debug.Log($"이동 도중 이동력 부족. {step} 여기서 멈춤");
+                break;
+            }
+        }
+        
+        if (pathQueue.Count > 0)
+        {
+            //최종 이동 구현
+            isMoving = true;
+            canNextMove = true;
+        }
+
+    }
+
+    private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
+    {
+        // BFS 탐색을 위한 큐
+        Queue<Vector3Int> open = new Queue<Vector3Int>();
+        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
+
+        open.Enqueue(start);
+        cameFrom[start] = start;
+
+        while (open.Count > 0)
+        {
+            Vector3Int current = open.Dequeue();
+
+            // 목표에 도달하면 역추적해서 경로 반환
+            if (current == end)
+            {
+                return ReconstructPath(cameFrom, start, end);
+            }
+
+            // 인접 노드 탐색 (대각선 포함 체비셰프)
+            foreach (var dir in GameManager.GetInstance.nearNode)
+            {
+                Vector3Int next = current + dir;
+
+                // 1) 노드 존재 여부 확인
+                if (!GameManager.GetInstance.Nodes.ContainsKey(next)) continue;
+
+                var node = GameManager.GetInstance.Nodes[next];
+
+                // 2) 이동 가능한지 체크
+                if (node == null) continue;
+                if (!node.isWalkable) continue;
+                if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
+
+                // 3) 방문한 적 없는 경우만 추가
+                if (!cameFrom.ContainsKey(next))
+                {
+                    cameFrom[next] = current;
+                    open.Enqueue(next);
+                }
+            }
+        }
+
+        // 경로를 찾지 못한 경우
+        Debug.Log("경로를 찾지 못했습니다.");
+        return new List<Vector3Int>();
+    }
+
+    /// <summary>
+    /// BFS 탐색 후 start→end까지 역추적
+    /// </summary>
+    private List<Vector3Int> ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int start, Vector3Int end)
+    {
+        List<Vector3Int> path = new List<Vector3Int>();
+        Vector3Int current = end;
+
+        while (current != start)
+        {
+            path.Add(current);
+            current = cameFrom[current];
+        }
+
+        path.Reverse();
+        return path;
+    }
+
+    public void SequentialMove()
+    {
+        PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
+        // 아직 목표가 없으면 다음 큐 꺼내기
+        if (!isMoving) return;
+
+        // 도착 판정 (== 대신 거리로 체크)
+        if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        {
+            canNextMove = true;
+        }
+
+        if (canNextMove && pathQueue.Count > 0)
+        {
+            canNextMove = false;
+            curTargetPos = pathQueue.Dequeue();
+            agent.SetDestination(curTargetPos);
+            stats.NodeUpdates(curTargetPos);
+        }
+
+        // 모든 경로 소모 시 이동 종료
+        if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        {
+            isMoving = false;
+        }
     }
 }

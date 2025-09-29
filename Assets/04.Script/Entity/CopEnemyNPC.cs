@@ -6,13 +6,15 @@ public class CopEnemyNPC : EnemyNPC
     bool isHit = false;
     Gun gun;
 
-    protected override void Awake()
+    protected override IEnumerator Start()
     {
         base.Awake();
+        StartCoroutine(base.Start());
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, EnemyStates.CopEnemyChaseState);
         gun = GetComponent<Gun>();
+        yield return null;
     }
-
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
