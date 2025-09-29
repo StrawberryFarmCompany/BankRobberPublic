@@ -27,8 +27,15 @@ public class FreePOV : MonoBehaviour
 
     [SerializeField] private float scrollSpeed = 0.1f;
 
-    [SerializeField, Range(0f, 1f)] private float yMin = 0f;
-    [SerializeField, Range(0f, 1f)] private float yMax = 1f;
+    [SerializeField, Range(0f, 1f)] private float scrollMin = 0f;
+    [SerializeField, Range(0f, 1f)] private float scrollMax = 1f;
+
+    [SerializeField] private float minX;
+    [SerializeField] private float maxX;
+    [SerializeField] private float minY;
+    [SerializeField] private float maxY;
+    [SerializeField] private float minZ;
+    [SerializeField] private float maxZ;
 
 
     void Start()
@@ -42,7 +49,7 @@ public class FreePOV : MonoBehaviour
     {
         if (wasdMoveInput != Vector2.zero)
         {
-            Movement(wasdMoveInput);
+            WasdMovement(wasdMoveInput);
         }
         if(moveInput != Vector2.zero)
         { 
@@ -57,32 +64,34 @@ public class FreePOV : MonoBehaviour
         ApplyRotation();
     }
 
-    private void Movement(Vector2 direction)
+    private void WasdMovement(Vector2 direction)
     {
         if (direction == Vector2.zero) return;
 
-        // 회전 기준 벡터를 평면에 투영해서 Y값 제거
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
         Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
 
-        // XZ 이동
         Vector3 move = (right * direction.x + forward * direction.y) * wasdMoveSpeed * Time.deltaTime * currSpeedMultiplier;
 
         Transform target = transform;
         Vector3 newPos = target.position + move;
 
-        if (bound != null)
-        {
-            Bounds b = bound.bounds;
-            newPos.x = Mathf.Clamp(newPos.x, b.min.x, b.max.x);
-            newPos.y = Mathf.Clamp(newPos.y, b.min.y, b.max.y);
-            newPos.z = Mathf.Clamp(newPos.z, b.min.z, b.max.z);
-        }
+        // min/max xyz로 이동 제한
+        newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+        newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+        newPos.z = Mathf.Clamp(newPos.z, minZ, maxZ);
 
         target.position = newPos;
     }
+
     public void OnWASDMove(InputAction.CallbackContext context)
     {
+        if (!CameraManager.GetInstance.isFreeView)
+        {
+            followTarget.position = NodePlayerManager.GetInstance.GetCurrentPlayer().gameObject.transform.position;
+            CameraManager.GetInstance.isFreeView = true;
+        }
+
         if (CameraManager.GetInstance.isCompleteTransition == false) return;
         if(fcam.Follow != followTarget) fcam.Follow = followTarget;
         if (fcam.LookAt != followTarget) fcam.LookAt = followTarget;
@@ -91,24 +100,16 @@ public class FreePOV : MonoBehaviour
 
     private void MoveCamera(Vector2 delta)
     {
-        // 현재 카메라의 좌우/앞뒤 벡터 (XZ 평면)
         Vector3 right = transform.right;
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
 
-        // 마우스 델타 기반 위치 이동 (Y축은 화면상 위/아래로 이동)
         Vector3 move = (right * delta.x + Vector3.up * delta.y) * moveSpeed * currSpeedMultiplier;
         Vector3 newPos = transform.position + move;
 
-        // bound 안으로 제한
-        if (bound != null)
-        {
-            Vector3 min = bound.bounds.min;
-            Vector3 max = bound.bounds.max;
-
-            newPos.x = Mathf.Clamp(newPos.x, min.x, max.x);
-            newPos.y = Mathf.Clamp(newPos.y, min.y, max.y);
-            newPos.z = Mathf.Clamp(newPos.z, min.z, max.z);
-        }
+        // min/max xyz로 이동 제한
+        newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+        newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+        newPos.z = Mathf.Clamp(newPos.z, minZ, maxZ);
 
         transform.position = newPos;
     }
@@ -193,6 +194,25 @@ public class FreePOV : MonoBehaviour
         fcam.m_YAxis.Value += scrollValue * scrollSpeed * Time.deltaTime;
 
         // 값 범위 제한
-        fcam.m_YAxis.Value = Mathf.Clamp(fcam.m_YAxis.Value, yMin, yMax);
+        fcam.m_YAxis.Value = Mathf.Clamp(fcam.m_YAxis.Value, scrollMin, scrollMax);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+
+        // min/max 좌표를 기반으로 박스 표시
+        Vector3 center = new Vector3(
+            (minX + maxX) / 2f,
+            (minY + maxY) / 2f,
+            (minZ + maxZ) / 2f
+        );
+        Vector3 size = new Vector3(
+            Mathf.Abs(maxX - minX),
+            Mathf.Abs(maxY - minY),
+            Mathf.Abs(maxZ - minZ)
+        );
+
+        Gizmos.DrawWireCube(center, size);
     }
 }
