@@ -188,6 +188,7 @@ public class NodePlayerController : MonoBehaviour
         GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
 
         playerStats.SetCurrentNode(transform.position);
+        playerStats.NodeUpdates(transform.position);
         GameManager.GetInstance.RegisterEntity(playerStats);
     }
 
@@ -317,11 +318,16 @@ public class NodePlayerController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if(!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetNode(hit.point) == null || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
+            Debug.Log($"{GameManager.GetInstance.GetNode(hit.point).standing.Count}");
+            Debug.Log($"{GameManager.GetInstance.GetNode(hit.point).GetCenter}");
+            Debug.Log($"{GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter)}");
+
+            if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetNode(hit.point) == null || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
             {
                 Debug.Log("갈 수 없는 곳이거나, 노드가 아니거나, 엔티티가 있다.");
                 return;
             }
+
 
             // 현재 좌표 (정수 격자 기준)
             Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
@@ -389,8 +395,7 @@ public class NodePlayerController : MonoBehaviour
                 // 2) 이동 가능한지 체크
                 if (node == null) continue;
                 if (!node.isWalkable) continue;
-                if(node.standing != null)
-                    if (node.standing.Count > 0) continue;
+                if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
 
                 // 3) 방문한 적 없는 경우만 추가
                 if (!cameFrom.ContainsKey(next))
