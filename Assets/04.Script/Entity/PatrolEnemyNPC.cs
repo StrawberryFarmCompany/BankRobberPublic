@@ -15,17 +15,13 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 nearPlayerLocation;
     Gun gun;
 
-    protected override void Awake()
+    protected override IEnumerator Start()
     {
-        base.Awake();
+        StartCoroutine(base.Start());
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
         efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
         gun = GetComponent<Gun>();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
     }
 
     protected override void FixedUpdate()
@@ -45,7 +41,7 @@ public class PatrolEnemyNPC : EnemyNPC
         {
             IdleRotation();
         }
-        if (GameManager.GetInstance.securityData.GetSecLevel == 1)
+        if (stats.secData.GetSecLevel == 1)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
@@ -87,7 +83,7 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
+        else if (stats.secData.GetSecLevel >= 2)
         {
             TryAttack();
             Debug.Log("죽어잇!");

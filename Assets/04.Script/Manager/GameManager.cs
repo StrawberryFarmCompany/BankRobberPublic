@@ -31,7 +31,6 @@ class GameManager : SingleTon<GameManager>
     // private bool isFirstCharacterEnd;
     // private bool isSecondCharacterEnd;
     // private bool isThirdCharacterEnd;
-    public SecurityData securityData;
 
 
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
