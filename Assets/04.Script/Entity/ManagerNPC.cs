@@ -3,6 +3,7 @@ using UnityEngine;
 public class ManagerNPC : NeutralNPC
 {
     public bool canSeeAlly;
+    public int SecLv;
 
     protected override void Awake()
     {
@@ -45,7 +46,8 @@ public class ManagerNPC : NeutralNPC
         }
 
         // 경계레벨이 3일 때
-        else if (GameManager.GetInstance.securityData.GetSecLevel == 3)
+        //else if (GameManager.GetInstance.securityData.GetSecLevel == 3)
+        else if (SecLv == 3)
         {
             OnPlayerDetected();
         }

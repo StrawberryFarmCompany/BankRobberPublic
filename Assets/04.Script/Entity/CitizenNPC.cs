@@ -5,6 +5,7 @@ public class CitizenNPC : NeutralNPC
 {
     public bool isDetection = false;
     [SerializeField] private Vector3 exitArea;
+    public int SecLv = 0;
 
     protected override void Awake()
     {
@@ -30,7 +31,8 @@ public class CitizenNPC : NeutralNPC
             ChangeToDead();
         }
 
-        else if (GameManager.GetInstance.securityData.GetSecLevel >= 3)//경계수준이 3레벨 이상이면
+        //else if (GameManager.GetInstance.securityData.GetSecLevel >= 3)//경계수준이 3레벨 이상이면
+        else if(SecLv == 3)
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();
