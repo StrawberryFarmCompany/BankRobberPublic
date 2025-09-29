@@ -13,11 +13,10 @@ public class Gun : MonoBehaviour
     public GunType type;
     public int maxRounds;
     public int curRounds;
-    public int useRoundsPerShot;
+    //public int useRoundsPerShot;
     public int bulletPerOneShot;
     public int noise;
     public float damagePerOneBulletMultiplier;
-    public int accuracy;
     //public int minBullerSpread;         //최소 탄 퍼짐 정도
     //public int maxBulletSpread;         // min = 1, max =3 이라면 명중치가 -1 ~ -3 사이 값을 적용된다.
     public int firstRange;
@@ -41,11 +40,10 @@ public class Gun : MonoBehaviour
         type = gunData.type;
         maxRounds = gunData.maxRounds;
         curRounds = maxRounds;
-        useRoundsPerShot = gunData.useRoundsPerShot;
+        //useRoundsPerShot = gunData.useRoundsPerShot;
         bulletPerOneShot = gunData.bulletPerOneShot;
         noise = gunData.noise;
         damagePerOneBulletMultiplier = gunData.damagePerOneBulletMultiplier;
-        accuracy = gunData.accuracy;
         //minBullerSpread = gunData.minBullerSpread;
         //maxBulletSpread = gunData.maxBulletSpread;
         firstRange = gunData.firstRange;
@@ -69,7 +67,7 @@ public class Gun : MonoBehaviour
     /// <param name="hitBonus"></param>
     public void Shoot(Vector3Int targetPos, int hitBonus)
     {
-        if(!ConsumeRounds(useRoundsPerShot))
+        if(!ConsumeRounds(1/*useRoundsPerShot*/))
         {
             Debug.Log("잔탄수 부족, 불발");
             return;
@@ -84,10 +82,19 @@ public class Gun : MonoBehaviour
         }
 
         Debug.Log($"{entityStats.characterName}에게 격발 데미지를 가했음");
-        // for문 돌려서 불렛 마다 판정해주기
-        //      if(CheckBulletHit(targetPos, hitBonus))
-        //          entityStats.OnDamaged? Damaged? (2d6 * 데미지 계수)
-
+        for(int i = 0; i < bulletPerOneShot; i++)
+        {
+            if(CheckBulletHit(targetPos, hitBonus))
+            {
+                int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
+                entityStats.Damaged(result * damagePerOneBulletMultiplier);
+                Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
+            }
+            else
+            {
+                Debug.Log($"{i + 1}번째 격발 결과\n불발");
+            }
+        }
     }
 
     //public int GetBulletSpread()
@@ -118,11 +125,10 @@ public class Gun : MonoBehaviour
 
         hitAdjustment += hitBonus;
 
-        return true;
-        // if(/*3d6 다이스*/ + hitAdjustment + GameManager.GetInstance.GetEntityAt(targetPos).evasionRate)
-        //      return true
-        // else
-        //      return false
+        if (DiceManager.GetInstance.DirrectRoll(0, 6, 3) + hitAdjustment - GameManager.GetInstance.GetEntityAt(targetPos).evasionRate > 0)
+            return true;
+        else
+            return false;
     }
     public bool CheckRange(Vector3Int Pos, int range)
     {
