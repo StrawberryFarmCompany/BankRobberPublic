@@ -10,6 +10,7 @@ public class EnemyNPC : MonoBehaviour
     protected EntityStats stats;
     protected EnemyStateMachine efsm;
     public Node currNode;
+    public Gun gun;
 
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
     public LayerMask obstacleMask;  // 장애물 레이어 (Raycast에 사용)
@@ -21,6 +22,7 @@ public class EnemyNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
         stats.currNode = GameManager.GetInstance.GetNode(transform.position);
+        gun = GetComponent<Gun>();
     }
 
     protected virtual void FixedUpdate()
@@ -28,7 +30,6 @@ public class EnemyNPC : MonoBehaviour
         if (stats == null) return;
         stats.NodeUpdates(transform.position);
     }
-
 
     protected virtual void CalculateBehaviour()
     {
@@ -52,7 +53,6 @@ public class EnemyNPC : MonoBehaviour
     {
         // 적 자신의 노드
         Vector3Int enemyPos = stats.currNode.GetCenter;
-        Debug.Log(enemyPos); // 여기까지 됨
 
         // 사정거리 안에 있는 모든 엔티티 가져오기
         List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.attackRange);
@@ -72,6 +72,9 @@ public class EnemyNPC : MonoBehaviour
             }
         }
 
+        // 보이는 플레이어만 모은 리스트
+        List<EntityStats> visibleTargets = new List<EntityStats>();
+
         foreach (var target in targets)
         {
             // 플레이어만 공격 (적은 무시)
@@ -80,6 +83,7 @@ public class EnemyNPC : MonoBehaviour
                 Debug.Log("1. 성");
                 continue;
             }
+
             // 1. 거리 체크 (사거리 무제인지 확인 필요)
             float dist = Vector3.Distance(stats.currNode.GetCenter, target.currNode.GetCenter);
             if (dist > stats.attackRange)
@@ -87,6 +91,7 @@ public class EnemyNPC : MonoBehaviour
                 Debug.Log("2. 준");
                 continue;
             }
+
             // 2. 시야각 체크
             Vector3 dirToTarget = (target.currNode.GetCenter - transform.position).normalized;
             float angle = Vector3.Angle(transform.forward, dirToTarget);
@@ -96,51 +101,49 @@ public class EnemyNPC : MonoBehaviour
                 continue;
             }
 
-            // 3. 장애물(Line of Sight) 체크
-            if (HasLineOfSight(target))
+            // 3. 장애물 체크 후 보이는 플레이어들 리스트에 추가
+            if (CheckRangeAttack(target.currNode.GetCenter))
             {
-                Debug.Log("4. 음");
-                continue;
+                visibleTargets.Add(target);
             }
+        }
 
-            // 4. 행동력 확인 후 공격
-            if (stats.ConsumeActionPoint(1))
-            {
-                Debug.Log("5. 흣");
-                PerformAttack(target);
-                return; // 한 번 공격하면 종료 (여러 명 공격하지 않음)
-            }
+        // 4. 리스트에 아무도 없으면 리턴
+        if (visibleTargets.Count == 0)
+        {
+            return;
+        }
+
+        // 5. 랜덤으로 한 명 선택
+        EntityStats chosenTarget = visibleTargets[Random.Range(0, visibleTargets.Count)];
+
+        // 6. 행동 포인트 확인 및 공격
+        if (stats.ConsumeActionPoint(1))
+        {
+            gun.Shoot(chosenTarget.currNode.GetCenter, 1);
+            Debug.Log($"{stats.characterName}이(가) {chosenTarget.characterName}을(를) 향해 사격!");
         }
     }
 
-    private bool HasLineOfSight(EntityStats target)
+    private bool CheckRangeAttack(Vector3Int targetPos)
     {
-        Vector3 start = transform.position + Vector3.up * 1.5f;
-        Vector3 end = target.currNode.GetCenter + Vector3.up * 1.5f;
-        Vector3 dir = (end - start).normalized;
-        Debug.DrawRay(start, dir * Vector3.Distance(start, end), Color.red, 10f);//씬창 확인용
-        if (Physics.Raycast(start, dir, out RaycastHit hit, Vector3.Distance(start, end), obstacleMask))
-        {
-            // 맞은 게 플레이어면 Line of Sight OK
-            return hit.transform.CompareTag("Player");
-        }
-        return false;
-    }
+        Vector3 start = transform.position;
+        Vector3 target = targetPos;
 
-    private void PerformAttack(EntityStats target)
-    {
-        // 예시: 주사위 굴려서 명중 판정
-        float dice = Random.Range(1, 20);
-        bool isHit = stats.IsHit(dice, 0, target);
-
-        if (isHit)
+        // 1. NavMesh 상에서 장애물 체크
+        if (NavMesh.Raycast(start, target, out NavMeshHit hit, NavMesh.AllAreas))
         {
-            target.Damaged(10); // 데미지 10 (예시)
-            Debug.Log($"{stats.characterName} → {target.characterName} 명중! 현재 HP: {target.CurHp}");
+            Debug.DrawRay(start, (hit.position - start), Color.red, 10f);
+            Debug.Log("무언가로 막혀있음");
+            return false;
         }
+
         else
         {
-            Debug.Log($"{stats.characterName} → {target.characterName} 빗나감!");
+            Debug.Log("NavMesh 상에서 막히지 않음");
+            // 막히지 않았다면 초록색 선
+            Debug.DrawRay(start, (target - start), Color.green, 10f);
+            return true;
         }
     }
 }
