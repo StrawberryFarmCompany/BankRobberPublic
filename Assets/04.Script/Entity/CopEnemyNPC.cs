@@ -6,7 +6,6 @@ public class CopEnemyNPC : EnemyNPC
 {
     bool isDetection = false;
     bool isHit = false;
-    Gun gun;
 
     [SerializeField] Vector3 nearPlayerLocation;
 
@@ -21,7 +20,6 @@ public class CopEnemyNPC : EnemyNPC
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, EnemyStates.CopEnemyChaseState);
-        gun = GetComponent<Gun>();
         yield return null;
     }
 
