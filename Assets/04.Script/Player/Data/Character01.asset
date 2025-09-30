@@ -30,5 +30,4 @@ MonoBehaviour:
   aggroControl: 1
   maxRerollCount: 1
   curRerollCount: 1
-  moveRange: 2
-  portrait: {fileID: 21300000, guid: ff0f92ce2563d2247b4f4338f6a51d19, type: 3}
+  portrait: {fileID: 21300000, guid: 574d0455a6eefea4ba16da1d453d96e3, type: 3}
