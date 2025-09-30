@@ -7,10 +7,6 @@ public class BuffIcon : MonoBehaviour, IPointerClickHandler
     private int index;
     public int Index { get { return index; } }
     private BuffPannel Pannel { get { return UIManager.GetInstance.BuffPannel; } }
-    private void Awake()
-    {
-        Debug.Log("sex");
-    }
     public void Init(int index)
     {
         if (image == null) image = GetComponent<Image>();

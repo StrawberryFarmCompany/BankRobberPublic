@@ -13,21 +13,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject cancelPanel;
 
     public AutoPipBar pip;
-
-    private BuffPannel buffPannel;
-    public BuffPannel BuffPannel
-    {
-        get
-        {
-            if (buffPannel == null)
-            {
-                GameObject obj = GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["BuffPannel"], interactionCanvasInstance.transform);
-                buffPannel = obj.GetComponent<BuffPannel>();
-                buffPannel.Init();
-            }
-            return buffPannel;
-        }
-    }
     [Header("인터랙션 캔버스")]
     [SerializeField] private GameObject interactionCanvasPrefab;
     [SerializeField] private Transform canvasRoot;
@@ -39,7 +24,7 @@ public class UIManager : MonoBehaviour
         {
             if (buffPannel == null)
             {
-                GameObject obj = GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["BuffPannel"], interactionCanvasInstance.transform);
+                GameObject obj = GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["BuffPannel"], actionPanel.transform.parent.parent.parent.parent);
                 buffPannel = obj.GetComponent<BuffPannel>();
                 buffPannel.Init();
             }
