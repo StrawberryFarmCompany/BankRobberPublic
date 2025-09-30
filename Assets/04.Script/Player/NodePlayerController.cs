@@ -28,27 +28,35 @@ public class NodePlayerController : MonoBehaviour
     [SerializeField] private MoveRangeHighlighter highlighter;
     [SerializeField] private Gun gun;
 
+    [HideInInspector]
     public bool isHide;
+    [HideInInspector]
     public bool isAiming;
-
+    [HideInInspector]
     public bool isEndReady;
 
-    [Header("현재 플레이어의 액션 상태")]
+    //[Header("현재 플레이어의 액션 상태")]
+    [HideInInspector]
     public bool isMoveMode;
+    [HideInInspector]
     public bool isRunMode;
+    [HideInInspector]
     public bool isHideMode;
+    [HideInInspector]
     public bool isSneakAttackMode;
+    [HideInInspector]
     public bool isThrowMode;
+    [HideInInspector]
     public bool isPickPocketMode;
+    [HideInInspector]
     public bool isAimingMode;
+    [HideInInspector]
     public bool isRangeAttackMode;
+    [HideInInspector]
     public bool isPerkActionMode;
 
     [Header("명중 보정치")]
     public int hitBonus = 0;
-
-    [Header("행동판정")]
-    public int diceResult;
 
     private bool isEndTurn;
     public bool IsEndTurn { get { return isEndTurn; } }
@@ -64,6 +72,12 @@ public class NodePlayerController : MonoBehaviour
     Vector3Int curTargetPos;
     public bool isMoving;
     public bool canNextMove;
+
+    [Header("백팩")]
+    public GameObject fullBackPackPrefab;
+    public GameObject backPackParent;
+    public GameObject emptyBackPack;
+    public GameObject fullBackPack;
 
     private bool IsWindowCell(Vector3Int overCell)
     {
@@ -905,5 +919,11 @@ public class NodePlayerController : MonoBehaviour
     public void EndAction()
     {
         NodePlayerManager.GetInstance.NotifyPlayerEndTurn(this);
+    }
+
+    public void GetGold()
+    {
+        Destroy(emptyBackPack);
+        fullBackPack = Instantiate(fullBackPack, backPackParent.transform);
     }
 }
