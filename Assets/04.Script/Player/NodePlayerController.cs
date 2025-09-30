@@ -177,9 +177,6 @@ public class NodePlayerController : MonoBehaviour
         TurnOnHighlighter(playerVec, playerStats.movement);
 
         _isVaulting = false;
-
-        //도착했으니 현재 노드 기준 인터랙션 패널 갱신
-        UIManager.GetInstance.TryUpdateInteractionFromNode(GameManager.GetInstance.GetNode(transform.position), playerStats);
     }
 
     private void Awake()

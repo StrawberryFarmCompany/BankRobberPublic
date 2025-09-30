@@ -42,6 +42,16 @@ namespace NodeDefines
             return null;
         }
 
+        public string GetInteractionNames(string separator = ",")
+        {
+            return string.Join(',', nodeInteractions.Keys);
+        }
+        public string[] GetInteractionNameArray()
+        {
+            return nodeInteractions.Keys.ToArray();
+        }
+
+
         public void AddCharacter(EntityStats stat)
         {
             standing.Add(stat);
