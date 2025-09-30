@@ -1,83 +1,209 @@
+using NodeDefines;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using NodeDefines;
 
 public class LeftInteractionPanel : MonoBehaviour
 {
-    [Header("Existing UI objects (under Canvas)")]
-    [SerializeField] private GameObject panelRoot; // ← 이미 있는 UIPanel GameObject
-    [SerializeField] private Image icon;           // ← UIPanel 안의 Image(아이콘)
-    [SerializeField] private Button actionButton;  // ← UIPanel 안의 Button(실행 버튼)
+    [Header("UI References")]
+    [SerializeField] private GameObject panelRoot;
+    [SerializeField] private Button actionButton;
+    private Transform buttonsRoot;
 
-    [Header("Icon map (node image key → sprite)")]
-    [SerializeField] private List<KeySprite> iconMap = new List<KeySprite>();
-    [SerializeField] private string defaultIconKey = "default";
+    static readonly string[] WhitelistParts = { "Window", "Door" };
 
-    [Serializable]
-    public struct KeySprite { public string key; public Sprite sprite; }
+    static readonly Vector3Int[] Cross4 =
+    {
+        new Vector3Int( 1,0, 0),
+        new Vector3Int(-1,0, 0),
+        new Vector3Int( 0,0, 1),
+        new Vector3Int( 0,0,-1),
+    };
 
-    private Dictionary<string, Sprite> _iconDict;
+    NodePlayerController _lastPlayer;
+    Vector3Int _lastCenter;
+    int _lastPlayerIndex = -1;
 
     void Awake()
     {
-        BuildIconDict();
+        buttonsRoot = panelRoot ? panelRoot.transform : transform;
+        if (actionButton) actionButton.gameObject.SetActive(false);
         Hide(); // 시작은 숨김
     }
 
-    void BuildIconDict()
+    void OnDisable()
     {
-        _iconDict = new Dictionary<string, Sprite>(StringComparer.OrdinalIgnoreCase);
-        foreach (var kv in iconMap)
+        // 컴포넌트 비활성 시 잔여 버튼 정리
+        ClearButtons();
+    }
+
+    void Update()
+    {
+        var npm = NodePlayerManager.GetInstance;
+        if (npm == null) { Hide(); return; }
+
+        var curPlayer = npm.GetCurrentPlayer();
+        if (curPlayer == null) { Hide(); return; }
+
+        bool playerChanged = (_lastPlayer != curPlayer) || (_lastPlayerIndex != npm.currentPlayerIndex);
+
+        var gm = GameManager.GetInstance;
+        var node = gm?.GetNode(curPlayer.transform.position);
+        //node.GetPrimaryImageKey();
+        if (node == null) { Hide(); return; }
+        var center = node.GetCenter;
+
+        bool centerChanged = center != _lastCenter;
+
+        //플레이어가 바뀌었거나, 현재 센터 타일이 바뀌었을 때만 갱신
+        if (playerChanged || centerChanged)
         {
-            if (!string.IsNullOrEmpty(kv.key) && kv.sprite) _iconDict[kv.key] = kv.sprite;
+            RefreshForPlayer(curPlayer);
+            _lastPlayer = curPlayer;
+            _lastPlayerIndex = npm.currentPlayerIndex;
+            _lastCenter = center;
         }
     }
 
-    /// <summary>현재 플레이어 발밑 노드 기준으로 패널 갱신</summary>
     public void RefreshForPlayer(NodePlayerController player)
     {
         if (!player) { Hide(); return; }
 
-        var node = GameManager.GetInstance.GetNode(player.transform.position);
-        if (node == null || !node.HasAnyInteraction())
+        var pairs = CollectPairs(player);   //노드 키 목록
+        BuildButtons(pairs, player);        //버튼 생성
+
+        if (pairs.Count > 0) Show();
+        else Hide();
+    }
+
+    bool IsFrontWallPattern(Vector3Int playerC, Vector3Int wallC, GameManager gm)
+    {
+        var d = wallC - playerC;
+        //1칸(상하좌우), 대각선/2칸 제외
+        if (Mathf.Abs(d.x) + Mathf.Abs(d.z) != 1) return false;
+
+        var wall = gm.GetNode(wallC);
+        if (wall == null || wall.isWalkable) return false;
+
+        var land = gm.GetNode(wallC + d); //벽 반대편
+        if (land == null || !land.isWalkable) return false;
+
+        return true;
+    }
+
+
+    private List<(Node, string)> CollectPairs(NodePlayerController player)
+    {
+        var list = new List<(Node, string)>();
+        var gm = GameManager.GetInstance;
+        var cur = gm.GetNode(player.transform.position);
+        if (cur == null || !cur.HasAnyInteraction()) return list;
+
+        var csv = cur.GetInteractionNames(",");
+        if (string.IsNullOrEmpty(csv)) return list;
+
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var raw in csv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
         {
-            Hide();
-            return;
+            var key = raw.Trim();
+            if (key.Length == 0) continue;
+            if (!IsWhitelisted(key)) continue;
+            if (seen.Add(key))
+                list.Add((cur, key));
         }
 
-        // 아이콘: Node.GetPrimaryImageKey() 사용 (없으면 default)
-        if (icon != null)
-        {
-            var key = node.GetPrimaryImageKey();
-            if (!string.IsNullOrEmpty(key) && _iconDict.TryGetValue(key, out var sp)) icon.sprite = sp;
-            else if (_iconDict.TryGetValue(defaultIconKey, out var def)) icon.sprite = def;
-        }
+        list.Sort((a, b) => 
+        { 
+            int pa = PriorityIndex(a.Item2); 
+            int pb = PriorityIndex(b.Item2); 
+            int c = pa.CompareTo(pb); 
+            return c != 0 ? c : string.Compare(a.Item2, b.Item2, StringComparison.OrdinalIgnoreCase);
+        });
 
-        // 버튼: 항상 인터랙터블, 클릭 시 노드 이벤트 실행
-        if (actionButton != null)
+        return list;
+    }
+
+    private bool IsWhitelisted(string key)
+    {
+        foreach (var part in WhitelistParts)
+            if (key.IndexOf(part, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+        return false;
+    }
+
+    private int PriorityIndex(string key)
+    {
+        for (int i = 0; i < WhitelistParts.Length; i++)
+            if (key.IndexOf(WhitelistParts[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                return i;
+        return int.MaxValue;
+    }
+
+    //버튼 생성
+    void BuildButtons(List<(Node node, string key)> pairs, NodePlayerController player)
+    {
+        ClearButtons();
+
+        if (!actionButton || !buttonsRoot) return;
+
+        foreach (var (node, key) in pairs)
         {
-            actionButton.interactable = true;
-            actionButton.onClick.RemoveAllListeners();
-            actionButton.onClick.AddListener(() =>
+            var btn = Instantiate(actionButton, buttonsRoot);
+            btn.gameObject.SetActive(true);
+
+            var tmp = btn.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (tmp) tmp.text = KeyToLabel(key);
+            else
             {
-                node.InvokeEvent(player.playerStats);
-                Hide(); // 실행 후 닫기(원하면 주석 처리)
+                var legacy = btn.GetComponentInChildren<Text>(true);
+                if (legacy) legacy.text = KeyToLabel(key);
+            }
+
+            btn.interactable = true;
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() =>
+            {
+                bool ok = node.TryInvokeInteraction(key, player.playerStats);
+
+                RefreshForPlayer(player);
+                if (!ok)
+                {
+                    try { UIManager.GetInstance?.SetSelectionLocked(false); } catch { }
+                }
             });
         }
+    }
 
-        Show();
+    string KeyToLabel(string key)
+    {
+        if (key.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0) return "window";    //나중에 한글로 바꿔주기 
+        if (key.IndexOf("Door", StringComparison.OrdinalIgnoreCase) >= 0) return "door";
+        return key;
+    }
+
+    void ClearButtons()
+    {
+        if (!buttonsRoot) return;
+
+        for (int i = buttonsRoot.childCount - 1; i >= 0; i--)
+        {
+            var child = buttonsRoot.GetChild(i);
+            if (actionButton && child == actionButton.transform) continue;
+            Destroy(child.gameObject);
+        }
     }
 
     public void Hide()
     {
-        if (actionButton != null) actionButton.onClick.RemoveAllListeners();
-        if (panelRoot != null && panelRoot.activeSelf) panelRoot.SetActive(false);
+        ClearButtons();
+        if (panelRoot && panelRoot.activeSelf) panelRoot.SetActive(false);
     }
 
     void Show()
     {
-        if (panelRoot != null && !panelRoot.activeSelf) panelRoot.SetActive(true);
+        if (panelRoot && !panelRoot.activeSelf) panelRoot.SetActive(true);
     }
 }
