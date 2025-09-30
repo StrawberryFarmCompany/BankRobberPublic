@@ -52,7 +52,7 @@ public class LeftInteractionPanel : MonoBehaviour
 
         var gm = GameManager.GetInstance;
         var node = gm?.GetNode(curPlayer.transform.position);
-        //node.GetPrimaryImageKey();
+        node.GetPrimaryImageKey();
         if (node == null) { Hide(); return; }
         var center = node.GetCenter;
 
@@ -102,24 +102,14 @@ public class LeftInteractionPanel : MonoBehaviour
         var cur = gm.GetNode(player.transform.position);
         if (cur == null || !cur.HasAnyInteraction()) return list;
 
-        var csv = cur.GetInteractionNames(",");
-        if (string.IsNullOrEmpty(csv)) return list;
+        foreach (var k in cur.EnumerateInteractionKeys())
+            if (IsWhitelisted(k)) list.Add((cur, k));
 
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var raw in csv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+        list.Sort((a, b) =>
         {
-            var key = raw.Trim();
-            if (key.Length == 0) continue;
-            if (!IsWhitelisted(key)) continue;
-            if (seen.Add(key))
-                list.Add((cur, key));
-        }
-
-        list.Sort((a, b) => 
-        { 
-            int pa = PriorityIndex(a.Item2); 
-            int pb = PriorityIndex(b.Item2); 
-            int c = pa.CompareTo(pb); 
+            int pa = PriorityIndex(a.Item2);
+            int pb = PriorityIndex(b.Item2);
+            int c = pa.CompareTo(pb);
             return c != 0 ? c : string.Compare(a.Item2, b.Item2, StringComparison.OrdinalIgnoreCase);
         });
 
