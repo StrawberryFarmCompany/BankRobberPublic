@@ -62,8 +62,8 @@ public class TurnActionInput : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isHideMode);
+            playerController.TurnOnHighlighter(6);
         }
-        Debug.Log("[Action] Melee Attack"); //아직 안 만듦 ㅋㅋ
     }
 
     public void OnAimingPressed()
@@ -79,12 +79,13 @@ public class TurnActionInput : MonoBehaviour
 
     public void OnHidePressed()
     {
-        if ((playerController.IsMyTurn() && !playerController.isHide))
+        if (playerController.IsMyTurn() && !playerController.isHide && playerController.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isHideMode);
         }
-        else
+        
+        if (playerController.IsMyTurn() && playerController.isHide && playerController.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isSneakAttackMode);
@@ -97,6 +98,7 @@ public class TurnActionInput : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(ref playerController.isRangeAttackMode);
+            playerController.TurnOnHighlighter(0);
         }
     }
 
@@ -115,6 +117,7 @@ public class TurnActionInput : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(true);
             playerController.StartMode(ref playerController.isMoveMode);
+            playerController.TurnOnHighlighter(playerController.playerStats.movement);
         }
     }
 
