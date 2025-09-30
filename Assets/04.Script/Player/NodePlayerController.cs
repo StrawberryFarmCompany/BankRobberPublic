@@ -227,6 +227,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (context.canceled)
         {
+
             Vector3 mousePos = Mouse.current.position.ReadValue();
             
             if (!ViewBuffData(mousePos)) return;
@@ -248,9 +249,11 @@ public class NodePlayerController : MonoBehaviour
             if (node != null && node.standing.Count > 0)
             {
                 UIManager.GetInstance.BuffPannel.UpdateBuffList(node);
+                UIManager.GetInstance.BuffPannel.Description.TurnOn(false);
                 return true;
             }
         }
+        if(!EventSystem.current.IsPointerOverGameObject()) UIManager.GetInstance.BuffPannel.TurnOn(false);
         return false;
     }
     public void OnClickNode(InputAction.CallbackContext context)
