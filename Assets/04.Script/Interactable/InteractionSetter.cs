@@ -15,6 +15,8 @@ public class InteractionSetter : MonoBehaviour
     public int doorValue;
     [ConditionalHide("type", (int)InteractionType.Door)]//금고문,문
     public DoorLockType lockType;
+    [ConditionalHide("type", (int)InteractionType.GoldBar)]//골드바, 현금
+    public GameObject[] consumeItems;
     void Start()
     {
         interaction = IInteractable.Factory(type);
@@ -45,7 +47,7 @@ public class InteractionSetter : MonoBehaviour
                 break;
             case InteractionType.GoldBar:
                 GoldBar gold = (GoldBar)interaction;
-                gold.Init(pos);
+                gold.Init(pos, consumeItems);
                 break;
             case InteractionType.MoneyBag:
                 break;
