@@ -28,6 +28,7 @@ public class NoneBattleTurnStateMachine
             BuffCount?.Invoke();
         }
         Debug.Log(GetCurrState());
+        if(GetCurrState() == TurnTypes.ally) GameManager.GetInstance.StartPlayerTurn();
         currState.Enter();
     }
     public void ForceSet(int index)
