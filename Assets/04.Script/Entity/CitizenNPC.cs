@@ -9,7 +9,6 @@ public class CitizenNPC : NeutralNPC
 
     protected override IEnumerator Start()
     {
-        base.Awake();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         nfsm = new NeutralStateMachine(this, NeutralStates.CitizenIdleState);

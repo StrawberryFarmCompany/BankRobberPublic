@@ -1,6 +1,6 @@
 using NodeDefines;
 using UnityEngine;
-
+using System.Collections;
 public class NeutralNPC : MonoBehaviour
 {
     public EntityData entityData;
@@ -13,9 +13,11 @@ public class NeutralNPC : MonoBehaviour
         stats = new EntityStats(entityData);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
+        stats.currNode = GameManager.GetInstance.GetNode(transform.position);
     }
     protected virtual void FixedUpdate()
     {
+        if (stats == null) return;
         stats.NodeUpdates(transform.position);
     }
 

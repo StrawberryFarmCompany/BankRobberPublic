@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-
+using System.Collections;
 public class HoldEnemyNPC : EnemyNPC
 {
     bool isRangeDetection = false;
@@ -16,7 +16,6 @@ public class HoldEnemyNPC : EnemyNPC
     Gun gun;
     protected override IEnumerator Start()
     {
-        base.Awake();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
