@@ -45,6 +45,7 @@ public class EntityStats
     public SecurityData secData;
     private PassiveSkill equippedPassive;
     private List<IBuff> buffs;
+    public List<IBuff> Buffs { get { return buffs; } }
     public Action OnDamaged;
 
     public EntityStats(EntityData baseStats)
