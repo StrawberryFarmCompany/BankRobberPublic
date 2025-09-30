@@ -188,16 +188,7 @@ namespace BuffDefine
 
         public void ReleaseBuff()
         {
-            ushort level = 0;
-            if (data.StatusValue < ushort.MaxValue)
-            {
-                level = (ushort)data.StatusValue;
-            }
-            else
-            {
-                level = 3;
-            }
-            GameManager.GetInstance.securityData.SetSecLevel(level);
+
         }
 
         public void CountDuration()
