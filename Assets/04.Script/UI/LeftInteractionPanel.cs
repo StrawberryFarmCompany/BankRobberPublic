@@ -52,6 +52,7 @@ public class LeftInteractionPanel : MonoBehaviour
 
         var gm = GameManager.GetInstance;
         var node = gm?.GetNode(curPlayer.transform.position);
+        node.GetPrimaryImageKey();
         if (node == null) { Hide(); return; }
         var center = node.GetCenter;
 
@@ -99,32 +100,20 @@ public class LeftInteractionPanel : MonoBehaviour
         var list = new List<(Node, string)>();
         var gm = GameManager.GetInstance;
         var cur = gm.GetNode(player.transform.position);
-        if (cur == null) return list;
+        if (cur == null || !cur.HasAnyInteraction()) return list;
 
-        var c = cur.GetCenter;
+        foreach (var k in cur.EnumerateInteractionKeys())
+            if (IsWhitelisted(k)) list.Add((cur, k));
 
-        foreach (var d in Cross4)
+        list.Sort((a, b) =>
         {
-            var n = gm.GetNode(c + d);
-            if (n == null || !n.HasAnyInteraction()) continue;
+            int pa = PriorityIndex(a.Item2);
+            int pb = PriorityIndex(b.Item2);
+            int c = pa.CompareTo(pb);
+            return c != 0 ? c : string.Compare(a.Item2, b.Item2, StringComparison.OrdinalIgnoreCase);
+        });
 
-            if (!IsFrontWallPattern(c, n.GetCenter, gm)) continue;
-
-            foreach (var k in n.EnumerateInteractionKeys())
-                if (IsWhitelisted(k)) list.Add((n, k));
-        }
-
-        //중복 제거,정렬(문,창문 우선)
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var dedup = new List<(Node, string)>();
-        foreach (var t in list
-            .OrderBy(t => PriorityIndex(t.Item2))                         //key -> Item2
-            .ThenBy(t => t.Item2, StringComparer.OrdinalIgnoreCase))      //key -> Item2
-        {
-            string sig = $"{t.Item1.GetCenter.x},{t.Item1.GetCenter.z}:{t.Item2}"; //node -> Item1
-            if (seen.Add(sig)) dedup.Add(t);
-        }
-        return dedup;
+        return list;
     }
 
     private bool IsWhitelisted(string key)
