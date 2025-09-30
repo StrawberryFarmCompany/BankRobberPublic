@@ -134,9 +134,7 @@ public class EntityStats
 
     public void ActiveRun()
     {
-        Debug.Log($"prevoius: {movement}");
         if (ConsumeActionPoint(1)) movement += movementSpeed; // 달리기 활성화 시 이동력 증가
-        Debug.Log($"Run Activated: {movement}");
     }
 
     public void Damaged(float damage)
