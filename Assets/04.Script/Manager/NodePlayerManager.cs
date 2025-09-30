@@ -93,8 +93,8 @@ public class NodePlayerManager : MonoBehaviour
     {
         if (context.started)
         {
+            UIManager.GetInstance.ShowActionPanel(true);
             NotifyPlayerEndTurn(GetCurrentPlayer());
-            Debug.Log($"End Start: {NodePlayerManager.GetInstance.GetCurrentPlayer()?.name}");
         }
     }
 
