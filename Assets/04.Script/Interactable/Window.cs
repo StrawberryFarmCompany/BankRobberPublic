@@ -21,79 +21,22 @@ public class Window : IInteractable
         this.tile = tile;
         wayOne = forward;
         wayTwo = forward * -1;
-
-        UIManager.GetInstance.StartCoroutine(CoRegisterWhenNodesReady(OnInteraction));
     }
-
-    private IEnumerator CoRegisterWhenNodesReady(Interaction interaction)
-    {
-        var gm = GameManager.GetInstance;
-
-        var span = (wayOne.x != 0) ? new Vector3Int(0, 0, 1) : new Vector3Int(1, 0, 0);
-
-        var frontA = tile + wayOne;
-        var frontB = tile + span + wayOne;
-        var backA = tile + wayTwo;
-        var backB = tile + span + wayTwo;
-
-        while (!gm.IsExistNode(frontA) || !gm.IsExistNode(frontB) ||
-               !gm.IsExistNode(backA) || !gm.IsExistNode(backB))
-            yield return null;
-
-        RegistInteraction(interaction);
-    }
-
     public void OnInteraction(EntityStats stat)
     {
         //1이 아닌 방향을 구해야함
 
-        bool isForwardXAxis = (wayOne.x != 0);
-        Vector3Int goal;
-
+        bool isForwardXAxis = wayOne.x == 1;
+        Vector3Int goal = Vector3Int.zero;
         if (isForwardXAxis)
         {
             goal = stat.currNode.GetCenter.x == (tile + wayOne).x ? tile + wayTwo : tile + wayOne;
         }
         else
         {
-            goal = stat.currNode.GetCenter.z == (tile + wayOne).z ? tile + wayTwo : tile + wayOne;
+            goal = stat.currNode.GetCenter.z == (tile + wayOne).y ? tile + wayTwo : tile + wayOne;
         }
         //TODO : 플레이어 강제 움직임 함수 받아서 goal넣어줘야함
-        var span = (wayOne.x != 0) ? new Vector3Int(0, 0, 1) : new Vector3Int(1, 0, 0);
-        var frontA = tile + wayOne;
-        var frontB = frontA + span;
-        var backA = tile + wayTwo;
-        var backB = backA + span;
-
-        var here = stat.currNode.GetCenter;
-
-        //4칸(앞2/뒤2) 중에 서있지 않으면 무시
-        if (here != frontA && here != frontB && here != backA && here != backB)
-            return;
-
-        //같은 라인 보정
-        if (here == frontB && goal == backA) goal = backB;
-        else if (here == backB && goal == frontA) goal = frontB;
-        else if (here == frontA && goal == backB) goal = backA;
-        else if (here == backA && goal == frontB) goal = frontA;
-
-        var gm = GameManager.GetInstance;
-        if (!gm.Nodes.TryGetValue(goal, out var goalNode) || !goalNode.isWalkable)
-            return;
-
-        //실제 이동 처리
-        var prevNode = stat.currNode;
-        if (prevNode != null) prevNode.RemoveCharacter(stat);
-
-        stat.currNode = goalNode;
-        goalNode.AddCharacter(stat);
-
-        var npm = NodePlayerManager.GetInstance;
-        var cur = npm?.GetCurrentPlayer();
-        if (cur == null || cur.playerStats != stat) return;
-
-        var pos = cur.transform.position;
-        cur.transform.position = new Vector3(goal.x, pos.y, goal.z);
     }
     public void UnInteraction(EntityStats stat)
     {
