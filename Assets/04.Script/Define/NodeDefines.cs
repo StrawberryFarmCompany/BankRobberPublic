@@ -41,6 +41,11 @@ namespace NodeDefines
             }
             return null;
         }
+        public string GetInteractionNames()
+        {
+            return string.Join(',', nodeInteractions.Keys);
+        }
+
 
         public void AddCharacter(EntityStats stat)
         {
