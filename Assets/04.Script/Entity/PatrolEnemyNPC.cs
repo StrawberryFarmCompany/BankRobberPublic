@@ -14,7 +14,6 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
-    Gun gun;
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
@@ -28,7 +27,6 @@ public class PatrolEnemyNPC : EnemyNPC
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
         efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
-        gun = GetComponent<Gun>();
     }
 
     protected override void FixedUpdate()
