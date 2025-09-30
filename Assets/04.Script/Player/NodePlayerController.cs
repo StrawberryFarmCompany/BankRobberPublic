@@ -706,6 +706,7 @@ public class NodePlayerController : MonoBehaviour
             RemoveAiming();
         }
         TurnOffHighlighter();
+        StartMode(ref isMoveMode);
     }
         
     
