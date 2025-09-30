@@ -20,7 +20,74 @@ MonoBehaviour:
   - m_GUID: 19d4586faad2d474b9e6639dc4b52868
     m_Address: BuffStatus
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 63e12645c5cca7245b7144c996e8da91
+    m_Address: 6011
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e4bac46059beba4d891d785d1e75516
+    m_Address: 6009
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af78d562ab4269a40a73e092372a943d
+    m_Address: 6010
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a82e13b04773d643a1dd203445607c8
+    m_Address: 6006
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9264e5f3325e022439d0a04cc47c6dce
+    m_Address: 6005
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 11acbf50ca1d2394c940cfe873e5ea23
+    m_Address: 6002
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 133de35d8c9d554498d5b64c37a9d0e0
+    m_Address: 6000
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa029a937415d38409b2aceb9c7426c7
+    m_Address: 6004
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e04461d60cabc344998e2270542a3d29
+    m_Address: 6001
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac05652b538f85641a124a5a677821e2
+    m_Address: BuffPannel
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c05591d701364984dbe289a109f08be2
+    m_Address: BuffIcon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b1ea3b1297f0bad47ae074d7277b2f7a, type: 2}

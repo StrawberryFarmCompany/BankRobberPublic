@@ -21,6 +21,7 @@ public class ResourceManager : SingleTon<ResourceManager>
         preloaded = new Dictionary<string, object>();
         buffDatas = new Dictionary<ushort, BuffData>();
         SetBuffData();
+        PreLoadAsyncAll("PreLoad",null);
     }
     protected void SetBuffData()
     {
@@ -60,7 +61,7 @@ public class ResourceManager : SingleTon<ResourceManager>
     /// <typeparam name="T">����Ÿ��</typeparam>
     /// <param name="label">Ÿ�� Ű��</param>
     /// <param name="callback">(obj)=>{targetInstance = obj}</param>
-    public void LoadAsyncAll<T>(string label, Action<(string, T)[]> callback, bool isCaching = true)
+    public void LoadAsyncAll<T>(string label, Action<(string, T)[]> callback, bool isCaching = false)
     {
         var labelKeys = Addressables.LoadResourceLocationsAsync(label, typeof(T));
         labelKeys.WaitForCompletion();
