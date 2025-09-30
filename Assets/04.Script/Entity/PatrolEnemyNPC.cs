@@ -9,15 +9,14 @@ public class PatrolEnemyNPC : EnemyNPC
     public bool destinationPoint = false;    // 도착 지점
     public bool isNoise = false;             // 소음 감지
     public bool isArrivedNoisePlace = false; // 소음 발생 지역 도착
-    public bool isdoridori = false;
-    public NavMeshAgent agent;
+
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
-    public int SecLv = 0;
     Gun gun;
 
+    public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
     bool isMoving;
@@ -37,7 +36,7 @@ public class PatrolEnemyNPC : EnemyNPC
         base.FixedUpdate();
     }
 
-    protected override void Update()
+    private void Update()
     {
         if (isMoving)
         {
@@ -48,17 +47,13 @@ public class PatrolEnemyNPC : EnemyNPC
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
     {
-        if (isdoridori==true)
-        {
-            IdleRotation();
-        }
-        //if (GameManager.GetInstance.securityData.GetSecLevel == 1)
-        if(SecLv == 1)
+        if(stats.secData.GetSecLevel == 1)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
                 Debug.Log("조사");
-                Investigate(noiseLocation);
+                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
+                Move(noiseLocation);
                 if (this.gameObject.transform.position == noiseLocation)
                 {
                     isArrivedNoisePlace = true;
@@ -75,7 +70,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == true && destinationPoint == false)
             {
-
+                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 Move(firstLocation);
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
                 if (this.gameObject.transform.position == firstLocation)
@@ -88,6 +83,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == false && destinationPoint == true)
             {
+                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 Move(homeLocation);
                 if (this.gameObject.transform.position == homeLocation)
                 {
@@ -98,8 +94,7 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        //else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
-        else if(SecLv >= 2)
+        else if(stats.secData.GetSecLevel >= 2)
         {
             TryAttack();
             Debug.Log("죽어잇!");
@@ -107,15 +102,16 @@ public class PatrolEnemyNPC : EnemyNPC
             // 공격이 실패했거나 이동력이 남았으면 추적
             if (stats.movement > 0)
             {
-                Chase(nearPlayerLocation);
+                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyChaseState));
+                Move(nearPlayerLocation);
             }
         }
         base.CalculateBehaviour();
     }
 
     // 순찰
-    public void Patrol(Vector3 pos)
-    {
+    //public void Patrol(Vector3 pos)  //나중에 리펙토링 해보기
+    //{
         //PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
         //if (patrolState.agent == null)
         //{
@@ -125,7 +121,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
         //float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
         //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
-    }
+    //}
 
     // 두리번
     public void LookAround()
@@ -168,19 +164,14 @@ public class PatrolEnemyNPC : EnemyNPC
         efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
     }
 
-    public void Investigate(Vector3 pos)
-    {
-        PatrolEnemyInvestigateState investigateState = (PatrolEnemyInvestigateState)efsm.FindState(EnemyStates.PatrolEnemyInvestigateState);
-        investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
-        investigateState.pos = pos;
-        float eta = investigateState.agent.remainingDistance / investigateState.agent.speed;
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
-    }
-
-    public void Combat()
-    {
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
-    }
+    //public void Investigate(Vector3 pos)//나중에 리팩터링 해보기
+    //{
+    //    PatrolEnemyInvestigateState investigateState = (PatrolEnemyInvestigateState)efsm.FindState(EnemyStates.PatrolEnemyInvestigateState);
+    //    investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
+    //    investigateState.pos = pos;
+    //    float eta = investigateState.agent.remainingDistance / investigateState.agent.speed;
+    //    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
+    //}
 
     // 대미지 입었을 때
     public void TakeDamage()
@@ -198,25 +189,26 @@ public class PatrolEnemyNPC : EnemyNPC
         }
     }
 
-    public void Chase(Vector3 pos)
-    {
-        PatrolEnemyChaseState ChaseState = (PatrolEnemyChaseState)efsm.FindState(EnemyStates.PatrolEnemyChaseState);
+    //public void Chase(Vector3 pos)//나중에 리팩터링 해보기
+    //{
+    //    PatrolEnemyChaseState ChaseState = (PatrolEnemyChaseState)efsm.FindState(EnemyStates.PatrolEnemyChaseState);
 
-        if (ChaseState.agent == null)
-        {
-            ChaseState.agent = gameObject.GetComponent<NavMeshAgent>();
-        }
+    //    if (ChaseState.agent == null)
+    //    {
+    //        ChaseState.agent = gameObject.GetComponent<NavMeshAgent>();
+    //    }
 
-        ChaseState.pos.Enqueue(pos);
+    //    ChaseState.pos.Enqueue(pos);
 
-        float eta = ChaseState.agent.remainingDistance / ChaseState.agent.speed;
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyChaseState));
-    }
+    //    float eta = ChaseState.agent.remainingDistance / ChaseState.agent.speed;
+    //    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyChaseState));
+    //}
 
     public void Die()
     {
         efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyDeadState));
     }
+
     public void Move(Vector3 pos)
     {
         if (isMoving) return;
@@ -333,7 +325,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
     public void SequentialMove()
     {
-        PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
         // 아직 목표가 없으면 다음 큐 꺼내기
         if (!isMoving) return;
 

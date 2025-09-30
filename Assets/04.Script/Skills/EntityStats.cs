@@ -67,7 +67,7 @@ public class EntityStats
         curRerollCount = baseStats.curRerollCount;
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
-        secData = new SecurityData();
+        secData = new SecurityData(this);
     }
     public void RegistBuff(BuffData data)
     {
@@ -134,9 +134,7 @@ public class EntityStats
 
     public void ActiveRun()
     {
-        Debug.Log($"prevoius: {movement}");
         if (ConsumeActionPoint(1)) movement += movementSpeed; // 달리기 활성화 시 이동력 증가
-        Debug.Log($"Run Activated: {movement}");
     }
 
     public void Damaged(float damage)
@@ -159,7 +157,6 @@ public class EntityStats
     {
         curActionPoint = actionPoint;
         movement = movementSpeed;
-
     }
 
     public void SetCurrentNode(Vector3Int pos)

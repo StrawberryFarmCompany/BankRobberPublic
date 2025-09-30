@@ -7,6 +7,8 @@ namespace BuffDefine
 
     public class BuffData
     {
+        private ushort key;
+        public ushort Key { get { return key; } }
         private string statusName;
         public string StatusName { get { return statusName; } }
         private string disStatusNameEng;
@@ -27,6 +29,7 @@ namespace BuffDefine
         public BuffColorType ColorType { get { return colorType; } }
         public BuffData(ParsingBuffData data)
         {
+            key = data.key;
             this.statusName = data.statusName;
             this.disStatusNameEng = data.disStatusNameEng;
             this.disStatusNameKor = data.disStatusNameKor;
@@ -185,16 +188,7 @@ namespace BuffDefine
 
         public void ReleaseBuff()
         {
-            ushort level = 0;
-            if (data.StatusValue < ushort.MaxValue)
-            {
-                level = (ushort)data.StatusValue;
-            }
-            else
-            {
-                level = 3;
-            }
-            GameManager.GetInstance.securityData.SetSecLevel(level);
+
         }
 
         public void CountDuration()
