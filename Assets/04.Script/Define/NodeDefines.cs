@@ -42,7 +42,7 @@ namespace NodeDefines
             return null;
         }
 
-        public string GetInteractionNames(string separator = ",")
+        public string GetInteractionNames()
         {
             return string.Join(',', nodeInteractions.Keys);
         }
