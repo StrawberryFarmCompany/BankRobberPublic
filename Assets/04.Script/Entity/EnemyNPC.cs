@@ -23,12 +23,6 @@ public class EnemyNPC : MonoBehaviour
         stats.currNode = GameManager.GetInstance.GetNode(transform.position);
     }
 
-    protected virtual void Update()
-    {
-
-    }
-
-
     protected virtual void FixedUpdate()
     {
         if (stats == null) return;

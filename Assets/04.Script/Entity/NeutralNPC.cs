@@ -38,10 +38,4 @@ public class NeutralNPC : MonoBehaviour
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
         }
     }
-
-
-    protected virtual void Update()
-    {
-        
-    }
 }

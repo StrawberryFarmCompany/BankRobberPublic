@@ -20,13 +20,6 @@ public class ManagerNPC : NeutralNPC
         base.FixedUpdate();
     }
 
-    protected override void Update()
-    {
-        //현재 상태 실행
-        if (nfsm == null) return;
-        nfsm.Current?.Execute();
-    }
-
     protected override void CalculateBehaviour()
     {
         // 피격시 사망
