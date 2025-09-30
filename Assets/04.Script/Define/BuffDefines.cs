@@ -7,6 +7,8 @@ namespace BuffDefine
 
     public class BuffData
     {
+        private ushort key;
+        public ushort Key { get { return key; } }
         private string statusName;
         public string StatusName { get { return statusName; } }
         private string disStatusNameEng;
@@ -27,6 +29,7 @@ namespace BuffDefine
         public BuffColorType ColorType { get { return colorType; } }
         public BuffData(ParsingBuffData data)
         {
+            key = data.key;
             this.statusName = data.statusName;
             this.disStatusNameEng = data.disStatusNameEng;
             this.disStatusNameKor = data.disStatusNameKor;
