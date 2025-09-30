@@ -21,7 +21,7 @@ public class SecurityData
     /// <param name="defaultLevel">1~3 사이의 값을 넣어야합니다.</param>
     public SecurityData(EntityStats stat,ushort defaultLevel = 1)
     {
-        secLevel = defaultLevel;
+        SetSecLevel(defaultLevel); 
         this.stat = stat;
     }
     /// <summary>

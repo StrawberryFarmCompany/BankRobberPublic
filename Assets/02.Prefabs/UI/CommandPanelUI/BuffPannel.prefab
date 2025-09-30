@@ -192,8 +192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: {fileID: 1101189216979820166}
-  icons:
-  - {fileID: 6950430866370610911}
+  icons: []
 --- !u!1 &6057387272395771904
 GameObject:
   m_ObjectHideFlags: 0
