@@ -9,7 +9,7 @@ public class PatrolEnemyNPC : EnemyNPC
     public bool destinationPoint = false;    // 도착 지점
     public bool isNoise = false;             // 소음 감지
     public bool isArrivedNoisePlace = false; // 소음 발생 지역 도착
-    public bool isdoridori = false;
+
     public NavMeshAgent agent;
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
@@ -47,11 +47,6 @@ public class PatrolEnemyNPC : EnemyNPC
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
     {
-        if (isdoridori==true)
-        {
-            IdleRotation();
-        }
-
         if(stats.secData.GetSecLevel == 1)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
