@@ -10,6 +10,7 @@ public class Door : IInteractable
     public Vector3Int tile { get; set; }
     public Transform tr;
     public ILock lockModule;
+    private Vector3 defaultRotation;
     /// <summary>
     /// 
     /// </summary>
@@ -21,6 +22,7 @@ public class Door : IInteractable
         this.tile = tile;
         this.tr = tr;
         lockModule = ILock.Factory(type, doorValue);
+        defaultRotation = tr.rotation.eulerAngles;
         RegistInteraction(OnInteraction);
     }
     public void OnInteraction(EntityStats stat)
@@ -28,7 +30,10 @@ public class Door : IInteractable
         if (lockModule.IsLock(stat))
         {
             //이동 가능 불가 여부 추후 추가 필요
-            tr.transform.DORotate(new Vector3(0f, 180f, 0f),0.7f).OnComplete(RebuildAllNavMeshes);
+            Vector3 targetRot;
+
+            targetRot = defaultRotation + (Vector3.up * 90);
+            tr.transform.DORotate(targetRot,0.7f).OnComplete(RebuildAllNavMeshes);
             GameManager.GetInstance.Nodes[tile].isWalkable = true;
             ReleaseInteraction(OnInteraction);
             RegistInteraction(UnInteraction);
@@ -37,7 +42,7 @@ public class Door : IInteractable
     public void UnInteraction(EntityStats stat)
     {
         //이동 가능 불가 여부 추후 추가 필요
-        tr.transform.DORotate(new Vector3(0f, 0f, 0f), 0.7f).OnComplete(RebuildAllNavMeshes);
+        tr.transform.DORotate(defaultRotation, 0.7f).OnComplete(RebuildAllNavMeshes);
         GameManager.GetInstance.Nodes[tile].isWalkable = false;
 
     }
