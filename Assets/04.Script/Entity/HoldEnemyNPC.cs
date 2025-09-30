@@ -13,7 +13,6 @@ public class HoldEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
-    Gun gun;
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
@@ -26,7 +25,6 @@ public class HoldEnemyNPC : EnemyNPC
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
-        gun = GetComponent<Gun>();
     }
 
     private void Update()
