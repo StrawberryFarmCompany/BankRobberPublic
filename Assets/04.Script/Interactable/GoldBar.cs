@@ -6,8 +6,18 @@ using UnityEngine;
 public class GoldBar : IInteractable
 {
     public Vector3Int tile { get; set; }
+    
+
+    public void Init(Vector3Int tile)
+    {
+        this.tile = tile;
+        RegistInteraction(OnInteraction);
+    }
+
     public void OnInteraction(EntityStats stat)
     {
+        NodePlayerManager.GetInstance.GetCurrentPlayer().GetGold();
+        GameManager.GetInstance.Nodes[tile].isWalkable = true;
         ReleaseInteraction(OnInteraction);
     }
     public void UnInteraction(EntityStats stat)
