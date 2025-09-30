@@ -16,7 +16,6 @@ public class BuffIcon : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("우클릭 감지됨");
             Pannel.SetDescription(index);
         }
     }
