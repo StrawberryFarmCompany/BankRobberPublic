@@ -225,6 +225,12 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnCancel(InputAction.CallbackContext context)
     {
+        if (context.canceled)
+        {
+            Vector3 mousePos = Mouse.current.position.ReadValue();
+            
+            if (!ViewBuffData(mousePos)) return;
+        }
         if (context.started && IsMyTurn())
         {
             StartMode(ref isMoveMode);
@@ -232,7 +238,21 @@ public class NodePlayerController : MonoBehaviour
             TurnOnHighlighter(playerStats.movement);
         }
     }
+    public bool ViewBuffData(Vector3 mouseScreenPos)
+    {
+        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
 
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Node node = GameManager.GetInstance.GetNode(hit.point);
+            if (node != null && node.standing.Count > 0)
+            {
+                UIManager.GetInstance.BuffPannel.UpdateBuffList(node);
+                return true;
+            }
+        }
+        return false;
+    }
     public void OnClickNode(InputAction.CallbackContext context)
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
