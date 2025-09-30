@@ -1,130 +1,210 @@
+using NodeDefines;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using NodeDefines;
-using TMPro;
 
 public class LeftInteractionPanel : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private GameObject panelRoot; // ← 이미 있는 UIPanel GameObject
-    [SerializeField] private Button actionButton;  // ← UIPanel 안의 Button(실행 버튼)
+    [SerializeField] private GameObject panelRoot;
+    [SerializeField] private Button actionButton;
+    private Transform buttonsRoot;
 
-    private bool useCross4Scan = true;
-    private bool onlyNonWalkable = false;
+    static readonly string[] WhitelistParts = { "Window", "Door" };
+
+    static readonly Vector3Int[] Cross4 =
+    {
+        new Vector3Int( 1,0, 0),
+        new Vector3Int(-1,0, 0),
+        new Vector3Int( 0,0, 1),
+        new Vector3Int( 0,0,-1),
+    };
+
+    NodePlayerController _lastPlayer;
+    Vector3Int _lastCenter;
+    int _lastPlayerIndex = -1;
 
     void Awake()
     {
+        buttonsRoot = panelRoot ? panelRoot.transform : transform;
+        if (actionButton) actionButton.gameObject.SetActive(false);
         Hide(); // 시작은 숨김
+    }
+
+    void OnDisable()
+    {
+        // 컴포넌트 비활성 시 잔여 버튼 정리
+        ClearButtons();
+    }
+
+    void Update()
+    {
+        var npm = NodePlayerManager.GetInstance;
+        if (npm == null) { Hide(); return; }
+
+        var curPlayer = npm.GetCurrentPlayer();
+        if (curPlayer == null) { Hide(); return; }
+
+        bool playerChanged = (_lastPlayer != curPlayer) || (_lastPlayerIndex != npm.currentPlayerIndex);
+
+        var gm = GameManager.GetInstance;
+        var node = gm?.GetNode(curPlayer.transform.position);
+        if (node == null) { Hide(); return; }
+        var center = node.GetCenter;
+
+        bool centerChanged = center != _lastCenter;
+
+        //플레이어가 바뀌었거나, 현재 센터 타일이 바뀌었을 때만 갱신
+        if (playerChanged || centerChanged)
+        {
+            RefreshForPlayer(curPlayer);
+            _lastPlayer = curPlayer;
+            _lastPlayerIndex = npm.currentPlayerIndex;
+            _lastCenter = center;
+        }
     }
 
     public void RefreshForPlayer(NodePlayerController player)
     {
         if (!player) { Hide(); return; }
 
-        if (!TryPickInteractionTarget(player, out Node targetNode, out string targetKey))
+        var pairs = CollectPairs(player);   //노드 키 목록
+        BuildButtons(pairs, player);        //버튼 생성
+
+        if (pairs.Count > 0) Show();
+        else Hide();
+    }
+
+    bool IsFrontWallPattern(Vector3Int playerC, Vector3Int wallC, GameManager gm)
+    {
+        var d = wallC - playerC;
+        //1칸(상하좌우), 대각선/2칸 제외
+        if (Mathf.Abs(d.x) + Mathf.Abs(d.z) != 1) return false;
+
+        var wall = gm.GetNode(wallC);
+        if (wall == null || wall.isWalkable) return false;
+
+        var land = gm.GetNode(wallC + d); //벽 반대편
+        if (land == null || !land.isWalkable) return false;
+
+        return true;
+    }
+
+
+    private List<(Node, string)> CollectPairs(NodePlayerController player)
+    {
+        var list = new List<(Node, string)>();
+        var gm = GameManager.GetInstance;
+        var cur = gm.GetNode(player.transform.position);
+        if (cur == null) return list;
+
+        var c = cur.GetCenter;
+
+        foreach (var d in Cross4)
         {
-            Hide();
-            return;
+            var n = gm.GetNode(c + d);
+            if (n == null || !n.HasAnyInteraction()) continue;
+
+            if (!IsFrontWallPattern(c, n.GetCenter, gm)) continue;
+
+            foreach (var k in n.EnumerateInteractionKeys())
+                if (IsWhitelisted(k)) list.Add((n, k));
         }
 
-        if (actionButton != null)
+        //중복 제거,정렬(문,창문 우선)
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var dedup = new List<(Node, string)>();
+        foreach (var t in list
+            .OrderBy(t => PriorityIndex(t.Item2))                         //key -> Item2
+            .ThenBy(t => t.Item2, StringComparer.OrdinalIgnoreCase))      //key -> Item2
         {
-            var tmp = actionButton.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (tmp) tmp.text = string.IsNullOrEmpty(targetKey) ? "상호작용" : targetKey;
+            string sig = $"{t.Item1.GetCenter.x},{t.Item1.GetCenter.z}:{t.Item2}"; //node -> Item1
+            if (seen.Add(sig)) dedup.Add(t);
+        }
+        return dedup;
+    }
 
-            actionButton.interactable = true;
-            actionButton.onClick.RemoveAllListeners();
-            actionButton.onClick.AddListener(() =>
+    private bool IsWhitelisted(string key)
+    {
+        foreach (var part in WhitelistParts)
+            if (key.IndexOf(part, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+        return false;
+    }
+
+    private int PriorityIndex(string key)
+    {
+        for (int i = 0; i < WhitelistParts.Length; i++)
+            if (key.IndexOf(WhitelistParts[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                return i;
+        return int.MaxValue;
+    }
+
+    //버튼 생성
+    void BuildButtons(List<(Node node, string key)> pairs, NodePlayerController player)
+    {
+        ClearButtons();
+
+        if (!actionButton || !buttonsRoot) return;
+
+        foreach (var (node, key) in pairs)
+        {
+            var btn = Instantiate(actionButton, buttonsRoot);
+            btn.gameObject.SetActive(true);
+
+            var tmp = btn.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (tmp) tmp.text = KeyToLabel(key);
+            else
             {
-                bool ok = true;
-                if (!string.IsNullOrEmpty(targetKey))
-                    ok = targetNode.TryInvokeInteraction(targetKey, player.playerStats);
-                else
-                {
-                    try { targetNode.InvokeEvent(player.playerStats); }
-                    catch { ok = false; }
-                }
+                var legacy = btn.GetComponentInChildren<Text>(true);
+                if (legacy) legacy.text = KeyToLabel(key);
+            }
 
+            btn.interactable = true;
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() =>
+            {
+                bool ok = node.TryInvokeInteraction(key, player.playerStats);
+
+                RefreshForPlayer(player);
                 if (!ok)
                 {
                     try { UIManager.GetInstance?.SetSelectionLocked(false); } catch { }
                 }
-
-                Hide();
             });
         }
-
-        Show();
     }
+
+    string KeyToLabel(string key)
+    {
+        if (key.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0) return "window";    //나중에 한글로 바꿔주기 
+        if (key.IndexOf("Door", StringComparison.OrdinalIgnoreCase) >= 0) return "door";
+        return key;
+    }
+
+    void ClearButtons()
+    {
+        if (!buttonsRoot) return;
+
+        for (int i = buttonsRoot.childCount - 1; i >= 0; i--)
+        {
+            var child = buttonsRoot.GetChild(i);
+            if (actionButton && child == actionButton.transform) continue;
+            Destroy(child.gameObject);
+        }
+    }
+
     public void Hide()
     {
-        if (actionButton != null) actionButton.onClick.RemoveAllListeners();
-        if (panelRoot != null && panelRoot.activeSelf) panelRoot.SetActive(false);
+        ClearButtons();
+        if (panelRoot && panelRoot.activeSelf) panelRoot.SetActive(false);
     }
 
     void Show()
     {
-        if (panelRoot != null && !panelRoot.activeSelf) panelRoot.SetActive(true);
-    }
-
-    bool TryPickInteractionTarget(NodePlayerController player, out Node outNode, out string outKey)
-    {
-        outNode = null;
-        outKey = null;
-
-        var gm = GameManager.GetInstance;
-        var curNode = gm.GetNode(player.transform.position);
-        if (curNode == null) return false;
-
-        var c = curNode.GetCenter;
-
-        if (useCross4Scan)
-        {
-            Vector3Int[] dirs =
-            {
-                new Vector3Int( 1,0, 0),
-                new Vector3Int(-1,0, 0),
-                new Vector3Int( 0,0, 1),
-                new Vector3Int( 0,0,-1),
-            };
-
-            foreach (var d in dirs)
-            {
-                var n = gm.GetNode(c + d);
-                if (n == null) continue;
-                if (onlyNonWalkable && n.isWalkable) continue;
-
-                foreach (var k in n.EnumerateInteractionKeys())
-                {
-                    outNode = n; outKey = k;
-                    return true;
-                }
-
-                if (n.HasAnyInteraction())
-                {
-                    outNode = n; outKey = null;
-                    return true;
-                }
-            }
-            return false;
-        }
-        else
-        {
-            var n = curNode;
-
-            foreach (var k in n.EnumerateInteractionKeys())
-            {
-                outNode = n; outKey = k;
-                return true;
-            }
-            if (n.HasAnyInteraction())
-            {
-                outNode = n; outKey = null;
-                return true;
-            }
-            return false;
-        }
+        if (panelRoot && !panelRoot.activeSelf) panelRoot.SetActive(true);
     }
 }

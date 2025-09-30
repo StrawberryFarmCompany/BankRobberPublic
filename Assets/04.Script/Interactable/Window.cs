@@ -34,7 +34,7 @@ public class Window : IInteractable
         }
         else
         {
-            goal = stat.currNode.GetCenter.y == (tile + wayOne).y ? tile + wayTwo : tile + wayOne;
+            goal = stat.currNode.GetCenter.z == (tile + wayOne).y ? tile + wayTwo : tile + wayOne;
         }
         //TODO : 플레이어 강제 움직임 함수 받아서 goal넣어줘야함
     }
@@ -55,7 +55,7 @@ public class Window : IInteractable
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
-            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction,InteractionType.Window.ToString());
+            GameManager.GetInstance.Nodes[vecs[i]].RemoveInteraction(OnInteraction,InteractionType.Window.ToString());
         }
     }
 }

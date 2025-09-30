@@ -28,7 +28,7 @@ public class Door : IInteractable
         if (lockModule.IsLock(stat))
         {
             //이동 가능 불가 여부 추후 추가 필요
-            tr.transform.DORotate(new Vector3(0f, 90f, 0f),0.7f).OnComplete(RebuildAllNavMeshes);
+            tr.transform.DORotate(new Vector3(0f, 180f, 0f),0.7f).OnComplete(RebuildAllNavMeshes);
             GameManager.GetInstance.Nodes[tile].isWalkable = true;
             ReleaseInteraction(OnInteraction);
             RegistInteraction(UnInteraction);
@@ -64,10 +64,18 @@ public class Door : IInteractable
         if (_cached == null || _cached.Length == 0)
             _cached = Object.FindObjectsOfType<NavMeshSurface>(); // 씬 내 Surface 전부 수집
 
-        foreach (var s in _cached)
+        for (int i = 0; i < _cached.Length; i++)
         {
-            if (s != null) s.BuildNavMesh();
+            if (_cached[i] != null)
+            {
+                _cached[i].BuildNavMesh();
+            }
         }
+
+        //foreach (var s in _cached)
+        //{
+        //    if (s != null) s.BuildNavMesh();
+        //}
     }
 }
 public enum DoorLockType{none,lockPick,keyCard}
