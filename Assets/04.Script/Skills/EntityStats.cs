@@ -67,7 +67,7 @@ public class EntityStats
         curRerollCount = baseStats.curRerollCount;
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
-        secData = new SecurityData();
+        secData = new SecurityData(this);
     }
     public void RegistBuff(BuffData data)
     {

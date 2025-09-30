@@ -44,6 +44,8 @@ public class InteractionSetter : MonoBehaviour
                 door.Init(pos,target, lockType, doorValue);
                 break;
             case InteractionType.GoldBar:
+                GoldBar gold = (GoldBar)interaction;
+                gold.Init(pos);
                 break;
             case InteractionType.MoneyBag:
                 break;
