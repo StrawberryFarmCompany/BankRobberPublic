@@ -16,7 +16,7 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual IEnumerator Start()
     {
-         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
@@ -38,6 +38,7 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual void CalculateBehaviour()
     {
+        stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
 
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)   
         {
@@ -148,6 +149,4 @@ public class EnemyNPC : MonoBehaviour
             Debug.Log($"{stats.characterName} → {target.characterName} 빗나감!");
         }
     }
-
-
 }

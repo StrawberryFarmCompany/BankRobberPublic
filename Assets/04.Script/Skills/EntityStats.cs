@@ -157,7 +157,6 @@ public class EntityStats
     {
         curActionPoint = actionPoint;
         movement = movementSpeed;
-
     }
 
     public void SetCurrentNode(Vector3Int pos)

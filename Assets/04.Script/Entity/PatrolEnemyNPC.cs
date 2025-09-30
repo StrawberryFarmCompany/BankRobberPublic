@@ -15,7 +15,6 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
     [SerializeField] private Vector3 nearPlayerLocation;
-    public int SecLv = 0;
     Gun gun;
 
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
@@ -52,8 +51,8 @@ public class PatrolEnemyNPC : EnemyNPC
         {
             IdleRotation();
         }
-        //if (GameManager.GetInstance.securityData.GetSecLevel == 1)
-        if(SecLv == 1)
+
+        if(stats.secData.GetSecLevel == 1)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
@@ -75,7 +74,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == true && destinationPoint == false)
             {
-
                 Move(firstLocation);
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
                 if (this.gameObject.transform.position == firstLocation)
@@ -98,8 +96,7 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        //else if (GameManager.GetInstance.securityData.GetSecLevel >= 2)
-        else if(SecLv >= 2)
+        else if(stats.secData.GetSecLevel >= 2)
         {
             TryAttack();
             Debug.Log("죽어잇!");
