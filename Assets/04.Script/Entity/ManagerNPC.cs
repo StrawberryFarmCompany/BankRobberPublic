@@ -3,7 +3,6 @@ using System.Collections;
 public class ManagerNPC : NeutralNPC
 {
     public bool canSeeAlly;
-    public int SecLv;
 
     protected override IEnumerator Start()
     {
@@ -49,7 +48,6 @@ public class ManagerNPC : NeutralNPC
         }
 
         // 경계레벨이 3일 때
-        //else if (GameManager.GetInstance.securityData.GetSecLevel == 3)
         else if (stats.secData.GetSecLevel == 3)
         {
             OnPlayerDetected();

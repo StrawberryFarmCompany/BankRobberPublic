@@ -23,6 +23,8 @@ public class NeutralNPC : MonoBehaviour
 
     protected virtual void CalculateBehaviour()
     {
+        stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
+
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
