@@ -32,6 +32,7 @@ public class SecurityData
     {
         if (level >= 3 || level == secLevel) return;
         ushort key = (ushort)(6000 + level);
+        this.secLevel = level + 1;
         ResourceManager.GetInstance.GetBuffData.TryGetValue(key, out BuffData data);
         if (level == 2)
         {
