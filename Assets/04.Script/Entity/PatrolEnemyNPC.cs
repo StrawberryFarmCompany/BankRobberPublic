@@ -286,7 +286,7 @@ public class PatrolEnemyNPC : EnemyNPC
                 if (!GameManager.GetInstance.Nodes.ContainsKey(next)) continue;
 
                 var node = GameManager.GetInstance.Nodes[next];
-                Debug.Log(node);
+
                 // 2) 이동 가능한지 체크
                 if (node == null) continue;
                 if (!node.isWalkable) continue;
