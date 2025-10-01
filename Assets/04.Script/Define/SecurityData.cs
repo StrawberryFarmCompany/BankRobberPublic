@@ -19,7 +19,7 @@ public class SecurityData
     /// 시큐리티레벨 설정하는 함수
     /// </summary>
     /// <param name="defaultLevel">1~3 사이의 값을 넣어야합니다.</param>
-    public SecurityData(EntityStats stat,ushort defaultLevel = 1)
+    public SecurityData(EntityStats stat,ushort defaultLevel = 0)
     {
         SetSecLevel(defaultLevel); 
         this.stat = stat;
@@ -30,8 +30,9 @@ public class SecurityData
     /// <param name="level">0~2 사이의 값을 넣어야합니다.</param>
     public void SetSecLevel(ushort level)
     {
-        if (level >= 3 || level == secLevel) return;
+        if (level >= 3 || level+1 == secLevel) return;
         ushort key = (ushort)(6000 + level);
+        this.secLevel = level + 1;
         ResourceManager.GetInstance.GetBuffData.TryGetValue(key, out BuffData data);
         if (level == 2)
         {
