@@ -44,8 +44,8 @@ public class MoveRangeHighlighter : MonoBehaviour
         if (Mathf.Abs(startPos.x - currPos.x) > maxRange|| Mathf.Abs(startPos.z - currPos.z) > maxRange) return;
 
         if (!GameManager.GetInstance.Nodes.ContainsKey(currPos)) return;
-        else if (!GameManager.GetInstance.Nodes[currPos].isWalkable) return;
         else if (GameManager.GetInstance.Nodes[currPos] == null) return;
+        else if (!GameManager.GetInstance.Nodes[currPos].isWalkable) return;
         else if (GameManager.GetInstance.Nodes[currPos].standing != null)
             if(startPos != currPos)
                 if(GameManager.GetInstance.Nodes[currPos].standing.Count > 0) return;
@@ -60,7 +60,6 @@ public class MoveRangeHighlighter : MonoBehaviour
                 return;
             }
         }
-
 
         costMap[x, z] = curr;
 
