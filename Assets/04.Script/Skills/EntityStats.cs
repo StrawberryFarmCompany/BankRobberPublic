@@ -69,7 +69,6 @@ public class EntityStats
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
-        //secData.SetSecLevel(0);
     }
     public void RegistBuff(BuffData data)
     {
