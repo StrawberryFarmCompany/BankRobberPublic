@@ -169,8 +169,8 @@ public class LeftInteractionPanel : MonoBehaviour
 
     string KeyToLabel(string key)
     {
-        if (key.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0) return "window";    //나중에 한글로 바꿔주기 
-        if (key.IndexOf("Door", StringComparison.OrdinalIgnoreCase) >= 0) return "door";
+        if (key.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0) return "창문 넘기";    //나중에 한글로 바꿔주기 
+        if (key.IndexOf("Door", StringComparison.OrdinalIgnoreCase) >= 0) return "문";
         return key;
     }
 

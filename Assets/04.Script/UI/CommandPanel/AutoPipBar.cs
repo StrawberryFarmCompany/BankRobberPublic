@@ -92,11 +92,11 @@ public class AutoPipBar : MonoBehaviour
     {
         if (NodePlayerManager.GetInstance.GetCurrentPlayer().isHide)
         {
-            hideAndSneakAttackText.text = "Sneak\nAttack";
+            hideAndSneakAttackText.text = "기습 공격";
         }
         else
         {   
-            hideAndSneakAttackText.text = "Hiding";
+            hideAndSneakAttackText.text = "숨기";
         }
     }
 }
