@@ -4,8 +4,8 @@ using UnityEngine;
 using BuffDefine;
 public class SecurityData
 {
-    private int secLevel;
-    public int GetSecLevel { get { return secLevel; } }
+    private ushort secLevel;
+    public ushort GetSecLevel { get { return secLevel; } }
     private static IBuff battleSec;
     IBuff currSec;
     private EntityStats stat;
@@ -32,7 +32,7 @@ public class SecurityData
     {
         if (level >= 3 || level+1 == secLevel) return;
         ushort key = (ushort)(6000 + level);
-        this.secLevel = level + 1;
+        this.secLevel = level++;
         ResourceManager.GetInstance.GetBuffData.TryGetValue(key, out BuffData data);
         if (level == 2)
         {
