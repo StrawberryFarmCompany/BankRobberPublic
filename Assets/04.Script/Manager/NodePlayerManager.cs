@@ -56,7 +56,9 @@ public class NodePlayerManager : MonoBehaviour
         if (players.Count == 0)
             return;
 
+        players[currentPlayerIndex].playerInput.DeactivateInput();
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+        players[currentPlayerIndex].playerInput.ActivateInput();
         UIManager.GetInstance.pip.HideAndSneakText();
     }
 
@@ -67,7 +69,9 @@ public class NodePlayerManager : MonoBehaviour
     {
         if (UIManager.GetInstance != null && UIManager.GetInstance.SelectionLocked) return;
         if (index < 0 || index >= players.Count) return;
+        players[currentPlayerIndex].playerInput.DeactivateInput();
         currentPlayerIndex = index;
+        players[currentPlayerIndex].playerInput.ActivateInput();
         GetCurrentPlayer().isEndReady = false;
         UIManager.GetInstance.pip.HideAndSneakText();
     }
