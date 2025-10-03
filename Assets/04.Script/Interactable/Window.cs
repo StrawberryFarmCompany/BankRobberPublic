@@ -21,6 +21,7 @@ public class Window : IInteractable
         this.tile = tile;
         wayOne = forward;
         wayTwo = forward * -1;
+        RegistInteraction(OnInteraction);
     }
 
     public void OnInteraction(EntityStats stat)
@@ -39,6 +40,8 @@ public class Window : IInteractable
             goal = stat.currNode.GetCenter.z == (tile + wayOne).y ? tile + wayTwo : tile + wayOne;
         }
         //TODO : 플레이어 강제 움직임 함수 받아서 goal넣어줘야함
+
+        stat.ForceMove?.Invoke(goal);
     }
     public void UnInteraction(EntityStats stat)
     {
