@@ -20,7 +20,7 @@ public class NodePlayerController : MonoBehaviour
     public bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
-    private bool characterTurn = false;
+    public PlayerInput playerInput;
 
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Camera mainCamera;
@@ -78,6 +78,49 @@ public class NodePlayerController : MonoBehaviour
     public GameObject backPackParent;
     public GameObject emptyBackPack;
     public GameObject fullBackPack;
+
+    private void Awake()
+    {
+        playerStats = new EntityStats(playerData);
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (gun == null) gun = GetComponent<Gun>();
+        if (playerInput == null) playerInput = GetComponent<PlayerInput>();
+        isHide = true;
+        isEndTurn = false;
+        StartMode(ref isMoveMode);
+        //playerStats.OnDamaged += 추후 애니메이션 구현시 데미지 스테이트로 변환되도록
+    }
+
+    void Start()
+    {
+        playerInput.DeactivateInput();
+        playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
+
+        // [변경됨] 매니저에 자기 자신 등록
+        NodePlayerManager.GetInstance.RegisterPlayer(this);
+        GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
+
+        playerStats.SetCurrentNode(transform.position);
+        playerStats.NodeUpdates(transform.position);
+        GameManager.GetInstance.RegisterEntity(playerStats);
+    }
+
+    void Update()
+    {
+        if (IsMyTurn())
+        {
+            TurnOnHighlighter(playerVec, playerStats.movement);
+        }
+        else
+        {
+            TurnOffHighlighter();
+        }
+
+        if (isMoving)
+        {
+            SequentialMove();
+        }
+    }
 
     private bool IsWindowCell(Vector3Int overCell)
     {
@@ -179,50 +222,6 @@ public class NodePlayerController : MonoBehaviour
         _isVaulting = false;
     }
 
-    private void Awake()
-    {
-        playerStats = new EntityStats(playerData);
-        if (agent == null) agent = GetComponent<NavMeshAgent>();
-        if (gun == null)  gun = GetComponent<Gun>();
-        isHide = true;
-        isEndTurn = false;
-        StartMode(ref isMoveMode);
-        //playerStats.OnDamaged += 추후 애니메이션 구현시 데미지 스테이트로 변환되도록
-    }
-
-    void Start()
-    {
-        playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
-
-        // [변경됨] 매니저에 자기 자신 등록
-        NodePlayerManager.GetInstance.RegisterPlayer(this);
-        GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
-
-        playerStats.SetCurrentNode(transform.position);
-        playerStats.NodeUpdates(transform.position);
-        GameManager.GetInstance.RegisterEntity(playerStats);
-    }
-
-    void Update()
-    {
-        if (IsMyTurn())
-        {
-        TurnOnHighlighter(playerVec, playerStats.movement);
-        }
-        else
-            {
-            TurnOffHighlighter();
-        }
-
-        if (isMoving)
-        {
-            SequentialMove();
-        }
-
-        
-    }
-
-
     public void OnCancel(InputAction.CallbackContext context)
     {
         if (context.canceled)
@@ -258,7 +257,7 @@ public class NodePlayerController : MonoBehaviour
     }
     public void OnClickNode(InputAction.CallbackContext context)
     {
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current.IsPointerOverGameObject())
         {
             // UI 클릭 중이면 실행 안 함
             return;
