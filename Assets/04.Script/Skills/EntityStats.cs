@@ -47,6 +47,7 @@ public class EntityStats
     private List<IBuff> buffs;
     public List<IBuff> Buffs { get { return buffs; } }
     public Action OnDamaged;
+    public Action<Vector3Int> ForceMove;
 
     public EntityStats(EntityData baseStats)
     {
@@ -173,9 +174,9 @@ public class EntityStats
     {
         Vector3Int tempPos = GameManager.GetInstance.GetNode(GameManager.GetInstance.GetVecInt(pos)).GetCenter;
 
-        if (currNode.GetCenter != tempPos)
+        if (currNode == null || currNode.GetCenter != tempPos)
         {
-            currNode.RemoveCharacter(this);
+            if(currNode != null)currNode.RemoveCharacter(this);
             currNode = GameManager.GetInstance.GetNode(tempPos);
             currNode.AddCharacter(this);
         }

@@ -48,7 +48,7 @@ namespace NodeDefines
         }
         public string[] GetInteractionNameArray()
         {
-            return nodeInteractions.Keys.ToArray();
+            return nodeInteractions == null ? null : nodeInteractions.Keys.ToArray();
         }
 
 

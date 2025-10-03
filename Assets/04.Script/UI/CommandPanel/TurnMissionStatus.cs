@@ -10,10 +10,10 @@ public class TurnMissionStatus : MonoBehaviour
     [SerializeField] Button endTurnButton;
     [SerializeField] bool lockButtonOnEnemy = false;
 
-    [SerializeField] string allyText = "My Turn";
-    [SerializeField] string enemyText = "Enemy Turn";
-    [SerializeField] string neutralText = "Neutral";
-    [SerializeField] string stealthPrefix = "Stealth Round ";
+    [SerializeField] string allyText = "내 턴";
+    [SerializeField] string enemyText = "상대 턴";
+    [SerializeField] string neutralText = "중립 턴";
+    [SerializeField] string stealthPrefix = "잠입 라운드 ";
 
     int stealthRound = 1;       //라운드 카운트
     bool sawFirstAlly = false;  //시작 후 첫 아군 턴 증가 방지

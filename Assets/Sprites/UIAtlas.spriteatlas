@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UIAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 133de35d8c9d554498d5b64c37a9d0e0, type: 3}
+    - {fileID: 2800000, guid: e04461d60cabc344998e2270542a3d29, type: 3}
+    - {fileID: 2800000, guid: 11acbf50ca1d2394c940cfe873e5ea23, type: 3}
+    - {fileID: 2800000, guid: aa029a937415d38409b2aceb9c7426c7, type: 3}
+    - {fileID: 2800000, guid: 9264e5f3325e022439d0a04cc47c6dce, type: 3}
+    - {fileID: 2800000, guid: 4a82e13b04773d643a1dd203445607c8, type: 3}
+    - {fileID: 2800000, guid: 6e4bac46059beba4d891d785d1e75516, type: 3}
+    - {fileID: 2800000, guid: af78d562ab4269a40a73e092372a943d, type: 3}
+    - {fileID: 2800000, guid: 63e12645c5cca7245b7144c996e8da91, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - 11acbf50ca1d2394c940cfe873e5ea23: 21300000
+    - af78d562ab4269a40a73e092372a943d: 21300000
+    - aa029a937415d38409b2aceb9c7426c7: 21300000
+    - 9264e5f3325e022439d0a04cc47c6dce: 21300000
+    - 63e12645c5cca7245b7144c996e8da91: 21300000
+    - 6e4bac46059beba4d891d785d1e75516: 21300000
+    - e04461d60cabc344998e2270542a3d29: 21300000
+    - 4a82e13b04773d643a1dd203445607c8: 21300000
+    - 133de35d8c9d554498d5b64c37a9d0e0: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 11acbf50ca1d2394c940cfe873e5ea23, type: 3}
+  - {fileID: 21300000, guid: af78d562ab4269a40a73e092372a943d, type: 3}
+  - {fileID: 21300000, guid: aa029a937415d38409b2aceb9c7426c7, type: 3}
+  - {fileID: 21300000, guid: 9264e5f3325e022439d0a04cc47c6dce, type: 3}
+  - {fileID: 21300000, guid: 63e12645c5cca7245b7144c996e8da91, type: 3}
+  - {fileID: 21300000, guid: 6e4bac46059beba4d891d785d1e75516, type: 3}
+  - {fileID: 21300000, guid: e04461d60cabc344998e2270542a3d29, type: 3}
+  - {fileID: 21300000, guid: 4a82e13b04773d643a1dd203445607c8, type: 3}
+  - {fileID: 21300000, guid: 133de35d8c9d554498d5b64c37a9d0e0, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - 6002
+  - 6010
+  - 6004
+  - 6005
+  - 6011
+  - 6009
+  - 6001
+  - 6006
+  - 6000
+  m_RenderDataMap: {}
+  m_Tag: UIAtlas
+  m_IsVariant: 0

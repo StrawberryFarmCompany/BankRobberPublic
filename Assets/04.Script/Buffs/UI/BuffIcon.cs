@@ -7,10 +7,6 @@ public class BuffIcon : MonoBehaviour, IPointerClickHandler
     private int index;
     public int Index { get { return index; } }
     private BuffPannel Pannel { get { return UIManager.GetInstance.BuffPannel; } }
-    private void Awake()
-    {
-        Debug.Log("sex");
-    }
     public void Init(int index)
     {
         if (image == null) image = GetComponent<Image>();
@@ -20,7 +16,6 @@ public class BuffIcon : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("우클릭 감지됨");
             Pannel.SetDescription(index);
         }
     }

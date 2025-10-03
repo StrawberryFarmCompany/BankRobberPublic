@@ -68,6 +68,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == true && destinationPoint == false)
             {
+                Debug.Log("무브 실행 전");
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 Move(firstLocation);
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
@@ -209,6 +210,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
     public void Move(Vector3 pos)
     {
+        Debug.Log("무브 실행");
         if (isMoving) return;
         Vector3Int targetPos = GameManager.GetInstance.GetVecInt(pos);
 
@@ -238,6 +240,7 @@ public class PatrolEnemyNPC : EnemyNPC
             if (stats.ConsumeMovement(1))
             {
                 pathQueue.Enqueue((Vector3Int)step);
+                Debug.Log($"이동{step}");
             }
             else
             {

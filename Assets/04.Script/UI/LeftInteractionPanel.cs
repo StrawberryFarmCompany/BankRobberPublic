@@ -72,91 +72,39 @@ public class LeftInteractionPanel : MonoBehaviour
     {
         if (!player) { Hide(); return; }
 
-        var pairs = CollectPairs(player);   //노드 키 목록
-        BuildButtons(pairs, player);        //버튼 생성
-
-        if (pairs.Count > 0) Show();
-        else Hide();
-    }
-
-    bool IsFrontWallPattern(Vector3Int playerC, Vector3Int wallC, GameManager gm)
-    {
-        var d = wallC - playerC;
-        //1칸(상하좌우), 대각선/2칸 제외
-        if (Mathf.Abs(d.x) + Mathf.Abs(d.z) != 1) return false;
-
-        var wall = gm.GetNode(wallC);
-        if (wall == null || wall.isWalkable) return false;
-
-        var land = gm.GetNode(wallC + d); //벽 반대편
-        if (land == null || !land.isWalkable) return false;
-
-        return true;
-    }
-
-
-    private List<(Node, string)> CollectPairs(NodePlayerController player)
-    {
-        var list = new List<(Node, string)>();
-        var gm = GameManager.GetInstance;
-        var cur = gm.GetNode(player.transform.position);
-        if (cur == null || !cur.HasAnyInteraction()) return list;
-
-        foreach (var k in cur.EnumerateInteractionKeys())
-            if (IsWhitelisted(k)) list.Add((cur, k));
-
-        list.Sort((a, b) =>
-        {
-            int pa = PriorityIndex(a.Item2);
-            int pb = PriorityIndex(b.Item2);
-            int c = pa.CompareTo(pb);
-            return c != 0 ? c : string.Compare(a.Item2, b.Item2, StringComparison.OrdinalIgnoreCase);
-        });
-
-        return list;
-    }
-
-    private bool IsWhitelisted(string key)
-    {
-        foreach (var part in WhitelistParts)
-            if (key.IndexOf(part, StringComparison.OrdinalIgnoreCase) >= 0)
-                return true;
-        return false;
-    }
-
-    private int PriorityIndex(string key)
-    {
-        for (int i = 0; i < WhitelistParts.Length; i++)
-            if (key.IndexOf(WhitelistParts[i], StringComparison.OrdinalIgnoreCase) >= 0)
-                return i;
-        return int.MaxValue;
+        BuildButtons(player);        //버튼 생성
     }
 
     //버튼 생성
-    void BuildButtons(List<(Node node, string key)> pairs, NodePlayerController player)
+    void BuildButtons(NodePlayerController player)
     {
         ClearButtons();
 
         if (!actionButton || !buttonsRoot) return;
+        Node node = GameManager.GetInstance.GetNode(player.transform.position);
+        string[] strArray = node.GetInteractionNameArray();
 
-        foreach (var (node, key) in pairs)
+        if (strArray == null)
         {
-            var btn = Instantiate(actionButton, buttonsRoot);
+            Hide();
+            return;
+        }
+
+        for (int i = 0; i < strArray.Length; i++)
+        {
+            Button btn = Instantiate(actionButton, buttonsRoot);
             btn.gameObject.SetActive(true);
+            btn.transform.name = "Btn_" + strArray[i];
 
             var tmp = btn.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (tmp) tmp.text = KeyToLabel(key);
-            else
-            {
-                var legacy = btn.GetComponentInChildren<Text>(true);
-                if (legacy) legacy.text = KeyToLabel(key);
-            }
+            if (tmp) tmp.text = KeyToLabel(strArray[i]);
 
             btn.interactable = true;
             btn.onClick.RemoveAllListeners();
+            int index = i;
             btn.onClick.AddListener(() =>
             {
-                bool ok = node.TryInvokeInteraction(key, player.playerStats);
+                bool ok = node.TryInvokeInteraction(strArray[index], player.playerStats);
 
                 RefreshForPlayer(player);
                 if (!ok)
@@ -165,12 +113,15 @@ public class LeftInteractionPanel : MonoBehaviour
                 }
             });
         }
+
+        if (strArray.Length > 0) Show();
+        else Hide();
     }
 
     string KeyToLabel(string key)
     {
-        if (key.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0) return "window";    //나중에 한글로 바꿔주기 
-        if (key.IndexOf("Door", StringComparison.OrdinalIgnoreCase) >= 0) return "door";
+        if (key.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0) return "창문 넘기";    //나중에 한글로 바꿔주기 
+        if (key.IndexOf("Door", StringComparison.OrdinalIgnoreCase) >= 0) return "문";
         return key;
     }
 
