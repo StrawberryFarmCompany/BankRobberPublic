@@ -20,7 +20,7 @@ public class NodePlayerController : MonoBehaviour
     public bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
-    private bool characterTurn = false;
+    public PlayerInput playerInput;
 
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Camera mainCamera;
@@ -61,6 +61,13 @@ public class NodePlayerController : MonoBehaviour
     private bool isEndTurn;
     public bool IsEndTurn { get { return isEndTurn; } }
 
+
+    [Header("창문 넘기")]
+    [SerializeField] float vaultSpeed = 8f;         //이동 속도
+    [SerializeField] float arriveTolerance = 0.05f; //위치 수정 용
+
+    bool _isVaulting;                                // 중복 실행 방지
+
     private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
     public bool isMoving;
@@ -76,7 +83,8 @@ public class NodePlayerController : MonoBehaviour
     {
         playerStats = new EntityStats(playerData);
         if (agent == null) agent = GetComponent<NavMeshAgent>();
-        if (gun == null)  gun = GetComponent<Gun>();
+        if (gun == null) gun = GetComponent<Gun>();
+        if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         isHide = true;
         isEndTurn = false;
         StartMode(ref isMoveMode);
@@ -85,6 +93,7 @@ public class NodePlayerController : MonoBehaviour
 
     void Start()
     {
+        playerInput.DeactivateInput();
         playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
 
         // [변경됨] 매니저에 자기 자신 등록
@@ -100,10 +109,10 @@ public class NodePlayerController : MonoBehaviour
     {
         if (IsMyTurn())
         {
-        TurnOnHighlighter(playerVec, playerStats.movement);
+            TurnOnHighlighter(playerVec, playerStats.movement);
         }
         else
-            {
+        {
             TurnOffHighlighter();
         }
 
@@ -111,10 +120,107 @@ public class NodePlayerController : MonoBehaviour
         {
             SequentialMove();
         }
-
-        
     }
 
+    private bool IsWindowCell(Vector3Int overCell)
+    {
+        var node = GameManager.GetInstance.Nodes.TryGetValue(overCell, out var n) ? n : null;
+        if (node == null) return false;
+        if (!node.HasAnyInteraction()) return false;
+
+        // 네가 쓰는 키가 InteractionType.Window.ToString() 라면 정확 매칭
+        // (혹은 부분 문자열로 포함 검사: k.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0)
+        foreach (var k in node.EnumerateInteractionKeys())
+            if (k == InteractionType.Window.ToString()) return true;
+
+        return false;
+    }
+
+    //대각선 금지
+    Vector3Int AxialDir(Vector3Int from, Vector3Int to)
+    {
+        int dx = Mathf.Clamp(to.x - from.x, -1, 1);
+        int dz = Mathf.Clamp(to.z - from.z, -1, 1);
+        if (Mathf.Abs(dx) > Mathf.Abs(dz)) dz = 0;
+        else if (Mathf.Abs(dz) > Mathf.Abs(dx)) dx = 0;
+        else
+        {
+            dz = 0;
+        }
+        return new Vector3Int(dx, 0, dz);
+    }
+
+    public void VaultTowardMouse()
+    {
+        if (!IsMyTurn() || _isVaulting) return;
+
+        Vector3 mousePos = Mouse.current.position.ReadValue();  //마우스 위치
+        Vector3Int cur = GameManager.GetInstance.GetNode(transform.position).GetCenter; //프레이어 위치
+        Vector3Int click = GetNodeVector3ByRay(mousePos);
+        if (click.x == -1) return;
+
+        Vector3Int dir = AxialDir(cur, click);  //직선 이동만
+        if (dir == Vector3Int.zero) return;
+
+        Vector3Int over = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z);  //창문,벽 있는 칸
+        Vector3Int land = new Vector3Int(cur.x + dir.x, cur.y, cur.z + dir.z) + dir;    //착지할 칸
+        TryVault(over, land);
+    }
+
+    public void TryVault(Vector3Int overCell, Vector3Int landCell)
+    {
+        if (!IsMyTurn() || _isVaulting) return;
+
+        var gm = GameManager.GetInstance;
+        var overNode = gm.GetNode(overCell);
+        var landNode = gm.GetNode(landCell);
+        if (overNode == null || landNode == null) { Debug.Log("유효하지 않은 위치"); return; }
+
+        // ← 창문 판정은 노드의 상호작용 키로
+        if (!IsWindowCell(overCell)) { Debug.Log("여기는 창문이 아님"); return; }
+
+        if (overNode.isWalkable) { Debug.Log("앞칸이 벽/창문이 아님"); return; }
+        if (!landNode.isWalkable) { Debug.Log("착지칸 불가"); return; }
+
+        TurnOffHighlighter();
+        StartCoroutine(Co_VaultMove((Vector3)landNode.GetCenter, landCell));
+    }
+
+    IEnumerator Co_VaultMove(Vector3 targetWorld, Vector3Int landCell)
+    {
+        _isVaulting = true;
+
+        //NavMeshAgent 간섭 방지
+        if (agent) agent.enabled = false;
+
+        Vector3 start = transform.position;
+        float flatDist = Vector3.Distance(new Vector3(start.x, 0, start.z), new Vector3(targetWorld.x, 0, targetWorld.z));
+        float duration = Mathf.Max(0.06f, flatDist / Mathf.Max(0.01f, vaultSpeed));
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / duration;
+            transform.position = Vector3.Lerp(start, targetWorld, t);
+            yield return null;
+        }
+
+        if (Vector3.Distance(transform.position, targetWorld) > arriveTolerance)
+            transform.position = targetWorld;
+
+        //NavMeshAgent 재활성
+        if (agent)
+        {
+            agent.enabled = true;
+            agent.ResetPath();
+        }
+
+        //상태/하이라이트 갱신
+        playerVec = landCell;
+        TurnOnHighlighter(playerVec, playerStats.movement);
+
+        _isVaulting = false;
+    }
 
     public void OnCancel(InputAction.CallbackContext context)
     {
@@ -151,7 +257,7 @@ public class NodePlayerController : MonoBehaviour
     }
     public void OnClickNode(InputAction.CallbackContext context)
     {
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current.IsPointerOverGameObject())
         {
             // UI 클릭 중이면 실행 안 함
             return;
