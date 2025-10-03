@@ -47,6 +47,7 @@ public class EntityStats
     private List<IBuff> buffs;
     public List<IBuff> Buffs { get { return buffs; } }
     public Action OnDamaged;
+    public Action<Vector3Int> ForceMove;
 
     public EntityStats(EntityData baseStats)
     {
