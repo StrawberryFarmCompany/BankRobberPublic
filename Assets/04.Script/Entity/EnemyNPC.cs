@@ -9,7 +9,6 @@ public class EnemyNPC : MonoBehaviour
     public EntityData entityData;
     protected EntityStats stats;
     protected EnemyStateMachine efsm;
-    public Node currNode;
     public Gun gun;
 
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
@@ -21,7 +20,7 @@ public class EnemyNPC : MonoBehaviour
         stats = new EntityStats(entityData);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
-        stats.currNode = GameManager.GetInstance.GetNode(transform.position);
+        stats.NodeUpdates(transform.position);
         gun = GetComponent<Gun>();
     }
 
