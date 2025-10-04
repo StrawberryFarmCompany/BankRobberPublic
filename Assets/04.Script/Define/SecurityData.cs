@@ -40,7 +40,7 @@ public class SecurityData
             ResourceManager.GetInstance.GetBuffData.TryGetValue(6003, out BuffData move);
             currSec = IBuff.Factory(move, stat, BuffType.securityLevel);
             currSec.RegistBuff();
-            GameManager.GetInstance.CurrentPhase = GamePhase.Battle;
+            GameManager.GetInstance.SetGamePhase(GamePhase.Battle);
         }
         else
         {
