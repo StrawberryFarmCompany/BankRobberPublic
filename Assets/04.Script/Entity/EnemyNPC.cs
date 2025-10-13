@@ -56,7 +56,7 @@ public class EnemyNPC : MonoBehaviour
         Vector3Int enemyPos = stats.currNode.GetCenter;
 
         // 사정거리 안에 있는 모든 엔티티 가져오기
-        List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.attackRange);
+        List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.detectingDistance);
 
         // 리스트 상태 출력 (디버그용)
         if (targets == null || targets.Count == 0)
@@ -76,7 +76,7 @@ public class EnemyNPC : MonoBehaviour
 
             // 1. 거리 체크 (사거리 무제인지 확인 필요)
             float dist = Vector3.Distance(stats.currNode.GetCenter, target.currNode.GetCenter);
-            if (dist > stats.attackRange)
+            if (dist > stats.detectingDistance)
             {
                 Debug.Log("2. 준");
                 continue;
@@ -99,6 +99,12 @@ public class EnemyNPC : MonoBehaviour
         }
 
         Debug.Log($"[DetectVisibleTargets] {visibleTargets.Count}명 시야 내 감지됨");
+        
+        if (visibleTargets.Count > 0)
+        {
+            stats.secData.SetSecLevel(2);
+            Debug.Log("세큐리티 레벨 2로 상승");
+        }
         return visibleTargets;
     }
 

@@ -49,6 +49,8 @@ public class HoldEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel == 0)
         {
+            DetectVisibleTargets();
+
             if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
             {
                 ChangeToIdle();//대기 상태
