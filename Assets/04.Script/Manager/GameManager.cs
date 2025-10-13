@@ -27,13 +27,6 @@ class GameManager : SingleTon<GameManager>
     public bool PlayerTurn { get { return playerTurn; } set { playerTurn = value; } } //현재 플레이어의 턴인가?
 
 
-    // 캐릭터 턴 종료 여부 대신 → NodePlayerController 내부 상태로 관리
-    // private bool isFirstCharacterEnd;
-    // private bool isSecondCharacterEnd;
-    // private bool isThirdCharacterEnd;
-    public SecurityData securityData;
-
-
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
     public readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
     public List<bool> isPlayerGetKeyCard = new List<bool>();
@@ -66,6 +59,20 @@ class GameManager : SingleTon<GameManager>
 
     // 
     private List<EntityStats> entities = new List<EntityStats>();
+    public void SetGamePhase(GamePhase phase)
+    {
+        CurrentPhase = phase;
+        //추후 해당 페이즈시 추가
+        switch (phase)
+        {
+            case GamePhase.NoneBattle:
+                break;
+            case GamePhase.Battle:
+                break;
+            default:
+                break;
+        }
+    }
 
     protected override void Init()
     {
