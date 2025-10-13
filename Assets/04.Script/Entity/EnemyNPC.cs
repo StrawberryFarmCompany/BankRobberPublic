@@ -48,8 +48,10 @@ public class EnemyNPC : MonoBehaviour
         }
     }
     
-    public void TryAttack()
+    public List<EntityStats> DetectVisibleTargets()
     {
+        List<EntityStats> visibleTargets = new List<EntityStats>();
+
         // 적 자신의 노드
         Vector3Int enemyPos = stats.currNode.GetCenter;
 
@@ -59,20 +61,9 @@ public class EnemyNPC : MonoBehaviour
         // 리스트 상태 출력 (디버그용)
         if (targets == null || targets.Count == 0)
         {
-            Debug.LogError("[TryAttack] 타겟 없음!");
-            return;
+            Debug.LogError("[DetectVisibleTargets] 타겟 없음!");
+            return visibleTargets;
         }
-        else
-        {
-            Debug.LogError($"[TryAttack] 타겟 {targets.Count}명 발견");
-            foreach (var t in targets)
-            {
-                Debug.LogError($"- 이름: {t.characterName}, HP: {t.CurHp}, 위치: {t.currNode.GetCenter}, 태그: {t.entityTag}");
-            }
-        }
-
-        // 보이는 플레이어만 모은 리스트
-        List<EntityStats> visibleTargets = new List<EntityStats>();
 
         foreach (var target in targets)
         {
@@ -107,20 +98,34 @@ public class EnemyNPC : MonoBehaviour
             }
         }
 
-        // 4. 리스트에 아무도 없으면 리턴
+        Debug.Log($"[DetectVisibleTargets] {visibleTargets.Count}명 시야 내 감지됨");
+        return visibleTargets;
+    }
+
+    public void TryAttack()
+    {
+        // 보이는 플레이어만 모은 리스트
+        List<EntityStats> visibleTargets = DetectVisibleTargets();
+
+        // 리스트에 아무도 없으면 리턴
         if (visibleTargets.Count == 0)
         {
+            Debug.Log("공격 가능한 친구 없음");
             return;
         }
 
-        // 5. 랜덤으로 한 명 선택
+        // 랜덤으로 한 명 선택
         EntityStats chosenTarget = visibleTargets[Random.Range(0, visibleTargets.Count)];
 
-        // 6. 행동 포인트 확인 및 공격
+        // 행동 포인트 확인 및 공격
         if (stats.ConsumeActionPoint(1))
         {
             gun.Shoot(chosenTarget.currNode.GetCenter, 1);
             Debug.Log($"{stats.characterName}이(가) {chosenTarget.characterName}을(를) 향해 사격!");
+        }
+        else
+        {
+            Debug.Log("행동 포인트 부족");
         }
     }
 

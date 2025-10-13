@@ -47,7 +47,7 @@ public class HoldEnemyNPC : EnemyNPC
             ChangeToDead();//사망
         }
 
-        else if (stats.secData.GetSecLevel == 3)
+        else if (stats.secData.GetSecLevel == 0)
         {
             if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
             {
@@ -82,7 +82,7 @@ public class HoldEnemyNPC : EnemyNPC
             }
         }
 
-        else if (stats.secData.GetSecLevel >= 1)
+        else if (stats.secData.GetSecLevel >= 2)
         {
             efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyCombatState));
             TryAttack();
