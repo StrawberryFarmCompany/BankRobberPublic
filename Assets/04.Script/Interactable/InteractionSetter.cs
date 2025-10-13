@@ -38,8 +38,8 @@ public class InteractionSetter : MonoBehaviour
                 break;
             case InteractionType.Window:
                 Window window = (Window)interaction;
-                Vector3Int forward = Manager.GetVecInt(transform.forward);
-                window.Init(pos,forward-pos);
+                Vector3Int forward = Manager.GetVecInt(transform.right);
+                window.Init(pos,forward);
                 break;
             case InteractionType.Door:
                 Door door = (Door)interaction;
