@@ -151,7 +151,6 @@ public class PatrolEnemyNPC : EnemyNPC
         this.gameObject.transform.rotation = Quaternion.Euler(0, firstLookAngle, 0);
         Debug.Log(firstLookAngle);
         yield return new WaitForSeconds(1.2f);
-
         
         this.gameObject.transform.rotation = Quaternion.Euler(0, secondLookAngle, 0);
         Debug.Log(secondLookAngle);
