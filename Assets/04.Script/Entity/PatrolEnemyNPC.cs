@@ -45,7 +45,7 @@ public class PatrolEnemyNPC : EnemyNPC
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
     {
-        if(stats.secData.GetSecLevel == 1)
+        if(stats.secData.GetSecLevel == 0)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
