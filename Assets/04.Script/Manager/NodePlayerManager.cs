@@ -58,6 +58,7 @@ public class NodePlayerManager : MonoBehaviour
 
         players[currentPlayerIndex].playerInput.DeactivateInput();
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+        CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         UIManager.GetInstance.pip.HideAndSneakText();
     }
@@ -71,6 +72,7 @@ public class NodePlayerManager : MonoBehaviour
         if (index < 0 || index >= players.Count) return;
         players[currentPlayerIndex].playerInput.DeactivateInput();
         currentPlayerIndex = index;
+        CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         GetCurrentPlayer().isEndReady = false;
         UIManager.GetInstance.pip.HideAndSneakText();
