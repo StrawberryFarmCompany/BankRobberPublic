@@ -6,14 +6,15 @@ public class SecurityData
 {
     private ushort secLevel;
     public ushort GetSecLevel { get { return secLevel; } }
-    private static IBuff battleSec;
+    private static IBuff sharedSec;
+
     IBuff currSec;
     private EntityStats stat;
-    public IBuff GetSecBuff { get {return battleSec != null ? battleSec : currSec ; }}
+    public IBuff GetSecBuff { get {return sharedSec != null ? sharedSec : currSec ; }}
 
     public static void Reset()
     {
-        battleSec = null;
+        sharedSec = null;
     }
     /// <summary>
     /// 시큐리티레벨 설정하는 함수
@@ -36,16 +37,15 @@ public class SecurityData
         ResourceManager.GetInstance.GetBuffData.TryGetValue(key, out BuffData data);
         if (level == 2)
         {
-            battleSec = IBuff.Factory(data, stat, BuffType.securityLevel);
+            sharedSec = IBuff.Factory(data, stat, BuffType.securityLevel);
             ResourceManager.GetInstance.GetBuffData.TryGetValue(6003, out BuffData move);
             currSec = IBuff.Factory(move, stat, BuffType.securityLevel);
             currSec.RegistBuff();
-            
+            GameManager.GetInstance.SetGamePhase(GamePhase.Battle);
         }
         else
         {
             currSec = IBuff.Factory(data, stat, BuffType.securityLevel);
         }
-
     }
 }
