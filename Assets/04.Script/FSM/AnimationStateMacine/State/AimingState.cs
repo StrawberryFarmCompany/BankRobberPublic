@@ -3,6 +3,7 @@ using UnityEngine;
 public class AimingState : AnimationState
 {
     private static readonly int isAiming = Animator.StringToHash("isAiming");
+    private static readonly int isIdle = Animator.StringToHash("isIdle");
     Animator animator;
 
     public AimingState(Animator animator)
@@ -12,6 +13,7 @@ public class AimingState : AnimationState
 
     public override void Enter()
     {
+        animator.SetBool(isIdle, true);
         animator.SetBool(isAiming, true);
     }
 
@@ -22,6 +24,6 @@ public class AimingState : AnimationState
 
     public override void Exit()
     {
-        animator.SetBool(isAiming, false);
+        animator.SetBool(isIdle, false);
     }
 }

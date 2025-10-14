@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class RunState : AnimationState
 {
-    private static readonly int isRun = Animator.StringToHash("isRun");
+    private static readonly int Run = Animator.StringToHash("Run");
     //private static readonly int unEquip = Animator.StringToHash("UnEquip");
     Animator animator;
 
@@ -13,7 +13,8 @@ public class RunState : AnimationState
 
     public override void Enter()
     {
-        animator.SetBool(isRun, true);
+        animator.SetBool(AnimationStateController.isIdle, true);
+        animator.Play(Run);
         animator.Play(AnimationStateController.unEquip);
     }
 
@@ -24,6 +25,6 @@ public class RunState : AnimationState
 
     public override void Exit()
     {
-        animator.SetBool(isRun, false);
+        animator.SetBool(AnimationStateController.isIdle, false);
     }
 }

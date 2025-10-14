@@ -72,6 +72,9 @@ public class NodePlayerController : MonoBehaviour
     public GameObject emptyBackPack;
     public GameObject fullBackPack;
 
+    [Header("애니메이션")]
+    public AnimationStateController animationController;
+
     private void Awake()
     {
         playerStats = new EntityStats(playerData);
@@ -166,6 +169,7 @@ public class NodePlayerController : MonoBehaviour
         if (context.started && IsMyTurn() && isRunMode)
         {
             UIManager.GetInstance.ShowActionPanel(true);
+            animationController.RunState();
             playerStats.ActiveRun();
             isHighlightOn = false;
         }
@@ -275,6 +279,7 @@ public class NodePlayerController : MonoBehaviour
 
             if (pathQueue.Count > 0)
             {
+                animationController.MoveState();
                 playerVec = pathQueue.Last();
                 TurnOffHighlighter();
                 //최종 이동 구현
@@ -412,8 +417,8 @@ public class NodePlayerController : MonoBehaviour
         UIManager.GetInstance.ShowActionPanel(true);
         if (playerStats.ConsumeActionPoint(1))
         {
-            
-           ThrowSystem.GetInstance.ExecuteCoinThrow(this, targetNodeCenter);
+            animationController.ThrowState();
+            ThrowSystem.GetInstance.ExecuteCoinThrow(this, targetNodeCenter);
             StartMode(ref isMoveMode);
             TurnOffHighlighter();
         }
@@ -441,6 +446,7 @@ public class NodePlayerController : MonoBehaviour
 
     private void HideMode()
     {
+        animationController.HideState();
         isHide = true;
         UIManager.GetInstance.pip.HideAndSneakText();
     }
@@ -502,7 +508,7 @@ public class NodePlayerController : MonoBehaviour
         int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
         Debug.Log($"{result}의 데미지를 상대에게 줌");
         GameManager.GetInstance.GetEntityAt(targetPos).Damaged(result);
-
+        animationController.SneakAttackState();
 
     }
 
@@ -559,6 +565,7 @@ public class NodePlayerController : MonoBehaviour
 
     private void Aiming()
     {
+        animationController.AimingState();
         isAiming = true;
         hitBonus += 3;
     }
@@ -605,11 +612,22 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
+        if (!gun.CheckAmmo())
+        {
+            Debug.Log("잔탄수 부족, 불발");
+            return;
+        }
+
         gun.Shoot(targetPos, hitBonus);
         UIManager.GetInstance.ShowActionPanel(true);
         if (isAiming)
         {
+            animationController.AimRangedAttackState(targetPos);
             RemoveAiming();
+        }
+        else
+        {
+            animationController.HipRangedAttackState(targetPos);
         }
         TurnOffHighlighter();
         StartMode(ref isMoveMode);
@@ -667,6 +685,7 @@ public class NodePlayerController : MonoBehaviour
     {
         if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !isHighlightOn)
         {
+            animationController.IdleState();
             isHighlightOn = true;
             highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
         }
