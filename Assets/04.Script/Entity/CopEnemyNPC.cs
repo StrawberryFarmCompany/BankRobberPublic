@@ -7,7 +7,6 @@ public class CopEnemyNPC : EnemyNPC
     bool isDetection = false;
     bool isHit = false;
 
-    [SerializeField] Vector3 nearPlayerLocation;
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();

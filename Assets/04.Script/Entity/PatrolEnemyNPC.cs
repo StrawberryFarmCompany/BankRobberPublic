@@ -13,7 +13,6 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
-    [SerializeField] private Vector3 nearPlayerLocation;
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();

@@ -14,6 +14,8 @@ public class EnemyNPC : MonoBehaviour
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
     public LayerMask obstacleMask;  // 장애물 레이어 (Raycast에 사용)
 
+    [SerializeField] protected Vector3 nearPlayerLocation;
+
     protected virtual IEnumerator Start()
     {
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
@@ -51,12 +53,12 @@ public class EnemyNPC : MonoBehaviour
     public List<EntityStats> DetectVisibleTargets()
     {
         List<EntityStats> visibleTargets = new List<EntityStats>();
-
+        
         // 적 자신의 노드
         Vector3Int enemyPos = stats.currNode.GetCenter;
 
         // 사정거리 안에 있는 모든 엔티티 가져오기
-        List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.detectingDistance);
+        List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.detectingDistance);//(int)stats.detectingDistance
 
         // 리스트 상태 출력 (디버그용)
         if (targets == null || targets.Count == 0)
@@ -67,7 +69,7 @@ public class EnemyNPC : MonoBehaviour
 
         foreach (var target in targets)
         {
-            // 플레이어만 공격 (적은 무시)
+            // 플레이어만 검출(적 무시)
             if (target.entityTag != EntityTag.ally)
             {
                 Debug.Log("1. 성");
@@ -95,6 +97,7 @@ public class EnemyNPC : MonoBehaviour
             if (CheckRangeAttack(target.currNode.GetCenter))
             {
                 visibleTargets.Add(target);
+                target.GetPosition();
             }
         }
 
@@ -139,7 +142,6 @@ public class EnemyNPC : MonoBehaviour
     {
         Vector3 start = transform.position;
         Vector3 target = targetPos;
-
         // 1. NavMesh 상에서 장애물 체크
         if (NavMesh.Raycast(start, target, out NavMeshHit hit, NavMesh.AllAreas))
         {
@@ -147,7 +149,6 @@ public class EnemyNPC : MonoBehaviour
             Debug.Log("무언가로 막혀있음");
             return false;
         }
-
         else
         {
             Debug.Log("NavMesh 상에서 막히지 않음");
@@ -156,4 +157,5 @@ public class EnemyNPC : MonoBehaviour
             return true;
         }
     }
+
 }
