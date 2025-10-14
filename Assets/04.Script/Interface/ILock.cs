@@ -66,8 +66,12 @@ public class LockPick : ILock
 public class KeyCardLock : ILock
 {
     int cardKeyIndex;
+    public bool released = false;
     public bool IsLock(EntityStats stat)
     {
+        if (released == true) return released;
+        released = GameManager.GetInstance.isPlayerGetKeyCard[cardKeyIndex];
+        if (released == false) Debug.Log("해당 키카드가 없습니다 키카드 넘버 : "+cardKeyIndex);
         return GameManager.GetInstance.isPlayerGetKeyCard[cardKeyIndex];
     }
     public KeyCardLock(int cardKeyIndex)

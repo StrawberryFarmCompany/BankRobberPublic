@@ -10,7 +10,8 @@ public class SecurityData
 
     IBuff currSec;
     private EntityStats stat;
-    public IBuff GetSecBuff { get {return sharedSec != null ? sharedSec : currSec ; }}
+    public IBuff GetSecBuff { get {return isBattlePhase ? sharedSec : currSec ; }}
+    public static bool isBattlePhase { get { return sharedSec != null; } }
 
     public static void Reset()
     {
