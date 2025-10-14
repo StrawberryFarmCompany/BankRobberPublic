@@ -14,7 +14,7 @@ public class EnemyNPC : MonoBehaviour
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
     public LayerMask obstacleMask;  // 장애물 레이어 (Raycast에 사용)
 
-    [SerializeField] protected Vector3 nearPlayerLocation;
+    [SerializeField] protected EntityStats nearPlayerLocation;
 
     protected virtual IEnumerator Start()
     {
@@ -97,7 +97,8 @@ public class EnemyNPC : MonoBehaviour
             if (CheckRangeAttack(target.currNode.GetCenter))
             {
                 visibleTargets.Add(target);
-                target.GetPosition();
+                nearPlayerLocation = target;
+                Debug.Log(nearPlayerLocation);
             }
         }
 

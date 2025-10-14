@@ -101,7 +101,7 @@ public class PatrolEnemyNPC : EnemyNPC
             if (stats.movement > 0)
             {
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyChaseState));
-                Move(nearPlayerLocation);
+                Move(nearPlayerLocation.GetPosition());
             }
         }
         base.CalculateBehaviour();
