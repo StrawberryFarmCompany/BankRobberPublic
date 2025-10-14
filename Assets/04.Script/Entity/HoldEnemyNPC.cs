@@ -41,6 +41,8 @@ public class HoldEnemyNPC : EnemyNPC
 
     protected override void CalculateBehaviour()
     {
+        DetectVisibleTargets();
+
         if (stats.CurHp <= 0)//체력이 0보다 낮거나 같으면
         {
             ChangeToDead();//사망
@@ -48,7 +50,7 @@ public class HoldEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel == 0)
         {
-            DetectVisibleTargets();
+            
 
             if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
             {
@@ -86,6 +88,7 @@ public class HoldEnemyNPC : EnemyNPC
         else if (stats.secData.GetSecLevel >= 2)
         {
             efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyCombatState));
+            DetectVisibleTargets();
             TryAttack();
             Debug.Log("죽자 준게이야");
 
@@ -93,7 +96,7 @@ public class HoldEnemyNPC : EnemyNPC
             if (stats.movement > 0)
             {
                 efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
-                Move(nearPlayerLocation);
+                Move(nearPlayerLocation.GetPosition());
             }
         }
         base.CalculateBehaviour();
@@ -193,12 +196,12 @@ public class HoldEnemyNPC : EnemyNPC
             Debug.Log("노드가 아니다.");
             return;
         }
-        
-        if (!GameManager.GetInstance.GetNode(targetPos).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(targetPos).GetCenter) != null)
-        {
-            Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
-            return;
-        }
+
+        //if (!GameManager.GetInstance.GetNode(targetPos).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(targetPos).GetCenter) != null)
+        //{
+        //    Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
+        //    return;
+        //}
 
         // 현재 좌표 (정수 격자 기준)
         Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
@@ -248,10 +251,10 @@ public class HoldEnemyNPC : EnemyNPC
             if (current == end)
             {
                 return ReconstructPath(cameFrom, start, end);
-            }
+            }//중단점 찍고 찾아봤는데 거의 다 와서 길을 못 찾고 나와버린다
 
             // 인접 노드 탐색 (대각선 포함 체비셰프)
-            foreach (var dir in GameManager.GetInstance.nearNode)
+            foreach (var dir in GameManager.GetInstance.nearNode)//여기서 뭔가 잘못된거같다 여길 한 번 같이 보면 좋을것 같다
             {
                 Vector3Int next = current + dir;
 
@@ -263,7 +266,7 @@ public class HoldEnemyNPC : EnemyNPC
                 // 2) 이동 가능한지 체크
                 if (node == null) continue;
                 if (!node.isWalkable) continue;
-                if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
+                //if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
 
                 // 3) 방문한 적 없는 경우만 추가
                 if (!cameFrom.ContainsKey(next))
