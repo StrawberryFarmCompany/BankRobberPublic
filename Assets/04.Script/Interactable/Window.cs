@@ -30,7 +30,7 @@ public class Window : IInteractable
     {
         //1이 아닌 방향을 구해야함
 
-        bool isForwardXAxis = wayOne.x == 1;
+        bool isForwardXAxis = Mathf.Abs(wayOne.x) > 0;  /*wayOne.x == 1;*/
         Vector3Int goal = Vector3Int.zero;
         
         if (isForwardXAxis)
