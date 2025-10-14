@@ -92,7 +92,6 @@ public class FreePOV : MonoBehaviour
             CameraManager.GetInstance.isFreeView = true;
         }
 
-        if (CameraManager.GetInstance.isCompleteTransition == false) return;
         if(fcam.Follow != followTarget) fcam.Follow = followTarget;
         if (fcam.LookAt != followTarget) fcam.LookAt = followTarget;
         wasdMoveInput = context.ReadValue<Vector2>();

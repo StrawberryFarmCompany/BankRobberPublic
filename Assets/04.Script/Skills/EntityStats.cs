@@ -181,4 +181,10 @@ public class EntityStats
             currNode.AddCharacter(this);
         }
     }
+
+    public Vector3Int GetPosition()
+    {
+        if (currNode == null) return Vector3Int.zero;
+        return currNode.GetCenter;
+    }
 }
