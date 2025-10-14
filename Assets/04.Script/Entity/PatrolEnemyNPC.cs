@@ -13,7 +13,6 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
-    [SerializeField] private Vector3 nearPlayerLocation;
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
@@ -45,7 +44,7 @@ public class PatrolEnemyNPC : EnemyNPC
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
     {
-        if(stats.secData.GetSecLevel == 1)
+        if(stats.secData.GetSecLevel == 0)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
@@ -151,7 +150,6 @@ public class PatrolEnemyNPC : EnemyNPC
         this.gameObject.transform.rotation = Quaternion.Euler(0, firstLookAngle, 0);
         Debug.Log(firstLookAngle);
         yield return new WaitForSeconds(1.2f);
-
         
         this.gameObject.transform.rotation = Quaternion.Euler(0, secondLookAngle, 0);
         Debug.Log(secondLookAngle);

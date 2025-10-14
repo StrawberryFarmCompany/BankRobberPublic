@@ -23,12 +23,11 @@ MonoBehaviour:
   curHp: 5
   evasionRate: 8
   accuracyModifier: 0
-  attackRange: 100
+  attackRange: 9
   detectingDistance: 9.5
   isCombat: 1
   sabotage: 0
   aggroControl: 0
   maxRerollCount: 0
   curRerollCount: 0
-  moveRange: 0
   portrait: {fileID: 0}

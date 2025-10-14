@@ -12,7 +12,6 @@ public class HoldEnemyNPC : EnemyNPC
     int countTurn = 0;
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 noiseLocation;
-    [SerializeField] private Vector3 nearPlayerLocation;
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
@@ -47,8 +46,10 @@ public class HoldEnemyNPC : EnemyNPC
             ChangeToDead();//사망
         }
 
-        else if (stats.secData.GetSecLevel == 3)
+        else if (stats.secData.GetSecLevel == 0)
         {
+            DetectVisibleTargets();
+
             if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
             {
                 ChangeToIdle();//대기 상태
@@ -82,7 +83,7 @@ public class HoldEnemyNPC : EnemyNPC
             }
         }
 
-        else if (stats.secData.GetSecLevel >= 1)
+        else if (stats.secData.GetSecLevel >= 2)
         {
             efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyCombatState));
             TryAttack();
@@ -192,7 +193,7 @@ public class HoldEnemyNPC : EnemyNPC
             Debug.Log("노드가 아니다.");
             return;
         }
-
+        
         if (!GameManager.GetInstance.GetNode(targetPos).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(targetPos).GetCenter) != null)
         {
             Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
