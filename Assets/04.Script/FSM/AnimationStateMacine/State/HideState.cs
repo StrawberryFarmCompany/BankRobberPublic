@@ -12,6 +12,7 @@ public class HideState : AnimationState
 
     public override void Enter()
     {
+        animator.SetBool(AnimationStateController.isIdle, true);
         animator.Play(hide);
     }
 
@@ -22,6 +23,6 @@ public class HideState : AnimationState
 
     public override void Exit()
     {
-
+        animator.SetBool(AnimationStateController.isIdle, false);
     }
 }
