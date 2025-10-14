@@ -25,18 +25,14 @@ public class Door : IInteractable
 
     private string doorId;
 
-    private NavMeshModifier modifier;
-    private BoxCollider box;
-
     public void Init(Vector3Int tile, Transform tr, DoorLockType type,int doorValue)
     {
         this.tile = tile;
         this.tr = tr;
         lockModule = ILock.Factory(type, doorValue);
+
         defaultRotation = tr.rotation.eulerAngles;
 
-        modifier = tr.GetComponent<NavMeshModifier>();
-        box = tr.GetComponent<BoxCollider>();
 
         //문 인스턴스 식별자(좌표 기반)
         doorId = $"{tile.x},{tile.z}";
@@ -57,13 +53,11 @@ public class Door : IInteractable
             Vector3 targetRot;
 
             targetRot = defaultRotation + (Vector3.up * 90);
-            tr.transform.DORotate(targetRot,0.7f).OnComplete(RebuildAllNavMeshes);
+            tr.transform.DORotate(targetRot, 0.7f);/*.OnComplete(RebuildAllNavMeshes);*/
 
             isOpen = true;
 
             GameManager.GetInstance.Nodes[tile].isWalkable = true;
-
-            if (modifier) modifier.enabled = false;
 
             ReleaseInteraction(OnInteraction);
             RegistInteraction(UnInteraction);
@@ -73,12 +67,10 @@ public class Door : IInteractable
     {
         if (!isOpen) return;
         //이동 가능 불가 여부 추후 추가 필요
-        tr.transform.DORotate(defaultRotation, 0.7f).OnComplete(RebuildAllNavMeshes);
+        tr.transform.DORotate(defaultRotation, 0.7f)/*.OnComplete(RebuildAllNavMeshes)*/;
         GameManager.GetInstance.Nodes[tile].isWalkable = false;
 
         isOpen = false;
-
-        if (modifier) modifier.enabled = true;
 
         ReleaseInteraction(UnInteraction);
         RegistInteraction(OnInteraction);
@@ -102,7 +94,7 @@ public class Door : IInteractable
         }
     }
 
-    private static NavMeshSurface[] _cached;
+/*    private static NavMeshSurface[] _cached;
     private static void RebuildAllNavMeshes()
     {
         if (_cached == null || _cached.Length == 0)
@@ -120,6 +112,6 @@ public class Door : IInteractable
         //{
         //    if (s != null) s.BuildNavMesh();
         //}
-    }
+    }*/
 }
 public enum DoorLockType{none,lockPick,keyCard}
