@@ -26,7 +26,7 @@ public class NodePlayerController : MonoBehaviour
     [SerializeField] Camera mainCamera;
 
     [SerializeField] private MoveRangeHighlighter highlighter;
-    [SerializeField] private Gun gun;
+    public Gun gun;
 
     [HideInInspector]
     public bool isHide;
@@ -78,6 +78,7 @@ public class NodePlayerController : MonoBehaviour
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         if (gun == null) gun = GetComponent<Gun>();
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
+        playerStats.ForceMove += WindowForcMove;
         isHide = true;
         isEndTurn = false;
         StartMode(ref isMoveMode);
@@ -837,5 +838,20 @@ public class NodePlayerController : MonoBehaviour
     {
         Destroy(emptyBackPack);
         fullBackPack = Instantiate(fullBackPack, backPackParent.transform);
+    }
+
+    private void WindowForcMove(Vector3Int nextTile)
+    {
+        Debug.Log("강제 이동");
+        Node targetNode = GameManager.GetInstance.GetNode(nextTile);
+
+        if (targetNode == null) return;
+
+        Debug.Log($"next {nextTile}, target {targetNode.GetCenter}");
+
+        agent.Warp(targetNode.GetCenter);
+        
+        playerStats.SetCurrentNode(transform.position);
+        playerStats.NodeUpdates(transform.position);
     }
 }
