@@ -28,7 +28,7 @@ public class Gun : MonoBehaviour
     public int awayRangeAccuracy;
 
 
-    private void Start()
+    private void Awake()
     {
         SetGun();
     }
