@@ -29,17 +29,17 @@ public class NoneLock : ILock
 public class LockPick : ILock
 {
     int unlockMin;
-    bool isLocked;
+    bool released;
     public bool IsLock(EntityStats stat)
     {
-        if (isLocked)
+        if (released)
         {
             //TODO : 현재 선택된 캐릭터의 락핏 스텟
             
             DiceManager.GetInstance.DelayedRoll(stat.sabotage,6,3, (result) =>
             {
-                isLocked = unlockMin > result;
-                if (!isLocked)
+                released = unlockMin > result;
+                if (!released)
                 {
                     Debug.Log("해제 실패, 경고발동");
                     ActivateWarning();
@@ -51,7 +51,7 @@ public class LockPick : ILock
 
             });
         }
-        return isLocked;
+        return released;
     }
     public void ActivateWarning()
     {
@@ -60,7 +60,7 @@ public class LockPick : ILock
     public LockPick(int unlockMin)
     {
         this.unlockMin = unlockMin;
-        isLocked = true;
+        released = true;
     }
 }
 public class KeyCardLock : ILock
@@ -78,7 +78,7 @@ public class KeyCardLock : ILock
     {
         this.cardKeyIndex = cardKeyIndex;
         if (GameManager.GetInstance.isPlayerGetKeyCard == null) GameManager.GetInstance.isPlayerGetKeyCard = new List<bool>();
-        while (GameManager.GetInstance.isPlayerGetKeyCard.Count >= cardKeyIndex)
+        while (GameManager.GetInstance.isPlayerGetKeyCard.Count <= cardKeyIndex)
         {
             GameManager.GetInstance.isPlayerGetKeyCard.Add(false);
         }

@@ -9,7 +9,7 @@ public class InteractionSetter : MonoBehaviour
     [SerializeField] bool isWalkAble = false;
     private GameManager Manager {get{return GameManager.GetInstance; } }
 
-    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.GoldBar)]//금고문,문 카드키
+    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.GoldBar,(int)InteractionType.VaultDoor)]//금고문,문 카드키
     public Transform target;
     [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard)]//금고문,문 카드키
     public int doorValue;
@@ -21,7 +21,7 @@ public class InteractionSetter : MonoBehaviour
         Vector3Int pos = Manager.GetVecInt(transform.localPosition);
         if (type == InteractionType.Door)
         {
-            pos = Manager.GetVecInt(target.localPosition + (target.forward/2f)+ (transform.right / -2f));
+            pos = Manager.GetVecInt(transform.localPosition + (transform.forward/2f)+ (transform.right / -2f));
         }
 
         if (!Manager.Nodes.ContainsKey(pos)) Manager.RegistNode(pos, isWalkAble);
