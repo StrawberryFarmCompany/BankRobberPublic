@@ -37,6 +37,7 @@ public class CopEnemyNPC : EnemyNPC
 
     protected override void CalculateBehaviour()
     {
+        DetectVisibleTargets();
         TryAttack();
         Debug.Log("죽어잇!");
 
@@ -44,7 +45,7 @@ public class CopEnemyNPC : EnemyNPC
         if (stats.movement > 0)
         {
             efsm.ChangeState(efsm.FindState(EnemyStates.CopEnemyChaseState));
-            Move(nearPlayerLocation);
+            Move(nearPlayerLocation.GetPosition());
         }
         base.CalculateBehaviour();
     }
