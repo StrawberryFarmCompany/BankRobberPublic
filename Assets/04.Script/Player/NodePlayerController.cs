@@ -26,7 +26,7 @@ public class NodePlayerController : MonoBehaviour
     [SerializeField] Camera mainCamera;
 
     [SerializeField] private MoveRangeHighlighter highlighter;
-    [SerializeField] private Gun gun;
+    public Gun gun;
 
     [HideInInspector]
     public bool isHide;
