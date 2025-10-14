@@ -11,7 +11,8 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject optionUI;
 
     [Header("메인 UI 버튼")]
-    [SerializeField] private Button startButton;
+    [SerializeField] private Button newGameButton;
+    [SerializeField] private Button continueButton;
     [SerializeField] private Button optionButton;
     [SerializeField] private Button exitButton;
 
@@ -23,16 +24,23 @@ public class MainMenuUI : MonoBehaviour
         mainUI.SetActive(true);
         optionUI.SetActive(false);
 
-        startButton.onClick.AddListener(OnClickStart);
+        newGameButton.onClick.AddListener(OnClickNewGame);
+        continueButton.onClick.AddListener(OnClickContinue);
         optionButton.onClick.AddListener(OnClickOption);
         exitButton.onClick.AddListener(OnClickExit);
         backButton.onClick.AddListener(OnClickBack);
     }
 
-    private void OnClickStart()
+    private void OnClickNewGame()
     {
-        Debug.Log("게임 시작 버튼 클릭됨");
-        //SceneManager.LoadScene("d"); 나중에 게임씬 이름 넣기
+        Debug.Log("새로하기 버튼 클릭됨");
+        //SceneManager.LoadScene("");
+    }
+
+    private void OnClickContinue()
+    {
+        Debug.Log("이어하기 버튼 클릭됨");
+        //SceneManager.LoadScene("");
     }
 
     private void OnClickOption()
