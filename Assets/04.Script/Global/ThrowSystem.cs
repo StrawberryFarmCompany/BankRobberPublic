@@ -32,9 +32,6 @@ public class ThrowSystem : MonoBehaviour
 
     public void ExecuteCoinThrow(NodePlayerController player, Vector3Int targetNode)
     {
-        // 플레이어 던지는 모션 실행
-        //player.playerAnimator.SetTrigger("Throw");
-
         Vector3Int startPos = GameManager.GetInstance.GetVecInt(player.transform.position + Vector3.up * 1f);
         Vector3Int endPos = targetNode;
 

@@ -4,6 +4,7 @@ public class AimRangedAttackState : AnimationState
 {
     private static readonly int ar_Aim_Shooting = Animator.StringToHash("AR_Aim_Shooting");
     private static readonly int hg_Aim_Shooting = Animator.StringToHash("HG_Aim_Shooting");
+    private static readonly int isAiming = Animator.StringToHash("isAiming");
     Animator animator;
     Gun gun;
 
@@ -33,6 +34,6 @@ public class AimRangedAttackState : AnimationState
 
     public override void Exit()
     {
-
+        animator.SetBool(isAiming, false);
     }
 }
