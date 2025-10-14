@@ -159,4 +159,13 @@ public class Gun : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// 그냥 탄환이 남아있는지 확인하는 용도
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckAmmo()
+    {
+        return curRounds > 0;
+    }
+
 }

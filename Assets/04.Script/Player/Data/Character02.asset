@@ -15,10 +15,10 @@ MonoBehaviour:
   displayName: "2\uBC88\uCE90\uB9AD\uD130"
   description: "2\uBC88\uCE90\uB9AD\uD130\uC784 "
   Tag: 3
-  maxActionPoint: 3
-  curActionPoint: 3
-  movementSpeed: 5
-  movementPoint: 5
+  maxActionPoint: 2
+  curActionPoint: 2
+  movementSpeed: 3
+  movementPoint: 3
   maxHp: 5
   curHp: 5
   evasionRate: 3
