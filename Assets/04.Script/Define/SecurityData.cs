@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using BuffDefine;
 public class SecurityData
 {
@@ -11,11 +12,12 @@ public class SecurityData
     IBuff currSec;
     private EntityStats stat;
     public IBuff GetSecBuff { get {return isBattlePhase ? sharedSec : currSec ; }}
-    public static bool isBattlePhase { get { return sharedSec != null; } }
-
+    public bool isBattlePhase { get { return sharedSec != null; } }
+    public static Action OnBattlePhase;
     public static void Reset()
     {
         sharedSec = null;
+        OnBattlePhase = null;
     }
     /// <summary>
     /// 시큐리티레벨 설정하는 함수
@@ -43,6 +45,7 @@ public class SecurityData
             currSec = IBuff.Factory(move, stat, BuffType.securityLevel);
             currSec.RegistBuff();
             GameManager.GetInstance.SetGamePhase(GamePhase.Battle);
+            OnBattlePhase?.Invoke();
         }
         else
         {
