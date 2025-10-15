@@ -30,9 +30,9 @@ public class ThrowSystem : MonoBehaviour
         }
     }
 
-    public void ExecuteCoinThrow(NodePlayerController player, Vector3Int targetNode)
+    public void ExecuteCoinThrow(Vector3 start, Vector3Int targetNode)
     {
-        Vector3Int startPos = GameManager.GetInstance.GetVecInt(player.transform.position + Vector3.up * 1f);
+        Vector3Int startPos = GameManager.GetInstance.GetVecInt(start + Vector3.up * 1f);
         Vector3Int endPos = targetNode;
 
         GameObject throws = Instantiate(Coin, startPos, Quaternion.identity);

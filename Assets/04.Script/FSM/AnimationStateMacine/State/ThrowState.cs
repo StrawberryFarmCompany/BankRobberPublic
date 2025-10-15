@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ThrowState : AnimationState
 {
-    private static readonly int isThrow = Animator.StringToHash("isThrow");
+    private static readonly int Throw = Animator.StringToHash("Throw");
     //public static readonly int unEquip = Animator.StringToHash("UnEquip");
     Animator animator;
 
@@ -13,8 +13,7 @@ public class ThrowState : AnimationState
 
     public override void Enter()
     {
-        animator.SetBool(isThrow, true);
-        animator.Play(AnimationStateController.unEquip);
+        animator.Play(Throw);
     }
 
     public override void Execute()
@@ -24,6 +23,5 @@ public class ThrowState : AnimationState
 
     public override void Exit()
     {
-        animator.SetBool(isThrow, false);
     }
 }
