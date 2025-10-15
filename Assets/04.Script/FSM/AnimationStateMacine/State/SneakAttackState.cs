@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class SneakState : AnimationState
 {
-    private static readonly int isSneak = Animator.StringToHash("isSneakAttack");
-    //private static readonly int unEquip = Animator.StringToHash("UnEquip");
+    private static readonly int SneakAttack = Animator.StringToHash("SneakAttack");
     Animator animator;
 
     public SneakState(Animator animator)
@@ -13,8 +12,7 @@ public class SneakState : AnimationState
 
     public override void Enter()
     {
-        animator.SetBool(isSneak, true);
-        animator.Play(AnimationStateController.unEquip);
+        animator.Play(SneakAttack);
     }
 
     public override void Execute()
@@ -24,6 +22,6 @@ public class SneakState : AnimationState
 
     public override void Exit()
     {
-        animator.SetBool(isSneak, false);
+
     }
 }

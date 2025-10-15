@@ -54037,7 +54037,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 1
   m_Events:
   - time: 0.43356976
-    functionName: Object_ThrowObject
+    functionName: OnThrow
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

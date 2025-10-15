@@ -15,7 +15,6 @@ public class RunState : AnimationState
     {
         animator.SetBool(AnimationStateController.isIdle, true);
         animator.Play(Run);
-        animator.Play(AnimationStateController.unEquip);
     }
 
     public override void Execute()
