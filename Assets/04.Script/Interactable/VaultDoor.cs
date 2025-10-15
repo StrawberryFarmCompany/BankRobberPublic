@@ -54,6 +54,7 @@ public class VaultDoor : IInteractable
     }
     public void OnInteraction(EntityStats stat)
     {
+        NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
         if (lockModule.IsLock(stat) && !isOpen)
         {
             //이동 가능 불가 여부 추후 추가 필요
@@ -66,6 +67,7 @@ public class VaultDoor : IInteractable
 
     public void UnInteraction(EntityStats stat)
     {
+        NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
         if (!isOpen) return;
         DoorClose();
 

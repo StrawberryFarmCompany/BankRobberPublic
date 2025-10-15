@@ -191,6 +191,15 @@ public class HoldEnemyNPC : EnemyNPC
         if (isMoving) return;
         Vector3Int targetPos = GameManager.GetInstance.GetVecInt(pos);
 
+        // 플레이어가 있는 노드는 목적지로 하지 않도록 처리
+        var playerNode = GameManager.GetInstance.GetNode(targetPos);
+        if (playerNode != null && playerNode.standing != null && playerNode.standing.Count > 0)
+        {
+            // 플레이어 근처의 빈 노드 중 가장 가까운 곳 선택
+            Vector3Int bestAdjacent = FindNearestWalkableNodeAround(GameManager.GetInstance.GetVecInt(playerNode.GetCenter));
+            targetPos = bestAdjacent;
+        }
+
         if (GameManager.GetInstance.GetNode(targetPos) == null)
         {
             Debug.Log("노드가 아니다.");
@@ -206,6 +215,7 @@ public class HoldEnemyNPC : EnemyNPC
         // 현재 좌표 (정수 격자 기준)
         Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
         targetPos = GameManager.GetInstance.GetNode(targetPos).GetCenter;
+
         // 경로 배열 생성
         List<Vector3Int> path = GenerateChebyshevPath(start, targetPos);
 
@@ -231,11 +241,19 @@ public class HoldEnemyNPC : EnemyNPC
             isMoving = true;
             canNextMove = true;
         }
-
     }
 
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
     {
+        // 도착지가 막혀 있다면 대체 노드 찾기
+        if (!GameManager.GetInstance.Nodes.ContainsKey(end) ||
+            GameManager.GetInstance.GetNode(end) == null ||
+            !GameManager.GetInstance.GetNode(end).isWalkable ||
+            GameManager.GetInstance.GetEntityAt(end) != null)
+        {
+            end = FindNearestWalkableNodeAround(end);
+        }
+
         // BFS 탐색을 위한 큐
         Queue<Vector3Int> open = new Queue<Vector3Int>();
         Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
@@ -251,10 +269,10 @@ public class HoldEnemyNPC : EnemyNPC
             if (current == end)
             {
                 return ReconstructPath(cameFrom, start, end);
-            }//중단점 찍고 찾아봤는데 거의 다 와서 길을 못 찾고 나와버린다
+            }
 
             // 인접 노드 탐색 (대각선 포함 체비셰프)
-            foreach (var dir in GameManager.GetInstance.nearNode)//여기서 뭔가 잘못된거같다 여길 한 번 같이 보면 좋을것 같다
+            foreach (var dir in GameManager.GetInstance.nearNode)
             {
                 Vector3Int next = current + dir;
 
@@ -324,5 +342,31 @@ public class HoldEnemyNPC : EnemyNPC
         {
             isMoving = false;
         }
+    }
+
+    // 가장 가까운 노드 찾기
+    private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
+    {
+        Vector3Int best = center;
+        float bestDist = float.MaxValue;
+
+        foreach (var dir in GameManager.GetInstance.nearNode)
+        {
+            Vector3Int check = center + dir;
+            if (!GameManager.GetInstance.Nodes.ContainsKey(check)) continue;
+
+            var node = GameManager.GetInstance.Nodes[check];
+            if (node == null || !node.isWalkable) continue;
+            if (node.standing != null && node.standing.Count > 0) continue;
+
+            float dist = Vector3.Distance(check, GameManager.GetInstance.GetNode(transform.position).GetCenter);
+            if (dist < bestDist)
+            {
+                best = check;
+                bestDist = dist;
+            }
+        }
+
+        return best;
     }
 }
