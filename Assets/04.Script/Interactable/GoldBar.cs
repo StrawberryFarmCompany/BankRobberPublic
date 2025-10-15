@@ -8,11 +8,11 @@ using UnityEngine;
 public class GoldBar : IInteractable
 {
     public Vector3Int tile { get; set; }
-    public GameObject consumeItems;
+    public GameObject[] consumeItems;
     public Transform tr;
 
 
-    public void Init(Vector3Int tile, Transform tr, GameObject consumeItems)
+    public void Init(Vector3Int tile, Transform tr, GameObject[] consumeItems)
     {
         this.tile = tile;
         this.tr = tr;
@@ -26,7 +26,11 @@ public class GoldBar : IInteractable
         if (NodePlayerManager.GetInstance.GetCurrentPlayer().fullBackPack != null) return;
         NodePlayerManager.GetInstance.GetCurrentPlayer().GetGold();
 
-        GameObject.Destroy(consumeItems);
+        foreach (GameObject obj in consumeItems)
+        {
+            if (obj != null)
+                GameObject.Destroy(obj);
+        }
         ReleaseInteraction(OnInteraction);
     }
     public void UnInteraction(EntityStats stat)
