@@ -105,6 +105,7 @@ namespace NodeDefines
             {
                 nodeInteractions[keys[i]] = null;
             }
+            nodeInteractions.Clear();
         }
         public void InvokeEvent(EntityStats stat)
         {

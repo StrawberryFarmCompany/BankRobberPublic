@@ -35,4 +35,4 @@ public interface IInteractable
 
     }
 }
-public enum InteractionType{AlamBTN,Door,GoldBar,MoneyBag,KeyCard,Window,VaultDoor}
+public enum InteractionType{AlamBTN,Door,GoldBar,MoneyBag,KeyCard,Window,VaultDoor,EscapeCar}
