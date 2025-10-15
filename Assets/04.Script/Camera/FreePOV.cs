@@ -41,8 +41,34 @@ public class FreePOV : MonoBehaviour
     void Start()
     {
         if (fcam == null) fcam = GetComponent<CinemachineFreeLook>();
-       // 초기 카메라 방향 설정
+
+        //감도 초기 적용
+        ApplySensitivity();
+
+        //감도 변경 시 자동 갱신
+        if (CameraSensitivityManager.GetInstance != null)
+            CameraSensitivityManager.GetInstance.OnSensitivityChanged += ApplySensitivity;
+
+        // 초기 카메라 방향 설정
         ApplyRotation();
+    }
+
+    private void OnDestroy()
+    {
+        //씬 전환 등으로 FreePOV가 사라질 때 정리
+        if (CameraSensitivityManager.GetInstance != null)
+            CameraSensitivityManager.GetInstance.OnSensitivityChanged -= ApplySensitivity;
+    }
+
+    private void ApplySensitivity()
+    {
+        CameraSensitivityManager csmg = CameraSensitivityManager.GetInstance;
+        if (csmg == null) return;
+
+        moveSpeed = csmg.MoveSpeed;
+        wasdMoveSpeed = csmg.WasdSpeed;
+        rotateSpeed = csmg.RotateSpeed;
+        scrollSpeed = csmg.ScrollSpeed;
     }
 
     void Update()
