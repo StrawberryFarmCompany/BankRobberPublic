@@ -417,7 +417,7 @@ public class NodePlayerController : MonoBehaviour
         UIManager.GetInstance.ShowActionPanel(true);
         if (playerStats.ConsumeActionPoint(1))
         {
-            animationController.ThrowState();
+            animationController.ThrowState(targetNodeCenter);
             ThrowSystem.GetInstance.ExecuteCoinThrow(this, targetNodeCenter);
             StartMode(ref isMoveMode);
             TurnOffHighlighter();
