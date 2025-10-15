@@ -186,8 +186,10 @@ public class AnimationStateController : MonoBehaviour
     {
         stateMachine.ChangeState(idleState);
     }
-    public void InteractionState()
+    public void InteractionState(Vector3 target = default)
     {
+        if (target != default)
+            RotateTowards(target);
         stateMachine.ChangeState(interactionState);
     }
     public void MoveState()
