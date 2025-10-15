@@ -57,6 +57,7 @@ public class Door : IInteractable
 
             isOpen = true;
 
+            NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
             GameManager.GetInstance.Nodes[tile].isWalkable = true;
 
             ReleaseInteraction(OnInteraction);
@@ -65,6 +66,7 @@ public class Door : IInteractable
     }
     public void UnInteraction(EntityStats stat)
     {
+        NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
         if (!isOpen) return;
         //이동 가능 불가 여부 추후 추가 필요
         tr.transform.DORotate(defaultRotation, 0.7f)/*.OnComplete(RebuildAllNavMeshes)*/;

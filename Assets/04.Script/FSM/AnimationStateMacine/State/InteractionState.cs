@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class InteractionState : AnimationState
 {
-    private static readonly int Interaction = Animator.StringToHash("Interaction");
+    private static readonly int Interact = Animator.StringToHash("Interact");
     Animator animator;
 
     public InteractionState(Animator animator)
@@ -12,7 +12,7 @@ public class InteractionState : AnimationState
 
     public override void Enter()
     {
-        animator.Play(Interaction);
+        animator.Play(Interact);
     }
 
     public override void Execute()

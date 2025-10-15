@@ -45,7 +45,7 @@ public class InteractionSetter : MonoBehaviour
                 break;
             case InteractionType.GoldBar:
                 GoldBar gold = (GoldBar)interaction;
-                gold.Init(pos, target.gameObject);
+                gold.Init(pos, target, target.gameObject);
                 break;
             case InteractionType.MoneyBag:
                 break;
