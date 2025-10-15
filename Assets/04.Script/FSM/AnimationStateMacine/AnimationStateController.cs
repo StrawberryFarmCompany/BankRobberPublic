@@ -113,7 +113,12 @@ public class AnimationStateController : MonoBehaviour
                     break;
             }
         }
-            
+
+        if(playerController != null)
+            playerController.playerStats.OnDamaged += DamagedState;
+        if(playerController != null)
+            playerController.playerStats.OnDead += DeadState;
+
     }
 
     public void OnEquip()
@@ -156,6 +161,11 @@ public class AnimationStateController : MonoBehaviour
         }
     }
 
+    public void DestroyObject()
+    {
+        Destroy(transform.parent.gameObject);
+    }
+
     public void AimingState()
     {
         stateMachine.ChangeState(aimingState);
@@ -171,6 +181,7 @@ public class AnimationStateController : MonoBehaviour
     }
     public void DeadState()
     {
+        animator.applyRootMotion = true;
         stateMachine.ChangeState(deadState);
     }
     public void HideState()

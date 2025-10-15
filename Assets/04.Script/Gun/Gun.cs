@@ -124,9 +124,12 @@ public class Gun : MonoBehaviour
         }
 
         hitAdjustment += hitBonus;
-
-        if (DiceManager.GetInstance.DirrectRoll(0, 6, 3) + hitAdjustment - GameManager.GetInstance.GetEntityAt(targetPos).evasionRate > 0)
-            return true;
+        if(GameManager.GetInstance.GetEntityAt(targetPos) != null)
+        {
+            if (DiceManager.GetInstance.DirrectRoll(0, 6, 3) + hitAdjustment - GameManager.GetInstance.GetEntityAt(targetPos).evasionRate > 0)
+                return true;
+            else return false;
+        }
         else
             return false;
     }

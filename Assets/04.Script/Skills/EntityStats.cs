@@ -47,13 +47,16 @@ public class EntityStats
     private List<IBuff> buffs;
     public List<IBuff> Buffs { get { return buffs; } }
     public Action OnDamaged;
+    public Action OnDead;
     public Action<Vector3Int> ForceMove;
+
+    private GameObject thisGameObject;
     /// <summary>
     /// 탈출 시 초기화하는 함수 monobehaviour 단에서 구현하여 해당 OnReset Action에 추가
     /// </summary>
     public Action OnReset;
 
-    public EntityStats(EntityData baseStats)
+    public EntityStats(EntityData baseStats, GameObject gameObject = null)
     {
         entityTag = baseStats.Tag;
         characterName = baseStats.displayName;
@@ -74,6 +77,11 @@ public class EntityStats
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
+
+        if (gameObject != null)
+        {
+            thisGameObject = gameObject;
+        }
     }
     public void RegistBuff(BuffData data)
     {
@@ -155,8 +163,9 @@ public class EntityStats
 
     private void Dead()
     {
+        OnDead?.Invoke();
+        DestroyEntity();
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
-        //Destroy(this.gameObject);
     }
 
     public void ResetForNewTurn()
@@ -190,5 +199,20 @@ public class EntityStats
     {
         if (currNode == null) return Vector3Int.zero;
         return currNode.GetCenter;
+    }
+
+    public void DestroyEntity()
+    {
+        OnReset = null;
+        OnDamaged = null;
+        OnDead = null;
+        ForceMove = null;
+        UnequipPassive(equippedPassive);
+        equippedPassive = null;
+        buffs.Clear();
+        currNode?.RemoveCharacter(this);
+        currNode = null;
+        GameManager.GetInstance.UnregisterEntity(this);
+        //GameManager.GetInstance.BattleTurn.RemoveUnit();
     }
 }

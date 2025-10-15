@@ -12,6 +12,7 @@ public class DamagedState : AnimationState
 
     public override void Enter()
     {
+        animator.SetBool(AnimationStateController.isIdle, true);
         animator.Play(damaged);
     }
 
@@ -22,6 +23,6 @@ public class DamagedState : AnimationState
 
     public override void Exit()
     {
-
+        animator.SetBool(AnimationStateController.isIdle, false);
     }
 }
