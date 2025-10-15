@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class InteractionState : AnimationState
 {
-    //private static readonly int unEquip = Animator.StringToHash("UnEquip");
-    private static readonly int isInteraction = Animator.StringToHash("isInteraction");
+    private static readonly int Interact = Animator.StringToHash("Interact");
     Animator animator;
 
     public InteractionState(Animator animator)
@@ -13,8 +12,7 @@ public class InteractionState : AnimationState
 
     public override void Enter()
     {
-        animator.SetBool(isInteraction, true);
-        animator.Play(AnimationStateController.unEquip);
+        animator.Play(Interact);
     }
 
     public override void Execute()
@@ -24,6 +22,5 @@ public class InteractionState : AnimationState
 
     public override void Exit()
     {
-        animator.SetBool(isInteraction, false);
     }
 }
