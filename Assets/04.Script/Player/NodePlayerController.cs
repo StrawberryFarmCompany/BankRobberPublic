@@ -873,7 +873,7 @@ public class NodePlayerController : MonoBehaviour
     public void GetGold()
     {
         Destroy(emptyBackPack);
-        fullBackPack = Instantiate(fullBackPack, backPackParent.transform);
+        fullBackPack = Instantiate(fullBackPackPrefab, backPackParent.transform);
     }
 
     private void WindowForcMove(Vector3Int nextTile)

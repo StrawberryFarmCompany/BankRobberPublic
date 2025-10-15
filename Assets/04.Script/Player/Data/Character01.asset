@@ -19,8 +19,8 @@ MonoBehaviour:
   curActionPoint: 2
   movementSpeed: 3
   movementPoint: 3
-  maxHp: 5
-  curHp: 5
+  maxHp: 10
+  curHp: 10
   evasionRate: 3
   accuracyModifier: 3
   attackRange: 50
