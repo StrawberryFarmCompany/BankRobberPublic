@@ -4,7 +4,7 @@ public class AnimationStateController : MonoBehaviour
 {
     private static readonly int isRifle = Animator.StringToHash("isRifle");
     private static readonly int equip = Animator.StringToHash("Equip");
-    public static readonly int unEquip = Animator.StringToHash("UnEquip");
+    private static readonly int unEquipForSneak = Animator.StringToHash("UnEquipForSneak");
     public static readonly int isIdle = Animator.StringToHash("isIdle");
 
     [Header("애니메이터")]
@@ -129,6 +129,33 @@ public class AnimationStateController : MonoBehaviour
         currentGun.SetActive(false);
     }
 
+    public void OnThrow()
+    {
+        if (playerController != null)
+            ThrowSystem.GetInstance.ExecuteCoinThrow(transform.position, playerController.targetNodePos);
+    }
+
+    public void OnUnEquipForSneak()
+    { 
+        animator.Play(unEquipForSneak);
+    }
+
+    public void MoveBestNode()
+    {
+        if (playerController != null)
+        {
+            playerController.MoveBestNode();
+        }
+    }
+
+    public void OnSneakAttack()
+    {
+        if (playerController != null)
+        {
+            playerController.SneakAttack(playerController.targetNodePos);
+        }
+    }
+
     public void AimingState()
     {
         stateMachine.ChangeState(aimingState);
@@ -178,14 +205,16 @@ public class AnimationStateController : MonoBehaviour
     }
     public void SneakAttackState()
     {
+        RotateTowards(playerController.targetNodePos);
         stateMachine.ChangeState(sneakAttackState);
     }
     public void StrafeState()
     {
         stateMachine.ChangeState(strafeState);
     }
-    public void ThrowState(Vector3Int targePost)
+    public void ThrowState()
     {
+        RotateTowards(playerController.targetNodePos);
         stateMachine.ChangeState(throwState);
     }
 

@@ -75,6 +75,9 @@ public class NodePlayerController : MonoBehaviour
     [Header("애니메이션")]
     public AnimationStateController animationController;
 
+    [HideInInspector] public Vector3Int targetNodePos;
+    [HideInInspector] public Vector3Int bestNearNodePos;
+
     private void Awake()
     {
         playerStats = new EntityStats(playerData);
@@ -417,8 +420,8 @@ public class NodePlayerController : MonoBehaviour
         UIManager.GetInstance.ShowActionPanel(true);
         if (playerStats.ConsumeActionPoint(1))
         {
-            animationController.ThrowState(targetNodeCenter);
-            ThrowSystem.GetInstance.ExecuteCoinThrow(this, targetNodeCenter);
+            targetNodePos = targetNodeCenter;
+            animationController.ThrowState();
             StartMode(ref isMoveMode);
             TurnOffHighlighter();
         }
@@ -487,10 +490,12 @@ public class NodePlayerController : MonoBehaviour
         UIManager.GetInstance.ShowActionPanel(true);
         if (playerStats.ConsumeActionPoint(1))
         {
+            targetNodePos = targetNodeCenter;
+            bestNearNodePos = bestNode;
             RemoveHideMode();
-            int result = DiceManager.GetInstance.DirrectRoll(0, 6, 3);
-            if (result + hitBonus - GameManager.GetInstance.GetEntityAt(targetNodeCenter).evasionRate > 0)
-            SneakAttack(bestNode, targetNodeCenter);
+
+            animationController.OnUnEquipForSneak();
+            
             StartMode(ref isMoveMode);
         }
         else
@@ -499,17 +504,29 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    private void SneakAttack(Vector3Int movePos, Vector3Int targetPos)
+    public void MoveBestNode()
     {
-        agent.SetDestination(movePos);
-        playerStats.NodeUpdates(movePos);
-        playerVec = movePos;
+        agent.SetDestination(bestNearNodePos);
+        playerStats.NodeUpdates(bestNearNodePos);
+        playerVec = bestNearNodePos;
         TurnOffHighlighter();
-        int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
-        Debug.Log($"{result}의 데미지를 상대에게 줌");
-        GameManager.GetInstance.GetEntityAt(targetPos).Damaged(result);
-        animationController.SneakAttackState();
+    }
 
+    public void SneakAttack(Vector3Int targetPos)
+    {
+        int result = DiceManager.GetInstance.DirrectRoll(0, 6, 3);
+        if (result + hitBonus - GameManager.GetInstance.GetEntityAt(targetPos).evasionRate > 0)
+        {
+            int resultDamage = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
+            Debug.Log($"{result}의 데미지를 상대에게 줌");
+            GameManager.GetInstance.GetEntityAt(targetPos).Damaged(resultDamage);
+            animationController.SneakAttackState();
+        }
+        else
+        {
+            Debug.Log("스니크 어택 빗나감!");
+            return;
+        }
     }
 
     public void OnPickPocket(InputAction.CallbackContext context)
