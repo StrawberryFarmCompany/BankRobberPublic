@@ -184,7 +184,7 @@ public class AnimationStateController : MonoBehaviour
     {
         stateMachine.ChangeState(strafeState);
     }
-    public void ThrowState()
+    public void ThrowState(Vector3Int targePost)
     {
         stateMachine.ChangeState(throwState);
     }
