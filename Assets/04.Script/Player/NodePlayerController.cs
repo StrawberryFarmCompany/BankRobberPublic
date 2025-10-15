@@ -88,7 +88,7 @@ public class NodePlayerController : MonoBehaviour
         isHide = true;
         isEndTurn = false;
         StartMode(ref isMoveMode);
-        //playerStats.OnDamaged += 추후 애니메이션 구현시 데미지 스테이트로 변환되도록
+        playerStats.OnDead += UnsubscribePlayer;
     }
 
     void Start()
@@ -889,5 +889,14 @@ public class NodePlayerController : MonoBehaviour
         
         playerStats.SetCurrentNode(transform.position);
         playerStats.NodeUpdates(transform.position);
+    }
+
+    /// <summary>
+    /// EntityStats에 있는 OnDead 이벤트에 연결된 함수
+    /// 그 이외에 탈출 루트 이벤트에도 연결 가능
+    /// </summary>
+    public void UnsubscribePlayer()
+    {
+        NodePlayerManager.GetInstance.UnregisterPlayer(this);
     }
 }
