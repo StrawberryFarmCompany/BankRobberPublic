@@ -87,22 +87,44 @@ class GameManager : SingleTon<GameManager>
     {
         base.Reset();
         SecurityData.Reset();
-        nodes.Clear();
+        OnNodeReset();
         noneBattleTurn.OnSceneChange();
+        OnEntityReset();
         battleTurn = new BattleTurnStateMachine();
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();
     }
+    public void OnEntityReset()
+    {
+        if (entities == null)
+        {
+            entities = new List<EntityStats>();
+            return;
+        }
+        for (int i = 0; i<entities.Count; i++)
+        {
+            entities[i].OnDamaged = null;
+            entities[i].ForceMove = null;
+        }
+        entities.Clear();
+    }
     public void OnNodeReset()
     {
+        if(nodes == null)
+        {
+            nodes = new Dictionary<Vector3Int, Node>();
+            return;
+        }
         foreach (Node item in nodes.Values)
         {
             item.ResetEvent();
             item.ResetInteraction();
         }
+        nodes.Clear();
     }
     public void RegistNode(Vector3Int vec, bool isWalkable = false)
     {
+        if (nodes == null) nodes = new Dictionary<Vector3Int, Node>();
         nodes.TryAdd(vec, new Node(vec, isWalkable));
     }
 
