@@ -48,6 +48,10 @@ public class EntityStats
     public List<IBuff> Buffs { get { return buffs; } }
     public Action OnDamaged;
     public Action<Vector3Int> ForceMove;
+    /// <summary>
+    /// 탈출 시 초기화하는 함수 monobehaviour 단에서 구현하여 해당 OnReset Action에 추가
+    /// </summary>
+    public Action OnReset;
 
     public EntityStats(EntityData baseStats)
     {
