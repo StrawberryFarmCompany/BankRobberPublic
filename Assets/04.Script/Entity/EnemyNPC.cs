@@ -12,7 +12,6 @@ public class EnemyNPC : MonoBehaviour
     public Gun gun;
 
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
-    public LayerMask obstacleMask;  // 장애물 레이어 (Raycast에 사용)
 
     [SerializeField] protected EntityStats nearPlayerLocation;
 

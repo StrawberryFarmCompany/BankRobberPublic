@@ -238,7 +238,6 @@ public class PatrolEnemyNPC : EnemyNPC
             if (stats.ConsumeMovement(1))
             {
                 pathQueue.Enqueue((Vector3Int)step);
-                Debug.Log($"이동{step}");
             }
             else
             {
