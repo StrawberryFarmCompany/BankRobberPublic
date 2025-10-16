@@ -29,8 +29,11 @@ public interface IInteractable
                 return new KeyCard();
             case InteractionType.VaultDoor:
                 return new VaultDoor();
+            case InteractionType.EscapeCar:
+                return new EscapeCar();
             default:
                 return null;
+
         }
 
     }
