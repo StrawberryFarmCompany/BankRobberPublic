@@ -72,7 +72,6 @@ public class EnemyNPC : MonoBehaviour
             // 플레이어만 검출(적 무시)
             if (target.entityTag != EntityTag.ally)
             {
-                Debug.Log("1. 성");
                 continue;
             }
 
@@ -80,7 +79,6 @@ public class EnemyNPC : MonoBehaviour
             float dist = Vector3.Distance(stats.currNode.GetCenter, target.currNode.GetCenter);
             if (dist > stats.detectingDistance)
             {
-                Debug.Log("2. 준");
                 continue;
             }
 
@@ -89,7 +87,6 @@ public class EnemyNPC : MonoBehaviour
             float angle = Vector3.Angle(transform.forward, dirToTarget);
             if (angle > fovAngle * 0.5f) //&& angle < 180f -(fovAngle * 0.5f)) //55~135도 사이에 있는 값인지 체크
             {
-                Debug.Log("3. 우");
                 continue;
             }
 
@@ -101,13 +98,10 @@ public class EnemyNPC : MonoBehaviour
                 Debug.Log(nearPlayerLocation);
             }
         }
-
-        Debug.Log($"[DetectVisibleTargets] {visibleTargets.Count}명 시야 내 감지됨");
         
         if (visibleTargets.Count > 0)
         {
             stats.secData.SetSecLevel(2);
-            Debug.Log("세큐리티 레벨 2로 상승");
         }
         return visibleTargets;
     }
@@ -120,7 +114,6 @@ public class EnemyNPC : MonoBehaviour
         // 리스트에 아무도 없으면 리턴
         if (visibleTargets.Count == 0)
         {
-            Debug.Log("공격 가능한 친구 없음");
             return;
         }
 
@@ -131,7 +124,6 @@ public class EnemyNPC : MonoBehaviour
         if (stats.ConsumeActionPoint(1))
         {
             gun.Shoot(chosenTarget.currNode.GetCenter, 1);
-            Debug.Log($"{stats.characterName}이(가) {chosenTarget.characterName}을(를) 향해 사격!");
         }
         else
         {
