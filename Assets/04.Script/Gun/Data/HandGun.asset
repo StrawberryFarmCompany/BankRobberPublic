@@ -16,7 +16,7 @@ MonoBehaviour:
   gunDescription: "\uC2EC\uC601\uC744 \uACE0\uC790\uB85C \uB9CC\uB4E4\uC5C8\uB358
     \uC804\uC124\uC758 \uCD1D"
   type: 0
-  maxRounds: 5
+  maxRounds: 1
   bulletPerOneShot: 1
   noise: 3
   damagePerOneBulletMultiplier: 1

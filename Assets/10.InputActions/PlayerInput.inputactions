@@ -463,7 +463,7 @@
                     "name": "Click",
                     "type": "Button",
                     "id": "a479538b-c268-4bee-88ff-f7d4474a06b4",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -536,6 +536,15 @@
                     "type": "Button",
                     "id": "0ceee91d-e17b-4be4-bcc3-f94c687563bf",
                     "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "ab8990c1-1aa7-4e91-be3d-54d5030102a2",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -638,6 +647,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "PerkAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d3f79ad0-3d08-4a8a-969e-8d6a2918a2ea",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
