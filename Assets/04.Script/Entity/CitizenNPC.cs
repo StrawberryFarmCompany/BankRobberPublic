@@ -36,7 +36,14 @@ public class CitizenNPC : NeutralNPC
 
     protected override void CalculateBehaviour()
     {
-        if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
+        List<EntityStats> visibleTargets = DetectVisibleTargets();
+        
+        if (visibleTargets.Count > 0 && isDetection == false)
+        { 
+            isDetection = true;
+        }
+
+        else if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
         {
             Debug.Log("죽은상태");
             ChangeToDead();
@@ -94,21 +101,30 @@ public class CitizenNPC : NeutralNPC
         if (isMoving) return;
         Vector3Int targetPos = GameManager.GetInstance.GetVecInt(pos);
 
+        // 플레이어가 있는 노드는 목적지로 하지 않도록 처리
+        var playerNode = GameManager.GetInstance.GetNode(targetPos);
+        if (playerNode != null && playerNode.standing != null && playerNode.standing.Count > 0)
+        {
+            // 플레이어 근처의 빈 노드 중 가장 가까운 곳 선택
+            Vector3Int bestAdjacent = FindNearestWalkableNodeAround(GameManager.GetInstance.GetVecInt(playerNode.GetCenter));
+            targetPos = bestAdjacent;
+        }
+
         if (GameManager.GetInstance.GetNode(targetPos) == null)
         {
-            Debug.Log("노드가 아니다.");
             return;
         }
 
-        if (!GameManager.GetInstance.GetNode(targetPos).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(targetPos).GetCenter) != null)
-        {
-            Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
-            return;
-        }
+        //if (!GameManager.GetInstance.GetNode(targetPos).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(targetPos).GetCenter) != null)
+        //{
+        //    Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
+        //    return;
+        //}
 
         // 현재 좌표 (정수 격자 기준)
         Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
         targetPos = GameManager.GetInstance.GetNode(targetPos).GetCenter;
+
         // 경로 배열 생성
         List<Vector3Int> path = GenerateChebyshevPath(start, targetPos);
 
@@ -134,11 +150,19 @@ public class CitizenNPC : NeutralNPC
             isMoving = true;
             canNextMove = true;
         }
-
     }
 
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
     {
+        // 도착지가 막혀 있다면 대체 노드 찾기
+        if (!GameManager.GetInstance.Nodes.ContainsKey(end) ||
+            GameManager.GetInstance.GetNode(end) == null ||
+            !GameManager.GetInstance.GetNode(end).isWalkable ||
+            GameManager.GetInstance.GetEntityAt(end) != null)
+        {
+            end = FindNearestWalkableNodeAround(end);
+        }
+
         // BFS 탐색을 위한 큐
         Queue<Vector3Int> open = new Queue<Vector3Int>();
         Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
@@ -169,7 +193,7 @@ public class CitizenNPC : NeutralNPC
                 // 2) 이동 가능한지 체크
                 if (node == null) continue;
                 if (!node.isWalkable) continue;
-                if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
+                //if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
 
                 // 3) 방문한 적 없는 경우만 추가
                 if (!cameFrom.ContainsKey(next))
@@ -227,6 +251,33 @@ public class CitizenNPC : NeutralNPC
         {
             isMoving = false;
         }
+
+    }
+
+    // 가장 가까운 노드 찾기
+    private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
+    {
+        Vector3Int best = center;
+        float bestDist = float.MaxValue;
+
+        foreach (var dir in GameManager.GetInstance.nearNode)
+        {
+            Vector3Int check = center + dir;
+            if (!GameManager.GetInstance.Nodes.ContainsKey(check)) continue;
+
+            var node = GameManager.GetInstance.Nodes[check];
+            if (node == null || !node.isWalkable) continue;
+            if (node.standing != null && node.standing.Count > 0) continue;
+
+            float dist = Vector3.Distance(check, GameManager.GetInstance.GetNode(transform.position).GetCenter);
+            if (dist < bestDist)
+            {
+                best = check;
+                bestDist = dist;
+            }
+        }
+
+        return best;
     }
 
 }
