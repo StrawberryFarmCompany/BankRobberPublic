@@ -71,9 +71,12 @@ public class InteractionSetter : MonoBehaviour
                     {
                         GameManager.GetInstance.Nodes[currPos].isWalkable = false;
                     }
-
                 }
                 vaultDoor.Init(doorPoints,target,doorValue);
+                break;
+            case InteractionType.EscapeCar:
+                EscapeCar car = (EscapeCar)interaction;
+                car.Init(pos);
                 break;
             default:
                 break;
