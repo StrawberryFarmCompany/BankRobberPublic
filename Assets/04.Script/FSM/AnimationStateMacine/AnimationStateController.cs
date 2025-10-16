@@ -5,6 +5,7 @@ public class AnimationStateController : MonoBehaviour
     private static readonly int isRifle = Animator.StringToHash("isRifle");
     private static readonly int equip = Animator.StringToHash("Equip");
     private static readonly int unEquipForSneak = Animator.StringToHash("UnEquipForSneak");
+    private static readonly int isAiming = Animator.StringToHash("isAiming");
     public static readonly int isIdle = Animator.StringToHash("isIdle");
 
     [Header("애니메이터")]
@@ -80,7 +81,7 @@ public class AnimationStateController : MonoBehaviour
             moveState = new MoveState(animator, playerController);
         else
             moveState = new MoveState(animator);
-        reloadState = new ReloadState(animator);
+        reloadState = new ReloadState(animator, gun);
         runState = new RunState(animator);
         sneakAttackState = new SneakState(animator);
         strafeState = new StrafeState(animator);
@@ -113,7 +114,12 @@ public class AnimationStateController : MonoBehaviour
                     break;
             }
         }
-            
+
+        if(playerController != null)
+            playerController.playerStats.OnDamaged += DamagedState;
+        if(playerController != null)
+            playerController.playerStats.OnDead += DeadState;
+
     }
 
     public void OnEquip()
@@ -140,6 +146,11 @@ public class AnimationStateController : MonoBehaviour
         animator.Play(unEquipForSneak);
     }
 
+    public void UnAiming()
+    {
+               animator.SetBool(isAiming, false);
+    }
+
     public void MoveBestNode()
     {
         if (playerController != null)
@@ -154,6 +165,11 @@ public class AnimationStateController : MonoBehaviour
         {
             playerController.SneakAttack(playerController.targetNodePos);
         }
+    }
+
+    public void DestroyObject()
+    {
+        Destroy(transform.parent.gameObject);
     }
 
     public void AimingState()
@@ -171,6 +187,7 @@ public class AnimationStateController : MonoBehaviour
     }
     public void DeadState()
     {
+        animator.applyRootMotion = true;
         stateMachine.ChangeState(deadState);
     }
     public void HideState()
