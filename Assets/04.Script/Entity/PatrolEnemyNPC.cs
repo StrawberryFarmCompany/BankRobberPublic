@@ -48,7 +48,6 @@ public class PatrolEnemyNPC : EnemyNPC
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
-                Debug.Log("조사");
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
                 Move(noiseLocation);
                 if (this.gameObject.transform.position == noiseLocation)
@@ -59,7 +58,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (isNoise == true && isArrivedNoisePlace == true)
             {
-                Debug.Log("두리번두리번");
                 IdleRotation();
                 isNoise = false;
                 isArrivedNoisePlace = false;
@@ -67,7 +65,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == true && destinationPoint == false)
             {
-                Debug.Log("무브 실행 전");
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 Move(firstLocation);
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
@@ -95,7 +92,6 @@ public class PatrolEnemyNPC : EnemyNPC
         else if(stats.secData.GetSecLevel >= 2)
         {
             TryAttack();
-            Debug.Log("죽어잇!");
 
             // 공격이 실패했거나 이동력이 남았으면 추적
             if (stats.movement > 0)
@@ -107,18 +103,25 @@ public class PatrolEnemyNPC : EnemyNPC
         base.CalculateBehaviour();
     }
 
+    public void OnDrawGizmos()
+    {
+        Gizmos.DrawCube(homeLocation, Vector3.one);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(firstLocation, Vector3.one);
+        Gizmos.color = Color.red;
+    }
     // 순찰
     //public void Patrol(Vector3 pos)  //나중에 리펙토링 해보기
     //{
-        //PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
-        //if (patrolState.agent == null)
-        //{
-        //    patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
-        //}
-        //patrolState.pos.Enqueue(pos);
+    //PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
+    //if (patrolState.agent == null)
+    //{
+    //    patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
+    //}
+    //patrolState.pos.Enqueue(pos);
 
-        //float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
-        //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+    //float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
+    //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
     //}
 
     // 두리번
@@ -129,7 +132,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
         // 왼쪽 보기
         transform.rotation = Quaternion.Euler(0, lookAngle, 0);
-        Debug.Log("두리번");
 
         // 정면 복귀
         //transform.rotation = originalRotation;
@@ -157,7 +159,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
         // 정면 복귀
         transform.rotation = originalRotation;
-        Debug.Log("정면 복귀");
         efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
     }
 
@@ -208,7 +209,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
     public void Move(Vector3 pos)
     {
-        Debug.Log("무브 실행");
         if (isMoving) return;
         Vector3Int targetPos = GameManager.GetInstance.GetVecInt(pos);
 
@@ -238,7 +238,6 @@ public class PatrolEnemyNPC : EnemyNPC
             if (stats.ConsumeMovement(1))
             {
                 pathQueue.Enqueue((Vector3Int)step);
-                Debug.Log($"이동{step}");
             }
             else
             {
