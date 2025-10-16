@@ -61,7 +61,7 @@ public class TurnActionInput : MonoBehaviour
         if ((playerController.IsMyTurn() && playerController.isMoveMode))
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isHideMode);
+            playerController.StartMode(ref playerController.isThrowMode);
             playerController.TurnOnHighlighter(6);
         }
     }
