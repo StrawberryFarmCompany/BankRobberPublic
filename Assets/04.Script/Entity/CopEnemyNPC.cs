@@ -45,7 +45,15 @@ public class CopEnemyNPC : EnemyNPC
         if (stats.movement > 0)
         {
             efsm.ChangeState(efsm.FindState(EnemyStates.CopEnemyChaseState));
-            Move(nearPlayerLocation.GetPosition());
+            if (nearPlayerLocation != null)
+            {
+                Move(nearPlayerLocation.GetPosition());
+            }
+            else
+            {
+                Debug.LogError($"플레이어 로케이션이 지정되지 않았습니다 : {gameObject.name}");
+            }
+            
         }
         base.CalculateBehaviour();
     }
