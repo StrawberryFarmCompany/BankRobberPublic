@@ -58,8 +58,7 @@ public class NodePlayerController : MonoBehaviour
     [Header("명중 보정치")]
     public int hitBonus = 0;
 
-    private bool isEndTurn;
-    public bool IsEndTurn { get { return isEndTurn; } }
+    public bool isTurnEnd;
 
     private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
@@ -86,7 +85,7 @@ public class NodePlayerController : MonoBehaviour
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
         isHide = true;
-        isEndTurn = false;
+        isTurnEnd = false;
         StartMode(ref isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
     }
