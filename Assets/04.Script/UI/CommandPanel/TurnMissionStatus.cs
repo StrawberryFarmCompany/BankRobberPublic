@@ -7,7 +7,9 @@ public class TurnMissionStatus : MonoBehaviour
 {
     [SerializeField] TMP_Text titleLabel;
     [SerializeField] TMP_Text stealthRoundLabel;
+
     [SerializeField] Button endTurnButton;
+
     [SerializeField] bool lockButtonOnEnemy = false;
 
     [SerializeField] string allyText = "내 턴";
@@ -28,15 +30,18 @@ public class TurnMissionStatus : MonoBehaviour
         onNeutralStart = OnNeutralStart;
 
         SM.AddStartPointer(TurnTypes.ally, onAllyStart);
-        SM.AddStartPointer(TurnTypes.enemy, onEnemyStart);
-        SM.AddStartPointer(TurnTypes.neutral, onNeutralStart);
+        SM.AddEndPointer(TurnTypes.ally, onEnemyStart);
+        SM.AddEndPointer(TurnTypes.enemy, onNeutralStart);
     }
 
     void OnDestroy()
     {
         SM.RemoveStartPointer(TurnTypes.ally, onAllyStart);
-        SM.RemoveStartPointer(TurnTypes.enemy, onEnemyStart);
-        SM.RemoveStartPointer(TurnTypes.neutral, onNeutralStart);
+        SM.RemoveEndPointer(TurnTypes.ally, onEnemyStart);
+        SM.RemoveEndPointer(TurnTypes.enemy, onNeutralStart);
+        onAllyStart = null;
+        onEnemyStart = null;
+        onNeutralStart = null;
     }
 
     void OnAllyStart()
@@ -72,6 +77,6 @@ public class TurnMissionStatus : MonoBehaviour
     void SetButtonInteractable(bool myTurn)
     {
         if (!endTurnButton) return;
-        endTurnButton.interactable = lockButtonOnEnemy ? myTurn : true;
+        endTurnButton.interactable = myTurn;
     }
 }
