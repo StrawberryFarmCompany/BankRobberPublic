@@ -32,7 +32,7 @@ public class NodePlayerController : MonoBehaviour
     public bool isHide;
     [HideInInspector]
     public bool isAiming;
-    [HideInInspector]
+
     public bool isEndReady;
 
     //[Header("현재 플레이어의 액션 상태")]
@@ -60,9 +60,6 @@ public class NodePlayerController : MonoBehaviour
     [Header("명중 보정치")]
     public int hitBonus = 0;
 
-    private bool isEndTurn;
-    public bool IsEndTurn { get { return isEndTurn; } }
-
     private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
     public bool isMoving;
@@ -88,7 +85,7 @@ public class NodePlayerController : MonoBehaviour
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
         isHide = true;
-        isEndTurn = false;
+        isEndReady = false;
         StartMode(ref isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
     }
