@@ -30,6 +30,11 @@ public class NoneBattleTurnStateMachine
         Debug.Log(GetCurrState());
         if(GetCurrState() == TurnTypes.ally) GameManager.GetInstance.StartPlayerTurn();
         currState.Enter();
+        if (currState.StartPointer == null || currState.StartPointer.Method == null|| currState.StartPointer.GetInvocationList().Length  <= 0)
+        {
+            Debug.Log($"논 배틀턴 등록된 이벤트 없음, 타입 {GetCurrState()}");
+            ChangeState();
+        }
     }
     public void ForceSet(int index)
     {

@@ -5,6 +5,7 @@ public class AnimationStateController : MonoBehaviour
     private static readonly int isRifle = Animator.StringToHash("isRifle");
     private static readonly int equip = Animator.StringToHash("Equip");
     private static readonly int unEquipForSneak = Animator.StringToHash("UnEquipForSneak");
+    private static readonly int isAiming = Animator.StringToHash("isAiming");
     public static readonly int isIdle = Animator.StringToHash("isIdle");
 
     [Header("애니메이터")]
@@ -80,7 +81,7 @@ public class AnimationStateController : MonoBehaviour
             moveState = new MoveState(animator, playerController);
         else
             moveState = new MoveState(animator);
-        reloadState = new ReloadState(animator);
+        reloadState = new ReloadState(animator, gun);
         runState = new RunState(animator);
         sneakAttackState = new SneakState(animator);
         strafeState = new StrafeState(animator);
@@ -143,6 +144,11 @@ public class AnimationStateController : MonoBehaviour
     public void OnUnEquipForSneak()
     { 
         animator.Play(unEquipForSneak);
+    }
+
+    public void UnAiming()
+    {
+               animator.SetBool(isAiming, false);
     }
 
     public void MoveBestNode()
