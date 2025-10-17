@@ -255,20 +255,19 @@ class GameManager : SingleTon<GameManager>
 
     public void CheckAllCharacterEndTurn()
     {
-
-        foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
+        List<NodePlayerController> players = NodePlayerManager.GetInstance.GetAllPlayers();
+        for (int i = 0; i < players.Count; i++)
         {
-            if (!player.isEndReady)
-                return;
-        } 
+            if (!players[i].isEndReady) return;
+        }
 
         Debug.Log($"다 끝나고 플레이어 턴 엔드");
 
         EndPlayerTurn();
 
-        foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
+        for (int i = 0; i < players.Count; i++)
         {
-            player.isEndReady = false;
+            players[i].isEndReady = false;
         }
     }
 

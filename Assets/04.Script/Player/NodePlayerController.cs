@@ -32,7 +32,7 @@ public class NodePlayerController : MonoBehaviour
     public bool isHide;
     [HideInInspector]
     public bool isAiming;
-    [HideInInspector]
+
     public bool isEndReady;
 
     //[Header("현재 플레이어의 액션 상태")]
@@ -54,11 +54,11 @@ public class NodePlayerController : MonoBehaviour
     public bool isRangeAttackMode;
     [HideInInspector]
     public bool isPerkActionMode;
+    [HideInInspector]
+    public bool isReloadMode;
 
     [Header("명중 보정치")]
     public int hitBonus = 0;
-
-    public bool isTurnEnd;
 
     private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
@@ -85,7 +85,7 @@ public class NodePlayerController : MonoBehaviour
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
         isHide = true;
-        isTurnEnd = false;
+        isEndReady = false;
         StartMode(ref isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
     }
@@ -220,13 +220,25 @@ public class NodePlayerController : MonoBehaviour
             }
         }
 
+        if (context.started && IsMyTurn() && isReloadMode)
+        {
+            if (!playerStats.ConsumeActionPoint(1))
+            {
+                Debug.Log("행동력이 부족함");
+                return;
+            }
+            gun.Reload();
+            animationController.ReloadState();
+            UIManager.GetInstance.ShowActionPanel(true);
+        }
+
         if (context.started && IsMyTurn() && isRangeAttackMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckRangeAttack(mousePos);
         }
 
-        if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode))
+        if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode || isReloadMode))
         {
             UIManager.GetInstance.ShowActionPanel(true);
             StartMode(ref isMoveMode);
@@ -588,6 +600,7 @@ public class NodePlayerController : MonoBehaviour
 
     private void RemoveAiming()
     {
+        animationController.UnAiming();
         isAiming = false;
         hitBonus -= 3;
     }
@@ -622,15 +635,15 @@ public class NodePlayerController : MonoBehaviour
             
         }
 
-        if (!playerStats.ConsumeActionPoint(1))
-        {
-            Debug.Log("행동 포인트가 부족");
-            return;
-        }
-
         if (!gun.CheckAmmo())
         {
             Debug.Log("잔탄수 부족, 불발");
+            return;
+        }
+
+        if (!playerStats.ConsumeActionPoint(1))
+        {
+            Debug.Log("행동 포인트가 부족");
             return;
         }
 
@@ -653,11 +666,20 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnPerkAction(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn())
+        if (context.started && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             Debug.Log("특전 모드 활성화");
             // 특전 로직
+        }
+    }
+
+    public void OnReload(InputAction.CallbackContext context)
+    {
+        if (context.started && IsMyTurn() && isMoveMode)
+        {
+            UIManager.GetInstance.ShowActionPanel(false);
+            StartMode(ref isReloadMode);
         }
     }
 
@@ -730,6 +752,7 @@ public class NodePlayerController : MonoBehaviour
         isRangeAttackMode = false;
         isPerkActionMode = false;
         isThrowMode = false;
+        isReloadMode = false;
 
         mode = true;
     }

@@ -11,8 +11,10 @@ public class TurnActionInput : MonoBehaviour
 
     [SerializeField] CanvasGroup actionPanelGroup;
 
-    TurnBehaviour onAllyStart, onEnemyStart, onNeutralStart;
+    [SerializeField] Button turnButton;
 
+    TurnBehaviour onAllyStart, onEnemyStart, onNeutralStart;
+    
     NodePlayerController playerController => NodePlayerManager.GetInstance.GetCurrentPlayer();
 
     NoneBattleTurnStateMachine SM => GameManager.GetInstance.NoneBattleTurn;
@@ -24,25 +26,28 @@ public class TurnActionInput : MonoBehaviour
         onNeutralStart = () => SetCanAct(false);  // 중립 턴 시작 → 입력 차단
 
         SM.AddStartPointer(TurnTypes.ally, onAllyStart);
-        SM.AddStartPointer(TurnTypes.enemy, onEnemyStart);
-        SM.AddStartPointer(TurnTypes.neutral, onNeutralStart);
+        SM.AddEndPointer(TurnTypes.ally, onEnemyStart);
+        SM.AddEndPointer(TurnTypes.enemy, onNeutralStart);
 
     }
 
     void OnDestroy()
     {
         SM.RemoveStartPointer(TurnTypes.ally, onAllyStart);
-        SM.RemoveStartPointer(TurnTypes.enemy, onEnemyStart);
-        SM.RemoveStartPointer(TurnTypes.neutral, onNeutralStart);
+        SM.RemoveEndPointer(TurnTypes.ally, onEnemyStart);
+        SM.RemoveEndPointer(TurnTypes.enemy, onNeutralStart);
+        onAllyStart = null;
+        onEnemyStart = null;
+        onNeutralStart = null;
     }
 
     void SetCanAct(bool allow)
     {
         canAct = allow;
-
         //패널 자체 클릭 막기
         if (actionPanelGroup)
         {
+            turnButton.interactable = allow;
             actionPanelGroup.interactable = allow;
             actionPanelGroup.blocksRaycasts = true;
         }
@@ -61,7 +66,7 @@ public class TurnActionInput : MonoBehaviour
         if ((playerController.IsMyTurn() && playerController.isMoveMode))
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isHideMode);
+            playerController.StartMode(ref playerController.isThrowMode);
             playerController.TurnOnHighlighter(6);
         }
     }
