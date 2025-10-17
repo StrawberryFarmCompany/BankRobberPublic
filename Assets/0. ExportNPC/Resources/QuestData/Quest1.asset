@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26a5f1d1181dc8d44ba6bbfa1d3cc5b5, type: 3}
+  m_Name: Quest1
+  m_EditorClassIdentifier: 
+  questID: 1
+  questName: "\uC220\uB798\uC7A1\uAE30"
+  description: "\uC220\uB798\uC7A1\uAE30\uB97C \uD574\uBCF4\uC790"
+  requiredAmount: 0
+  targetID: 
+  currentAmount: 0
+  targetNpc: 2
+  branch: 4
+  index: 1
+  targetDialogue: "\uC220\uB798\uC7A1\uAE30\uB97C \uD558\uC790"
+  status: 0
+  successChanges:
+  - npc: 0
+    newBranch: 10
+    newIndex: 1
+  failChanges:
+  - npc: 0
+    newBranch: 11
+    newIndex: 1

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class PlayerController : MonoBehaviour
     public float lookSensitivity;
 
     private Rigidbody _rigidbody;
+    public bool canLook = true;
+
+    public Action quest;
 
     private void Awake()
     {
@@ -30,12 +34,14 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
+            Move();
     }
 
     // 카메라 움직임 값 구현 및 Player Input에 전달
     public void CameraLook(InputAction.CallbackContext context)
     {
+        if (!canLook) return;
+
         Vector2 temp = context.ReadValue<Vector2>();
 
         camCurXRot += temp.y * lookSensitivity;
@@ -104,5 +110,12 @@ public class PlayerController : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void ToggleCursor()
+    {
+        bool toggle = Cursor.lockState == CursorLockMode.Locked;
+        Cursor.lockState = toggle ? CursorLockMode.None : CursorLockMode.Locked;
+        canLook = !toggle;
     }
 }
