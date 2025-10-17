@@ -19,6 +19,12 @@ public class OptionUI : MonoBehaviour
 
     private CameraSensitivityManager csmg;
 
+    [Header("음량 조절")]
+    [SerializeField] private Slider bgmSlider;
+    [SerializeField] private Slider sfxSlider;
+
+    private bool isInitialized = false;
+
     void Start()
     {
         csmg = CameraSensitivityManager.GetInstance;
@@ -44,6 +50,22 @@ public class OptionUI : MonoBehaviour
 
             fpsLookSlider.onValueChanged.AddListener(v => ApplyFpsToAll(v));
         }
+
+        // 볼륨 불러오기
+        float bgmVolume = PlayerPrefs.GetFloat("BGMVolume", SoundManager.Instance.DefaultBGMVolume);
+        float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", SoundManager.Instance.DefaultSFXVolume);
+
+        bgmSlider.value = bgmVolume;
+        sfxSlider.value = sfxVolume;
+
+        SoundManager.Instance.SetBGMVolume(bgmVolume);
+        SoundManager.Instance.SetSFXVolume(sfxVolume);
+
+        // 이벤트 등록
+        bgmSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
+        sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
+
+        isInitialized = true;
     }
 
     void OnEnable()
@@ -86,5 +108,19 @@ public class OptionUI : MonoBehaviour
         if (fpsPlayers == null) return;
         foreach (var p in fpsPlayers)
             if (p != null) p.SetLookSensitivity(v);
+    }
+
+    private void OnBGMVolumeChanged(float value)
+    {
+        if (!isInitialized) return;
+        SoundManager.Instance.SetBGMVolume(value);
+        PlayerPrefs.SetFloat("BGMVolume", value);
+    }
+
+    private void OnSFXVolumeChanged(float value)
+    {
+        if (!isInitialized) return;
+        SoundManager.Instance.SetSFXVolume(value);
+        PlayerPrefs.SetFloat("SFXVolume", value);
     }
 }
