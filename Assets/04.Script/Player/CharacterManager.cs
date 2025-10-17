@@ -1,4 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
+
+public enum CharacterType
+{
+    Rook,
+    Bishop,
+    Knight
+}
 
 public class CharacterManager : MonoBehaviour
 {
@@ -17,10 +25,11 @@ public class CharacterManager : MonoBehaviour
 
     public Player player
     {
-        get { return _player; }
-        set { _player = value; }
+        get { return _Player; }
+        set { _Player = value; }
     }
-    private Player _player;
+    private Player _Player;
+
 
     private void Awake()
     {
