@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class HoldEnemyDamagedState : EnemyState
 {
-    public EnemyNPC holdEnemy;
-
-    public HoldEnemyDamagedState(EnemyNPC holdEnemy)
+    public HoldEnemyDamagedState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.holdEnemy = holdEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()

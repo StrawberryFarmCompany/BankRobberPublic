@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CopEnemyDeadState : EnemyState
 {
-    public EnemyNPC copEnemy;
-    public CopEnemyDeadState(EnemyNPC copEnemy)
+    public CopEnemyDeadState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.copEnemy = copEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()

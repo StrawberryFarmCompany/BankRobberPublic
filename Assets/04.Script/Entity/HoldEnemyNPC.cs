@@ -23,7 +23,7 @@ public class HoldEnemyNPC : EnemyNPC
     {
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
-        efsm = new EnemyStateMachine(this, EnemyStates.HoldEnemyIdleState);
+        efsm = new EnemyStateMachine(this,transform.GetComponentInChildren<Animator>(), EnemyStates.HoldEnemyIdleState);
     }
 
     private void Update()

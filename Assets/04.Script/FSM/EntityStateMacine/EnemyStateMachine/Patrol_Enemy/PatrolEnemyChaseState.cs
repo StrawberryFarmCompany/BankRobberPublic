@@ -10,13 +10,14 @@ public class PatrolEnemyChaseState : EnemyState
     public NavMeshAgent agent;
     public Queue<Vector3> pos;
 
-    public PatrolEnemyChaseState(EnemyNPC patrolEnemy)
+    public PatrolEnemyChaseState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.patrolEnemy = patrolEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
         pos = new Queue<Vector3>();
     }
 
-    public override void Enter()
+public override void Enter()
     {
         if (pos.TryDequeue(out Vector3 current))
         {
