@@ -61,6 +61,10 @@ public class InteractionSetter : MonoBehaviour
                 for (int i = 1; i <= 4; i++)
                 {
                     Vector3Int currPos = pos + (GameManager.GetInstance.GetVecInt(-transform.right * i));
+                    if (!GameManager.GetInstance.Nodes.ContainsKey(currPos))
+                    {
+                        GameManager.GetInstance.RegistNode(currPos,false);
+                    }
                     GameManager.GetInstance.Nodes[currPos].isWalkable = i == 2 || i == 3 ? true : false;
                     if (i == 2 || i == 3)
                     {
@@ -71,9 +75,12 @@ public class InteractionSetter : MonoBehaviour
                     {
                         GameManager.GetInstance.Nodes[currPos].isWalkable = false;
                     }
-
                 }
                 vaultDoor.Init(doorPoints,target,doorValue);
+                break;
+            case InteractionType.EscapeCar:
+                EscapeCar car = (EscapeCar)interaction;
+                car.Init(pos);
                 break;
             default:
                 break;

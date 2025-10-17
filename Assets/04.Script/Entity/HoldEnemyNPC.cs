@@ -88,15 +88,22 @@ public class HoldEnemyNPC : EnemyNPC
         else if (stats.secData.GetSecLevel >= 2)
         {
             efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyCombatState));
-            DetectVisibleTargets();
-            TryAttack();
-            Debug.Log("죽자 준게이야");
 
-            // 공격이 실패했거나 행동력이 남았으면 추적
-            if (stats.movement > 0)
+            DetectVisibleTargets();
+
+            transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+
+            TryAttack();
+
+            //공격이 실패했거나 행동력이 남았으면 추적
+            if (stats.curActionPoint > 0)
             {
                 efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
                 Move(nearPlayerLocation.GetPosition());
+
+                //transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+
+                //TryAttack();
             }
         }
         base.CalculateBehaviour();
@@ -129,14 +136,10 @@ public class HoldEnemyNPC : EnemyNPC
         Quaternion originalRotation = transform.rotation;
 
         transform.rotation = Quaternion.Euler(0, firstLookAngle , 0);
-        Debug.Log("첫 번째 랜덤 각도 두리번");
-
         transform.rotation = Quaternion.Euler(0, secondLookAngle , 0);
-        Debug.Log("두 번째 랜덤 각도 두리번");
 
         // 정면 복귀
         transform.rotation = originalRotation;
-        Debug.Log("정면 복귀");
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleRotationState));
     }
 
@@ -202,7 +205,6 @@ public class HoldEnemyNPC : EnemyNPC
 
         if (GameManager.GetInstance.GetNode(targetPos) == null)
         {
-            Debug.Log("노드가 아니다.");
             return;
         }
 
@@ -227,7 +229,7 @@ public class HoldEnemyNPC : EnemyNPC
             if (stats.ConsumeMovement(1))
             {
                 pathQueue.Enqueue((Vector3Int)step);
-            }
+            } 
             else
             {
                 Debug.Log($"이동 도중 이동력 부족. {step} 여기서 멈춤");
@@ -341,9 +343,12 @@ public class HoldEnemyNPC : EnemyNPC
         if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
         {
             isMoving = false;
+            transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+            TryAttack();
         }
-    }
 
+    }
+     
     // 가장 가까운 노드 찾기
     private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
     {
