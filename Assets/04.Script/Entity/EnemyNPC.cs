@@ -15,6 +15,7 @@ public class EnemyNPC : MonoBehaviour
 
     [SerializeField] protected EntityStats nearPlayerLocation;
 
+
     protected virtual IEnumerator Start()
     {
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
@@ -76,7 +77,7 @@ public class EnemyNPC : MonoBehaviour
 
             // 1. 거리 체크 (사거리 무제인지 확인 필요)
             float dist = Vector3.Distance(stats.currNode.GetCenter, target.currNode.GetCenter);
-            if (dist > stats.detectingDistance)
+            if (dist > stats.attackRange)
             {
                 continue;
             }
@@ -122,7 +123,16 @@ public class EnemyNPC : MonoBehaviour
         // 행동 포인트 확인 및 공격
         if (stats.ConsumeActionPoint(1))
         {
-            gun.Shoot(chosenTarget.currNode.GetCenter, 1);
+            if (gun.curRounds > 0)
+            {
+                gun.Shoot(chosenTarget.currNode.GetCenter, 1);
+            }
+
+            else
+            {
+                gun.Reload();
+                Debug.Log($"장전 완료 남은 총알 {gun.curRounds}발");
+            }
         }
         else
         {

@@ -9,10 +9,10 @@ public class PatrolEnemyPatrolState : EnemyState
     //public NavMeshAgent agent;
     //public EnemyNPC patrolEnemy;
 
-    public PatrolEnemyPatrolState(EnemyNPC patrolEnemy)
+    public PatrolEnemyPatrolState(EnemyNPC enemyNPC, Animator anim)
     {
-        //this.patrolEnemy = patrolEnemy;
-        //pos = new Queue<Vector3>();
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()

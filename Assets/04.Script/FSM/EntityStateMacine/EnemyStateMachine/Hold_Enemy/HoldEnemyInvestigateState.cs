@@ -6,16 +6,16 @@ using UnityEngine.AI;
 
 public class HoldEnemyInvestigateState : EnemyState
 {
-    public EnemyNPC holdEnemy;
     public NavMeshAgent agent;
     public Queue<Vector3> pos;
-    public HoldEnemyInvestigateState(EnemyNPC holdEnemy)
+    public HoldEnemyInvestigateState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.holdEnemy = holdEnemy;
         pos = new Queue<Vector3>();
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
-    
-    public override void Enter()
+
+public override void Enter()
     {
         if(pos.TryDequeue(out Vector3 current))
         {

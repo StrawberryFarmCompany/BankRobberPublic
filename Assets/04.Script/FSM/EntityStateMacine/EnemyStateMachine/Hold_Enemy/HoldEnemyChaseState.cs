@@ -6,16 +6,16 @@ using static UnityEditor.PlayerSettings;
 
 public class HoldEnemyChaseState : EnemyState
 {
-    public EnemyNPC holdEnemy;
     public NavMeshAgent agent;
     public Queue<Vector3> pos;
-    public HoldEnemyChaseState(EnemyNPC holdEnemy)
+    public HoldEnemyChaseState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.holdEnemy = holdEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
         pos = new Queue<Vector3>();
     }
 
-    public override void Enter()
+public override void Enter()
     {
         if (pos.TryDequeue(out Vector3 current))
         {
