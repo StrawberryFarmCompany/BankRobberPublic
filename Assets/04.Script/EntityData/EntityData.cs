@@ -11,6 +11,14 @@ public enum EntityTag
     CCTV            //씨씨티비
 }
 
+public enum PlayerSkill
+{
+    SneakAttack,    //은신 공격
+    Heal,       //치유
+    Ready,          //준비
+
+}
+
 [CreateAssetMenu(fileName = "Entity",menuName = "New Entity")]
 public class EntityData : ScriptableObject
 {
@@ -33,6 +41,7 @@ public class EntityData : ScriptableObject
     public bool isCombat;          //NPC 공격 가능 여부
 
     [Header("PlayerOnly")]
+    public PlayerSkill playerSkill; //플레이어 스킬
     public int sabotage;           //손재주(함정해제)
     public int aggroControl;       //장악력
     public int maxRerollCount;     //최대 리롤 횟수
