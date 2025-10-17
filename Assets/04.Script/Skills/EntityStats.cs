@@ -32,6 +32,7 @@ public class EntityStats
         } 
     }
     public int evasionRate;
+    public int baseEvasionRate;
     public int accuracyModifier;
     public float attackRange;
     public float detectingDistance;
@@ -68,6 +69,7 @@ public class EntityStats
         movement = baseStats.movementPoint;
         maxHp = baseStats.maxHp;
         CurHp = baseStats.curHp;
+        baseEvasionRate = baseStats.evasionRate;
         evasionRate = baseStats.evasionRate;
         accuracyModifier = baseStats.accuracyModifier;
         attackRange = baseStats.attackRange;
@@ -189,10 +191,16 @@ public class EntityStats
         }
     }
 
+    public void HealMovement(int amount)
+    {
+        movement += amount;
+    }
+
     public void ResetForNewTurn()
     {
         curActionPoint = actionPoint;
         movement = movementSpeed;
+        evasionRate = baseEvasionRate;                                  // 매 턴마다 회피율을 기본값으로 리셋 임시적으로 넣은거라서 나중에 바꿔야함
     }
 
     public void SetCurrentNode(Vector3Int pos)
@@ -236,4 +244,5 @@ public class EntityStats
         GameManager.GetInstance.UnregisterEntity(this);
         //GameManager.GetInstance.BattleTurn.RemoveUnit();
     }
+
 }
