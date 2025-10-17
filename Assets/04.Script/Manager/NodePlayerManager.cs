@@ -38,6 +38,14 @@ public class NodePlayerManager : MonoBehaviour
         }
     }
 
+    public void PlayerTurnReset()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].isEndReady = false;
+        }
+    }
+
     /// <summary>
     /// 현재 조종 중인 플레이어 반환
     /// </summary>
