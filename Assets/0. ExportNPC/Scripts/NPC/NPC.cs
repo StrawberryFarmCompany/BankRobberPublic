@@ -5,8 +5,7 @@ using UnityEngine;
 public enum ENPC
 {
     Amy,
-    Knight,
-    Seonghan
+    MainNPC
 }
 
 public class NPC : MonoBehaviour, INPCInteractable
