@@ -42,7 +42,7 @@ public class NodePlayerManager : MonoBehaviour
     {
         for (int i = 0; i < players.Count; i++)
         {
-            players[i].isTurnEnd = false;
+            players[i].isEndReady = false;
         }
     }
 
