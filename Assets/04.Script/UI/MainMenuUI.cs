@@ -34,13 +34,14 @@ public class MainMenuUI : MonoBehaviour
     private void OnClickNewGame()
     {
         Debug.Log("새로하기 버튼 클릭됨");
-        //SceneManager.LoadScene("");
+        SceneManager.LoadScene("LobbyPlayerChange");
     }
 
     private void OnClickContinue()
     {
         Debug.Log("이어하기 버튼 클릭됨");
-        //SceneManager.LoadScene("");
+        //저장 정보 가져오기
+        SceneManager.LoadScene("LobbyPlayerChange");
     }
 
     private void OnClickOption()

@@ -95,15 +95,20 @@ public class HoldEnemyNPC : EnemyNPC
 
             TryAttack();
 
-            //공격이 실패했거나 행동력이 남았으면 추적
+            //공격이 실패했거나 행동력이 남았으면 추적 후 공격
             if (stats.curActionPoint > 0)
             {
                 efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
-                Move(nearPlayerLocation.GetPosition());
+                if (nearPlayerLocation != null)
+                {
+                    Move(nearPlayerLocation.GetPosition());
+                }
 
-                //transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+                else
+                {
+                    Debug.LogError($"플레이어 로케이션이 지정되지 않았습니다 : {gameObject.name}");
+                }
 
-                //TryAttack();
             }
         }
         base.CalculateBehaviour();
@@ -343,7 +348,10 @@ public class HoldEnemyNPC : EnemyNPC
         if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
         {
             isMoving = false;
-            transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+            if (nearPlayerLocation != null)
+            {
+                transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+            }
             TryAttack();
         }
 
