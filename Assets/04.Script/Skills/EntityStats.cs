@@ -42,6 +42,8 @@ public class EntityStats
     public Sprite portrait;
     public Node currNode;
 
+    public PlayerSkill playerSkill; //플레이어 스킬
+
     public SecurityData secData;
     private PassiveSkill equippedPassive;
     private List<IBuff> buffs;
@@ -74,6 +76,7 @@ public class EntityStats
         aggroControl = baseStats.aggroControl;
         maxRerollCount = baseStats.maxRerollCount;
         curRerollCount = baseStats.curRerollCount;
+        playerSkill = baseStats.playerSkill;
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
@@ -166,6 +169,24 @@ public class EntityStats
         OnDead?.Invoke();
         DestroyEntity();
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
+    }
+
+    public void HealHealthPoint(float amount)
+    {
+        CurHp += amount;
+        if (CurHp > maxHp)
+        {
+            CurHp = maxHp;
+        }
+    }
+
+    public void HealActionPoint(int amount)
+    {
+        curActionPoint += amount;
+        if (curActionPoint > actionPoint)
+        {
+            curActionPoint = actionPoint;
+        }
     }
 
     public void ResetForNewTurn()
