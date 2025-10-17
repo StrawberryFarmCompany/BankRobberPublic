@@ -18,7 +18,7 @@ public class CopEnemyNPC : EnemyNPC
     {
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
-        efsm = new EnemyStateMachine(this, EnemyStates.CopEnemyChaseState);
+        efsm = new EnemyStateMachine(this,transform.GetComponentInChildren<Animator>(), EnemyStates.CopEnemyChaseState);
         yield return null;
     }
 

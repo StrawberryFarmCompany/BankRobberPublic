@@ -25,7 +25,7 @@ public class PatrolEnemyNPC : EnemyNPC
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
-        efsm = new EnemyStateMachine(this, EnemyStates.PatrolEnemyPatrolState);
+        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyPatrolState);
     }
 
     protected override void FixedUpdate()

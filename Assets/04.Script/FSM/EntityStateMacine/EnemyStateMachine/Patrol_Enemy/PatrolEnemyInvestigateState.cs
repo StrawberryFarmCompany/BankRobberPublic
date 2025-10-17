@@ -5,13 +5,13 @@ using UnityEngine.AI;
 
 public class PatrolEnemyInvestigateState : EnemyState
 {
-    public EnemyNPC patrolEnemy;
     public Vector3 pos;
     public NavMeshAgent agent;
 
-    public PatrolEnemyInvestigateState(EnemyNPC patrolEnemy)
+    public PatrolEnemyInvestigateState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.patrolEnemy = patrolEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()
