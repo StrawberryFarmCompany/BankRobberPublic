@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CopEnemyChaseState : EnemyState
 {
-    public EnemyNPC copEnemy;
-    public CopEnemyChaseState(EnemyNPC copEnemy)
+    public CopEnemyChaseState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.copEnemy = copEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()

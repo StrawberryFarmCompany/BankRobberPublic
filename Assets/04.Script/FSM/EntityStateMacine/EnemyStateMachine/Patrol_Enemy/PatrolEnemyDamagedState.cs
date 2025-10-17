@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class PatrolEnemyDamagedState : EnemyState
 {
-    public EnemyNPC patrolEnemy;
 
-    public PatrolEnemyDamagedState(EnemyNPC patrolEnemy)
+    public PatrolEnemyDamagedState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.patrolEnemy = patrolEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()

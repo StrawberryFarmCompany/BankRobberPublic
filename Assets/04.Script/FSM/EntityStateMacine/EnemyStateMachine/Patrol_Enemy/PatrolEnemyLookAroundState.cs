@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class PatrolEnemyLookAroundState : EnemyState
 {
-    public EnemyNPC patrolEnemy;
-
-    public PatrolEnemyLookAroundState(EnemyNPC patrolEnemy)
+    public PatrolEnemyLookAroundState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.patrolEnemy = patrolEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()

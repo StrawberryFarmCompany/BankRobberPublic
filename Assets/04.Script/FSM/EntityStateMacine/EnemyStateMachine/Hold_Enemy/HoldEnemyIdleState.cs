@@ -5,11 +5,10 @@ using UnityEngine.AI;
 
 public class HoldEnemyIdleState : EnemyState
 {
-    public EnemyNPC holdEnemy;
-
-    public HoldEnemyIdleState(EnemyNPC holdEnemy)
+    public HoldEnemyIdleState(EnemyNPC enemyNPC, Animator anim)
     {
-        this.holdEnemy = holdEnemy;
+        this.patrolEnemy = enemyNPC;
+        this.anim = anim;
     }
 
     public override void Enter()
