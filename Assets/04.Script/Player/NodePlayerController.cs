@@ -198,11 +198,13 @@ public class NodePlayerController : MonoBehaviour
             }
             else if (playerStats.playerSkill == PlayerSkill.Heal)
             {
+                if(!playerStats.ConsumeActionPoint(1)) return;
                 UIManager.GetInstance.ShowActionPanel(true);
                 Heal();
             }
             else if (playerStats.playerSkill == PlayerSkill.Ready)
             {
+                if (!playerStats.ConsumeActionPoint(1)) return;
                 UIManager.GetInstance.ShowActionPanel(true);
                 Ready();
             }
@@ -681,13 +683,12 @@ public class NodePlayerController : MonoBehaviour
 
     public void Heal()
     {
-        playerStats.HealHealthPoint(3); //========================================================================임의로 3회복
+        animationController.HealState();
     }
 
     public void Ready()
     {
-        playerStats.HealActionPoint(1); //========================================================================임의로 1회복
-        playerStats.evasionRate += 1; //========================================================================임의로 회피 1증가
+        animationController.ReadyState();
     }
     
 
