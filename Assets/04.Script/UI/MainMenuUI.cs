@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -19,27 +20,34 @@ public class MainMenuUI : MonoBehaviour
     [Header("옵션 UI 버튼")]
     [SerializeField] private Button backButton;
 
+    [Header("종료 확인 UI")]
+    [SerializeField] private GameObject qutiConfirmUI;
+    [SerializeField] private Button quitYesButton;
+    [SerializeField] private Button quitNoButton;
+
     private void Start()
     {
         mainUI.SetActive(true);
         optionUI.SetActive(false);
+        qutiConfirmUI.SetActive(false);
 
         newGameButton.onClick.AddListener(OnClickNewGame);
         continueButton.onClick.AddListener(OnClickContinue);
         optionButton.onClick.AddListener(OnClickOption);
         exitButton.onClick.AddListener(OnClickExit);
         backButton.onClick.AddListener(OnClickBack);
+
+        quitYesButton.onClick.AddListener(DoQuit);
+        quitNoButton.onClick.AddListener(CloseExitConfirm);
     }
 
     private void OnClickNewGame()
     {
-        Debug.Log("새로하기 버튼 클릭됨");
         SceneManager.LoadScene("LobbyPlayerChange");
     }
 
     private void OnClickContinue()
     {
-        Debug.Log("이어하기 버튼 클릭됨");
         //저장 정보 가져오기
         SceneManager.LoadScene("LobbyPlayerChange");
     }
@@ -58,6 +66,21 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnClickExit()
     {
-        Debug.Log("게임 종료");
+        //종료 확인창 오픈
+        qutiConfirmUI.SetActive(true);
+    }
+
+    private void CloseExitConfirm()
+    {
+        if (qutiConfirmUI) qutiConfirmUI.SetActive(false);
+    }
+
+    private void DoQuit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
     }
 }
