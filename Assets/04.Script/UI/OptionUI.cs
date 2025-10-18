@@ -51,7 +51,7 @@ public class OptionUI : MonoBehaviour
             fpsLookSlider.onValueChanged.AddListener(v => ApplyFpsToAll(v));
         }
 
-        // 볼륨 불러오기
+        // 사운드
         float bgmVolume = PlayerPrefs.GetFloat("BGMVolume", SoundManager.Instance.DefaultBGMVolume);
         float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", SoundManager.Instance.DefaultSFXVolume);
 
@@ -61,7 +61,6 @@ public class OptionUI : MonoBehaviour
         SoundManager.Instance.SetBGMVolume(bgmVolume);
         SoundManager.Instance.SetSFXVolume(sfxVolume);
 
-        // 이벤트 등록
         bgmSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
         sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
 
@@ -83,6 +82,12 @@ public class OptionUI : MonoBehaviour
             fpsLookSlider.SetValueWithoutNotify(Mathf.Clamp(cur, fpsMin, fpsMax));
             ApplyFpsToAll(cur);
         }
+
+        // 옵션창이 다시 켜질 때, 현재 볼륨 반영
+        if (SoundManager.Instance == null) return;
+
+        bgmSlider.SetValueWithoutNotify(SoundManager.Instance.GetBGMVolume());
+        sfxSlider.SetValueWithoutNotify(SoundManager.Instance.GetSFXVolume());
     }
 
     private void OnDestroy()
