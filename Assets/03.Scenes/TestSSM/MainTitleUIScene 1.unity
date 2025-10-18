@@ -3933,7 +3933,6 @@ MonoBehaviour:
   fpsMax: 0.5
   bgmSlider: {fileID: 0}
   sfxSlider: {fileID: 0}
-  muteToggle: {fileID: 0}
 --- !u!1 &1035991936
 GameObject:
   m_ObjectHideFlags: 0
@@ -4768,13 +4767,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgmSource: {fileID: 267587851}
-  sfxSources:
-  - {fileID: 260034602}
+  sfxSource: {fileID: 260034602}
   bgmClips: []
   sfxClips: []
   defaultBGMVolume: 1
   defaultSFXVolume: 1
-  sfxSourcePoolSize: 6
 --- !u!4 &1374150471
 Transform:
   m_ObjectHideFlags: 0
