@@ -26,6 +26,7 @@ public class NodePlayerManager : MonoBehaviour
     private void Start()
     {
         players.AddRange(FindObjectsOfType<NodePlayerController>());
+        SwitchToPlayer(0); // 첫 번째 플레이어로 시작
         UIManager.GetInstance.pip.HideAndSneakText();
     }
 
@@ -65,7 +66,6 @@ public class NodePlayerManager : MonoBehaviour
 
         players[currentPlayerIndex].playerInput.DeactivateInput();
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
-        players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         UIManager.GetInstance.pip.HideAndSneakText();
@@ -80,7 +80,6 @@ public class NodePlayerManager : MonoBehaviour
         if (index < 0 || index >= players.Count) return;
         players[currentPlayerIndex].playerInput.DeactivateInput();
         currentPlayerIndex = index;
-        players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         GetCurrentPlayer().isEndReady = false;

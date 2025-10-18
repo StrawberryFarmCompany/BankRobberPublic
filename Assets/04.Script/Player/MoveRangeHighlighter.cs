@@ -1,35 +1,29 @@
 using NodeDefines;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class MoveRangeHighlighter : MonoBehaviour
 {
     [Header("하이라이트 표시")]
-    public static NodeBoundPreviewer normalHighlighter;
+    [SerializeField] private GameObject normalHighlighter;
     [SerializeField] private GameObject securityAreaHighlighter;
     [SerializeField] private GameObject interactableHighlighter;
 
     [SerializeField] private GameObject ParentTransform;
 
-    private void Awake()
-    {
-        if(normalHighlighter == null)
-            normalHighlighter = new NodeBoundPreviewer();
-    }
+    private List<GameObject> activeHighlights = new();
 
     public void ShowMoveRange(Vector3Int start, int range)
     {
+        ClearHighlights();
         HashSet<Vector3Int> map = new HashSet<Vector3Int>();
         //start위치까지 포함하여야 하고 음수처리 때문에 값 비교 array는 (range*2)+1
         GetPath(start, start, map,new int[(range*2)+1, (range * 2) + 1], range);
-        normalHighlighter.SetMesh(map.ToArray());
-/*        
         foreach (Vector3Int item in map)
         {
             HighlightNode(item);
         }
-        for (int x = -range; x <= range; x++)
+/*        for (int x = -range; x <= range; x++)
         {
             for (int z = -range; z <= range; z++)
             {
@@ -77,7 +71,7 @@ public class MoveRangeHighlighter : MonoBehaviour
         }
     }
 
-/*    private void HighlightNode(Vector3Int pos)
+    private void HighlightNode(Vector3Int pos)
     {
         GameObject prefab = normalHighlighter;
 
@@ -97,10 +91,12 @@ public class MoveRangeHighlighter : MonoBehaviour
 
         GameObject obj = Instantiate(prefab, pos, Quaternion.identity, ParentTransform.transform);
         activeHighlights.Add(obj);
-    }*/
+    }
 
     public void ClearHighlights()
     {
-        normalHighlighter.Enable(false);
+        foreach (var obj in activeHighlights)
+            Destroy(obj);
+        activeHighlights.Clear();
     }
 }
