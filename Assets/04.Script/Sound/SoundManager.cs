@@ -94,8 +94,8 @@ public class SoundManager : MonoBehaviour
     // BGM 재생
     public void PlayBGM(int index)
     {
-        if (bgmSource == null) return;
-        if (index < 0 || index >= bgmClips.Length) return;
+        if (bgmSource == null || index < 0 || index >= bgmClips.Length)
+            return;
 
         // 같은 곡 중복 재생 방지
         if (bgmSource.clip == bgmClips[index] && bgmSource.isPlaying)
@@ -115,8 +115,8 @@ public class SoundManager : MonoBehaviour
     // 효과음 재생
     public void PlaySFX(int index)
     {
-        if (sfxSource == null) return;
-        if (index < 0 || index >= sfxClips.Length) return;
+        if (sfxSource == null || index < 0 || index >= sfxClips.Length)
+            return;
 
         sfxSource.PlayOneShot(sfxClips[index]);
     }
