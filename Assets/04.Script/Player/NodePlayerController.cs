@@ -180,10 +180,25 @@ public class NodePlayerController : MonoBehaviour
             UIManager.GetInstance.ShowActionPanel(true);
         }
 
-        if (context.started && IsMyTurn() && isSneakAttackMode)
+        if (context.started && IsMyTurn() && isPerkActionMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
-            CheckSneakAttack(mousePos);
+            if (playerStats.playerSkill == PlayerSkill.SneakAttack)
+            {
+                CheckSneakAttack(mousePos);
+            }
+            else if (playerStats.playerSkill == PlayerSkill.Heal)
+            {
+                if(!playerStats.ConsumeActionPoint(1)) return;
+                UIManager.GetInstance.ShowActionPanel(true);
+                Heal();
+            }
+            else if (playerStats.playerSkill == PlayerSkill.Ready)
+            {
+                if (!playerStats.ConsumeActionPoint(1)) return;
+                UIManager.GetInstance.ShowActionPanel(true);
+                Ready();
+            }
         }
 
         if (context.started && IsMyTurn() && isPickPocketMode)
@@ -229,7 +244,7 @@ public class NodePlayerController : MonoBehaviour
             CheckRangeAttack(mousePos);
         }
 
-        if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode || isReloadMode))
+        if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode || isReloadMode || isPerkActionMode))
         {
             UIManager.GetInstance.ShowActionPanel(true);
             StartMode(ref isMoveMode);
@@ -433,18 +448,12 @@ public class NodePlayerController : MonoBehaviour
     }
 
 
-    public void OnHideAndSneakAttack(InputAction.CallbackContext context)
+    public void OnHide(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn() && !isHide && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(ref isHideMode);
-        }
-
-        if (context.started && IsMyTurn() && isHide && isMoveMode)
-        {
-            UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isSneakAttackMode);
         }
     }
 
@@ -649,18 +658,27 @@ public class NodePlayerController : MonoBehaviour
         }
         StartMode(ref isMoveMode);
     }
-        
-    
+
 
     public void OnPerkAction(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            Debug.Log("특전 모드 활성화");
-            // 특전 로직
+            StartMode(ref isPerkActionMode);
         }
     }
+
+    public void Heal()
+    {
+        animationController.HealState();
+    }
+
+    public void Ready()
+    {
+        animationController.ReadyState();
+    }
+    
 
     public void OnReload(InputAction.CallbackContext context)
     {
