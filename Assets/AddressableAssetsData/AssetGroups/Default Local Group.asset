@@ -22,6 +22,17 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3fa08665dcf0c4949b7bfd2e54ae0267
+    m_Address: NodePreviewerMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5666c8f1344c51049ae8b0e602f12d0c
+    m_Address: BuffDescription
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6958c052cf022ac4fb1ebbba684cf7be
     m_Address: UIAtlas
     m_ReadOnly: 0
@@ -40,15 +51,9 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5666c8f1344c51049ae8b0e602f12d0c
-    m_Address: BuffDescription
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b1ea3b1297f0bad47ae074d7277b2f7a, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 9beb2db0534746f43870c77fb9e19022, type: 2}
     - {fileID: 11400000, guid: 6942dd1e332ff524b86fef57a0e8427e, type: 2}
+    - {fileID: 11400000, guid: 9beb2db0534746f43870c77fb9e19022, type: 2}

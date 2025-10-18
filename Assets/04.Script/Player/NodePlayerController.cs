@@ -17,7 +17,6 @@ public class NodePlayerController : MonoBehaviour
     public EntityStats playerStats;
 
     private Vector3Int playerVec;
-    public bool isHighlightOn = false;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
     public PlayerInput playerInput;
@@ -97,24 +96,17 @@ public class NodePlayerController : MonoBehaviour
 
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
-        GameManager.GetInstance.BattleTurn.AddUnit(false, ResetPlayer, EndAction); //+++++++++++++++++==================================================================================================
-
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.ally, ()=> { MoveRangeHighlighter.normalHighlighter.Enable(true); });
+        GameManager.GetInstance.NoneBattleTurn.AddEndPointer(TurnTypes.ally, ()=> { MoveRangeHighlighter.normalHighlighter.Enable(false); });
         playerStats.SetCurrentNode(transform.position);
         playerStats.NodeUpdates(transform.position);
         GameManager.GetInstance.RegisterEntity(playerStats);
+        NodePlayerManager.GetInstance.SwitchToPlayer(0); // 첫 번째 플레이어로 시작
+
     }
 
     void Update()
     {
-        if (IsMyTurn())
-        {
-            TurnOnHighlighter(playerVec, playerStats.movement);
-        }
-        else
-        {
-            TurnOffHighlighter();
-        }
-
         if (isMoving)
         {
             SequentialMove();
@@ -173,7 +165,6 @@ public class NodePlayerController : MonoBehaviour
             UIManager.GetInstance.ShowActionPanel(true);
             animationController.RunState();
             playerStats.ActiveRun();
-            isHighlightOn = false;
         }
 
         if (context.started && IsMyTurn() && isHideMode)
@@ -295,7 +286,6 @@ public class NodePlayerController : MonoBehaviour
             {
                 animationController.MoveState();
                 playerVec = pathQueue.Last();
-                TurnOffHighlighter();
                 //최종 이동 구현
                 isMoving = true;
                 canNextMove = true;
@@ -401,6 +391,7 @@ public class NodePlayerController : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(ref isRunMode);
+            highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
         }
     }
 
@@ -434,7 +425,6 @@ public class NodePlayerController : MonoBehaviour
             targetNodePos = targetNodeCenter;
             animationController.ThrowState();
             StartMode(ref isMoveMode);
-            TurnOffHighlighter();
         }
         else
         {
@@ -520,7 +510,6 @@ public class NodePlayerController : MonoBehaviour
         agent.SetDestination(bestNearNodePos);
         playerStats.NodeUpdates(bestNearNodePos);
         playerVec = bestNearNodePos;
-        TurnOffHighlighter();
     }
 
     public void SneakAttack(Vector3Int targetPos)
@@ -658,7 +647,6 @@ public class NodePlayerController : MonoBehaviour
         {
             animationController.HipRangedAttackState(targetPos);
         }
-        TurnOffHighlighter();
         StartMode(ref isMoveMode);
     }
         
@@ -719,28 +707,25 @@ public class NodePlayerController : MonoBehaviour
         NodePlayerManager.GetInstance.SwitchToPlayer(i);
     }
 
+    public void TurnOnHighlighter()
+    {
+        highlighter.ShowMoveRange(playerStats.currNode.GetCenter ,playerStats.movement);
+    }
     public void TurnOnHighlighter(Vector3Int destination, int range)
     {
-        if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !isHighlightOn)
+        if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter)
         {
             animationController.IdleState();
-            isHighlightOn = true;
             highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
         }
     }
 
     public void TurnOnHighlighter(int range)
     {
-            isHighlightOn = true;
             highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
         
     }
 
-    public void TurnOffHighlighter()
-    {
-        isHighlightOn = false;
-        highlighter.ClearHighlights();
-    }
 
     public void StartMode(ref bool mode)
     {
