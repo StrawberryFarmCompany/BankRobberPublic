@@ -46,8 +46,7 @@ public class AnimationStateController : MonoBehaviour
     private ReadyState readyState;
 
 
-
-    void Start()
+    private void Awake()
     {
         Init();
 
