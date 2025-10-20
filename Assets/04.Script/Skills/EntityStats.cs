@@ -32,6 +32,7 @@ public class EntityStats
         } 
     }
     public int evasionRate;
+    public int baseEvasionRate;
     public int accuracyModifier;
     public float attackRange;
     public float detectingDistance;
@@ -41,6 +42,8 @@ public class EntityStats
     public int curRerollCount;
     public Sprite portrait;
     public Node currNode;
+
+    public PlayerSkill playerSkill; //플레이어 스킬
 
     public SecurityData secData;
     private PassiveSkill equippedPassive;
@@ -66,6 +69,7 @@ public class EntityStats
         movement = baseStats.movementPoint;
         maxHp = baseStats.maxHp;
         CurHp = baseStats.curHp;
+        baseEvasionRate = baseStats.evasionRate;
         evasionRate = baseStats.evasionRate;
         accuracyModifier = baseStats.accuracyModifier;
         attackRange = baseStats.attackRange;
@@ -74,6 +78,7 @@ public class EntityStats
         aggroControl = baseStats.aggroControl;
         maxRerollCount = baseStats.maxRerollCount;
         curRerollCount = baseStats.curRerollCount;
+        playerSkill = baseStats.playerSkill;
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
@@ -168,10 +173,34 @@ public class EntityStats
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
     }
 
+    public void HealHealthPoint(float amount)
+    {
+        CurHp += amount;
+        if (CurHp > maxHp)
+        {
+            CurHp = maxHp;
+        }
+    }
+
+    public void HealActionPoint(int amount)
+    {
+        curActionPoint += amount;
+        if (curActionPoint > actionPoint)
+        {
+            curActionPoint = actionPoint;
+        }
+    }
+
+    public void HealMovement(int amount)
+    {
+        movement += amount;
+    }
+
     public void ResetForNewTurn()
     {
         curActionPoint = actionPoint;
         movement = movementSpeed;
+        evasionRate = baseEvasionRate;                                  // 매 턴마다 회피율을 기본값으로 리셋 임시적으로 넣은거라서 나중에 바꿔야함
     }
 
     public void SetCurrentNode(Vector3Int pos)
@@ -215,4 +244,5 @@ public class EntityStats
         GameManager.GetInstance.UnregisterEntity(this);
         //GameManager.GetInstance.BattleTurn.RemoveUnit();
     }
+
 }
