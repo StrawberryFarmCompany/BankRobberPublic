@@ -7,18 +7,22 @@ public class SecurityData
 {
     private ushort secLevel;
     public ushort GetSecLevel { get { return secLevel; } }
-    private static IBuff sharedSec;
 
+    private static IBuff sharedSec;
     IBuff currSec;
+    public IBuff GetSecBuff { get { return isBattlePhase ? sharedSec : currSec; } }
+
     private EntityStats stat;
-    public IBuff GetSecBuff { get {return isBattlePhase ? sharedSec : currSec ; }}
-    public bool isBattlePhase { get { return sharedSec != null; } }
     public static Action OnBattlePhase;
+
+    public bool isBattlePhase { get { return sharedSec != null; } }
+    
     public static void Reset()
     {
         sharedSec = null;
         OnBattlePhase = null;
     }
+
     /// <summary>
     /// 시큐리티레벨 설정하는 함수
     /// </summary>
@@ -28,6 +32,7 @@ public class SecurityData
         SetSecLevel(defaultLevel); 
         this.stat = stat;
     }
+
     /// <summary>
     /// 시큐리티레벨 설정하는 함수
     /// </summary>
@@ -38,13 +43,13 @@ public class SecurityData
         ushort key = (ushort)(6000 + level);
         this.secLevel = level++;
         ResourceManager.GetInstance.GetBuffData.TryGetValue(key, out BuffData data);
+
         if (level == 2)
         {
             sharedSec = IBuff.Factory(data, stat, BuffType.securityLevel);
             ResourceManager.GetInstance.GetBuffData.TryGetValue(6003, out BuffData move);
             currSec = IBuff.Factory(move, stat, BuffType.securityLevel);
             currSec.RegistBuff();
-            GameManager.GetInstance.SetGamePhase(GamePhase.Battle);
             OnBattlePhase?.Invoke();
         }
         else
