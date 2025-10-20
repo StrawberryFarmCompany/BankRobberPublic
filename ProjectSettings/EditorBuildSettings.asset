@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/03.Scenes/TestSJW/PauseUIMainScene.unity
     guid: afbe8028e5c92a14ba738918f787c2ac
+  - enabled: 1
+    path: Assets/03.Scenes/TestJYJ/LobbyNPCTEST.unity
+    guid: f567799caeb65804f8a8909d9ad4a8e9
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e143ca59767af404d91e1de6e2e8c3a5,
       type: 2}
