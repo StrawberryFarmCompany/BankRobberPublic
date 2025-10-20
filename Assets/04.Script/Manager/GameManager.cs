@@ -300,10 +300,13 @@ class GameManager : SingleTon<GameManager>
     // 특정 좌표에 있는 엔티티 찾기
     public EntityStats GetEntityAt(Vector3Int pos)
     {
-        foreach (var e in entities)
+        if (nodes.ContainsKey(pos))
         {
-            if (e.currNode.GetCenter == pos)
-                return e;
+            Node currNode = nodes[pos];
+            for (int i = 0; i < currNode.standing.Count; i++)
+            {
+                if (currNode.standing[i] != null) return currNode.standing[i];
+            }
         }
         return null;
     }
