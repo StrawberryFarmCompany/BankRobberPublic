@@ -10,6 +10,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using DG.Tweening;
+using System;
 
 public class NodePlayerController : MonoBehaviour
 {
@@ -21,7 +23,6 @@ public class NodePlayerController : MonoBehaviour
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
     public PlayerInput playerInput;
 
-    [SerializeField] NavMeshAgent agent;
     [SerializeField] Camera mainCamera;
 
     [SerializeField] private MoveRangeHighlighter highlighter;
@@ -60,7 +61,7 @@ public class NodePlayerController : MonoBehaviour
     public int hitBonus = 0;
 
     private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
-    Vector3Int curTargetPos;
+    public float eta = 0f;
     public bool isMoving;
     public bool canNextMove;
 
@@ -76,10 +77,10 @@ public class NodePlayerController : MonoBehaviour
     [HideInInspector] public Vector3Int targetNodePos;
     [HideInInspector] public Vector3Int bestNearNodePos;
 
+
     private void Awake()
     {
         playerStats = new EntityStats(playerData);
-        if (agent == null) agent = GetComponent<NavMeshAgent>();
         if (gun == null) gun = GetComponent<Gun>();
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
@@ -384,25 +385,32 @@ public class NodePlayerController : MonoBehaviour
         if (!isMoving) return;
 
         // 도착 판정 (== 대신 거리로 체크)
-        if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
-        {
-            canNextMove = true;
-        }
+        eta -= Time.deltaTime;
+        if (eta <= 0f) canNextMove = true;
 
         if (canNextMove && pathQueue.Count > 0)
         {
             canNextMove = false;
-            curTargetPos = pathQueue.Dequeue();
-            agent.SetDestination(curTargetPos);
-            playerStats.NodeUpdates(curTargetPos);
+            eta = DoMoveAndRotate(Ease.Unset ,pathQueue.Dequeue(), 0.2f, 0.3f,()=> {
+                playerStats.SetCurrentNode(transform.position);
+                playerStats.NodeUpdates(transform.position);
+            });
+
+            /*transform.DOComplete(true);
+            transform.DOMove(pathQueue.Dequeue(), 0.3f).OnComplete(()=> { playerStats.NodeUpdates(transform.position); });*/
+            
         }
 
         // 모든 경로 소모 시 이동 종료
-        if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        if (pathQueue.Count == 0 && eta <= 0f)
         {
             isMoving = false;
+            eta = 0f;
+
             if (NodePlayerManager.GetInstance.GetCurrentPlayer() == this)
             {
+                playerStats.SetCurrentNode(transform.position);
+                playerStats.NodeUpdates(transform.position);
                 TurnOnHighlighter();
             }
             else
@@ -527,10 +535,12 @@ public class NodePlayerController : MonoBehaviour
 
     public void MoveBestNode()
     {
-        agent.SetDestination(bestNearNodePos);
-        playerStats.NodeUpdates(bestNearNodePos);
-        playerVec = bestNearNodePos;
-        TurnOffHighlighter();
+        transform.DOMove(bestNearNodePos, 0.3f).OnComplete(()=>
+        {
+            playerStats.NodeUpdates(bestNearNodePos);
+            playerVec = bestNearNodePos;
+            TurnOffHighlighter();
+        });
     }
 
     public void SneakAttack(Vector3Int targetPos)
@@ -928,13 +938,52 @@ public class NodePlayerController : MonoBehaviour
 
         Debug.Log($"next {nextTile}, target {targetNode.GetCenter}");
 
-        agent.Warp(targetNode.GetCenter);
-        
-        playerStats.SetCurrentNode(transform.position);
-        playerStats.NodeUpdates(transform.position);
-        highlighter.ShowMoveRange(playerStats.currNode.GetCenter,playerStats.movement);
+        transform.DOComplete(true);
+
+
+        DoMoveAndRotate(Ease.InCirc, nextTile, 0.2f, 0.1f,()=> 
+        {
+            playerStats.SetCurrentNode(transform.position);
+            playerStats.NodeUpdates(transform.position);
+            highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
+        });
     }
 
+    private float DoMoveAndRotate(Ease ease, Vector3Int pos, float moveDuration, float rotationDuration, Action action = null)
+    {
+        transform.DOComplete(true);
+
+        Vector2 relPos = new Vector2(pos.x, pos.z) - new Vector2(transform.position.x, transform.position.z);
+        float radian = Mathf.Atan2(relPos.x, relPos.y);
+        float angle = (Mathf.Rad2Deg * radian);
+
+
+        float minAngle = Mathf.Min(angle, transform.eulerAngles.y) + 180f;
+        float maxAngle = Mathf.Max(angle, transform.eulerAngles.y) + 180f;
+
+        float rotAngle = (maxAngle - minAngle) / 360f;
+        if (rotAngle == 0)
+        {
+            rotationDuration = 0;
+        }
+        else
+        {
+            float originRotDur = rotationDuration;
+            rotationDuration = originRotDur*rotAngle;
+        }
+        var rotationSeq = transform.DORotate(Vector3.up* angle, rotationDuration).OnComplete(()=> 
+        {
+            var moveSeq = transform.DOMove(pos, moveDuration);
+
+            moveSeq.SetEase(ease);
+            moveSeq.OnComplete(() =>
+            {
+                if (playerStats == null) return;
+                action?.Invoke();
+            });
+        });
+        return moveDuration + rotationDuration;
+    }
     /// <summary>
     /// EntityStats에 있는 OnDead 이벤트에 연결된 함수
     /// 그 이외에 탈출 루트 이벤트에도 연결 가능
@@ -942,5 +991,9 @@ public class NodePlayerController : MonoBehaviour
     public void UnsubscribePlayer()
     {
         NodePlayerManager.GetInstance.UnregisterPlayer(this);
+    }
+    private void OnDestroy()
+    {
+        
     }
 }
