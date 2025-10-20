@@ -4,6 +4,7 @@ using System.Globalization;
 using Unity.VisualScripting;
 using UnityEditor.ShaderGraph.Drawing;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class SetUI : MonoBehaviour, INPCInteractable
@@ -42,6 +43,7 @@ public class SetUI : MonoBehaviour, INPCInteractable
         {
             CharacterManager.Instance.player.curUIPanel = null;
         }
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void OnCloseUI(InputAction.CallbackContext context)
@@ -56,14 +58,12 @@ public class SetUI : MonoBehaviour, INPCInteractable
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        CharacterManager.Instance.player.controller.canLook = true;
     }
 
     public void UnlockCursor()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        CharacterManager.Instance.player.controller.canLook = false;
     }
 
     public void DisableActions()
