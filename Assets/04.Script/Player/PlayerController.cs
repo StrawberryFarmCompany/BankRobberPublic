@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
         lookSensitivity = Mathf.Clamp(v, 0.01f, 0.5f);
     }
 
+    public GameObject crosshair;
+
     private Rigidbody _rigidbody;
     public bool canLook = true;
 
