@@ -83,5 +83,56 @@ public class DiceManager : MonoSingleTon<DiceManager>
         action.Invoke(result);
         isCoroutineRun = false;
     }
+    public int DirrectRollDoubleJackPot(int factor,sbyte max,int diceCount)
+    {
+        sbyte[] diceValues = Roll(diceCount, max);
+        int result = 0;
+        if (diceValues.All(x => diceValues[0] == x))
+        {
+            result = (diceValues[0] * diceValues.Length) * 2;
+        }
+        else
+        {
+            for (int i = 0; i < diceValues.Length; i++)
+            {
+                result += diceValues[i];
+            }
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="action">콜백 실행 로직을 여기에 두면됨</param>
+    /// <returns></returns>
+    private IEnumerator RollCallbackDoubleJackPot(int factor,sbyte max,int diceCount,Action<int> action)
+    {
+        yield return new WaitUntil(() => isCoroutineRun);
+        StopCoroutine(coroutine);
+        isCoroutineRun = true;
+        float timer = 0;
+        sbyte[] diceValues = Roll(diceCount, max);
+        int result = 0;
+        if (diceValues.All(x => diceValues[0] == x))
+        {
+            result = (diceValues[0] * diceValues.Length)*2;
+        }
+        else
+        {
+            for (int i = 0; i < diceValues.Length; i++)
+            {
+                result += diceValues[i];
+            }
+        }
+        while (timer < 5)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+
+        }
+        action.Invoke(result);
+        isCoroutineRun = false;
+    }
 
 }
