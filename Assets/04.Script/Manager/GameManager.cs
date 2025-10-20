@@ -262,13 +262,13 @@ class GameManager : SingleTon<GameManager>
         }
 
         Debug.Log($"다 끝나고 플레이어 턴 엔드");
-
-        EndPlayerTurn();
-
         for (int i = 0; i < players.Count; i++)
         {
             players[i].isEndReady = false;
         }
+
+        EndPlayerTurn();
+
     }
 
     public void EndPlayerTurn()
