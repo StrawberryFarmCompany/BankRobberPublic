@@ -2,12 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+
 public class CopEnemyNPC : EnemyNPC
 {
-    bool isDetection = false;
-    bool isHit = false;
-
-
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
