@@ -354,7 +354,6 @@ public class HoldEnemyNPC : EnemyNPC
             }
             TryAttack();
         }
-
     }
      
     // 가장 가까운 노드 찾기

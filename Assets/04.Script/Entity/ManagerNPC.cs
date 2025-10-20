@@ -1,8 +1,9 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 public class ManagerNPC : NeutralNPC
 {
-    public bool canSeeAlly;
+    public bool isDetection = false;
 
     protected override IEnumerator Start()
     {
@@ -22,14 +23,20 @@ public class ManagerNPC : NeutralNPC
 
     protected override void CalculateBehaviour()
     {
-        // 피격시 사망
-        if (stats.CurHp != stats.maxHp)
+        List<EntityStats> visibleTargets = DetectVisibleTargets();
+
+        if (visibleTargets.Count > 0 && isDetection == false)
         {
-            Die();
+            isDetection = true;
         }
+        //// 피격시 사망
+        //if (stats.CurHp != stats.maxHp)
+        //{
+        //    Die();
+        //}
 
         // 플레이어 발각시
-        else if (canSeeAlly == true)
+        else if (isDetection == true)
         {
             // Status에서 3턴의 목격자 Status를 받아옴.
             // 턴 끝날 때 마다 목격자 status -= 1 해주기.
