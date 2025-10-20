@@ -932,6 +932,7 @@ public class NodePlayerController : MonoBehaviour
         
         playerStats.SetCurrentNode(transform.position);
         playerStats.NodeUpdates(transform.position);
+        highlighter.ShowMoveRange(playerStats.currNode.GetCenter,playerStats.movement);
     }
 
     /// <summary>
