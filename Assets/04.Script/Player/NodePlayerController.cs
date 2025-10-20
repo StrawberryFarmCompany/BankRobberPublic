@@ -263,7 +263,9 @@ public class NodePlayerController : MonoBehaviour
     public void Move(Vector3 mouseScreenPos)
     {
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        LayerMask layerMask = ~(1 << 8);
+
+        if (Physics.Raycast(ray, out RaycastHit hit,float.PositiveInfinity,layerMask))
         {
             if (GameManager.GetInstance.GetNode(hit.point) == null)
             {
@@ -271,7 +273,7 @@ public class NodePlayerController : MonoBehaviour
                 return;
             }
 
-            if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null)
+            if (!GameManager.GetInstance.GetNode(hit.point).isWalkable || (GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(hit.point).GetCenter) != null ))
             {
                 Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
                 return;
@@ -641,10 +643,10 @@ public class NodePlayerController : MonoBehaviour
 
         Vector3 start = transform.position;
         Vector3 target = targetPos;
-
-        if (NavMesh.Raycast(start, target, out NavMeshHit hit, NavMesh.AllAreas))
+        LayerMask layerMask = ~(1 << 8);
+        if (Physics.Raycast(new Ray(start+Vector3.up, (target - start).normalized), Vector3.Distance(start, target), layerMask))
         {
-            Debug.Log("무언가로 막혀있음");
+            Debug.Log($"무언가로 막혀있음 :");
             return;
         }
 
@@ -848,7 +850,9 @@ public class NodePlayerController : MonoBehaviour
     public Vector3Int GetNodeVector3ByRay(Vector3 mouseScreenPos)
     {
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        LayerMask layerMask = ~(1 << 8);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, layerMask))
         {
             return GameManager.GetInstance.GetNode(hit.point).GetCenter;
         }
@@ -958,8 +962,8 @@ public class NodePlayerController : MonoBehaviour
         float angle = (Mathf.Rad2Deg * radian);
 
 
-        float minAngle = Mathf.Min(angle, transform.eulerAngles.y) + 180f;
-        float maxAngle = Mathf.Max(angle, transform.eulerAngles.y) + 180f;
+        float minAngle = (Mathf.Min(angle, transform.eulerAngles.y) + 180) % 360f;
+        float maxAngle = (Mathf.Max(angle, transform.eulerAngles.y) + 180) % 360f;
 
         float rotAngle = (maxAngle - minAngle) / 360f;
         if (rotAngle == 0)
@@ -970,6 +974,7 @@ public class NodePlayerController : MonoBehaviour
         {
             float originRotDur = rotationDuration;
             rotationDuration = originRotDur*rotAngle;
+            rotationDuration = MathF.Abs(rotationDuration);
         }
         var rotationSeq = transform.DORotate(Vector3.up* angle, rotationDuration).OnComplete(()=> 
         {
@@ -994,6 +999,6 @@ public class NodePlayerController : MonoBehaviour
     }
     private void OnDestroy()
     {
-        
+        transform.DOKill(false);
     }
 }
