@@ -42,9 +42,11 @@ public class AnimationStateController : MonoBehaviour
     private SneakState sneakAttackState;
     private StrafeState strafeState;
     private ThrowState throwState;
+    private HealState healState;
+    private ReadyState readyState;
 
 
-    void Start()
+    private void Awake()
     {
         Init();
 
@@ -86,6 +88,8 @@ public class AnimationStateController : MonoBehaviour
         sneakAttackState = new SneakState(animator);
         strafeState = new StrafeState(animator);
         throwState = new ThrowState(animator);
+        healState = new HealState(animator);
+        readyState = new ReadyState(animator);
 
         if (playerController != null)
             playerController.animationController = this;
@@ -139,6 +143,23 @@ public class AnimationStateController : MonoBehaviour
     {
         if (playerController != null)
             ThrowSystem.GetInstance.ExecuteCoinThrow(transform.position, playerController.targetNodePos);
+    }
+
+    public void OnHeal()
+    {
+        if (playerController != null)
+        {
+            playerController.playerStats.HealHealthPoint(5); // 예시로 20만큼 회복
+        }
+    }
+
+    public void OnReady()
+    {
+        if (playerController != null)
+        {
+            playerController.playerStats.HealMovement((int)(playerController.playerStats.maxHp - playerController.playerStats.CurHp + 1));
+            playerController.playerStats.evasionRate += 2;
+        }
     }
 
     public void OnUnEquipForSneak()
@@ -235,6 +256,16 @@ public class AnimationStateController : MonoBehaviour
     {
         RotateTowards(playerController.targetNodePos);
         stateMachine.ChangeState(throwState);
+    }
+
+    public void HealState()
+    {
+        stateMachine.ChangeState(healState);
+    }
+
+    public void ReadyState()
+    {
+        stateMachine.ChangeState(readyState);
     }
 
     private void RotateTowards(Vector3 target)

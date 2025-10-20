@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,7 +17,15 @@ public class PlayerController : MonoBehaviour
     private float camCurXRot;
     public float lookSensitivity;
 
+    public void SetLookSensitivity(float v)
+    {
+        lookSensitivity = Mathf.Clamp(v, 0.01f, 0.5f);
+    }
+
     private Rigidbody _rigidbody;
+    public bool canLook = true;
+
+    public Action quest;
 
     private void Awake()
     {
@@ -30,12 +39,15 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (PauseManager.isPaused) return;
         Move();
     }
 
     // 카메라 움직임 값 구현 및 Player Input에 전달
     public void CameraLook(InputAction.CallbackContext context)
     {
+        if (PauseManager.isPaused) return;
+        if (!canLook) return;
         Vector2 temp = context.ReadValue<Vector2>();
 
         camCurXRot += temp.y * lookSensitivity;
@@ -63,8 +75,9 @@ public class PlayerController : MonoBehaviour
     // 움직임을 Player Input에 전달
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (PauseManager.isPaused) return;
         // 움직일 때 (키보드 누르고 있을 때)
-        if(context.phase == InputActionPhase.Performed)
+        if (context.phase == InputActionPhase.Performed)
         {
             curMovementInput = context.ReadValue<Vector2>();
         }
@@ -79,7 +92,8 @@ public class PlayerController : MonoBehaviour
     // 점프 Player Input에 전달
     public void OnJump(InputAction.CallbackContext context)
     {
-        if(context.phase == InputActionPhase.Started && IsGrounded())
+        if (PauseManager.isPaused) return;
+        if (context.phase == InputActionPhase.Started && IsGrounded())
         {
             _rigidbody.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
         }
@@ -104,5 +118,12 @@ public class PlayerController : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void ToggleCursor()
+    {
+        bool toggle = Cursor.lockState == CursorLockMode.Locked;
+        Cursor.lockState = toggle ? CursorLockMode.None : CursorLockMode.Locked;
+        canLook = !toggle;
     }
 }
