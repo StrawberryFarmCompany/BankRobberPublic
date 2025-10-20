@@ -68,6 +68,7 @@ public class LobbyInteraction : MonoBehaviour
             curInteractGameObject = null;
             curInteractable = null;
             promptText.gameObject.SetActive(false);
+            //UI가 뜨는 인터랙트일 때 CharacterManager.Instance.player.controller.ToggleCursor();
 
         }
         if (context.phase == InputActionPhase.Started && dialogueManager.gameObject.activeSelf)
