@@ -216,7 +216,7 @@ public class FreePOV : MonoBehaviour
         if (!context.performed) return;
 
         float scrollValue = context.ReadValue<Vector2>().y;
-        fcam.m_YAxis.Value += scrollValue * scrollSpeed * Time.deltaTime;
+        fcam.m_YAxis.Value -= scrollValue * scrollSpeed * Time.deltaTime;
 
         // 값 범위 제한
         fcam.m_YAxis.Value = Mathf.Clamp(fcam.m_YAxis.Value, scrollMin, scrollMax);
