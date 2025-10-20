@@ -13,6 +13,7 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
+    Animator anim;
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
@@ -20,12 +21,16 @@ public class PatrolEnemyNPC : EnemyNPC
     bool isMoving;
     bool canNextMove;
 
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
     protected override IEnumerator Start()
     {
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
-        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyPatrolState);
+        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyIdleRotationState);
     }
 
     protected override void FixedUpdate()
@@ -50,8 +55,8 @@ public class PatrolEnemyNPC : EnemyNPC
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
                 Move(noiseLocation);
+
                 if (this.gameObject.transform.position == noiseLocation)
                 {
                     isArrivedNoisePlace = true;
@@ -376,12 +381,14 @@ public class PatrolEnemyNPC : EnemyNPC
         // 모든 경로 소모 시 이동 종료
         if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
         {
-            isMoving = false; 
+            isMoving = false;
+            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
             if (nearPlayerLocation != null)
             {
                 transform.LookAt(nearPlayerLocation.currNode.GetCenter);
             }
             TryAttack();
+            stats.NodeUpdates(transform.position);
         }
 
     }
