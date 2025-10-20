@@ -43,18 +43,21 @@ public class MoveRangeHighlighter : MonoBehaviour
     {
         int x = startPos.x - currPos.x;
         int z = startPos.z - currPos.z;
+
+        if (!GameManager.GetInstance.Nodes.TryGetValue(currPos, out Node currNode))
+            return;
         if (Mathf.Abs(startPos.x - currPos.x) > maxRange|| Mathf.Abs(startPos.z - currPos.z) > maxRange) return;
 
-        if (!GameManager.GetInstance.Nodes.ContainsKey(currPos)) return;
-        else if (GameManager.GetInstance.Nodes[currPos] == null) return;
-        else if (!GameManager.GetInstance.Nodes[currPos].isWalkable) return;
-        else if (GameManager.GetInstance.Nodes[currPos].standing != null)
+        if (currNode == null) return;
+        else if (!currNode.isWalkable) return;
+        else if (currNode.standing != null)
             if(startPos != currPos)
-                if(GameManager.GetInstance.Nodes[currPos].standing.Count > 0) return;
+                if(currNode.standing.Count > 0) return;
 
         if (curr > maxRange) return;
         x = 0 >= x ? Mathf.Abs(x) : x + maxRange;
         z = 0 >= z ? Mathf.Abs(z) : z + maxRange;
+        currPos = currNode.GetCenter;
         if (map.Contains(currPos))
         {
             if (costMap[x, z] <= curr)
