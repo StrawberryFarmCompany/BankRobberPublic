@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using BuffDefine;
 
 public class EnemyNPC : MonoBehaviour
 {
@@ -15,7 +14,7 @@ public class EnemyNPC : MonoBehaviour
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
 
     [SerializeField] protected EntityStats nearPlayerLocation;
-    
+
 
     protected virtual IEnumerator Start()
     {
