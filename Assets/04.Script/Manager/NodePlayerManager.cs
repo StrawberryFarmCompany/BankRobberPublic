@@ -69,6 +69,7 @@ public class NodePlayerManager : MonoBehaviour
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         UIManager.GetInstance.pip.HideAndSneakText();
+        UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
     }
 
     /// <summary>
@@ -85,6 +86,7 @@ public class NodePlayerManager : MonoBehaviour
         players[currentPlayerIndex].playerInput.ActivateInput();
         GetCurrentPlayer().isEndReady = false;
         UIManager.GetInstance.pip.HideAndSneakText();
+        UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
     }
 
     public void OnFirst(InputAction.CallbackContext context)
