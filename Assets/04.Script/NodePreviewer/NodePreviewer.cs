@@ -4,20 +4,25 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NodeBoundPreviewer
+public class NodePreviewer
 {
     #region 범위프리뷰어
     GameObject boundPreviewerGOBJ;
     [SerializeField]MeshFilter boundMeshFilter;
     public bool isBoundActivated { get { return boundPreviewerGOBJ.activeSelf; } }
+    HashSet<Vector3Int> activatedBounds;
+
     #endregion
 
-    #region 골프리뷰어
+    #region 골 프리뷰어 변수
     Transform goalPreviewer;
     public bool isGoalActivated { get { return goalPreviewer.gameObject.activeSelf; } }
-
+    Vector3Int lastNodePos;
     #endregion
 
+    #region 경로미리보기 변수
+    LineRenderer pathLine;
+    #endregion
 
     //GC call 최적화를 위해 클래스 변수로 선언
     private Dictionary<Vector3, int> vertDict;
@@ -34,7 +39,7 @@ public class NodeBoundPreviewer
         new Vector3(-0.5f , 0.03f, 0.5f)
     };
 
-    public NodeBoundPreviewer()
+    public NodePreviewer()
     {
         boundPreviewerGOBJ = new GameObject("NodeBoundPreviewer");
         GameObject.DontDestroyOnLoad(boundPreviewerGOBJ);
@@ -55,6 +60,7 @@ public class NodeBoundPreviewer
         goalPreviewer.transform.localScale = Vector3.one;
         ResourceManager.GetInstance.LoadAsync<Material>("NodePreviewerGoalMat", (mat) => { goalPreviewer.gameObject.AddComponent<MeshRenderer>().material = mat; });
         Mesh goalPreviewerMesh = new Mesh();
+        activatedBounds = new HashSet<Vector3Int>();
 
         Vector3[] GPVerts = GetPoints(Vector3.up*0.03f);
         goalPreviewerMesh.vertices = GPVerts;
@@ -68,6 +74,14 @@ public class NodeBoundPreviewer
         goalPreviewerMesh.uv = goalPreviewUV.ToArray();
         goalPreviewer.gameObject.AddComponent<MeshFilter>().mesh = goalPreviewerMesh;
 
+        GameObject.DontDestroyOnLoad(goalPreviewer.gameObject);
+        pathLine = new GameObject("PathLineRenderer").AddComponent<LineRenderer>();
+        pathLine.startWidth = 0.4f;
+        pathLine.endWidth = 0.4f;
+        pathLine.textureMode = LineTextureMode.Tile;
+        pathLine.textureScale = new Vector2(2.2f, 1f);
+        ResourceManager.GetInstance.LoadAsync<Material>("PathPreviewerMat", (mat) => { pathLine.material = mat; });
+
 
     }
     public void Enable(bool onOff)
@@ -79,10 +93,12 @@ public class NodeBoundPreviewer
     {
         Enable(true);
         boundMeshFilter.mesh = null;
+        activatedBounds.Clear();
         //List<Vector3> points = new List<Vector3>();
         for (int i = 0; i < poses.Length; i++)
         {
             Vector3[] vert = GetPoints(poses[i]);
+            activatedBounds.Add(poses[i]);
             for (int j = 0; j < vert.Length; j++)
             {
                 if (vertDict.ContainsKey(vert[j]))
@@ -107,9 +123,36 @@ public class NodeBoundPreviewer
         uvQueue.Clear();
         vertDict.Clear();
     }
-    public void SetGoalPos(Vector3 pos)
+    public void SetGoalPos(Vector3Int pos)
     {
+        GoalPreviewOnOff(true);
         goalPreviewer.position = pos;
+    }
+    public void SetPathLine(Vector3Int[] path)
+    {
+        pathLine.positionCount = path.Length;
+        for (int i = 0; i < path.Length; i++)
+        {
+            pathLine.SetPosition(i, new Vector3(path[i].x, path[i].y, path[i].z));
+        }
+        
+    }
+    public bool IsPosCludeInBound(Vector3Int pos)
+    {
+        return activatedBounds.Contains(pos);
+    }
+    public void GoalPreviewOnOff(bool enable)
+    {
+        if (!enable)
+        {
+            pathLine.transform.position = new Vector3(9999999f, 9999999f, 999999f);
+            goalPreviewer.position = new Vector3(9999999f, 9999999f, 999999f);
+        }
+        if (goalPreviewer.gameObject.activeSelf != enable)
+        {
+            goalPreviewer.gameObject.SetActive(enable);
+            pathLine.gameObject.SetActive(enable);
+        }
     }
     public Vector3[] GetPoints(Vector3 pos)
     {

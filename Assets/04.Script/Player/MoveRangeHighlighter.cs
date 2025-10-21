@@ -6,7 +6,7 @@ using System.Linq;
 public class MoveRangeHighlighter : MonoBehaviour
 {
     [Header("하이라이트 표시")]
-    public static NodeBoundPreviewer normalHighlighter;
+    public static NodePreviewer normalHighlighter;
     [SerializeField] private GameObject securityAreaHighlighter;
     [SerializeField] private GameObject interactableHighlighter;
 
@@ -14,7 +14,7 @@ public class MoveRangeHighlighter : MonoBehaviour
     private void Awake()
     {
         if (normalHighlighter == null)
-            normalHighlighter = new NodeBoundPreviewer();
+            normalHighlighter = new NodePreviewer();
     }
     public void ShowMoveRange(Vector3Int start, int range)
     {
