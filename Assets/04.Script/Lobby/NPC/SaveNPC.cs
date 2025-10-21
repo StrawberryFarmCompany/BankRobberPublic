@@ -2,18 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public enum SceneType
-{
-    MainScene,
-    PuzzleScene
-}
-
 [System.Serializable]
 public class ObjectData
 {
     public float posX, posY, posZ;
     public float rotX, rotY, rotZ;
-    public string prefabName; // ¾î¶² ÇÁ¸®ÆÕÀÎÁö
+    public string prefabName; // ì–´ë–¤ í”„ë¦¬íŒ¹ì¸ì§€
 }
 
 [System.Serializable]
@@ -31,7 +25,7 @@ public class SaveNPC : MonoBehaviour
         string filePath = $"{savePath}/save{scene}.json";
         ObjectDataList dataList;
 
-        // ±âÁ¸ µ¥ÀÌÅÍ ºÒ·¯¿À±â
+        // ê¸°ì¡´ ë°ì´í„° ë¶ˆëŸ¬ì˜¤ê¸°
         if (File.Exists(filePath))
         {
             string existingJson = File.ReadAllText(filePath);
@@ -42,7 +36,7 @@ public class SaveNPC : MonoBehaviour
             dataList = new ObjectDataList();
         }
 
-        // »õ µ¥ÀÌÅÍ Ãß°¡
+        // ìƒˆ ë°ì´í„° ì¶”ê°€
         ObjectData data = new ObjectData();
         data.posX = obj.transform.position.x;
         data.posY = obj.transform.position.y;
@@ -54,7 +48,7 @@ public class SaveNPC : MonoBehaviour
 
         dataList.objects.Add(data);
 
-        // ´Ù½Ã ÀúÀå
+        // ë‹¤ì‹œ ì €ì¥
         string json = JsonUtility.ToJson(dataList, true);
         File.WriteAllText(filePath, json);
     }
@@ -88,18 +82,18 @@ public class SaveNPC : MonoBehaviour
     {
         string prefabName = prefab.name.Replace("(Clone)", "");
 
-        // 1) ¾À¿¡ ÀÖ´Â ¸ğµç NPC Å½»ö
-        GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC"); // ÅÂ±×¸¦ ºÙ¿©µÎ¸é ´õ ¾ÈÀüÇÔ
+        // 1) ì”¬ì— ìˆëŠ” ëª¨ë“  NPC íƒìƒ‰
+        GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC"); // íƒœê·¸ë¥¼ ë¶™ì—¬ë‘ë©´ ë” ì•ˆì „í•¨
 
         foreach (GameObject npc in npcs)
         {
             if (npc.name.Replace("(Clone)", "") == prefabName)
             {
-                Destroy(npc); // ¾À¿¡¼­ Á¦°Å
+                Destroy(npc); // ì”¬ì—ì„œ ì œê±°
             }
         }
 
-        // 2) JSON ¼¼ÀÌºê ÆÄÀÏ¿¡¼­µµ Á¦°Å
+        // 2) JSON ì„¸ì´ë¸Œ íŒŒì¼ì—ì„œë„ ì œê±°
         string filePath = $"{savePath}/save{scene}.json";
         if (!File.Exists(filePath)) return;
 

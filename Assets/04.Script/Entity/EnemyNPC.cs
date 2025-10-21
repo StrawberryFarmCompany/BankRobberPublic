@@ -18,12 +18,12 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual IEnumerator Start()
     {
-        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
+        if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
-        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
-        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
         stats.NodeUpdates(transform.position);
         gun = GetComponent<Gun>();
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
     }
 
     protected virtual void FixedUpdate()
@@ -39,13 +39,11 @@ public class EnemyNPC : MonoBehaviour
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)   
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 0.5f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
         else
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 0.5f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
         }
     }
@@ -101,12 +99,13 @@ public class EnemyNPC : MonoBehaviour
         
         if (visibleTargets.Count > 0)
         {
-            stats.secData.SetSecLevel(2);
+            stats.secData.SetSecLevel(1);
+            Debug.LogError("씨ㅣㅣ바라라라라랄ㄹㄹㄹㄹ");
         }
         return visibleTargets;
     }
 
-    public void TryAttack()
+    public void TryAttack() // TryAttack NavMesh.Raycast 를 Raycast로 바꿔야함
     {
         // 보이는 플레이어만 모은 리스트
         List<EntityStats> visibleTargets = DetectVisibleTargets();

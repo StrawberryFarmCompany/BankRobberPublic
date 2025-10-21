@@ -13,7 +13,7 @@ public class PatrolEnemyIdleRotationState : EnemyState
     }
     public override void Enter()
     {
-
+        anim.Play("HG_Idle_Pose");
     }
 
     public override void Execute()

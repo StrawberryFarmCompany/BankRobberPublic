@@ -44,12 +44,14 @@ public class MainMenuUI : MonoBehaviour
     private void OnClickNewGame()
     {
         SceneManager.LoadScene("LobbyNPCTEST");
+        //LoadSceneManager.GetInstance.OnSceneLoad(SceneType.LobbyScene); // 나중에 씬 정리 완료 되면 이걸로 바꾸기
     }
 
     private void OnClickContinue()
     {
         //저장 정보 가져오기
         SceneManager.LoadScene("LobbyNPCTEST");
+        //LoadSceneManager.GetInstance.OnSceneLoad(SceneType.LobbyScene);
     }
 
     private void OnClickOption()
