@@ -14,7 +14,7 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
-
+    private float eta;
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
@@ -68,10 +68,10 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == true && destinationPoint == false)
             {
-                //EnemyState enemyState = efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
-                //enemyState.duration = eta;//ETA값 구해서 넣어주기
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(firstLocation); },0f));
+                efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+                
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
                 if (this.gameObject.transform.position == firstLocation)
                 {
@@ -276,32 +276,31 @@ public class PatrolEnemyNPC : EnemyNPC
 
         if (pathQueue.Count > 0)
         {
-            //float totalDistance = 0f;
-            //Vector3 lastPos = transform.position;
+            float totalDistance = 0f;
+            Vector3 lastPos = transform.position;
+            foreach (var step in pathQueue)
+            {
+                totalDistance += Vector3.Distance(lastPos, step);
+                lastPos = step;
+            }
 
-            //foreach (var step in pathQueue)
-            //{
-            //    totalDistance += Vector3.Distance(lastPos, step);
-            //    lastPos = step;
-            //}
+            if (agent == null)
+                agent = GetComponent<NavMeshAgent>();
 
-            //if (agent == null)
-            //    agent = GetComponent<NavMeshAgent>();
+            if (agent.speed <= 0f)
+                agent.speed = 2f;
 
-            //if (agent.speed <= 0f)
-            //    agent.speed = 2f;
+            float eta = totalDistance / agent.speed;
 
-            //float eta = totalDistance / agent.speed;
-
-            //if (efsm.currentState != null)
-            //{
-            //    efsm.Current.duration = eta;
-            //    Debug.Log($"[ETA] {eta:F2}초 / 거리 {totalDistance:F2} / 속도 {agent.speed:F2}");
-            //}
-            //else
-            //{
-            //    Debug.LogWarning("efsm.Current가 null입니다.");
-            //}
+            if (efsm.currentState != null)
+            {
+                efsm.Current.duration = eta;
+                Debug.Log($"[ETA] {eta:F2}초 / 거리 {totalDistance:F2} / 속도 {agent.speed:F2}");
+            }
+            else
+            {
+                Debug.LogWarning("efsm.Current가 null입니다.");
+            }
 
             //최종 이동 구현
             isMoving = true;
