@@ -39,7 +39,7 @@ public class CopEnemyNPC : EnemyNPC
     {
         DetectVisibleTargets();
 
-        transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+        //transform.LookAt(nearPlayerLocation.currNode.GetCenter);
 
         TryAttack();
 

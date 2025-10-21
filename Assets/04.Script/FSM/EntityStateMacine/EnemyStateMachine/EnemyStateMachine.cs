@@ -7,15 +7,15 @@ public class EnemyStateMachine : IStateMachineBase<EnemyState>
 {
     private Dictionary<EnemyStates, EnemyState> enemyStates;
 
-    private EnemyState currentState;
+    public EnemyState currentState;
 
     public EnemyState Current => currentState;
 
     public void ChangeState(EnemyState next)
     {
         currentState = next;
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration));
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Exit, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration=3.5f));//듀레이션에 Eta(거리 도착 시간)만큼 주기
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Exit, 0f));
     }
 
     public void ForceSet(EnemyState next)
