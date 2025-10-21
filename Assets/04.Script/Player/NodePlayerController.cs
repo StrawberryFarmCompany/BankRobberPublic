@@ -307,6 +307,7 @@ public class NodePlayerController : MonoBehaviour
             {
                 animationController.MoveState();
                 playerVec = pathQueue.Last();
+                playerStats.NodeUpdates(playerVec);
                 TurnOffHighlighter();
                 //최종 이동 구현
                 isMoving = true;
