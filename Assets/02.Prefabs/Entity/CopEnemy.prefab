@@ -3812,7 +3812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
-  gun: {fileID: 1880859700713028327}
+  gun: {fileID: 0}
   fovAngle: 110
   agent: {fileID: 5920130265891386225}
 --- !u!114 &1880859700713028327
