@@ -88,4 +88,21 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
                 return true;
         }
     }
+
+    public int GetRequireScore(SceneType sceneType)
+    {
+        switch (sceneType)
+        {
+            case SceneType.Stage01Scene:
+                return 0;
+            case SceneType.Stage02Scene:
+                return stage02RequireScore;
+            case SceneType.Stage03Scene:
+                return stage03RequireScore;
+            case SceneType.Stage04Scene:
+                return stage04RequireScore;
+            default:
+                return 0;
+        }
+    }
 }
