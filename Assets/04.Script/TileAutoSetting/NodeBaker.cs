@@ -58,9 +58,20 @@ public class NodeBaker : MonoBehaviour
                     Vector3 worldPos = new Vector3(min.x + x , min.y + y , min.z + z );
 
                     // NavMesh 위에 있는지 검사
-                    if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.3f, NavMesh.AllAreas))
+                    //겹치는 층 예외처리
+                    if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.4f, NavMesh.AllAreas))
                     {
-                        vectors.Add(new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y)-1, Mathf.CeilToInt(worldPos.z)));
+                        Vector3Int currPos = new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y) - 1, Mathf.CeilToInt(worldPos.z));
+                        vectors.Add(currPos);
+                        if (vectors.Contains(currPos + Vector3Int.down))
+                        {
+                            vectors.Remove(currPos + Vector3Int.down);
+                        }
+                        else
+                        {
+                            vectors.Add(currPos);
+                        }
+
                     }
                     else
                     {

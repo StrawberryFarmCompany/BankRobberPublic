@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
@@ -44,18 +45,17 @@ public class PauseManager : MonoBehaviour
         if (quitNoButton) quitNoButton.onClick.AddListener(CloseQuitConfirm);
     }
 
-    void Update()
+    public void OnPause(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (context.started)
         {
             if (quitConfirmUI && quitConfirmUI.activeSelf) { CloseQuitConfirm(); return; }
-
             if (optionUI && optionUI.activeSelf)
             {
                 CloseOption();
                 return;
             }
-
+            if (CharacterManager.Instance.player.curUIPanel != null) return;
             if (isPaused) ResumeGame();
             else PauseGame();
         }
@@ -71,6 +71,7 @@ public class PauseManager : MonoBehaviour
         Cursor.visible = true;
 
         isPaused = true;
+
     }
 
     private void ResumeGame()

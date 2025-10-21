@@ -210,6 +210,10 @@ public class EntityStats
     public void SetCurrentNode(Vector3 pos)
     {
         currNode = GameManager.GetInstance.GetNode(pos);
+        if (this == NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats)
+        {
+            UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
+        }
     }
 
     public void NodeUpdates(Vector3 pos)

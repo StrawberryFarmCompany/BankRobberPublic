@@ -29,6 +29,11 @@ public class LeftInteractionPanel : MonoBehaviour
 
     void Awake()
     {
+        if (UIManager.GetInstance.leftInteractionPanel != null)
+        {
+            Destroy(this.gameObject);
+        }
+        UIManager.GetInstance.leftInteractionPanel = this;
         buttonsRoot = panelRoot ? panelRoot.transform : transform;
         if (actionButton) actionButton.gameObject.SetActive(false);
         Hide(); // 시작은 숨김
@@ -40,7 +45,7 @@ public class LeftInteractionPanel : MonoBehaviour
         ClearButtons();
     }
 
-    void Update()
+    public void OnInteractionRefresh()
     {
         var npm = NodePlayerManager.GetInstance;
         if (npm == null) { Hide(); return; }
