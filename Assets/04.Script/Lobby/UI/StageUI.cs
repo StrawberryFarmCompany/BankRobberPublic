@@ -10,8 +10,9 @@ public class StageUI : MonoBehaviour
     public Button startButton;
     [SerializeField] private TextMeshProUGUI fisrtDescriptionText;
     [SerializeField] private TextMeshProUGUI secondDescriptionText;
-    [SerializeField] private TextMeshProUGUI thirdDescriptionText;
-    
+    [SerializeField] private TextMeshProUGUI conditionDescriptionText;
+    [SerializeField] private TextMeshProUGUI checkConditionDescriptionText;
+
     public SceneType curSelectScene; // 최근 선택된 씬
 
     private void Start()
@@ -21,7 +22,8 @@ public class StageUI : MonoBehaviour
             StageButton stageButton = StageBtns[i].GetComponent<StageButton>();
             stageButton.firstTextObject = this.fisrtDescriptionText;
             stageButton.secondTextObject = this.secondDescriptionText;
-            stageButton.thirdTextObject = this.thirdDescriptionText;
+            stageButton.conditionTextObject = this.conditionDescriptionText;
+            stageButton.checkConditionTextObject = this.checkConditionDescriptionText;
             stageButton.Init(this);
         }
         startButton.onClick.AddListener(OnChangeScene);

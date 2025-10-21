@@ -53,7 +53,7 @@ public class EntityStats
     public Action OnDead;
     public Action<Vector3Int> ForceMove;
 
-    private GameObject thisGameObject;
+    public GameObject thisGameObject;
     /// <summary>
     /// 탈출 시 초기화하는 함수 monobehaviour 단에서 구현하여 해당 OnReset Action에 추가
     /// </summary>
@@ -87,6 +87,8 @@ public class EntityStats
         {
             thisGameObject = gameObject;
         }
+
+        OnReset += DestroyEntity;
     }
     public void RegistBuff(BuffData data)
     {
@@ -236,7 +238,6 @@ public class EntityStats
 
     public void DestroyEntity()
     {
-        OnReset = null;
         OnDamaged = null;
         OnDead = null;
         ForceMove = null;
