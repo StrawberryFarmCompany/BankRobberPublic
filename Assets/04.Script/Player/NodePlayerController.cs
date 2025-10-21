@@ -80,7 +80,7 @@ public class NodePlayerController : MonoBehaviour
 
     private void Awake()
     {
-        playerStats = new EntityStats(playerData);
+        playerStats = new EntityStats(playerData, gameObject);
         if (gun == null) gun = GetComponent<Gun>();
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
@@ -307,6 +307,7 @@ public class NodePlayerController : MonoBehaviour
             {
                 animationController.MoveState();
                 playerVec = pathQueue.Last();
+                playerStats.NodeUpdates(playerVec);
                 TurnOffHighlighter();
                 //최종 이동 구현
                 isMoving = true;

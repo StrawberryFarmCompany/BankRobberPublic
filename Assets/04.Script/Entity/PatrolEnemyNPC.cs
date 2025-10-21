@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class PatrolEnemyNPC : EnemyNPC
 {
@@ -25,14 +26,14 @@ public class PatrolEnemyNPC : EnemyNPC
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
-        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyPatrolState);
+        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyIdleRotationState);
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
     }
-
+    
     private void Update()
     {
         if (isMoving)
@@ -51,13 +52,13 @@ public class PatrolEnemyNPC : EnemyNPC
             if (isNoise == true && isArrivedNoisePlace == false)
             {
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
-                Move(noiseLocation);
+                
                 if (this.gameObject.transform.position == noiseLocation)
                 {
                     isArrivedNoisePlace = true;
                 }
             }
-
+            
             else if (isNoise == true && isArrivedNoisePlace == true)
             {
                 IdleRotation();
@@ -67,8 +68,10 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == true && destinationPoint == false)
             {
+                //EnemyState enemyState = efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
+                //enemyState.duration = eta;//ETA값 구해서 넣어주기
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(firstLocation); },0f));
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
-                Move(firstLocation);
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
                 if (this.gameObject.transform.position == firstLocation)
                 {
@@ -94,9 +97,10 @@ public class PatrolEnemyNPC : EnemyNPC
         else if(stats.secData.GetSecLevel >= 2)
         {
             DetectVisibleTargets();
-
-            transform.LookAt(nearPlayerLocation.currNode.GetCenter);
-
+            if (nearPlayerLocation.currNode.GetCenter != null)
+            {
+                transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+            }
             TryAttack();
 
             // 공격이 실패했거나 행동력이 남았으면 추적 후 공격
@@ -125,18 +129,18 @@ public class PatrolEnemyNPC : EnemyNPC
         Gizmos.DrawCube(firstLocation, Vector3.one);
         Gizmos.color = Color.red;
     }
-    // 순찰
+    //순찰
     //public void Patrol(Vector3 pos)  //나중에 리펙토링 해보기
     //{
-    //PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
-    //if (patrolState.agent == null)
-    //{
-    //    patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
-    //}
-    //patrolState.pos.Enqueue(pos);
+    //    PatrolEnemyPatrolState patrolState = (PatrolEnemyPatrolState)efsm.FindState(EnemyStates.PatrolEnemyPatrolState);
+    //    if (patrolState.agent == null)
+    //    {
+    //        patrolState.agent = gameObject.GetComponent<NavMeshAgent>();
+    //    }
+    //    patrolState.pos.Enqueue(pos);
 
-    //float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
-    //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+    //    float eta = patrolState.agent.remainingDistance / patrolState.agent.speed;
+    //    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
     //}
 
     // 두리번
@@ -269,13 +273,44 @@ public class PatrolEnemyNPC : EnemyNPC
                 break;
             }
         }
-        
+
         if (pathQueue.Count > 0)
         {
+            //float totalDistance = 0f;
+            //Vector3 lastPos = transform.position;
+
+            //foreach (var step in pathQueue)
+            //{
+            //    totalDistance += Vector3.Distance(lastPos, step);
+            //    lastPos = step;
+            //}
+
+            //if (agent == null)
+            //    agent = GetComponent<NavMeshAgent>();
+
+            //if (agent.speed <= 0f)
+            //    agent.speed = 2f;
+
+            //float eta = totalDistance / agent.speed;
+
+            //if (efsm.currentState != null)
+            //{
+            //    efsm.Current.duration = eta;
+            //    Debug.Log($"[ETA] {eta:F2}초 / 거리 {totalDistance:F2} / 속도 {agent.speed:F2}");
+            //}
+            //else
+            //{
+            //    Debug.LogWarning("efsm.Current가 null입니다.");
+            //}
+
             //최종 이동 구현
             isMoving = true;
             canNextMove = true;
         }
+        //else 
+        //{
+        //    Debug.LogWarning("pathQueue가 비어있어 ETA계산 불가");
+        //}
 
     }
 
