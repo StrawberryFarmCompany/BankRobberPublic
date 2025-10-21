@@ -17,6 +17,7 @@ public class EscapeCar : IInteractable
     {
         stat.OnReset?.Invoke();
         stat.OnReset = null;
+        stat.thisGameObject.SetActive(false);
     }
     public void UnInteraction(EntityStats stat)
     {

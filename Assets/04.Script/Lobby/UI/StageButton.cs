@@ -7,7 +7,7 @@ public class StageButton : MonoBehaviour
     public SceneType sceneType;
     public string firstText;
     public string secondText;
-    public string thirdText;
+    public string conditionText;
 
     [HideInInspector]
     public StageUI stageUI;
@@ -16,7 +16,9 @@ public class StageButton : MonoBehaviour
     [HideInInspector]
     public TextMeshProUGUI secondTextObject;
     [HideInInspector]
-    public TextMeshProUGUI thirdTextObject;
+    public TextMeshProUGUI conditionTextObject;
+    [HideInInspector]
+    public TextMeshProUGUI checkConditionTextObject;
 
     [HideInInspector]
     public Button button;
@@ -33,7 +35,24 @@ public class StageButton : MonoBehaviour
         stageUI.curSelectScene = sceneType;
         firstTextObject.text = firstText;
         secondTextObject.text = secondText;
-        thirdTextObject.text = thirdText;
-        stageUI.startButton.interactable = LoadSceneManager.GetInstance.CheckEntryCondition(sceneType);
+        conditionTextObject.text = conditionText;
+
+        bool condition = LoadSceneManager.GetInstance.CheckEntryCondition(sceneType);
+
+        Color color = new Color();
+
+        if (condition)
+        {
+            color = Color.blue;
+        }
+        else
+        {
+            color = Color.yellow;
+        }
+
+        checkConditionTextObject.text = $"{ScoreManager.GetInstance.GetScore(sceneType - 1)} / {LoadSceneManager.GetInstance.GetRequireScore(sceneType)}";
+        checkConditionTextObject.color = color;
+
+        stageUI.startButton.interactable = condition;
     }
 }
