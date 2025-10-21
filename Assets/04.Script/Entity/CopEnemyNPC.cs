@@ -13,9 +13,9 @@ public class CopEnemyNPC : EnemyNPC
 
     protected override IEnumerator Start()
     {
+        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>(), EnemyStates.CopEnemyChaseState);
         StartCoroutine(base.Start());
-        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
-        efsm = new EnemyStateMachine(this,transform.GetComponentInChildren<Animator>(), EnemyStates.CopEnemyChaseState);
+        if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         yield return null;
     }
 
@@ -35,8 +35,8 @@ public class CopEnemyNPC : EnemyNPC
     protected override void CalculateBehaviour()
     {
         DetectVisibleTargets();
-
-        transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+        if (nearPlayerLocation != null)
+            transform.LookAt(nearPlayerLocation.currNode.GetCenter);
 
         TryAttack();
 

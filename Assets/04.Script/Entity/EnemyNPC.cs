@@ -18,12 +18,12 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual IEnumerator Start()
     {
-        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
+        if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
-        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
-        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
         stats.NodeUpdates(transform.position);
         gun = GetComponent<Gun>();
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
     }
 
     protected virtual void FixedUpdate()
