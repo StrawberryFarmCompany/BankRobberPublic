@@ -28,7 +28,11 @@ class GameManager : SingleTon<GameManager>
 
 
     //현재 팔방, 추후 4방이면 4방으로 바꿔야함
-    public readonly Vector3Int[] nearNode = new Vector3Int[8] { Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1) };
+    public readonly Vector3Int[] nearNode = new Vector3Int[24] { 
+        /*동일층*/Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1),
+        /*-1층*/new Vector3Int(0,-1,1), new Vector3Int(1,-1,0), new Vector3Int(0,-1,-1), new Vector3Int(-1,-1,0), new Vector3Int(-1, -1, -1), new Vector3Int(1, -1, 1), new Vector3Int(-1, -1, 1), new Vector3Int(1, -1, -1),
+        new Vector3Int(0,1,1), new Vector3Int(1,1,0), new Vector3Int(0,1,-1), new Vector3Int(-1,1,0), new Vector3Int(-1, 1, -1), new Vector3Int(1, 1, 1), new Vector3Int(-1, 1, 1), new Vector3Int(1, 1, -1)
+    };
     public List<bool> isPlayerGetKeyCard = new List<bool>();
     public int endTurnCount = 0;
 
@@ -296,10 +300,13 @@ class GameManager : SingleTon<GameManager>
     // 특정 좌표에 있는 엔티티 찾기
     public EntityStats GetEntityAt(Vector3Int pos)
     {
-        foreach (var e in entities)
+        if (nodes.ContainsKey(pos))
         {
-            if (e.currNode.GetCenter == pos)
-                return e;
+            Node currNode = nodes[pos];
+            for (int i = 0; i < currNode.standing.Count; i++)
+            {
+                if (currNode.standing[i] != null) return currNode.standing[i];
+            }
         }
         return null;
     }

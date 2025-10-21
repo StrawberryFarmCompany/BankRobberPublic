@@ -33,6 +33,8 @@ public class UIManager : MonoBehaviour
     }
     public bool SelectionLocked { get; private set; }
 
+    public LeftInteractionPanel leftInteractionPanel;
+
     private void Awake()
     {
         GetInstance = this;
