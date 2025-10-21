@@ -34,6 +34,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d3ce90ebd2811d4a85ec74501569893
+    m_Address: NodePreviewerGoalMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ac05652b538f85641a124a5a677821e2
     m_Address: BuffPannel
     m_ReadOnly: 0
