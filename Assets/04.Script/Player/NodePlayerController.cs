@@ -308,7 +308,7 @@ public class NodePlayerController : MonoBehaviour
             {
                 animationController.MoveState();
                 playerVec = pathQueue.Last();
-                playerStats.NodeUpdates(playerVec,true);
+                playerStats.NodeUpdates(playerVec);
                 TurnOffHighlighter();
                 //최종 이동 구현
                 isMoving = true;
@@ -397,7 +397,7 @@ public class NodePlayerController : MonoBehaviour
             canNextMove = false;
             eta = DoMoveAndRotate(Ease.Unset ,pathQueue.Dequeue(), 0.2f, 0.3f,()=> {
                 playerStats.SetCurrentNode(transform.position);
-                playerStats.NodeUpdates(transform.position, true);
+                playerStats.NodeUpdates(transform.position);
             });
 
             /*transform.DOComplete(true);
@@ -414,7 +414,7 @@ public class NodePlayerController : MonoBehaviour
             if (NodePlayerManager.GetInstance.GetCurrentPlayer() == this)
             {
                 playerStats.SetCurrentNode(transform.position);
-                playerStats.NodeUpdates(transform.position, true);
+                playerStats.NodeUpdates(transform.position);
                 TurnOnHighlighter();
             }
             else
@@ -541,7 +541,7 @@ public class NodePlayerController : MonoBehaviour
     {
         transform.DOMove(bestNearNodePos, 0.3f).OnComplete(()=>
         {
-            playerStats.NodeUpdates(bestNearNodePos, true);
+            playerStats.NodeUpdates(bestNearNodePos);
             playerVec = bestNearNodePos;
             TurnOffHighlighter();
         });
@@ -612,6 +612,31 @@ public class NodePlayerController : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(ref isAimingMode);
+        }
+    }
+
+    public void OnNodeSelection(InputAction.CallbackContext ctx)
+    {
+        if (IsMyTurn() && isMoveMode && !isMoving && this == NodePlayerManager.GetInstance.GetCurrentPlayer())
+        {
+            Vector2 pos = ctx.ReadValue<Vector2>();
+            Vector3Int selectedNode = GetNodeVector3ByRay(pos, ~(1 << 8));
+            if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(selectedNode))
+            {
+                MoveRangeHighlighter.normalHighlighter.SetGoalPos(selectedNode);
+                List<Vector3Int> list = new List<Vector3Int>();
+                list.Add(playerStats.currNode.GetCenter);
+                list.AddRange(GenerateChebyshevPath(playerStats.currNode.GetCenter, selectedNode));
+                MoveRangeHighlighter.normalHighlighter.SetPathLine(list.ToArray());
+            }
+            else
+            {
+                MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+            }
+        }
+        else
+        {
+            MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
         }
     }
 
@@ -856,8 +881,8 @@ public class NodePlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, layer))
         {
-            Debug.Log($"클릭된 위치{hit.point}");
-            return GameManager.GetInstance.GetNode(isEntityTarget? hit.transform.position : hit.point).GetCenter;
+            Node node = GameManager.GetInstance.GetNode(isEntityTarget ? hit.transform.position : hit.point);
+            if(node != null)return node.GetCenter;
         }
         Debug.Log("유효하지 않은 좌표입니다!");
         return new Vector3Int(-999, -999, -999); //유효하지 않은 좌표 반환
@@ -951,7 +976,7 @@ public class NodePlayerController : MonoBehaviour
         DoMoveAndRotate(Ease.InCirc, nextTile, 0.2f, 0.1f,()=> 
         {
             playerStats.SetCurrentNode(transform.position);
-            playerStats.NodeUpdates(transform.position, true);
+            playerStats.NodeUpdates(transform.position);
             highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
         });
     }
