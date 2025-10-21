@@ -59,7 +59,7 @@ public class NodeBaker : MonoBehaviour
 
                     // NavMesh 위에 있는지 검사
                     //겹치는 층 예외처리
-                    if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.4f, NavMesh.AllAreas))
+                    if (NavMesh.SamplePosition(worldPos, out NavMeshHit hit, 0.39f, NavMesh.AllAreas))
                     {
                         Vector3Int currPos = new Vector3Int(Mathf.CeilToInt(worldPos.x), Mathf.CeilToInt(worldPos.y) - 1, Mathf.CeilToInt(worldPos.z));
                         vectors.Add(currPos);
