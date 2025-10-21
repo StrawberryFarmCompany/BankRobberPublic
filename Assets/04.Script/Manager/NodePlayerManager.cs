@@ -127,17 +127,35 @@ public class NodePlayerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어 제거
+    /// 플레이어 제거 및 다음 플레이어로 전환 처리
     /// </summary>
     public void UnregisterPlayer(NodePlayerController player)
     {
         if (players.Contains(player))
         {
+            int removedIndex = players.IndexOf(player);
             players.Remove(player);
-            if (currentPlayerIndex >= players.Count)
+
+            // 플레이어가 전부 제거된 경우
+            if (players.Count == 0)
             {
                 currentPlayerIndex = 0;
+                // TODO: 모든 플레이어가 제거되었을 때 처리할 로직 호출 (예: GameManager.GetInstance.OnAllPlayersRemoved();)
+                return;
             }
+
+            // 현재 인덱스가 제거된 플레이어보다 크거나 같다면 한 칸 앞으로 당김
+            if (currentPlayerIndex >= removedIndex)
+            {
+                currentPlayerIndex--;
+                if (currentPlayerIndex < 0)
+                    currentPlayerIndex = 0;
+            }
+
+            // 인덱스 범위 보정
+            if (currentPlayerIndex >= players.Count)
+                currentPlayerIndex = 0;
+
         }
     }
 
