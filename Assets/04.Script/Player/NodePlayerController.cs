@@ -102,7 +102,8 @@ public class NodePlayerController : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddEndPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(false); });
 
         playerStats.SetCurrentNode(transform.position);
-        playerStats.NodeUpdates(transform.position);
+        playerStats.NodeUpdates(transform.position, true);
+        transform.position = playerStats.currNode.GetCenter;
         GameManager.GetInstance.RegisterEntity(playerStats);
         NodePlayerManager.GetInstance.SwitchToPlayer(0); // 첫 번째 플레이어로 시작
     }
@@ -307,7 +308,7 @@ public class NodePlayerController : MonoBehaviour
             {
                 animationController.MoveState();
                 playerVec = pathQueue.Last();
-                playerStats.NodeUpdates(playerVec);
+                playerStats.NodeUpdates(playerVec,true);
                 TurnOffHighlighter();
                 //최종 이동 구현
                 isMoving = true;
@@ -396,7 +397,7 @@ public class NodePlayerController : MonoBehaviour
             canNextMove = false;
             eta = DoMoveAndRotate(Ease.Unset ,pathQueue.Dequeue(), 0.2f, 0.3f,()=> {
                 playerStats.SetCurrentNode(transform.position);
-                playerStats.NodeUpdates(transform.position);
+                playerStats.NodeUpdates(transform.position, true);
             });
 
             /*transform.DOComplete(true);
@@ -413,7 +414,7 @@ public class NodePlayerController : MonoBehaviour
             if (NodePlayerManager.GetInstance.GetCurrentPlayer() == this)
             {
                 playerStats.SetCurrentNode(transform.position);
-                playerStats.NodeUpdates(transform.position);
+                playerStats.NodeUpdates(transform.position, true);
                 TurnOnHighlighter();
             }
             else
@@ -540,7 +541,7 @@ public class NodePlayerController : MonoBehaviour
     {
         transform.DOMove(bestNearNodePos, 0.3f).OnComplete(()=>
         {
-            playerStats.NodeUpdates(bestNearNodePos);
+            playerStats.NodeUpdates(bestNearNodePos, true);
             playerVec = bestNearNodePos;
             TurnOffHighlighter();
         });
@@ -652,13 +653,13 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
-/*        if (!CheckRangeAndEntity(targetPos, (int)playerStats.attackRange)) ??? 
+        if (!CheckRangeAndEntity(targetPos, (int)playerStats.attackRange))
         {
             Debug.Log("엔티티가 없엉");
             return;
 
-        }*/
-
+        }
+        //행동력 소모를 막기 위한 조건문,  shoot에서도 처리는 하나 return을 위한 파라메터
         if (!gun.CheckAmmo())
         {
             Debug.Log("잔탄수 부족, 불발");
@@ -810,7 +811,7 @@ public class NodePlayerController : MonoBehaviour
         }
         return false;
     }
-
+    //TODO : 의도 파악하여 추후 리펙토링 필요
     public bool CheckRangeAndEntity(Vector3 Pos, int range) //반환값을 bool로 하는게 맞나? 애매
     {
         Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
@@ -950,7 +951,7 @@ public class NodePlayerController : MonoBehaviour
         DoMoveAndRotate(Ease.InCirc, nextTile, 0.2f, 0.1f,()=> 
         {
             playerStats.SetCurrentNode(transform.position);
-            playerStats.NodeUpdates(transform.position);
+            playerStats.NodeUpdates(transform.position, true);
             highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
         });
     }

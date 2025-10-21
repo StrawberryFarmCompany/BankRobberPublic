@@ -303,9 +303,9 @@ class GameManager : SingleTon<GameManager>
         if (nodes.ContainsKey(pos))
         {
             Node currNode = nodes[pos];
-            for (int i = 0; i < currNode.standing.Count; i++)
+            for (int i = 0; i < currNode.Standing.Count; i++)
             {
-                if (currNode.standing[i] != null) return currNode.standing[i];
+                if (currNode.Standing[i] != null) return currNode.Standing[i];
             }
         }
         return null;
