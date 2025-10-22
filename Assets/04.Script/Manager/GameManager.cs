@@ -327,4 +327,10 @@ class GameManager : SingleTon<GameManager>
         }
         return result;
     }
+
+    public void GameEnd()
+    {
+        Time.timeScale = 0.0f;
+        Debug.Log("게임 끝");
+    }
 }
