@@ -17,7 +17,7 @@ public class NodePlayerController : MonoBehaviour
 {
     public EntityData playerData;
     public EntityStats playerStats;
-
+    
     private Vector3Int playerVec;
 
     // [변경됨] GameManager 대신 NodePlayerManager에서 턴 관리
@@ -76,7 +76,7 @@ public class NodePlayerController : MonoBehaviour
 
     [HideInInspector] public Vector3Int targetNodePos;
     [HideInInspector] public Vector3Int bestNearNodePos;
-
+    private static MouseStateMachine mouseStateMachine = new MouseStateMachine();
 
     private void Awake()
     {
@@ -176,7 +176,7 @@ public class NodePlayerController : MonoBehaviour
             UIManager.GetInstance.ShowActionPanel(true);
             animationController.RunState();
             playerStats.ActiveRun();
-            highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
+            TurnOnHighlighter();
             RefreshPipAllSafe();
         }
 
@@ -330,7 +330,7 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
+    public List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
     {
         // BFS 탐색을 위한 큐
         Queue<Vector3Int> open = new Queue<Vector3Int>();
@@ -636,26 +636,11 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnNodeSelection(InputAction.CallbackContext ctx)
     {
-        if (IsMyTurn() && isMoveMode && !isMoving && this == NodePlayerManager.GetInstance.GetCurrentPlayer())
+        if (this == NodePlayerManager.GetInstance.GetCurrentPlayer())
         {
             Vector2 pos = ctx.ReadValue<Vector2>();
             Vector3Int selectedNode = GetNodeVector3ByRay(pos, ~(1 << 8));
-            if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(selectedNode))
-            {
-                MoveRangeHighlighter.normalHighlighter.SetGoalPos(selectedNode);
-                List<Vector3Int> list = new List<Vector3Int>();
-                list.Add(playerStats.currNode.GetCenter);
-                list.AddRange(GenerateChebyshevPath(playerStats.currNode.GetCenter, selectedNode));
-                MoveRangeHighlighter.normalHighlighter.SetPathLine(list.ToArray());
-            }
-            else
-            {
-                MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
-            }
-        }
-        else
-        {
-            MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+            mouseStateMachine.Execute(selectedNode);
         }
     }
 
@@ -678,22 +663,34 @@ public class NodePlayerController : MonoBehaviour
         if (context.started && IsMyTurn() && isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
+            mouseStateMachine.ChangeState(MouseType.attack);
             StartMode(ref isRangeAttackMode);
+
             TurnOnHighlighter(0);
         }
     }
-
-    private void CheckRangeAttack(Vector3 mouseScreenPos)
+    /// <summary>
+    /// 플레이어로 부터 목표 위치에 장애물이 있으면 false를 리턴하는 함수
+    /// </summary>
+    /// <param name="pos"> 목표물 위치 </param>
+    public bool CheckObstacleOnShotPath(Vector3Int pos)
     {
-        Vector3Int targetPos = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
-
         Vector3 start = transform.position;
-        Vector3 target = targetPos;
+        Vector3 target = pos;
         LayerMask layerMask = ~(1 << 8);
-        if (Physics.Raycast(new Ray(start+Vector3.up, (target - start).normalized),out RaycastHit hit, Vector3.Distance(start, target), layerMask))
+        if (Physics.Raycast(new Ray(start + Vector3.up, (target - start).normalized), out RaycastHit hit, Vector3.Distance(start, target), layerMask))
         {
             Debug.Log($"방향성 : {(target - start).normalized} ");
             Debug.Log($"무언가로 막혀있음 : {hit.collider.name} ");
+            return false;
+        }
+        return true;
+    }
+    private void CheckRangeAttack(Vector3 mouseScreenPos)
+    {
+        Vector3Int targetPos = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
+        if (!CheckObstacleOnShotPath(targetPos))
+        {
             return;
         }
 
@@ -801,7 +798,7 @@ public class NodePlayerController : MonoBehaviour
     {
         animationController.IdleState();
         highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
-
+        mouseStateMachine.ChangeState(MouseType.move);
     }
     public void TurnOnHighlighter(Vector3Int destination, int range)
     {
@@ -814,7 +811,7 @@ public class NodePlayerController : MonoBehaviour
 
     public void TurnOnHighlighter(int range)
     {
-            highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
+        highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
         
     }
 
@@ -997,7 +994,7 @@ public class NodePlayerController : MonoBehaviour
         {
             playerStats.SetCurrentNode(transform.position);
             playerStats.NodeUpdates(transform.position);
-            highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
+            TurnOnHighlighter();
             RefreshPipAllSafe();
         });
     }
