@@ -9,15 +9,25 @@ public class GameEnd : MonoBehaviour
     [SerializeField] private Transform resultParent;
     [SerializeField] private GameObject resultPrefab;
     [SerializeField] private GameObject failImage;
+    [SerializeField] private GameObject successImage;
+    [SerializeField] private GameObject perfectImage;
+    [SerializeField] private Button LobbyButton;
     //public List<CharacterResult> characterResults = new List<CharacterResult>();
 
     private CharacterResult bishopResult;
     private CharacterResult rookResult;
     private CharacterResult knightResult;
 
+    private void Awake()
+    {
+        LobbyButton.onClick.AddListener(LoadLobby);
+    }
+
     private void Start()
     {
         failImage.SetActive(false);
+        successImage.SetActive(false);
+        perfectImage.SetActive(false);
     }
 
     public void TurnOffPanel()
@@ -105,5 +115,20 @@ public class GameEnd : MonoBehaviour
     public void SetFail()
     {
         failImage.SetActive(true);
+    }
+
+    public void SetSuccess()
+    {
+        successImage.SetActive(true);
+    }
+
+    public void SetPerfect()
+    {
+        perfectImage.SetActive(true);
+    }
+
+    private void LoadLobby()
+    {
+        LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
     }
 }

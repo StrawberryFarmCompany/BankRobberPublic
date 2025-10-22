@@ -179,9 +179,18 @@ public class EntityStats
         {
             UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
         }
-        if (NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0 &&
-            NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Failed)
-            UIManager.GetInstance.gameEndUI.SetFail();
+        if (NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0)
+        {
+            if(NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Failed)
+            {
+                UIManager.GetInstance.gameEndUI.SetFail();
+            }
+            else
+            {
+                UIManager.GetInstance.gameEndUI.SetSuccess();
+            }
+            NodePlayerManager.GetInstance.LateGameEndCall();
+        }
     }
 
     public void HealHealthPoint(float amount)

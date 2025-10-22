@@ -4,12 +4,10 @@ using UnityEngine;
 using UnityEngine.AI;
 public class HoldEnemyNPC : EnemyNPC
 {
-    bool isRangeDetection = false;
     bool isNoise = false;
     bool isNoisePlace = false;
     bool isHomePlace = true;
-    bool allySpottedStatus = false;
-    int countTurn = 0;
+
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 noiseLocation;
 
@@ -29,9 +27,7 @@ public class HoldEnemyNPC : EnemyNPC
     private void Update()
     {
         if (isMoving)
-        {
             SequentialMove();
-        }
     }
 
     protected override void FixedUpdate()
@@ -41,20 +37,16 @@ public class HoldEnemyNPC : EnemyNPC
 
     protected override void CalculateBehaviour()
     {
+        DetectNoise();
+
         DetectVisibleTargets();
 
-        if (stats.CurHp <= 0)//체력이 0보다 낮거나 같으면
+        if (stats.secData.GetSecLevel == 0)
         {
-            ChangeToDead();//사망
-        }
 
-        else if (stats.secData.GetSecLevel == 0)
-        {
-            
-
-            if (isNoise == false && isHomePlace == true)//소음 감지가 false라면
+            if (isNoise == false && isHomePlace == true) //소음 감지가 false라면
             {
-                ChangeToIdle();//대기 상태
+                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleState)); //대기 상태
             }
 
             else if (isNoise == false && isHomePlace == false)
@@ -98,7 +90,7 @@ public class HoldEnemyNPC : EnemyNPC
             //공격이 실패했거나 행동력이 남았으면 추적 후 공격
             if (stats.curActionPoint > 0)
             {
-                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
+                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
                 if (nearPlayerLocation != null)
                 {
                     Move(nearPlayerLocation.GetPosition());
@@ -111,27 +103,10 @@ public class HoldEnemyNPC : EnemyNPC
 
             }
         }
+
+        NoiseManager.ClearNoises(); // 게임메니저든 어디든 턴 종료시 한 번만 호출하게 해줘야함. (이동 필요!)
+
         base.CalculateBehaviour();
-    }
-
-    public void ChangeToIdle()
-    {
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleState));
-    }
-
-    public void ChangeToInvestigate(Vector3 pos)
-    {
-        HoldEnemyInvestigateState investigateState = (HoldEnemyInvestigateState)efsm.FindState(EnemyStates.HoldEnemyInvestigateState);
-
-        if(investigateState.agent == null)
-        {
-            investigateState.agent = gameObject.GetComponent<NavMeshAgent>();
-        }
-
-        investigateState.pos.Enqueue(pos);
-
-        float eta = investigateState.agent.remainingDistance / investigateState.agent.speed;
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
     }
 
     public void ChangeToIdleRotation()
@@ -146,52 +121,6 @@ public class HoldEnemyNPC : EnemyNPC
         // 정면 복귀
         transform.rotation = originalRotation;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleRotationState));
-    }
-
-    public void ChangeToMoveReturn(Vector3 pos)
-    {
-        HoldEnemyMoveReturnState moveReturnState = (HoldEnemyMoveReturnState)efsm.FindState(EnemyStates.HoldEnemyMoveReturnState);
-
-        if (moveReturnState.agent == null)
-        {
-            moveReturnState.agent = gameObject.GetComponent<NavMeshAgent>();
-        }
-
-        moveReturnState.pos.Enqueue(pos);
-
-        float eta = moveReturnState.agent.remainingDistance / moveReturnState.agent.speed;
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyMoveReturnState));
-    }
-
-    public void ChangeToChase(Vector3 pos)
-    {
-        HoldEnemyChaseState chaseState = (HoldEnemyChaseState)efsm.FindState(EnemyStates.HoldEnemyChaseState);
-
-        if (chaseState.agent == null)
-        {
-            chaseState.agent = gameObject.GetComponent<NavMeshAgent>();
-        }
-
-        chaseState.pos.Enqueue(pos);
-
-        float eta = chaseState.agent.remainingDistance / chaseState.agent.speed;
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
-    }
-
-    public void ChangeToCombat()
-    {
-        //여기 시간 주기 1초?
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyCombatState));
-    }
-
-    public void ChangeToDamaged()
-    {
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyDamagedState));
-    }
-
-    public void ChangeToDead()
-    {
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyDeadState));
     }
 
     public void Move(Vector3 pos)
@@ -354,7 +283,6 @@ public class HoldEnemyNPC : EnemyNPC
             }
             TryAttack();
         }
-
     }
      
     // 가장 가까운 노드 찾기
@@ -381,5 +309,29 @@ public class HoldEnemyNPC : EnemyNPC
         }
 
         return best;
+    }
+
+    private void DetectNoise()
+    {
+        var noises = NoiseManager.GetActiveNoises();
+        if (noises == null || noises.Count == 0) return;
+
+        foreach (var noise in noises)
+        {
+            float distance = Vector3.Distance(transform.position, noise.pos);
+
+            // 🔸 감지 반경 내에 들어왔다면
+            if (distance <= noise.radius)
+            {
+                // 이미 감지 상태라면 무시
+                if (isNoise) return;
+
+                isNoise = true;
+                noiseLocation = noise.pos;
+
+                Debug.Log($"{gameObject.name} 가 {noise.pos}에서 소음 감지함.");
+                break;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using System.Runtime.CompilerServices;
 
 public enum GamePhase
 {
@@ -330,8 +331,9 @@ class GameManager : SingleTon<GameManager>
 
     public void GameEnd()
     {
-        // 나중에 게임 종료 버튼에 씬 전환 직전에 Reset(); 달아주기
-        Time.timeScale = 0.0f;
+        //Reset();
+        Time.timeScale = 0f;
+        UIManager.GetInstance.gameEndUI.TurnOnPanel();
         Debug.Log("게임 끝");
     }
 }

@@ -57,11 +57,6 @@ public class UIManager : MonoBehaviour
 
     public void SetSelectionLocked(bool locked) => SelectionLocked = locked;
 
-    public void TurnOffGameEndPanel()
-    {
-        gameEndUI.TurnOffPanel();
-    }
-
     /// <summary>
     /// 게임 엔드 패널에 캐릭터 상태를 나타내는 프리팹을 생성하는 함수
     /// </summary>
