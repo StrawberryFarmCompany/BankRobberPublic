@@ -177,7 +177,6 @@ GameObject:
   - component: {fileID: 9139093660848333616}
   - component: {fileID: 1527679957248011129}
   - component: {fileID: 7270093474348948208}
-  - component: {fileID: 4466343968073414}
   m_Layer: 0
   m_Name: HandGun
   m_TagString: Untagged
@@ -253,28 +252,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4466343968073414
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1120754092437823813}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43926119963064422, guid: 333bd96ab68cc2940862abdf1a7929ce, type: 2}
 --- !u!1 &9040582056919826431
 GameObject:
   m_ObjectHideFlags: 0

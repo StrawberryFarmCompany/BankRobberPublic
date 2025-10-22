@@ -141,7 +141,17 @@ public class NodePreviewer
     }
     public void SetPosTargetPreview(Vector3Int pos)
     {
-        targetPreviewer.position = pos;
+        NodeDefines.Node currNode = GameManager.GetInstance.GetNode(pos);
+        if (currNode != null)
+        {
+            if (currNode.Standing.Count > 0 && !currNode.Standing.Contains(NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats))
+            {
+                targetPreviewer.position = pos;
+                return;
+            }
+        }
+        TargetPreviewOnOff(false);
+
     }
     #region 객체생성 함수들
     private void CreateBoundPreviewer()
