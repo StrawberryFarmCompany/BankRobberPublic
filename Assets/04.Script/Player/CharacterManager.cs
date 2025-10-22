@@ -1,13 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CharacterType
-{
-    Rook,
-    Bishop,
-    Knight
-}
-
 public class CharacterManager : MonoBehaviour
 {
     private static CharacterManager _instance;

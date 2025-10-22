@@ -1,6 +1,26 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+public enum EscapeCondition
+{
+    None,       // 현재 게임에 참가 안 함
+    Heisting,   // 습격중
+    Arrest,      // 잡힘
+    Escape,     // 탈출
+    SuccessHeist //돈 가방 가지고 탈출
+}
+
+public enum GameResult
+{
+    Failed,
+    Succeeded,
+    Perfect
+}
 
 public class NodePlayerManager : MonoBehaviour
 {
@@ -9,6 +29,11 @@ public class NodePlayerManager : MonoBehaviour
 
     [SerializeField] private List<NodePlayerController> players = new List<NodePlayerController>();
     public int currentPlayerIndex = 0;
+
+    private int heistMemberCount;
+    public EscapeCondition isEscapeBishop;
+    public EscapeCondition isEscapeRook;
+    public EscapeCondition isEscapeKnight;
 
     private void Awake()
     {
@@ -25,8 +50,11 @@ public class NodePlayerManager : MonoBehaviour
     // 플레이어 리스트 자동 등록 (씬에 배치된 모든 NodePlayerController)
     private void Start()
     {
-        players.AddRange(FindObjectsOfType<NodePlayerController>());
+        EscapeConditionReset();
+        UIManager.GetInstance.SetCharacterResultUI(players);
+        UIManager.GetInstance.gameEndUI.TurnOffPanel();
         UIManager.GetInstance.pip.HideAndSneakText();
+
     }
 
     private void Update()
@@ -186,5 +214,101 @@ public class NodePlayerManager : MonoBehaviour
         player.isEndReady = true;
         GameManager.GetInstance.CheckAllCharacterEndTurn();
         SwitchToNextPlayer();
+    }
+
+    public void EscapeConditionReset()
+    {
+        heistMemberCount = 0;
+        isEscapeBishop = EscapeCondition.None;
+        isEscapeRook = EscapeCondition.None;
+        isEscapeKnight = EscapeCondition.None;
+
+        foreach (NodePlayerController player in players)
+        {
+            switch (player.playerStats.characterType)
+            {
+                case (CharacterType.Bishop):
+                    isEscapeBishop = EscapeCondition.Heisting;
+                    heistMemberCount += 1;
+                    break;
+                case (CharacterType.Rook):
+                    isEscapeRook = EscapeCondition.Heisting;
+                    heistMemberCount += 1;
+                    break;
+                case (CharacterType.Knight):
+                    isEscapeKnight = EscapeCondition.Heisting;
+                    heistMemberCount += 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void SetEscapeCondition(EntityStats stats)
+    {
+        switch (stats.characterType) 
+        {
+            case (CharacterType.Bishop):
+                isEscapeBishop = EscapeCondition.Escape;
+                break;
+            case (CharacterType.Rook):
+                isEscapeRook= EscapeCondition.Escape;
+                break;
+            case (CharacterType.Knight):
+                isEscapeKnight = EscapeCondition.Escape;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 현재 스테이지의 성공 여부를 판단. GameResult 열거형을 반환
+    /// </summary>
+    /// <returns></returns>
+    public GameResult GetEscapeSuccess()
+    {
+        int result = CalculateEscape(isEscapeBishop) + CalculateEscape(isEscapeRook) + CalculateEscape(isEscapeKnight);
+        if (result == heistMemberCount * 2)
+        {
+            return GameResult.Perfect;
+        }
+        else if (result > 0) 
+        {
+            return GameResult.Succeeded;
+        }
+        else
+        {
+            return GameResult.Failed;
+        }
+    }
+
+    private int CalculateEscape(EscapeCondition condition) 
+    {
+        switch (condition)
+        {
+            case (EscapeCondition.SuccessHeist):
+                return 2;
+            case(EscapeCondition.Escape):
+                return 1;
+            case (EscapeCondition.Arrest):
+                return 0;
+            case (EscapeCondition.None):
+                return 0;
+            default:
+                return 0;
+        }
+    }
+
+    public void LateGameEndCall()
+    {
+        StartCoroutine(LateGameEndCallCoroutine());
+    }
+
+    private IEnumerator LateGameEndCallCoroutine()
+    {
+        yield return new WaitForSeconds(3f);
+        GameManager.GetInstance.GameEnd();
     }
 }
