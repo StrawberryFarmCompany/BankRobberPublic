@@ -117,6 +117,13 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
+    void RefreshPipAllSafe()
+    {
+        var ui = UIManager.GetInstance;
+        if (ui?.pip == null) return;
+        ui.pip.RefreshAll();
+    }
+
     public void OnCancel(InputAction.CallbackContext context)
     {
         if (context.canceled)
@@ -170,6 +177,7 @@ public class NodePlayerController : MonoBehaviour
             animationController.RunState();
             playerStats.ActiveRun();
             highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
+            RefreshPipAllSafe();
         }
 
         if (context.started && IsMyTurn() && isHideMode)
@@ -197,12 +205,14 @@ public class NodePlayerController : MonoBehaviour
                 if(!playerStats.ConsumeActionPoint(1)) return;
                 UIManager.GetInstance.ShowActionPanel(true);
                 Heal();
+                RefreshPipAllSafe();
             }
             else if (playerStats.playerSkill == PlayerSkill.Ready)
             {
                 if (!playerStats.ConsumeActionPoint(1)) return;
                 UIManager.GetInstance.ShowActionPanel(true);
                 Ready();
+                RefreshPipAllSafe();
             }
         }
 
@@ -229,6 +239,7 @@ public class NodePlayerController : MonoBehaviour
                 UIManager.GetInstance.ShowActionPanel(true);
                 Aiming();
             }
+            RefreshPipAllSafe();
         }
 
         if (context.started && IsMyTurn() && isReloadMode)
@@ -241,6 +252,8 @@ public class NodePlayerController : MonoBehaviour
             gun.Reload();
             animationController.ReloadState();
             UIManager.GetInstance.ShowActionPanel(true);
+
+            RefreshPipAllSafe();
         }
 
         if (context.started && IsMyTurn() && isRangeAttackMode)
@@ -416,6 +429,7 @@ public class NodePlayerController : MonoBehaviour
                 playerStats.SetCurrentNode(transform.position);
                 playerStats.NodeUpdates(transform.position);
                 TurnOnHighlighter();
+                RefreshPipAllSafe();
             }
             else
             {
@@ -463,6 +477,7 @@ public class NodePlayerController : MonoBehaviour
             targetNodePos = targetNodeCenter;
             animationController.ThrowState();
             StartMode(ref isMoveMode);
+            RefreshPipAllSafe();
         }
         else
         {
@@ -530,6 +545,8 @@ public class NodePlayerController : MonoBehaviour
             animationController.OnUnEquipForSneak();
             
             StartMode(ref isMoveMode);
+
+            RefreshPipAllSafe();
         }
         else
         {
@@ -544,6 +561,7 @@ public class NodePlayerController : MonoBehaviour
             playerStats.NodeUpdates(bestNearNodePos);
             playerVec = bestNearNodePos;
             TurnOffHighlighter();
+            RefreshPipAllSafe();
         });
     }
 
@@ -599,6 +617,7 @@ public class NodePlayerController : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(true);
             Debug.Log("훔치기 성공!");
+            RefreshPipAllSafe();
         }
         else
         {
@@ -708,6 +727,7 @@ public class NodePlayerController : MonoBehaviour
         {
             animationController.HipRangedAttackState(targetPos);
         }
+        RefreshPipAllSafe();
         TurnOffHighlighter();
         StartMode(ref isMoveMode);
     }
@@ -978,6 +998,7 @@ public class NodePlayerController : MonoBehaviour
             playerStats.SetCurrentNode(transform.position);
             playerStats.NodeUpdates(transform.position);
             highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
+            RefreshPipAllSafe();
         });
     }
 
