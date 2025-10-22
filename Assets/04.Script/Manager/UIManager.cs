@@ -18,6 +18,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Transform canvasRoot;
     private GameObject interactionCanvasInstance;
     private BuffPannel buffPannel;
+
+    public bool SelectionLocked { get; private set; }
+
+    public LeftInteractionPanel leftInteractionPanel;
+
+    [Header("게임 엔드 패널")]
+    public GameEnd gameEndUI;
+    //[HideInInspector]
+    //public //개별 캐릭터 결과창에 들어갈 UI (상태 세팅)
+
     public BuffPannel BuffPannel
     {
         get 
@@ -31,14 +41,13 @@ public class UIManager : MonoBehaviour
             return buffPannel; 
         }
     }
-    public bool SelectionLocked { get; private set; }
-
-    public LeftInteractionPanel leftInteractionPanel;
+    
 
     private void Awake()
     {
         GetInstance = this;
     }
+
 
     public void ShowActionPanel(bool show)
     {
@@ -47,4 +56,21 @@ public class UIManager : MonoBehaviour
     }
 
     public void SetSelectionLocked(bool locked) => SelectionLocked = locked;
+
+    public void TurnOffGameEndPanel()
+    {
+        gameEndUI.TurnOffPanel();
+    }
+
+    /// <summary>
+    /// 게임 엔드 패널에 캐릭터 상태를 나타내는 프리팹을 생성하는 함수
+    /// </summary>
+    /// <param name="stats"></param>
+    public void SetCharacterResultUI(List<NodePlayerController> players)
+    {
+        foreach (NodePlayerController player in players)
+        {
+            gameEndUI.CreateCharacterUI(player.playerStats);
+        }
+    }
 }
