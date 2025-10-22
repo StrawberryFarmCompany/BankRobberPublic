@@ -18,6 +18,9 @@ class GameManager : SingleTon<GameManager>
     private NoneBattleTurnStateMachine noneBattleTurn;
     public NoneBattleTurnStateMachine NoneBattleTurn { get { return noneBattleTurn; } }
 
+    private BattleTurnStateMachine battleTurn;
+    public BattleTurnStateMachine BattleTurn { get { return battleTurn; } }
+
     public GamePhase CurrentPhase { get; private set; } = GamePhase.NoneBattle;
 
     private bool playerTurn;
@@ -81,7 +84,7 @@ class GameManager : SingleTon<GameManager>
         nodes = new Dictionary<Vector3Int, Node>();
         noneBattleTurn = new NoneBattleTurnStateMachine();
         //noneBattleTurn.AddStartPointer(TurnTypes.ally, StartPlayerTurn);
-        //battleTurn = new BattleTurnStateMachine();
+        battleTurn = new BattleTurnStateMachine();
     }
 
     protected override void Reset()
@@ -91,7 +94,7 @@ class GameManager : SingleTon<GameManager>
         OnNodeReset();
         noneBattleTurn.OnSceneChange();
         OnEntityReset();
-        //battleTurn = new BattleTurnStateMachine();
+        battleTurn = new BattleTurnStateMachine();
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();
     }
@@ -243,14 +246,14 @@ class GameManager : SingleTon<GameManager>
         }
         else
         {
-            /*battleTurn.ChangeState();
+            battleTurn.ChangeState();
             endTurnCount = 0;
 
             foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
             {
                 player.playerStats.ResetForNewTurn();
             }
-            NodePlayerManager.GetInstance.SwitchToPlayer(0);*/
+            NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
     }
 
@@ -282,8 +285,8 @@ class GameManager : SingleTon<GameManager>
     {
         if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState();
-        /*else
-            battleTurn.ChangeState();*/
+        else
+            battleTurn.ChangeState();
     }
 
 
@@ -333,6 +336,7 @@ class GameManager : SingleTon<GameManager>
 
     public void GameEnd()
     {
+        // 나중에 게임 종료 버튼에 씬 전환 직전에 Reset(); 달아주기
         Time.timeScale = 0.0f;
         Debug.Log("게임 끝");
     }

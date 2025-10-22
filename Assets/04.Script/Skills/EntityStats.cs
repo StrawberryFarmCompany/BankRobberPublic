@@ -41,6 +41,7 @@ public class EntityStats
     public int maxRerollCount;
     public int curRerollCount;
     public Sprite portrait;
+    public CharacterType characterType;
     public Node currNode;
 
     public PlayerSkill playerSkill; //플레이어 스킬
@@ -82,6 +83,7 @@ public class EntityStats
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
+        if(baseStats.characterType != CharacterType.None) this.characterType = baseStats.characterType;
 
         if (gameObject != null)
         {
@@ -173,6 +175,13 @@ public class EntityStats
         OnDead?.Invoke();
         DestroyEntity();
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
+        if(characterType != CharacterType.None)
+        {
+            UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
+        }
+        if (NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0 &&
+            NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Failed)
+            UIManager.GetInstance.gameEndUI.SetFail();
     }
 
     public void HealHealthPoint(float amount)

@@ -15,9 +15,14 @@ public class EscapeCar : IInteractable
 
     public void OnInteraction(EntityStats stat)
     {
+        UIManager.GetInstance.gameEndUI.SetEscapeCharacter(stat);
         stat.OnReset?.Invoke();
         stat.OnReset = null;
         stat.thisGameObject.SetActive(false);
+        if(NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0 && NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Perfect)
+        {
+
+        }
     }
     public void UnInteraction(EntityStats stat)
     {
