@@ -82,7 +82,7 @@ public class VaultDoor : IInteractable
             return;
         }
         isDrillInstalled = true;
-        GameManager.GetInstance.BattleTurn.BuffCount += OnDrillCounting;
+        //GameManager.GetInstance.BattleTurn.BuffCount += OnDrillCounting;
         ReleaseInteraction(OnInstallDrill);
     }
     public void OnDrillCounting()
@@ -92,7 +92,7 @@ public class VaultDoor : IInteractable
         if (drillCount == 0)
         {
             lockModule.released = true;
-            GameManager.GetInstance.BattleTurn.BuffCount -= OnDrillCounting;
+            //GameManager.GetInstance.BattleTurn.BuffCount -= OnDrillCounting;
             OnInteraction(null);
         }
     }
