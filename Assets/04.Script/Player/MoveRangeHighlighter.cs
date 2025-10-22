@@ -6,17 +6,15 @@ using System.Linq;
 public class MoveRangeHighlighter : MonoBehaviour
 {
     [Header("하이라이트 표시")]
-    public static NodeBoundPreviewer normalHighlighter;
+    public static NodePreviewer normalHighlighter;
     [SerializeField] private GameObject securityAreaHighlighter;
     [SerializeField] private GameObject interactableHighlighter;
 
     [SerializeField] private GameObject ParentTransform;
-
-    private List<GameObject> activeHighlights = new();
     private void Awake()
     {
         if (normalHighlighter == null)
-            normalHighlighter = new NodeBoundPreviewer();
+            normalHighlighter = new NodePreviewer();
     }
     public void ShowMoveRange(Vector3Int start, int range)
     {
@@ -24,7 +22,8 @@ public class MoveRangeHighlighter : MonoBehaviour
         HashSet<Vector3Int> map = new HashSet<Vector3Int>();
         //start위치까지 포함하여야 하고 음수처리 때문에 값 비교 array는 (range*2)+1
         GetPath(start, start, map,new int[(range*2)+1, (range * 2) + 1], range);
-        normalHighlighter.SetMesh(map.ToArray());
+        map.Remove(start);
+        normalHighlighter.SetBoundMesh(map.ToArray());
         /*        for (int x = -range; x <= range; x++)
                 {
                     for (int z = -range; z <= range; z++)
@@ -50,9 +49,9 @@ public class MoveRangeHighlighter : MonoBehaviour
 
         if (currNode == null) return;
         else if (!currNode.isWalkable) return;
-        else if (currNode.standing != null)
+        else if (currNode.Standing != null)
             if(startPos != currPos)
-                if(currNode.standing.Count > 0) return;
+                if(currNode.Standing.Count > 0) return;
 
         if (curr > maxRange) return;
         x = 0 >= x ? Mathf.Abs(x) : x + maxRange;
