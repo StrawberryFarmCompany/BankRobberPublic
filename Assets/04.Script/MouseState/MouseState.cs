@@ -23,7 +23,7 @@ public class MouseStateMachine
         curr = states[(int)next];
         curr.Enter();
     }
-    public void Execute(Vector3Int pos)
+    public void Execute(Vector2 pos)
     {
         curr?.Execute(pos);
     }
@@ -31,12 +31,14 @@ public class MouseStateMachine
 public abstract class MouseState 
 {
     public abstract void Enter();
-    public abstract void Execute(Vector3Int pos);
+    public abstract void Execute(Vector2 pos);
     public abstract void Exit();
     public static MouseState Factory(MouseType type)
     {
         switch (type)
         {
+            case MouseType.none:
+                return new MouseNoneState();
             case MouseType.move:
                 return new MouseMoveState();
             case MouseType.attack:
@@ -54,16 +56,17 @@ public class MouseMoveState : MouseState
         MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(true);
     }
 
-    public override void Execute(Vector3Int pos)
+    public override void Execute(Vector2 pos)
     {
-        if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(pos))
+        Vector3Int selectedNode = NodePlayerManager.GetInstance.GetCurrentPlayer().GetNodeVector3ByRay(pos, ~(1 << 8));
+        if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(selectedNode))
         {
-            MoveRangeHighlighter.normalHighlighter.SetGoalPos(pos);
+            MoveRangeHighlighter.normalHighlighter.SetGoalPos(selectedNode);
             List<Vector3Int> list = new List<Vector3Int>();
             NodePlayerController ctrl = NodePlayerManager.GetInstance.GetCurrentPlayer();
             EntityStats playerStat = ctrl.playerStats;
             list.Add(ctrl.playerStats.currNode.GetCenter);
-            list.AddRange(ctrl.GenerateChebyshevPath(playerStat.currNode.GetCenter, pos));
+            list.AddRange(ctrl.GenerateChebyshevPath(playerStat.currNode.GetCenter, selectedNode));
             MoveRangeHighlighter.normalHighlighter.SetPathLine(list.ToArray());
         }
 
@@ -81,12 +84,13 @@ public class MouseAttackState : MouseState
         MoveRangeHighlighter.normalHighlighter.TargetPreviewOnOff(true);
     }
 
-    public override void Execute(Vector3Int pos)
+    public override void Execute(Vector2 pos)
     {
-        if (NodePlayerManager.GetInstance.GetCurrentPlayer().CheckObstacleOnShotPath(pos))
+        Vector3Int selectedNode = NodePlayerManager.GetInstance.GetCurrentPlayer().GetNodeVector3ByRay(pos, 1 << 8, true);
+        if (NodePlayerManager.GetInstance.GetCurrentPlayer().CheckObstacleOnShotPath(selectedNode))
         {
             MoveRangeHighlighter.normalHighlighter.TargetPreviewOnOff(true);
-            MoveRangeHighlighter.normalHighlighter.SetPosTargetPreview(pos);
+            MoveRangeHighlighter.normalHighlighter.SetPosTargetPreview(selectedNode);
         }
         else
         {
@@ -99,4 +103,18 @@ public class MouseAttackState : MouseState
         MoveRangeHighlighter.normalHighlighter.TargetPreviewOnOff(false);
     }
 }
-public enum MouseType { move,attack}
+public class MouseNoneState : MouseState
+{
+    public override void Enter()
+    {
+    }
+
+    public override void Execute(Vector2 pos)
+    {
+    }
+
+    public override void Exit()
+    {
+    }
+}
+public enum MouseType { none,move,attack}

@@ -68,6 +68,7 @@ public class NodePlayerController : MonoBehaviour
         playerStats.ForceMove += WindowForcMove;
         isHide = true;
         isEndReady = false;
+        highlighter.Init();
         StartMode(PlayerStatus.isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
 
@@ -625,8 +626,8 @@ public class NodePlayerController : MonoBehaviour
         if (this == NodePlayerManager.GetInstance.GetCurrentPlayer())
         {
             Vector2 pos = ctx.ReadValue<Vector2>();
-            Vector3Int selectedNode = GetNodeVector3ByRay(pos, ~(1 << 8));
-            mouseStateMachine.Execute(selectedNode);
+
+            mouseStateMachine.Execute(pos);
         }
     }
 
@@ -667,6 +668,11 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log($"방향성 : {(target - start).normalized} ");
             Debug.Log($"무언가로 막혀있음 : {hit.collider.name} ");
+            Node node = GameManager.GetInstance.GetNode(hit.point);
+            if (node != null && node.GetCenter == pos)
+            {
+                return true;
+            }
             return false;
         }
         return true;
@@ -817,6 +823,7 @@ public class NodePlayerController : MonoBehaviour
             case PlayerStatus.isAimingMode:
                 break;
             case PlayerStatus.isRunMode:
+                mouseStateMachine.ChangeState(MouseType.move);
                 break;
             case PlayerStatus.isHideMode:
                 break;

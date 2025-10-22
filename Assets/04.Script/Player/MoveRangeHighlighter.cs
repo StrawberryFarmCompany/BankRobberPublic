@@ -11,7 +11,7 @@ public class MoveRangeHighlighter : MonoBehaviour
     [SerializeField] private GameObject interactableHighlighter;
 
     [SerializeField] private GameObject ParentTransform;
-    private void Awake()
+    public void Init()
     {
         if (normalHighlighter == null)
             normalHighlighter = new NodePreviewer();
