@@ -22,6 +22,7 @@ public class NodePreviewer
 
     #region 경로미리보기 관련 변수
     LineRenderer pathLine;
+    LineRenderer throwPathLine;
     #endregion
 
     #region 엔티티 선택 미리보기
@@ -49,15 +50,21 @@ public class NodePreviewer
         CreateGoalPreviewer();
         CreatePathPreviewer();
         CreateTargetPreviewer();
+        CreateThrowPathPreviewer();
     }
     public void Enable(bool onOff)
     {
         boundPreviewerGOBJ.SetActive(onOff);
-        goalPreviewer.gameObject.SetActive(onOff);
+        GoalPreviewOnOff(onOff);
+    }
+    public void ThrowEnable(bool onOff)
+    {
+        boundPreviewerGOBJ.SetActive(onOff);
+        throwPathLine.gameObject.SetActive(onOff);
+        pathLine.gameObject.SetActive(false);
     }
     public void SetBoundMesh(Vector3Int[] poses)
     {
-        Enable(true);
         boundMeshFilter.mesh = null;
         activatedBounds.Clear();
         //List<Vector3> points = new List<Vector3>();
@@ -122,14 +129,10 @@ public class NodePreviewer
     {
         if (!enable)
         {
-            pathLine.transform.position = new Vector3(9999999f, 9999999f, 999999f);
             goalPreviewer.position = new Vector3(9999999f, 9999999f, 999999f);
         }
-        if (goalPreviewer.gameObject.activeSelf != enable)
-        {
-            goalPreviewer.gameObject.SetActive(enable);
-            pathLine.gameObject.SetActive(enable);
-        }
+        goalPreviewer.gameObject.SetActive(enable);
+        pathLine.gameObject.SetActive(enable);
     }
     public void TargetPreviewOnOff(bool enable)
     {
@@ -153,16 +156,29 @@ public class NodePreviewer
         TargetPreviewOnOff(false);
 
     }
+    public void SetThrowPath(Vector3[] pos)
+    {
+        throwPathLine.positionCount = pos.Length;
+        for (int i = 0;i<pos.Length; i++)
+        {
+            throwPathLine.SetPosition(i,pos[i]);
+        }
+    }
     #region 객체생성 함수들
     private void CreateBoundPreviewer()
     {
         boundPreviewerGOBJ = new GameObject("NodeBoundPreviewer");
+
         GameObject.DontDestroyOnLoad(boundPreviewerGOBJ);
+
         boundPreviewerGOBJ.transform.position = Vector3.zero;
         boundPreviewerGOBJ.transform.eulerAngles = Vector3.zero;
         boundPreviewerGOBJ.transform.localScale = Vector3.one;
+
         boundMeshFilter = boundPreviewerGOBJ.AddComponent<MeshFilter>();
+
         ResourceManager.GetInstance.LoadAsync<Material>("NodePreviewerMat", (mat) => { boundPreviewerGOBJ.AddComponent<MeshRenderer>().material = mat; });
+        
         vertDict = new Dictionary<Vector3, int>();
         triangleQueue = new Queue<int>();
         uvQueue = new Queue<Vector2>();
@@ -195,11 +211,22 @@ public class NodePreviewer
     private void CreatePathPreviewer()
     {
         pathLine = new GameObject("PathLineRenderer").AddComponent<LineRenderer>();
+        GameObject.DontDestroyOnLoad(pathLine.gameObject);
         pathLine.startWidth = 0.4f;
         pathLine.endWidth = 0.4f;
         pathLine.textureMode = LineTextureMode.Tile;
         pathLine.textureScale = new Vector2(2.2f, 1f);
         ResourceManager.GetInstance.LoadAsync<Material>("PathPreviewerMat", (mat) => { pathLine.material = mat; });
+    }
+    private void CreateThrowPathPreviewer()
+    {
+        throwPathLine = new GameObject("ThrowPathLineRenderer").AddComponent<LineRenderer>();
+        GameObject.DontDestroyOnLoad(throwPathLine.gameObject);
+        throwPathLine.startWidth = 0.4f;
+        throwPathLine.endWidth = 0.4f;
+        throwPathLine.textureMode = LineTextureMode.Tile;
+        throwPathLine.textureScale = new Vector2(2.2f, 1f);
+        ResourceManager.GetInstance.LoadAsync<Material>("PathPreviewerMat", (mat) => { throwPathLine.material = mat; });
     }
     private void CreateTargetPreviewer()
     {

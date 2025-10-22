@@ -36,7 +36,6 @@ public class NodePlayerController : MonoBehaviour
     public bool isEndReady;
 
     //[Header("현재 플레이어의 액션 상태")]
-    [HideInInspector]
     public PlayerStatus currPlayerStatus;
 
     [Header("명중 보정치")]
@@ -142,7 +141,7 @@ public class NodePlayerController : MonoBehaviour
     }
     public void OnClickNode(InputAction.CallbackContext context)
     {
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current.IsPointerOverGameObject() || NodePlayerManager.GetInstance.GetCurrentPlayer() != this)
         {
             // UI 클릭 중이면 실행 안 함
             return;
@@ -153,8 +152,7 @@ public class NodePlayerController : MonoBehaviour
             Vector3 mousePos = Mouse.current.position.ReadValue();
             Move(mousePos);
         }
-
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRunMode)
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRunMode)
         {
             UIManager.GetInstance.ShowActionPanel(true);
             animationController.RunState();
@@ -162,21 +160,18 @@ public class NodePlayerController : MonoBehaviour
             TurnOnHighlighter();
             RefreshPipAllSafe();
         }
-
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isHideMode)
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isHideMode)
         {
             HideMode();
             UIManager.GetInstance.ShowActionPanel(true);
         }
-
-        if(context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isThrowMode)
+        else if(context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isThrowMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckThrow(mousePos);
             UIManager.GetInstance.ShowActionPanel(true);
         }
-
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isPerkActionMode)
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isPerkActionMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             if (playerStats.playerSkill == PlayerSkill.SneakAttack)
@@ -198,14 +193,12 @@ public class NodePlayerController : MonoBehaviour
                 RefreshPipAllSafe();
             }
         }
-
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isPickPocketMode)
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isPickPocketMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             PickPocket(mousePos);
         }
-
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isAimingMode)
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isAimingMode)
         {
             if (!playerStats.ConsumeActionPoint(1))
             {
@@ -224,8 +217,7 @@ public class NodePlayerController : MonoBehaviour
             }
             RefreshPipAllSafe();
         }
-
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isReloadMode)
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isReloadMode)
         {
             if (!playerStats.ConsumeActionPoint(1))
             {
@@ -238,8 +230,7 @@ public class NodePlayerController : MonoBehaviour
 
             RefreshPipAllSafe();
         }
-
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRangeAttackMode)
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRangeAttackMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckRangeAttack(mousePos);
@@ -309,7 +300,7 @@ public class NodePlayerController : MonoBehaviour
                 animationController.MoveState();
                 playerVec = pathQueue.Last();
                 playerStats.NodeUpdates(playerVec);
-                TurnOffHighlighter();
+                MoveRangeHighlighter.normalHighlighter.Enable(false);
                 //최종 이동 구현
                 isMoving = true;
                 canNextMove = true;
@@ -395,10 +386,25 @@ public class NodePlayerController : MonoBehaviour
         if (canNextMove && pathQueue.Count > 0)
         {
             canNextMove = false;
-            eta = DoMoveAndRotate(Ease.Unset ,pathQueue.Dequeue(), 0.2f, 0.3f,()=> {
-                playerStats.SetCurrentNode(transform.position);
-                playerStats.NodeUpdates(transform.position);
-            });
+
+            if (pathQueue.Count <= 1)
+            {
+                eta = DoMoveAndRotate(Ease.Unset, pathQueue.Dequeue(), 0.2f, 0.3f, () => {
+                    playerStats.SetCurrentNode(transform.position);
+                    playerStats.NodeUpdates(transform.position);
+
+                    highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
+                    StartMode(PlayerStatus.isMoveMode);
+                });
+            }
+            else
+            {
+                eta = DoMoveAndRotate(Ease.Unset, pathQueue.Dequeue(), 0.2f, 0.3f, () => {
+                    playerStats.SetCurrentNode(transform.position);
+                    playerStats.NodeUpdates(transform.position);
+                });
+            }
+
 
             /*transform.DOComplete(true);
             transform.DOMove(pathQueue.Dequeue(), 0.3f).OnComplete(()=> { playerStats.NodeUpdates(transform.position); });*/
@@ -440,7 +446,6 @@ public class NodePlayerController : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(PlayerStatus.isThrowMode);
-            TurnOnHighlighter(6);
         }
     }
 
@@ -547,7 +552,7 @@ public class NodePlayerController : MonoBehaviour
         {
             playerStats.NodeUpdates(bestNearNodePos);
             playerVec = bestNearNodePos;
-            TurnOffHighlighter();
+            MoveRangeHighlighter.normalHighlighter.Enable(false);
             RefreshPipAllSafe();
         });
     }
@@ -716,7 +721,6 @@ public class NodePlayerController : MonoBehaviour
             animationController.HipRangedAttackState(targetPos);
         }
         RefreshPipAllSafe();
-        TurnOffHighlighter();
         StartMode(PlayerStatus.isMoveMode);
     }
 
@@ -743,7 +747,7 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnReload(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus != PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(PlayerStatus.isReloadMode);
@@ -790,14 +794,6 @@ public class NodePlayerController : MonoBehaviour
         animationController.IdleState();
         highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
     }
-    public void TurnOnHighlighter(Vector3Int destination, int range)
-    {
-        if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !MoveRangeHighlighter.normalHighlighter.isGoalActivated)
-        {
-            animationController.IdleState();
-            highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
-        }
-    }
 
     public void TurnOnHighlighter(int range)
     {
@@ -805,43 +801,46 @@ public class NodePlayerController : MonoBehaviour
         
     }
 
-    public void TurnOffHighlighter()
-    {
-        highlighter.ClearHighlights();
-    }
-
     public void StartMode(PlayerStatus mode)
     {
+        currPlayerStatus = mode;
+        if (NodePlayerManager.GetInstance.GetCurrentPlayer() != this) return;
         switch (mode)
         {
             case PlayerStatus.isMoveMode:
-                mouseStateMachine.ChangeState(MouseType.move);
+                if (playerStats.movement > 0) mouseStateMachine.ChangeState(MouseType.move);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isSneakAttackMode:
-                mouseStateMachine.ChangeState(MouseType.attack);
+                if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.attack);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isAimingMode:
                 break;
             case PlayerStatus.isRunMode:
-                mouseStateMachine.ChangeState(MouseType.move);
+                if (playerStats.movement > 0) mouseStateMachine.ChangeState(MouseType.move);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isHideMode:
                 break;
             case PlayerStatus.isPickPocketMode:
                 break;
             case PlayerStatus.isRangeAttackMode:
-                mouseStateMachine.ChangeState(MouseType.attack);
+                if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.attack);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isPerkActionMode:
                 break;
             case PlayerStatus.isThrowMode:
+                if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.throwing);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isReloadMode:
                 break;
             default:
                 break;
         }
-        currPlayerStatus = mode;
+
     }
 
     public bool CheckRange(Vector3Int Pos, int range)
@@ -1040,7 +1039,6 @@ public class NodePlayerController : MonoBehaviour
             {
                 if (playerStats == null) return;
                 action?.Invoke();
-                Debug.Log(playerStats.currNode.GetCenter);
             });
         });
         return moveDuration + rotationDuration;
