@@ -21,6 +21,7 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
 
     public void SceneLoad(SceneType sceneType)
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneTypeToString(sceneType));
     }
 
@@ -28,6 +29,7 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
     {
         if (CheckEntryCondition(sceneType))
         {
+            Time.timeScale = 1f;
             SceneManager.LoadScene(SceneTypeToString(sceneType));
         }
         else
@@ -43,7 +45,7 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
             case SceneType.MainTitle:
                 return "MainTitle";
             case SceneType.LobbyScene:
-                return "LobbyScene";
+                return "LobbyNPCTEST";
             case SceneType.TutorialScene:
                 return "MainScene";
                 //return "TutorialScene";
