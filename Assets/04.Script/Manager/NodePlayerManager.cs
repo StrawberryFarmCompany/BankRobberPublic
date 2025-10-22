@@ -91,9 +91,9 @@ public class NodePlayerManager : MonoBehaviour
             return;
 
         players[currentPlayerIndex].playerInput.DeactivateInput();
-        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
+        players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
-        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
+        players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
         players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
@@ -111,9 +111,9 @@ public class NodePlayerManager : MonoBehaviour
         if (UIManager.GetInstance != null && UIManager.GetInstance.SelectionLocked) return;
         if (index < 0 || index >= players.Count) return;
         players[currentPlayerIndex].playerInput.DeactivateInput();
-        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
+        players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
         currentPlayerIndex = index;
-        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
+        players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
         players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();

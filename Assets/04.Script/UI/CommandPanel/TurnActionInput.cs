@@ -55,28 +55,28 @@ public class TurnActionInput : MonoBehaviour
 
     public void OnRunPressed()
     {
-        if(playerController.isMoveMode && playerController.IsMyTurn())
+        if(playerController.currPlayerStatus == PlayerStatus.isMoveMode && playerController.IsMyTurn())
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isRunMode);
+            playerController.StartMode(PlayerStatus.isRunMode);
         }
     }
     public void OnThrowPressed()
     {
-        if ((playerController.IsMyTurn() && playerController.isMoveMode))
+        if ((playerController.IsMyTurn() && playerController.currPlayerStatus == PlayerStatus.isMoveMode))
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isThrowMode);
+            playerController.StartMode(PlayerStatus.isThrowMode);
             playerController.TurnOnHighlighter(6);
         }
     }
 
     public void OnAimingPressed()
     {
-        if (playerController.isMoveMode && playerController.IsMyTurn())
+        if (playerController.currPlayerStatus == PlayerStatus.isMoveMode && playerController.IsMyTurn())
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isAimingMode);
+            playerController.StartMode(PlayerStatus.isAimingMode);
         }
     }
 
@@ -84,44 +84,44 @@ public class TurnActionInput : MonoBehaviour
 
     public void OnHidePressed()
     {
-        if (playerController.IsMyTurn() && !playerController.isHide && playerController.isMoveMode)
+        if (playerController.IsMyTurn() && !playerController.isHide && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isHideMode);
+            playerController.StartMode(PlayerStatus.isHideMode);
         }
         
-        if (playerController.IsMyTurn() && playerController.isHide && playerController.isMoveMode)
+        if (playerController.IsMyTurn() && playerController.isHide && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isSneakAttackMode);
+            playerController.StartMode(PlayerStatus.isSneakAttackMode);
         }
     }
 
     public void OnRangedAttackPressed()
     {
-        if (playerController.IsMyTurn() && playerController.isMoveMode)
+        if (playerController.IsMyTurn() && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isRangeAttackMode);
+            playerController.StartMode(PlayerStatus.isRangeAttackMode);
             playerController.TurnOnHighlighter(0);
         }
     }
 
     public void OnPerkActionPressed()
     {
-        if (playerController.IsMyTurn() && playerController.isMoveMode)
+        if (playerController.IsMyTurn() && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(ref playerController.isPerkActionMode);
+            playerController.StartMode(PlayerStatus.isPerkActionMode);
         }
     }
 
     public void OnCancelPressed()
     {
-        if (playerController.IsMyTurn() && !playerController.isMoveMode)
+        if (playerController.IsMyTurn() && playerController.currPlayerStatus != PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(true);
-            playerController.StartMode(ref playerController.isMoveMode);
+            playerController.StartMode(PlayerStatus.isMoveMode);
             playerController.TurnOnHighlighter(playerController.playerStats.movement);
         }
     }
