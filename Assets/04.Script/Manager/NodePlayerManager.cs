@@ -136,11 +136,13 @@ public class NodePlayerManager : MonoBehaviour
             int removedIndex = players.IndexOf(player);
             players.Remove(player);
 
+            Debug.Log($"남은 플레이어 : {players.Count}");
+
             // 플레이어가 전부 제거된 경우
             if (players.Count == 0)
             {
                 currentPlayerIndex = 0;
-                // TODO: 모든 플레이어가 제거되었을 때 처리할 로직 호출 (예: GameManager.GetInstance.OnAllPlayersRemoved();)
+                GameManager.GetInstance.GameEnd();
                 return;
             }
 
@@ -155,6 +157,7 @@ public class NodePlayerManager : MonoBehaviour
             // 인덱스 범위 보정
             if (currentPlayerIndex >= players.Count)
                 currentPlayerIndex = 0;
+            SwitchToPlayer(currentPlayerIndex);
 
         }
     }
