@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
@@ -51,7 +52,7 @@ public class NodePlayerManager : MonoBehaviour
     {
         EscapeConditionReset();
         UIManager.GetInstance.SetCharacterResultUI(players);
-        UIManager.GetInstance.TurnOffGameEndPanel();
+        UIManager.GetInstance.gameEndUI.TurnOffPanel();
         UIManager.GetInstance.pip.HideAndSneakText();
 
     }
@@ -298,5 +299,16 @@ public class NodePlayerManager : MonoBehaviour
             default:
                 return 0;
         }
+    }
+
+    public void LateGameEndCall()
+    {
+        StartCoroutine(LateGameEndCallCoroutine());
+    }
+
+    private IEnumerator LateGameEndCallCoroutine()
+    {
+        yield return new WaitForSeconds(3f);
+        GameManager.GetInstance.GameEnd();
     }
 }
