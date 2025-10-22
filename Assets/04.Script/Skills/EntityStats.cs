@@ -172,10 +172,11 @@ public class EntityStats
 
     private void Dead()
     {
+        //thisGameObject.SetActive(false);
         OnDead?.Invoke();
         DestroyEntity();
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
-        if(characterType != CharacterType.None)
+        if (characterType != CharacterType.None)
         {
             UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
         }
@@ -260,7 +261,7 @@ public class EntityStats
         currNode?.RemoveCharacter(this);
         currNode = null;
         GameManager.GetInstance.UnregisterEntity(this);
-        NodePlayerManager.GetInstance.UnregisterPlayer(thisGameObject.GetComponent<NodePlayerController>());
+        //NodePlayerManager.GetInstance.UnregisterPlayer(thisGameObject.GetComponent<NodePlayerController>());
         //GameManager.GetInstance.BattleTurn.RemoveUnit();
     }
 
