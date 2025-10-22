@@ -26,6 +26,7 @@ MonoBehaviour:
   attackRange: 50
   detectingDistance: 0
   isCombat: 0
+  characterType: 2
   playerSkill: 1
   sabotage: 1
   aggroControl: 1

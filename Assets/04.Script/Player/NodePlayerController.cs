@@ -88,15 +88,15 @@ public class NodePlayerController : MonoBehaviour
         isEndReady = false;
         StartMode(ref isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
+
+        // [변경됨] 매니저에 자기 자신 등록
+        NodePlayerManager.GetInstance.RegisterPlayer(this);
     }
 
     void Start()
     {
         playerInput.DeactivateInput();
         playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
-
-        // [변경됨] 매니저에 자기 자신 등록
-        NodePlayerManager.GetInstance.RegisterPlayer(this);
 
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(true); });
         GameManager.GetInstance.NoneBattleTurn.AddEndPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(false); });
