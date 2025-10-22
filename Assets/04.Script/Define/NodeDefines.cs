@@ -19,7 +19,8 @@ namespace NodeDefines
         public bool IsSecurityArea { get { return isSecurityArea; } set { isSecurityArea = value; } } //나중을 위한 보안 구역
 
         Dictionary<string, Interaction> nodeInteractions;
-        public List<EntityStats> standing;
+        private List<EntityStats> standing;
+        public List<EntityStats> Standing { get { return standing; } }
 
         public Node(Vector3Int center,bool isWalkable)
         {

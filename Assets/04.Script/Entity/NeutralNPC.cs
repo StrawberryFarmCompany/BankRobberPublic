@@ -37,12 +37,12 @@ public class NeutralNPC : MonoBehaviour
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
-        else
+/*        else
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
-        }
+        }*/
     }
 
     public List<EntityStats> DetectVisibleTargets()

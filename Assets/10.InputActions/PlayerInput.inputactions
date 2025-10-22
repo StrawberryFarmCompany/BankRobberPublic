@@ -27,7 +27,7 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "3653705f-7eb1-4d5c-8d1d-9f1fd98583d6",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -546,7 +546,7 @@
                     "name": "Aiming",
                     "type": "Button",
                     "id": "eef1e534-7934-4a77-a49d-12950cc2a02f",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -568,6 +568,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "NodeSelect",
+                    "type": "Value",
+                    "id": "2f2ce2e8-6657-4bd7-98df-0364a6b56472",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -678,6 +687,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d377520-c70f-49a1-a9d5-175429cfbd89",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NodeSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
