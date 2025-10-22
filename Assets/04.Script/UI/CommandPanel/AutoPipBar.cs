@@ -20,16 +20,22 @@ public class AutoPipBar : MonoBehaviour
     private void Start()
     {
         UIManager.GetInstance.pip = this;
-        
+        RefreshAll();
     }
 
-
-    public void Update()  //=====================================================================================요거  바꿔야함 호출식으로
+    public void RefreshAll()
     {
+        NodePlayerController player = NodePlayerManager.GetInstance.GetCurrentPlayer();
+        if (player == null) return;
+
         RefreshMovement();
         RefreshActionPoint();
         UpdatePortrait();
         RefreshHealth();
+    }
+
+    public void Update()  //=====================================================================================요거  바꿔야함 호출식으로
+    {
 
     }
 
@@ -80,7 +86,7 @@ public class AutoPipBar : MonoBehaviour
 
     public void UpdatePortrait()
     {
-         portraitImage.sprite =  NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.portrait;
+        portraitImage.sprite =  NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.portrait;
     }
 
     public void RefreshHealth()
