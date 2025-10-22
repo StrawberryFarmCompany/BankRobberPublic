@@ -139,6 +139,12 @@ class GameManager : SingleTon<GameManager>
         return result;
     }
 
+    public Node GetNode(Vector3Int pos)
+    {
+        nodes.TryGetValue(pos, out Node result);
+        return result;
+    }
+
     public Vector3Int GetVecInt(Vector3 pos)
     {
         float x = pos.x % 1f;

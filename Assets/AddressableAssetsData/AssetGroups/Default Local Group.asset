@@ -50,6 +50,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b99870a09a370684e918709181534155
+    m_Address: TargetPreviewerMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c05591d701364984dbe289a109f08be2
     m_Address: BuffIcon
     m_ReadOnly: 0
