@@ -102,7 +102,8 @@ public class NodePlayerController : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddEndPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(false); });
 
         playerStats.SetCurrentNode(transform.position);
-        playerStats.NodeUpdates(transform.position);
+        playerStats.NodeUpdates(transform.position, true);
+        transform.position = playerStats.currNode.GetCenter;
         GameManager.GetInstance.RegisterEntity(playerStats);
         NodePlayerManager.GetInstance.SwitchToPlayer(0); // 첫 번째 플레이어로 시작
     }
@@ -139,7 +140,7 @@ public class NodePlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Node node = GameManager.GetInstance.GetNode(hit.point);
-            if (node != null && node.standing.Count > 0)
+            if (node != null && node.Standing.Count > 0)
             {
                 UIManager.GetInstance.BuffPannel.UpdateBuffList(node);
                 UIManager.GetInstance.BuffPannel.Description.TurnOn(false);
@@ -444,7 +445,7 @@ public class NodePlayerController : MonoBehaviour
 
     private void CheckThrow(Vector3 mouseScreenPos)
     {
-        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, ~(1 << 8));
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
@@ -494,7 +495,7 @@ public class NodePlayerController : MonoBehaviour
 
     private void CheckSneakAttack(Vector3 mouseScreenPos)
     {
-        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
@@ -574,7 +575,7 @@ public class NodePlayerController : MonoBehaviour
 
     private void PickPocket(Vector3 mouseScreenPos)
     {
-        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos);
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, ~(1 << 8));
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
         {
@@ -614,6 +615,31 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
+    public void OnNodeSelection(InputAction.CallbackContext ctx)
+    {
+        if (IsMyTurn() && isMoveMode && !isMoving && this == NodePlayerManager.GetInstance.GetCurrentPlayer())
+        {
+            Vector2 pos = ctx.ReadValue<Vector2>();
+            Vector3Int selectedNode = GetNodeVector3ByRay(pos, ~(1 << 8));
+            if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(selectedNode))
+            {
+                MoveRangeHighlighter.normalHighlighter.SetGoalPos(selectedNode);
+                List<Vector3Int> list = new List<Vector3Int>();
+                list.Add(playerStats.currNode.GetCenter);
+                list.AddRange(GenerateChebyshevPath(playerStats.currNode.GetCenter, selectedNode));
+                MoveRangeHighlighter.normalHighlighter.SetPathLine(list.ToArray());
+            }
+            else
+            {
+                MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+            }
+        }
+        else
+        {
+            MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+        }
+    }
+
     private void Aiming()
     {
         animationController.AimingState();
@@ -640,14 +666,15 @@ public class NodePlayerController : MonoBehaviour
 
     private void CheckRangeAttack(Vector3 mouseScreenPos)
     {
-        Vector3Int targetPos = GetNodeVector3ByRay(mouseScreenPos);
+        Vector3Int targetPos = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
 
         Vector3 start = transform.position;
         Vector3 target = targetPos;
         LayerMask layerMask = ~(1 << 8);
-        if (Physics.Raycast(new Ray(start+Vector3.up, (target - start).normalized), Vector3.Distance(start, target), layerMask))
+        if (Physics.Raycast(new Ray(start+Vector3.up, (target - start).normalized),out RaycastHit hit, Vector3.Distance(start, target), layerMask))
         {
-            Debug.Log($"무언가로 막혀있음 :");
+            Debug.Log($"방향성 : {(target - start).normalized} ");
+            Debug.Log($"무언가로 막혀있음 : {hit.collider.name} ");
             return;
         }
 
@@ -655,9 +682,9 @@ public class NodePlayerController : MonoBehaviour
         {
             Debug.Log("엔티티가 없엉");
             return;
-            
-        }
 
+        }
+        //행동력 소모를 막기 위한 조건문,  shoot에서도 처리는 하나 return을 위한 파라메터
         if (!gun.CheckAmmo())
         {
             Debug.Log("잔탄수 부족, 불발");
@@ -758,7 +785,7 @@ public class NodePlayerController : MonoBehaviour
     }
     public void TurnOnHighlighter(Vector3Int destination, int range)
     {
-        if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !MoveRangeHighlighter.normalHighlighter.isActivated)
+        if (destination == GameManager.GetInstance.GetNode(transform.position).GetCenter && !MoveRangeHighlighter.normalHighlighter.isGoalActivated)
         {
             animationController.IdleState();
             highlighter.ShowMoveRange(GameManager.GetInstance.GetNode(transform.position).GetCenter, range);
@@ -809,7 +836,7 @@ public class NodePlayerController : MonoBehaviour
         }
         return false;
     }
-
+    //TODO : 의도 파악하여 추후 리펙토링 필요
     public bool CheckRangeAndEntity(Vector3 Pos, int range) //반환값을 bool로 하는게 맞나? 애매
     {
         Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
@@ -848,14 +875,14 @@ public class NodePlayerController : MonoBehaviour
         return false;
     }
 
-    public Vector3Int GetNodeVector3ByRay(Vector3 mouseScreenPos)
+    public Vector3Int GetNodeVector3ByRay(Vector3 mouseScreenPos,LayerMask layer,bool isEntityTarget = false)
     {
         Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
-        LayerMask layerMask = ~(1 << 8);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, layerMask))
+        if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, layer))
         {
-            return GameManager.GetInstance.GetNode(hit.point).GetCenter;
+            Node node = GameManager.GetInstance.GetNode(isEntityTarget ? hit.transform.position : hit.point);
+            if(node != null)return node.GetCenter;
         }
         Debug.Log("유효하지 않은 좌표입니다!");
         return new Vector3Int(-999, -999, -999); //유효하지 않은 좌표 반환
@@ -986,6 +1013,7 @@ public class NodePlayerController : MonoBehaviour
             {
                 if (playerStats == null) return;
                 action?.Invoke();
+                Debug.Log(playerStats.currNode.GetCenter);
             });
         });
         return moveDuration + rotationDuration;
