@@ -247,6 +247,7 @@ public class EntityStats
         currNode?.RemoveCharacter(this);
         currNode = null;
         GameManager.GetInstance.UnregisterEntity(this);
+        NodePlayerManager.GetInstance.UnregisterPlayer(thisGameObject.GetComponent<NodePlayerController>());
         //GameManager.GetInstance.BattleTurn.RemoveUnit();
     }
 
