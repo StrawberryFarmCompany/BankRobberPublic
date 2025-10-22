@@ -64,13 +64,16 @@ public class NodePlayerManager : MonoBehaviour
             return;
 
         players[currentPlayerIndex].playerInput.DeactivateInput();
+        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
         players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         UIManager.GetInstance.pip.RefreshAll();
         UIManager.GetInstance.pip.HideAndSneakText();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
+        UIManager.GetInstance.ShowActionPanel(true);
     }
 
     /// <summary>
@@ -81,7 +84,9 @@ public class NodePlayerManager : MonoBehaviour
         if (UIManager.GetInstance != null && UIManager.GetInstance.SelectionLocked) return;
         if (index < 0 || index >= players.Count) return;
         players[currentPlayerIndex].playerInput.DeactivateInput();
+        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
         currentPlayerIndex = index;
+        players[currentPlayerIndex].StartMode(ref players[currentPlayerIndex].isMoveMode);
         players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
@@ -89,6 +94,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.pip.RefreshAll();
         UIManager.GetInstance.pip.HideAndSneakText();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
+        UIManager.GetInstance.ShowActionPanel(true);
     }
 
     public void OnFirst(InputAction.CallbackContext context)
