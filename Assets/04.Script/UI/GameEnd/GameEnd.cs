@@ -9,6 +9,8 @@ public class GameEnd : MonoBehaviour
     [SerializeField] private Transform resultParent;
     [SerializeField] private GameObject resultPrefab;
     [SerializeField] private GameObject failImage;
+    [SerializeField] private GameObject successImage;
+    [SerializeField] private GameObject perfectImage;
     //public List<CharacterResult> characterResults = new List<CharacterResult>();
 
     private CharacterResult bishopResult;
