@@ -204,11 +204,6 @@ public class EntityStats
         movement = movementSpeed;
         evasionRate = baseEvasionRate;                                  // 매 턴마다 회피율을 기본값으로 리셋 임시적으로 넣은거라서 나중에 바꿔야함
     }
-
-    public void SetCurrentNode(Vector3Int pos)
-    {
-        currNode = GameManager.GetInstance.GetNode(pos);
-    }
     public void SetCurrentNode(Vector3 pos)
     {
         currNode = GameManager.GetInstance.GetNode(pos);
@@ -218,11 +213,11 @@ public class EntityStats
         }
     }
 
-    public void NodeUpdates(Vector3 pos)
+    public void NodeUpdates(Vector3 pos,bool forceUpdate = false)
     {
         Vector3Int tempPos = GameManager.GetInstance.GetNode(GameManager.GetInstance.GetVecInt(pos)).GetCenter;
 
-        if (currNode == null || currNode.GetCenter != tempPos)
+        if (currNode == null || currNode.GetCenter != tempPos || forceUpdate)
         {
             if(currNode != null)currNode.RemoveCharacter(this);
             currNode = GameManager.GetInstance.GetNode(tempPos);

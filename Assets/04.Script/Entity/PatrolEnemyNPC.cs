@@ -233,7 +233,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
         // 플레이어가 있는 노드는 목적지로 하지 않도록 처리
         var playerNode = GameManager.GetInstance.GetNode(targetPos);
-        if (playerNode != null && playerNode.standing != null && playerNode.standing.Count > 0)
+        if (playerNode != null && playerNode.Standing != null && playerNode.Standing.Count > 0)
         {
             // 플레이어 근처의 빈 노드 중 가장 가까운 곳 선택
             Vector3Int bestAdjacent = FindNearestWalkableNodeAround(GameManager.GetInstance.GetVecInt(playerNode.GetCenter));
@@ -432,7 +432,7 @@ public class PatrolEnemyNPC : EnemyNPC
 
             var node = GameManager.GetInstance.Nodes[check];
             if (node == null || !node.isWalkable) continue;
-            if (node.standing != null && node.standing.Count > 0) continue;
+            if (node.Standing != null && node.Standing.Count > 0) continue;
 
             float dist = Vector3.Distance(check, GameManager.GetInstance.GetNode(transform.position).GetCenter);
             if (dist < bestDist)
