@@ -43,6 +43,8 @@ public abstract class MouseState
                 return new MouseMoveState();
             case MouseType.attack:
                 return new MouseAttackState();
+            case MouseType.throwing:
+                return new MouseThrowState();
             default:
                 break;
         }
@@ -53,14 +55,16 @@ public class MouseMoveState : MouseState
 {
     public override void Enter()
     {
-        MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(true);
+        MoveRangeHighlighter.normalHighlighter.Enable(true);
+        MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
     }
 
     public override void Execute(Vector2 pos)
     {
         Vector3Int selectedNode = NodePlayerManager.GetInstance.GetCurrentPlayer().GetNodeVector3ByRay(pos, ~(1 << 8));
-        if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(selectedNode))
+        if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(selectedNode) && MoveRangeHighlighter.normalHighlighter.isBoundActivated)
         {
+            MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(true);
             MoveRangeHighlighter.normalHighlighter.SetGoalPos(selectedNode);
             List<Vector3Int> list = new List<Vector3Int>();
             NodePlayerController ctrl = NodePlayerManager.GetInstance.GetCurrentPlayer();
@@ -69,12 +73,16 @@ public class MouseMoveState : MouseState
             list.AddRange(ctrl.GenerateChebyshevPath(playerStat.currNode.GetCenter, selectedNode));
             MoveRangeHighlighter.normalHighlighter.SetPathLine(list.ToArray());
         }
+        else
+        {
+            MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+        }
 
     }
 
     public override void Exit()
     {
-        MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+        MoveRangeHighlighter.normalHighlighter.Enable(false);
     }
 }
 public class MouseAttackState : MouseState
@@ -117,4 +125,34 @@ public class MouseNoneState : MouseState
     {
     }
 }
-public enum MouseType { none,move,attack}
+public class MouseThrowState : MouseState
+{
+    public override void Enter()
+    {
+        MoveRangeHighlighter.normalHighlighter.ThrowEnable(true);
+        MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+    }
+
+    public override void Execute(Vector2 pos)
+    {
+        Vector3Int selectedNode = NodePlayerManager.GetInstance.GetCurrentPlayer().GetNodeVector3ByRay(pos, ~(1 << 8));
+        MoveRangeHighlighter.normalHighlighter.SetThrowPath(GetThrowPath(NodePlayerManager.GetInstance.GetCurrentPlayer().transform.position, selectedNode, 30));
+    }
+
+    public override void Exit()
+    {
+        MoveRangeHighlighter.normalHighlighter.ThrowEnable(false);
+    }
+    private Vector3[] GetThrowPath(Vector3 start, Vector3 goal ,int step)
+    {
+        Vector3[] arr = new Vector3[step];
+        
+        float fStep = step;
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = new Vector3(Mathf.Lerp(start.x, goal.x, i / fStep),Mathf.Sin((i * 3) / fStep), Mathf.Lerp(start.z, goal.z, i / fStep));
+        }
+        return arr;
+    }
+}
+public enum MouseType { none,move,attack,throwing}
