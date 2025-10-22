@@ -34,11 +34,6 @@ public class AutoPipBar : MonoBehaviour
         RefreshHealth();
     }
 
-    public void Update()  //=====================================================================================요거  바꿔야함 호출식으로
-    {
-
-    }
-
     public void RefreshMovement()
     {
         Color fillMovementColor = new Color(0, 54, 255, 255);
