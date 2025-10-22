@@ -37,25 +37,7 @@ public class NodePlayerController : MonoBehaviour
 
     //[Header("현재 플레이어의 액션 상태")]
     [HideInInspector]
-    public bool isMoveMode;
-    [HideInInspector]
-    public bool isRunMode;
-    [HideInInspector]
-    public bool isHideMode;
-    [HideInInspector]
-    public bool isSneakAttackMode;
-    [HideInInspector]
-    public bool isThrowMode;
-    [HideInInspector]
-    public bool isPickPocketMode;
-    [HideInInspector]
-    public bool isAimingMode;
-    [HideInInspector]
-    public bool isRangeAttackMode;
-    [HideInInspector]
-    public bool isPerkActionMode;
-    [HideInInspector]
-    public bool isReloadMode;
+    public PlayerStatus currPlayerStatus;
 
     [Header("명중 보정치")]
     public int hitBonus = 0;
@@ -86,7 +68,7 @@ public class NodePlayerController : MonoBehaviour
         playerStats.ForceMove += WindowForcMove;
         isHide = true;
         isEndReady = false;
-        StartMode(ref isMoveMode);
+        StartMode(PlayerStatus.isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
 
         // [변경됨] 매니저에 자기 자신 등록
@@ -135,7 +117,7 @@ public class NodePlayerController : MonoBehaviour
         }
         if (context.started && IsMyTurn())
         {
-            StartMode(ref isMoveMode);
+            StartMode(PlayerStatus.isMoveMode);
             UIManager.GetInstance.ShowActionPanel(true);
             TurnOnHighlighter(playerStats.movement);
         }
@@ -165,13 +147,13 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
-        if (context.started && IsMyTurn() && isMoveMode && !isMoving)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode && !isMoving)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             Move(mousePos);
         }
 
-        if (context.started && IsMyTurn() && isRunMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRunMode)
         {
             UIManager.GetInstance.ShowActionPanel(true);
             animationController.RunState();
@@ -180,20 +162,20 @@ public class NodePlayerController : MonoBehaviour
             RefreshPipAllSafe();
         }
 
-        if (context.started && IsMyTurn() && isHideMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isHideMode)
         {
             HideMode();
             UIManager.GetInstance.ShowActionPanel(true);
         }
 
-        if(context.started && IsMyTurn() && isThrowMode)
+        if(context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isThrowMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckThrow(mousePos);
             UIManager.GetInstance.ShowActionPanel(true);
         }
 
-        if (context.started && IsMyTurn() && isPerkActionMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isPerkActionMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             if (playerStats.playerSkill == PlayerSkill.SneakAttack)
@@ -216,13 +198,13 @@ public class NodePlayerController : MonoBehaviour
             }
         }
 
-        if (context.started && IsMyTurn() && isPickPocketMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isPickPocketMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             PickPocket(mousePos);
         }
 
-        if (context.started && IsMyTurn() && isAimingMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isAimingMode)
         {
             if (!playerStats.ConsumeActionPoint(1))
             {
@@ -242,7 +224,7 @@ public class NodePlayerController : MonoBehaviour
             RefreshPipAllSafe();
         }
 
-        if (context.started && IsMyTurn() && isReloadMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isReloadMode)
         {
             if (!playerStats.ConsumeActionPoint(1))
             {
@@ -256,16 +238,20 @@ public class NodePlayerController : MonoBehaviour
             RefreshPipAllSafe();
         }
 
-        if (context.started && IsMyTurn() && isRangeAttackMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRangeAttackMode)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckRangeAttack(mousePos);
         }
 
-        if(context.canceled && IsMyTurn() && (isRunMode || isAimingMode || isHideMode || isReloadMode || isPerkActionMode))
+        if(context.canceled && IsMyTurn() && (currPlayerStatus == PlayerStatus.isRunMode ||
+            currPlayerStatus == PlayerStatus.isAimingMode ||
+            currPlayerStatus == PlayerStatus.isHideMode ||
+            currPlayerStatus == PlayerStatus.isReloadMode ||
+            currPlayerStatus == PlayerStatus.isPerkActionMode))
         {
             UIManager.GetInstance.ShowActionPanel(true);
-            StartMode(ref isMoveMode);
+            StartMode(PlayerStatus.isMoveMode);
         }
     }
 
@@ -440,19 +426,19 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnRun(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isRunMode);
+            StartMode(PlayerStatus.isRunMode);
         }
     }
 
     public void OnThrow(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isThrowMode);
+            StartMode(PlayerStatus.isThrowMode);
             TurnOnHighlighter(6);
         }
     }
@@ -476,7 +462,7 @@ public class NodePlayerController : MonoBehaviour
         {
             targetNodePos = targetNodeCenter;
             animationController.ThrowState();
-            StartMode(ref isMoveMode);
+            StartMode(PlayerStatus.isMoveMode);
             RefreshPipAllSafe();
         }
         else
@@ -488,10 +474,10 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnHide(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && !isHide && isMoveMode)
+        if (context.started && IsMyTurn() && !isHide && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isHideMode);
+            StartMode(PlayerStatus.isHideMode);
         }
     }
 
@@ -544,7 +530,7 @@ public class NodePlayerController : MonoBehaviour
 
             animationController.OnUnEquipForSneak();
             
-            StartMode(ref isMoveMode);
+            StartMode(PlayerStatus.isMoveMode);
 
             RefreshPipAllSafe();
         }
@@ -584,10 +570,10 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnPickPocket(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode && isHide)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode && isHide)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isPickPocketMode);
+            StartMode(PlayerStatus.isPickPocketMode);
         }
     }
 
@@ -627,10 +613,10 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnAiming(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isAimingMode);
+            StartMode(PlayerStatus.isAimingMode);
         }
     }
 
@@ -660,11 +646,10 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnRangeAttack(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            mouseStateMachine.ChangeState(MouseType.attack);
-            StartMode(ref isRangeAttackMode);
+            StartMode(PlayerStatus.isRangeAttackMode);
 
             TurnOnHighlighter(0);
         }
@@ -726,16 +711,16 @@ public class NodePlayerController : MonoBehaviour
         }
         RefreshPipAllSafe();
         TurnOffHighlighter();
-        StartMode(ref isMoveMode);
+        StartMode(PlayerStatus.isMoveMode);
     }
 
 
     public void OnPerkAction(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isPerkActionMode);
+            StartMode(PlayerStatus.isPerkActionMode);
         }
     }
 
@@ -752,10 +737,10 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnReload(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
-            StartMode(ref isReloadMode);
+            StartMode(PlayerStatus.isReloadMode);
         }
     }
 
@@ -798,7 +783,6 @@ public class NodePlayerController : MonoBehaviour
     {
         animationController.IdleState();
         highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
-        mouseStateMachine.ChangeState(MouseType.move);
     }
     public void TurnOnHighlighter(Vector3Int destination, int range)
     {
@@ -820,19 +804,37 @@ public class NodePlayerController : MonoBehaviour
         highlighter.ClearHighlights();
     }
 
-    public void StartMode(ref bool mode)
+    public void StartMode(PlayerStatus mode)
     {
-        isMoveMode = false;
-        isSneakAttackMode = false;
-        isAimingMode = false;
-        isRunMode = false;
-        isPickPocketMode = false;
-        isRangeAttackMode = false;
-        isPerkActionMode = false;
-        isThrowMode = false;
-        isReloadMode = false;
-
-        mode = true;
+        switch (mode)
+        {
+            case PlayerStatus.isMoveMode:
+                mouseStateMachine.ChangeState(MouseType.move);
+                break;
+            case PlayerStatus.isSneakAttackMode:
+                mouseStateMachine.ChangeState(MouseType.attack);
+                break;
+            case PlayerStatus.isAimingMode:
+                break;
+            case PlayerStatus.isRunMode:
+                break;
+            case PlayerStatus.isHideMode:
+                break;
+            case PlayerStatus.isPickPocketMode:
+                break;
+            case PlayerStatus.isRangeAttackMode:
+                mouseStateMachine.ChangeState(MouseType.attack);
+                break;
+            case PlayerStatus.isPerkActionMode:
+                break;
+            case PlayerStatus.isThrowMode:
+                break;
+            case PlayerStatus.isReloadMode:
+                break;
+            default:
+                break;
+        }
+        currPlayerStatus = mode;
     }
 
     public bool CheckRange(Vector3Int Pos, int range)
@@ -1048,4 +1050,16 @@ public class NodePlayerController : MonoBehaviour
     {
         transform.DOKill(false);
     }
+}
+public enum PlayerStatus {
+    isMoveMode,
+    isSneakAttackMode,
+    isAimingMode,
+    isRunMode,
+    isHideMode,
+    isPickPocketMode,
+    isRangeAttackMode,
+    isPerkActionMode,
+    isThrowMode,
+    isReloadMode
 }
