@@ -12,15 +12,28 @@ public class Skill : ScriptableObject
     public Group group;     //전투,잠입,도움
     public Kind kind;       //액티브,패시브,강화
 
-    [Header("숫자 ID")]
-    public int idNum = 1;   //Combat/Active의 1 -> 체력 회복
-
     [Header("표시 정보")]
     public string title = "체력 회복";
     [TextArea] public string effect;    //설명
 
-    [Header("가격")]
-    public int price = -1;  //-1이면 기본가(Active 10000) 사용
+    [Header("가격 자동 설정")]
+    [SerializeField, HideInInspector] private int price;
+
+    public int idNum = 1;
+
+    public int Price
+    {
+        get
+        {
+            switch (kind)
+            {
+                case Kind.Active: return 10000;
+                case Kind.Passive: return 40000;
+                case Kind.Upgrade: return 100000;
+                default: return 0;
+            }
+        }
+    }
 
     public string GetKey()
     {

@@ -26,12 +26,14 @@ public static class AbilityPurchases
         OnChanged?.Invoke();
     }
 
+    //스킬 구매 여부
     public static bool IsPurchased(string skillId)
     {
         if (string.IsNullOrEmpty(skillId)) return false;
         return data.purchased.Contains(skillId);
     }
 
+    //스킬 구매 시도
     public static bool TryPurchase(string skillId, int price)
     {
         if (string.IsNullOrEmpty(skillId)) return false;
@@ -45,9 +47,17 @@ public static class AbilityPurchases
         return true;
     }
 
+    //구매된 스킬 목록 조회
     public static IReadOnlyList<string> GetAllPurchased()
     {
         return data.purchased;
+    }
+
+    //가격 계산
+    public static int GetPrice(Skill skill)
+    {
+        if (skill == null) return 0;
+        return Mathf.Max(0, skill.Price);
     }
 
     static void Save()
@@ -59,7 +69,7 @@ public static class AbilityPurchases
         }
         catch (Exception e)
         {
-            Debug.LogError("[AbilityPurchases] Save failed: " + e);
+            Debug.LogError("[AbilityPurchases] 저장 실패: " + e);
         }
     }
 
@@ -77,7 +87,7 @@ public static class AbilityPurchases
         }
         catch (Exception e)
         {
-            Debug.LogWarning("[AbilityPurchases] Load failed, reset empty: " + e);
+            Debug.LogWarning("[AbilityPurchases] 불러오기 실패, 리셋: " + e);
         }
         data = new AbilityPurchaseData();
     }
