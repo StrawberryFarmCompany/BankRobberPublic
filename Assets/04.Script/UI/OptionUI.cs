@@ -92,6 +92,7 @@ public class OptionUI : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (CameraSensitivityManager.IsShuttingDown) return;
         if (rotationSlider) rotationSlider.onValueChanged.RemoveAllListeners();
         if (moveSlider) moveSlider.onValueChanged.RemoveAllListeners();
         if (zoomSlider) zoomSlider.onValueChanged.RemoveAllListeners();
