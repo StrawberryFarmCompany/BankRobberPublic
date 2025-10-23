@@ -338,8 +338,19 @@ class GameManager : SingleTon<GameManager>
     public void GameEnd()
     {
         //Reset();
-        Time.timeScale = 0f;
         UIManager.GetInstance.gameEndUI.TurnOnPanel();
+        if (NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Perfect)
+        {
+            UIManager.GetInstance.gameEndUI.SetPerfect();
+        }
+        else if (NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Failed)
+        {
+            UIManager.GetInstance.gameEndUI.SetFail();
+        }
+        else
+        {
+            UIManager.GetInstance.gameEndUI.SetSuccess();
+        }
         Debug.Log("게임 끝");
     }
 }
