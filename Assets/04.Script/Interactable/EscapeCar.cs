@@ -15,10 +15,18 @@ public class EscapeCar : IInteractable
 
     public void OnInteraction(EntityStats stat)
     {
-        NodePlayerManager.GetInstance.SetEscapeCondition(stat, EscapeCondition.Escape);
+        if (stat.isFullBag)
+        {
+            GameManager.GetInstance.GatherGoldAndScore();
+            NodePlayerManager.GetInstance.SetEscapeCondition(stat, EscapeCondition.SuccessHeist);
+        }
+        else
+        {
+            NodePlayerManager.GetInstance.SetEscapeCondition(stat, EscapeCondition.Escape);
+        }
         UIManager.GetInstance.gameEndUI.SetEscapeCharacter(stat);
         stat.OnReset?.Invoke();
-        stat.OnReset = null;
+        stat.DestroyEntity();
         stat.thisGameObject.SetActive(false);
         if(NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0)
         {

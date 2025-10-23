@@ -14,6 +14,8 @@ public enum SceneType
 
 public class LoadSceneManager : SingleTon<LoadSceneManager>
 {
+    public SceneType curSceneType;
+
     // 각 스테이지 진입 조건 점수
     public int stage02RequireScore = 90000;
     public int stage03RequireScore = 90000;
@@ -22,6 +24,7 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
     public void SceneLoad(SceneType sceneType)
     {
         Time.timeScale = 1f;
+        curSceneType = sceneType;
         SceneManager.LoadScene(SceneTypeToString(sceneType));
     }
 
@@ -30,6 +33,7 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
         if (CheckEntryCondition(sceneType))
         {
             Time.timeScale = 1f;
+            curSceneType = sceneType;
             SceneManager.LoadScene(SceneTypeToString(sceneType));
         }
         else
@@ -42,69 +46,71 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
     {
         switch (sceneType)
         {
-            case SceneType.MainTitle:
-                return "MainTitle";
-            case SceneType.LobbyScene:
-                return "LobbyNPCTEST";
-            case SceneType.TutorialScene:
-                return "MainScene";
-                //return "TutorialScene";
-            case SceneType.Stage01Scene:
-                return "Stage01Scene";
-            case SceneType.Stage02Scene:
-                return "Stage02Scene";
-            case SceneType.Stage03Scene:
-                return "Stage03Scene";
-            case SceneType.Stage04Scene:
-                return "Stage04Scene";
+            case SceneType.MainTitle: return "MainTitle";
+            case SceneType.LobbyScene: return "LobbyNPCTEST";
+            case SceneType.TutorialScene: return "EscapeTest";
+            case SceneType.Stage01Scene: return "EscapeTest";
+            case SceneType.Stage02Scene: return "Stage02Scene";
+            case SceneType.Stage03Scene: return "Stage03Scene";
+            case SceneType.Stage04Scene: return "Stage04Scene";
             default:
                 Debug.Log("그딴 씬은 없다");
                 return "null";
-
         }
     }
 
     public bool CheckEntryCondition(SceneType sceneType)
     {
-        // 각 스테이지 진입 조건
+        var scoreManager = ScoreManager.GetInstance;
+
         switch (sceneType)
         {
             case SceneType.Stage01Scene:
-                // 스테이지1은 항상 가능
                 return true;
 
             case SceneType.Stage02Scene:
-                // Stage01 점수가 기준 이상이어야 Stage02 진입 가능
-                return ScoreManager.GetInstance.GetScore(SceneType.Stage01Scene) >= stage02RequireScore;
+                return CheckOrUnlockStage(SceneType.Stage01Scene, SceneType.Stage02Scene, stage02RequireScore);
 
             case SceneType.Stage03Scene:
-                // Stage02 점수가 기준 이상이어야 Stage03 진입 가능
-                return ScoreManager.GetInstance.GetScore(SceneType.Stage02Scene) >= stage03RequireScore;
+                return CheckOrUnlockStage(SceneType.Stage02Scene, SceneType.Stage03Scene, stage03RequireScore);
 
             case SceneType.Stage04Scene:
-                // Stage03 점수가 기준 이상이어야 Stage04 진입 가능
-                return ScoreManager.GetInstance.GetScore(SceneType.Stage03Scene) >= stage04RequireScore;
+                return CheckOrUnlockStage(SceneType.Stage03Scene, SceneType.Stage04Scene, stage04RequireScore);
 
             default:
-                // 나머지는 제한 없음
                 return true;
         }
+    }
+
+    private bool CheckOrUnlockStage(SceneType prevStage, SceneType targetStage, int requireScore)
+    {
+        var scoreManager = ScoreManager.GetInstance;
+
+        // 이미 클리어된 스테이지면 바로 입장 가능
+        if (scoreManager.IsStageCleared(targetStage))
+            return true;
+
+        // 이전 스테이지 점수가 기준 이상이라면 클리어 처리 후 입장 가능
+        if (scoreManager.GetScore(prevStage) >= requireScore)
+        {
+            scoreManager.SetStageClear(targetStage, true);
+            Debug.Log($" {targetStage} 해금 완료!");
+            return true;
+        }
+
+        // 조건 미달
+        return false;
     }
 
     public int GetRequireScore(SceneType sceneType)
     {
         switch (sceneType)
         {
-            case SceneType.Stage01Scene:
-                return 0;
-            case SceneType.Stage02Scene:
-                return stage02RequireScore;
-            case SceneType.Stage03Scene:
-                return stage03RequireScore;
-            case SceneType.Stage04Scene:
-                return stage04RequireScore;
-            default:
-                return 0;
+            case SceneType.Stage01Scene: return 0;
+            case SceneType.Stage02Scene: return stage02RequireScore;
+            case SceneType.Stage03Scene: return stage03RequireScore;
+            case SceneType.Stage04Scene: return stage04RequireScore;
+            default: return 0;
         }
     }
 }
