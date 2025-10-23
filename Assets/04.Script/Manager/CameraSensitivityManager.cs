@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+using UnityEngine.SceneManagement;
 
 public class CameraSensitivityManager : MonoSingleTon<CameraSensitivityManager>
 {
@@ -12,9 +13,17 @@ public class CameraSensitivityManager : MonoSingleTon<CameraSensitivityManager>
 
     public event Action OnSensitivityChanged;
 
+    private static bool isShuttingDown = false;
+    public static bool IsShuttingDown => isShuttingDown;
+
     protected override void Init()
     {
         LoadValues();
+
+        Application.quitting += () =>
+        {
+            isShuttingDown = true;
+        };
     }
 
     private void LoadValues()
@@ -36,6 +45,7 @@ public class CameraSensitivityManager : MonoSingleTon<CameraSensitivityManager>
 
     public void SetMoveSpeed(float value)
     {
+        if (isShuttingDown) return;
         MoveSpeed = value;
         SaveValues();
         OnSensitivityChanged?.Invoke();
@@ -43,6 +53,7 @@ public class CameraSensitivityManager : MonoSingleTon<CameraSensitivityManager>
 
     public void SetWasdSpeed(float value)
     {
+        if (isShuttingDown) return;
         WasdSpeed = value;
         SaveValues();
         OnSensitivityChanged?.Invoke();
@@ -50,6 +61,7 @@ public class CameraSensitivityManager : MonoSingleTon<CameraSensitivityManager>
 
     public void SetRotateSpeed(float value)
     {
+        if (isShuttingDown) return;
         RotateSpeed = value;
         SaveValues();
         OnSensitivityChanged?.Invoke();
@@ -57,8 +69,14 @@ public class CameraSensitivityManager : MonoSingleTon<CameraSensitivityManager>
 
     public void SetScrollSpeed(float value)
     {
+        if (isShuttingDown) return;
         ScrollSpeed = value;
         SaveValues();
         OnSensitivityChanged?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        isShuttingDown = true;
     }
 }
