@@ -151,9 +151,4 @@ public class GameEnd : MonoBehaviour
         arrestCostText.text = $"$ -{GameManager.GetInstance.GatheredCost}";
         benefitText.text = totalBenefit >= 0 ? $"$ {totalBenefit}" : $"$ {totalBenefit}";
     }
-
-    private void Update()
-    {
-        Debug.Log($"{GameManager.GetInstance.GatheredGold}");
-    }
 }
