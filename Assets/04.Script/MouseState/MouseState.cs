@@ -150,7 +150,7 @@ public class MouseThrowState : MouseState
         float fStep = step;
         for (int i = 0; i < arr.Length; i++)
         {
-            arr[i] = new Vector3(Mathf.Lerp(start.x, goal.x, i / fStep),Mathf.Sin((i * 3) / fStep), Mathf.Lerp(start.z, goal.z, i / fStep));
+            arr[i] = new Vector3(Mathf.Lerp(start.x, goal.x, i / fStep),(Mathf.Sin((i * 3) / fStep)*3f), Mathf.Lerp(start.z, goal.z, i / fStep));
         }
         return arr;
     }
