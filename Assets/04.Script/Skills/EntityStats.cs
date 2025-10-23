@@ -173,6 +173,7 @@ public class EntityStats
     private void Dead()
     {
         //thisGameObject.SetActive(false);
+        NodePlayerManager.GetInstance.SetEscapeCondition(this, EscapeCondition.Arrest);
         OnDead?.Invoke();
         DestroyEntity();
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
@@ -182,14 +183,6 @@ public class EntityStats
         }
         if (NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0)
         {
-            if(NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Failed)
-            {
-                UIManager.GetInstance.gameEndUI.SetFail();
-            }
-            else
-            {
-                UIManager.GetInstance.gameEndUI.SetSuccess();
-            }
             NodePlayerManager.GetInstance.LateGameEndCall();
         }
     }
