@@ -35,6 +35,8 @@ public class NodePlayerManager : MonoBehaviour
     public EscapeCondition isEscapeRook;
     public EscapeCondition isEscapeKnight;
 
+    private bool isGameEnd;
+
     private void Awake()
     {
         if (GetInstance == null)
@@ -50,6 +52,7 @@ public class NodePlayerManager : MonoBehaviour
     // 플레이어 리스트 자동 등록 (씬에 배치된 모든 NodePlayerController)
     private void Start()
     {
+        isGameEnd = false;
         EscapeConditionReset();
         UIManager.GetInstance.SetCharacterResultUI(players);
         UIManager.GetInstance.gameEndUI.TurnOffPanel();
@@ -306,6 +309,8 @@ public class NodePlayerManager : MonoBehaviour
 
     public void LateGameEndCall()
     {
+        if (isGameEnd) return;
+        isGameEnd = true;
         StartCoroutine(LateGameEndCallCoroutine());
     }
 
