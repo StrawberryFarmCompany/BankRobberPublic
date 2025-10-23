@@ -61,7 +61,7 @@ public static class Money
         }
         catch (Exception e)
         {
-            Debug.LogError("[Money] Save failed: " + e);
+            Debug.LogError("[Money] 저장 실패: " + e);
         }
     }
 
@@ -79,7 +79,7 @@ public static class Money
         }
         catch (Exception e)
         {
-            Debug.LogWarning("[Money] Load failed, reset to 0: " + e);
+            Debug.LogWarning("[Money] 불러오기 실패, 리셋: " + e);
         }
         Value = 0;
     }
