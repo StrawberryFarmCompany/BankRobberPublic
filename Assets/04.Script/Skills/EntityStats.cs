@@ -55,6 +55,7 @@ public class EntityStats
     public Action<Vector3Int> ForceMove;
 
     public GameObject thisGameObject;
+    public bool isFullBag;
     /// <summary>
     /// 탈출 시 초기화하는 함수 monobehaviour 단에서 구현하여 해당 OnReset Action에 추가
     /// </summary>
@@ -83,14 +84,16 @@ public class EntityStats
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
-        if(baseStats.characterType != CharacterType.None) this.characterType = baseStats.characterType;
+        if (baseStats.characterType != CharacterType.None) 
+        {
+            this.characterType = baseStats.characterType;
+            isFullBag = false;
+        }
 
         if (gameObject != null)
         {
             thisGameObject = gameObject;
         }
-
-        OnReset += DestroyEntity;
     }
     public void RegistBuff(BuffData data)
     {
@@ -172,15 +175,16 @@ public class EntityStats
 
     private void Dead()
     {
+        GameManager.GetInstance.GatherCostAndScore();
         //thisGameObject.SetActive(false);
-        NodePlayerManager.GetInstance.SetEscapeCondition(this, EscapeCondition.Arrest);
+        if (characterType != CharacterType.None)
+        {
+            NodePlayerManager.GetInstance.SetEscapeCondition(this, EscapeCondition.Arrest);
+            UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
+        }
         OnDead?.Invoke();
         DestroyEntity();
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
-        if (characterType != CharacterType.None)
-        {
-            UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
-        }
         if (NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0)
         {
             NodePlayerManager.GetInstance.LateGameEndCall();
@@ -247,12 +251,14 @@ public class EntityStats
     {
         OnDamaged = null;
         OnDead = null;
+        OnReset = null;
         ForceMove = null;
         UnequipPassive(equippedPassive);
         equippedPassive = null;
         buffs.Clear();
         currNode?.RemoveCharacter(this);
         currNode = null;
+        isFullBag = false;
         GameManager.GetInstance.UnregisterEntity(this);
         //NodePlayerManager.GetInstance.UnregisterPlayer(thisGameObject.GetComponent<NodePlayerController>());
         //GameManager.GetInstance.BattleTurn.RemoveUnit();

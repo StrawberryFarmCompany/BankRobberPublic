@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,13 @@ public class GameEnd : MonoBehaviour
     [SerializeField] private GameObject successImage;
     [SerializeField] private GameObject perfectImage;
     [SerializeField] private Button LobbyButton;
+
+    [SerializeField] private TextMeshProUGUI revenueText;
+    [SerializeField] private TextMeshProUGUI projectCostText;
+    [SerializeField] private TextMeshProUGUI arrestCostText;
+    [SerializeField] private TextMeshProUGUI benefitText;
+
+
     //public List<CharacterResult> characterResults = new List<CharacterResult>();
 
     private CharacterResult bishopResult;
@@ -37,6 +45,7 @@ public class GameEnd : MonoBehaviour
 
     public void TurnOnPanel()
     {
+        SetBenefitResult();
         panel.SetActive(true);
     }
 
@@ -129,6 +138,22 @@ public class GameEnd : MonoBehaviour
 
     private void LoadLobby()
     {
+        GameManager.GetInstance.DoReset();
         LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
+    }
+
+    private void SetBenefitResult()
+    {
+        int totalBenefit = GameManager.GetInstance.GetBenefitResult();
+
+        revenueText.text = $"$ {GameManager.GetInstance.GatheredGold}";
+        projectCostText.text = $"$ -{GameManager.GetInstance.GetProjectCost()}";
+        arrestCostText.text = $"$ -{GameManager.GetInstance.GatheredCost}";
+        benefitText.text = totalBenefit >= 0 ? $"$ {totalBenefit}" : $"$ {totalBenefit}";
+    }
+
+    private void Update()
+    {
+        Debug.Log($"{GameManager.GetInstance.GatheredGold}");
     }
 }

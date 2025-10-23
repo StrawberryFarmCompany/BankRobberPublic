@@ -96,7 +96,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 5874ca0885877194abf40a3dd9228b23,
+    type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -11421,8 +11422,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneType: 3
-  firstText: "1 1 \uC124\uBA85"
-  secondText: "1 2 \uC124\uBA85"
+  firstText: "\uBD88\uBC95 \uACE0\uB9AC\uB300\uAE08 \uC740\uD589"
+  secondText: "\uC120\uB7C9\uD55C \uC0AC\uB78C\uB4E4\uC774 \uC774\uC6A9\uD558\uB294
+    \uC120\uB7C9\uD558\uC9C0 \uC54A\uC740 \uC740\uD589\uC774\uB2E4. \uC815\uC758\uAD6C\uD604\uC774
+    \uD544\uC694\uD558\uB2E4."
   conditionText: "\uC870\uAC74 \uC5C6\uC74C"
   stageUI: {fileID: 0}
   firstTextObject: {fileID: 0}
@@ -20365,8 +20368,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneType: 2
-  firstText: "\uD29C\uD1A0 1 \uC124\uBA85"
-  secondText: "\uD29C\uD1A0 2 \uC124\uBA85"
+  firstText: "\uD29C\uD1A0\uB9AC\uC5BC"
+  secondText: "\uB808\uC2A4\uD130\uAC00 \uCFE0\uC0AC\uB9AC \uC8FC\uBA74\uC11C \uB2E4\uC2DC
+    \uAD50\uC721\uD574\uC8FC\uB294 \uACF3"
   conditionText: "\uC870\uAC74 \uC5C6\uC74C"
   stageUI: {fileID: 0}
   firstTextObject: {fileID: 0}
@@ -23345,6 +23349,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: ee3deac0-cd93-4cb2-a02c-9254a69918ed
     m_ActionName: Player/CloseUI[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 2f2ce2e8-6657-4bd7-98df-0364a6b56472
+    m_ActionName: NodePlayer/NodeSelect[/Mouse/position]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -23370,7 +23378,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3558fd5e21b74e547a1b5b93130da627, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: 1
   controller: {fileID: 4392594149221849904}
   dialogueManager: {fileID: 1983841866}
   playerInput: {fileID: 1605532674519642536}
@@ -23449,7 +23456,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 308677266978795231}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 955a6f88b3d99a74888e7fdc0ae6f3df, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
