@@ -178,7 +178,6 @@ public class NodePlayerManager : MonoBehaviour
             if (players.Count == 0)
             {
                 currentPlayerIndex = 0;
-                GameManager.GetInstance.GameEnd();
                 return;
             }
 
@@ -245,18 +244,18 @@ public class NodePlayerManager : MonoBehaviour
         }
     }
 
-    public void SetEscapeCondition(EntityStats stats)
+    public void SetEscapeCondition(EntityStats stats, EscapeCondition condition)
     {
         switch (stats.characterType) 
         {
             case (CharacterType.Bishop):
-                isEscapeBishop = EscapeCondition.Escape;
+                isEscapeBishop = condition;
                 break;
             case (CharacterType.Rook):
-                isEscapeRook= EscapeCondition.Escape;
+                isEscapeRook= condition;
                 break;
             case (CharacterType.Knight):
-                isEscapeKnight = EscapeCondition.Escape;
+                isEscapeKnight = condition;
                 break;
             default:
                 break;
@@ -308,7 +307,9 @@ public class NodePlayerManager : MonoBehaviour
 
     private IEnumerator LateGameEndCallCoroutine()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1.5f);
         GameManager.GetInstance.GameEnd();
+        yield return new WaitForSeconds(2f);
+        Time.timeScale = 0f;
     }
 }
