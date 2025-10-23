@@ -70,6 +70,7 @@ public class NodePlayerController : MonoBehaviour
         highlighter.Init();
         StartMode(PlayerStatus.isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
+        playerStats.OnReset += UnsubscribePlayer;
 
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);

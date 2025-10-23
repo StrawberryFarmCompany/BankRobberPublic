@@ -25,6 +25,7 @@ public class GoldBar : IInteractable
         NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
         if (NodePlayerManager.GetInstance.GetCurrentPlayer().fullBackPack != null) return;
         NodePlayerManager.GetInstance.GetCurrentPlayer().GetGold();
+        stat.isFullBag = true;
 
         foreach (GameObject obj in consumeItems)
         {

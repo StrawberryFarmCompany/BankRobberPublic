@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 
 public enum GamePhase
 {
@@ -40,6 +41,13 @@ class GameManager : SingleTon<GameManager>
     //private readonly Dictionary<CharacterNumber, NodePlayerController> _actors = new();
     public NodePlayerController CurrentActor { get; private set; }
     public EntityStats CurrentStats => CurrentActor != null ? CurrentActor.playerStats : null;
+
+    private int gatheredGold;
+    public int GatheredGold { get {return gatheredGold;} set {gatheredGold = value;}}
+
+    private int gatheredCost;
+    public int GatheredCost { get { return gatheredCost; } set { gatheredCost = value; } }
+
 
     //public void RegisterActor(NodePlayerController actor)
     //{
@@ -86,18 +94,23 @@ class GameManager : SingleTon<GameManager>
         noneBattleTurn = new NoneBattleTurnStateMachine();
         //noneBattleTurn.AddStartPointer(TurnTypes.ally, StartPlayerTurn);
         battleTurn = new BattleTurnStateMachine();
+        GatheredGold = 0;
+        GatheredCost = 0;
     }
 
     protected override void Reset()
     {
         base.Reset();
+        GatheredGold = 0;
+        GatheredCost = 0;
         SecurityData.Reset();
-        OnNodeReset();
+        //OnNodeReset();            //나중에 nodeInteractions 가 Null 뜨는 거 잡기
         noneBattleTurn.OnSceneChange();
         OnEntityReset();
         battleTurn = new BattleTurnStateMachine();
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();
+        Debug.Log($"초기화된 돈 : {GatheredGold}");
     }
     public void OnEntityReset()
     {
@@ -351,6 +364,98 @@ class GameManager : SingleTon<GameManager>
         {
             UIManager.GetInstance.gameEndUI.SetSuccess();
         }
+        SaveGoldAndScore();
         Debug.Log("게임 끝");
+    }
+
+    public int GetProjectCost()
+    {
+        SceneType sceneType = LoadSceneManager.GetInstance.curSceneType;
+        switch (sceneType)
+        {
+            case SceneType.Stage01Scene:
+                return 10000;
+            case SceneType.Stage02Scene:
+                return 10000;
+            case SceneType.Stage03Scene:
+                return 10000;
+            case SceneType.Stage04Scene:
+                return 10000;
+            default:
+                return 0;
+        }
+    }
+
+    public void GatherGoldAndScore()
+    {
+        SceneType sceneType = LoadSceneManager.GetInstance.curSceneType;
+
+        switch (sceneType) 
+        {
+            case SceneType.Stage01Scene:
+                GatheredGold += 20000;
+                break;
+            case SceneType.Stage02Scene:
+                GatheredGold += 20000;
+                break;
+            case SceneType.Stage03Scene:
+                GatheredGold += 20000;
+                break;
+            case SceneType.Stage04Scene:
+                GatheredGold += 20000;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void GatherCostAndScore()
+    {
+        SceneType sceneType = LoadSceneManager.GetInstance.curSceneType;
+
+        switch (sceneType)
+        {
+            case SceneType.Stage01Scene:
+                GatheredCost += 6000;
+                break;
+            case SceneType.Stage02Scene:
+                GatheredCost += 6000;
+                break;
+            case SceneType.Stage03Scene:
+                GatheredCost += 6000;
+                break;
+            case SceneType.Stage04Scene:
+                GatheredCost += 6000;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 게임엔드UI에 쓸 용도
+    /// </summary>
+    /// <returns></returns>
+    public int GetBenefitResult()
+    {
+        
+        int totalBenefit = GatheredGold - GetProjectCost() - GatheredCost;
+        Debug.Log($"토탈: {totalBenefit}, 수익: {GatheredGold}, 작전 비용: {GetProjectCost()}, 보석금: {GatheredCost}");
+        return totalBenefit;
+    }
+
+    /// <summary>
+    /// 게임엔드 띄울 때 한 번만 호출할 것. 스코어 저장 하니까 쓸 때 조심
+    /// </summary>
+    /// <returns></returns>
+    public void SaveGoldAndScore()
+    {
+        int totalBenefit = GatheredGold - GetProjectCost() - GatheredCost;
+        ScoreManager.GetInstance.AddScore(LoadSceneManager.GetInstance.curSceneType, totalBenefit);
+    }
+
+    public void DoReset()
+    {
+        Reset();
     }
 }
