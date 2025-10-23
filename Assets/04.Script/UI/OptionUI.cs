@@ -99,7 +99,7 @@ public class OptionUI : MonoBehaviour
         if (clickSlider) clickSlider.onValueChanged.RemoveAllListeners();
         if (fpsLookSlider) fpsLookSlider.onValueChanged.RemoveAllListeners();
     }
-ㅈ
+
     float GetFirstFpsSensitivityOrDefault(float def)
     {
         if (fpsPlayers != null)
