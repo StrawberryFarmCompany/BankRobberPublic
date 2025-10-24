@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -531,7 +530,9 @@ public class NodePlayerController : MonoBehaviour
             RemoveHideMode();
 
             animationController.OnUnEquipForSneak();
-            
+
+            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Ambush);
+
             StartMode(PlayerStatus.isMoveMode);
 
             RefreshPipAllSafe();
@@ -718,6 +719,17 @@ public class NodePlayerController : MonoBehaviour
         }
         RefreshPipAllSafe();
         StartMode(PlayerStatus.isMoveMode);
+
+        if (gun.makeNoise == true)
+        {
+            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger);
+            return;
+        }
+
+        if (gun.makeNoise == false)
+        {
+            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger, false);
+        }
     }
 
 
