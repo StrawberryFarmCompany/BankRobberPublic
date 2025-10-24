@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48f4361ba35170f48a7b11315e8fd9bc, type: 3}
+  m_Name: CombatUpgrade1 2
+  m_EditorClassIdentifier: 
+  group: 0
+  kind: 2
+  title: "\uBAA8\uB4E0 \uC544\uAD70 \uCCB4\uB825 \uD68C\uBCF5"
+  effect: "\uC790\uAE30 \uC790\uC2E0\uB9CC \uD68C\uBCF5\uC5D0\uC11C \uBAA8\uB4E0
+    \uC544\uAD70 \uC5D4\uD2F0\uD2F0 \uD68C\uBCF5\uC73C\uB85C \uBCC0\uACBD"
+  price: 0
+  idNum: 2
