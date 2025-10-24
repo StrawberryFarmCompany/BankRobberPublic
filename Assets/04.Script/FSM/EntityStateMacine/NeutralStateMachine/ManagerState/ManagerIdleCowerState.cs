@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class ManagerIdleCowerState : NeutralState
 {
-    public ManagerNPC managerNPC;
 
-    public ManagerIdleCowerState(NeutralNPC neutral)
+    public ManagerIdleCowerState(NeutralNPC manager, Animator anim)
     {
-        managerNPC = neutral as ManagerNPC;
+        this.neutralNPC = manager;
+        this.anim = anim;
     }
 
     public override void Enter()

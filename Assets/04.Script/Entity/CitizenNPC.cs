@@ -1,3 +1,4 @@
+using BuffDefine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class CitizenNPC : NeutralNPC
     {
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
-        nfsm = new NeutralStateMachine(this, NeutralStates.CitizenIdleState);
+        nfsm = new NeutralStateMachine(this, transform.GetComponentInChildren<Animator>(), NeutralStates.CitizenIdleState);
         yield return null;
     }
 
@@ -41,6 +42,8 @@ public class CitizenNPC : NeutralNPC
         if (visibleTargets.Count > 0 && isDetection == false)
         { 
             isDetection = true;
+            //CitizenWitness();
+            Debug.Log("발견함");
         }
 
         else if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
@@ -58,8 +61,9 @@ public class CitizenNPC : NeutralNPC
         else if (isDetection == true)//플레이어 발각시
         {
             Debug.Log("존나 튀는 상태");
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(exitArea); }, 0f));
+            nfsm.eta = 3f;
             nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
-            Move(exitArea);
         }
 
         else 

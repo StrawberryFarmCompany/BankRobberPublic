@@ -9,7 +9,7 @@ public class ManagerNPC : NeutralNPC
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태 ManagerIdleState)
-        nfsm = new NeutralStateMachine(this, NeutralStates.ManagerIdleState);
+        nfsm = new NeutralStateMachine(this, transform.GetComponentInChildren<Animator>(), NeutralStates.ManagerIdleState);
 
         stats.OnDamaged += TakeDamage;
     }

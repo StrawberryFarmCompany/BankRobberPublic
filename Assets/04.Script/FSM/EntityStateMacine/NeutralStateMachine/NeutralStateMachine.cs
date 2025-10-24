@@ -1,11 +1,12 @@
 using IStateMachine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class NeutralStateMachine : IStateMachineBase<NeutralState>
 {
     private Dictionary<NeutralStates, NeutralState> neutralStates;
-
+    public float eta;
     private NeutralState currentState;
 
     public NeutralState Current => currentState;
@@ -13,8 +14,8 @@ public class NeutralStateMachine : IStateMachineBase<NeutralState>
     public void ChangeState(NeutralState next)
     {
         currentState = next;
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration));
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Exit, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration = 1 * eta));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Exit, 0f));
     }
 
     public void ForceSet(NeutralState next)
@@ -28,12 +29,12 @@ public class NeutralStateMachine : IStateMachineBase<NeutralState>
         return neutralStates[statesType];
     }
 
-    public NeutralStateMachine(NeutralNPC neutralNPC,NeutralStates startType = NeutralStates.CitizenIdleState) 
+    public NeutralStateMachine(NeutralNPC neutralNPC,Animator anim, NeutralStates startType = NeutralStates.CitizenIdleState) 
     {
         neutralStates = new Dictionary<NeutralStates, NeutralState>();
         for (int i = 0; i < Enum.GetValues(typeof(NeutralStates)).Length; i++)
         {
-            neutralStates.TryAdd((NeutralStates)i, NeutralState.Factory((NeutralStates)i,neutralNPC));
+            neutralStates.TryAdd((NeutralStates)i, NeutralState.Factory((NeutralStates)i,neutralNPC,anim));
         }
         currentState = neutralStates[startType];
         currentState.Enter();
@@ -55,6 +56,8 @@ public enum NeutralStates
 public class NeutralState : IStateBase 
 {
     public float duration;
+    protected Animator anim;
+    protected NeutralNPC neutralNPC;
 
     public virtual void Enter()
     {
@@ -71,24 +74,24 @@ public class NeutralState : IStateBase
 
     }
 
-    public static NeutralState Factory(NeutralStates neutralStatesType,NeutralNPC neutralNPC)
+    public static NeutralState Factory(NeutralStates neutralStatesType,NeutralNPC neutralNPC, Animator anim)
     {
         switch (neutralStatesType)
         {
             case NeutralStates.CitizenIdleState:
-                return new CitizenIdleState(neutralNPC);
+                return new CitizenIdleState(neutralNPC,anim);
             case NeutralStates.CitizenCowerState:
-                return new CitizenCowerState(neutralNPC);
+                return new CitizenCowerState(neutralNPC, anim);
             case NeutralStates.CitizenFleeState:
-                return new CitizenFleeState(neutralNPC);
+                return new CitizenFleeState(neutralNPC, anim);
             case NeutralStates.CitizenDeadState:
-                return new CitizenDeadState(neutralNPC);
+                return new CitizenDeadState(neutralNPC, anim);
             case NeutralStates.ManagerIdleState:
-                return new ManagerIdleState(neutralNPC);
+                return new ManagerIdleState(neutralNPC, anim);
             case NeutralStates.ManagerIdleCowerState:
-                return new ManagerIdleCowerState(neutralNPC);
+                return new ManagerIdleCowerState(neutralNPC, anim);
             case NeutralStates.ManagerDeadState:
-                return new ManagerDeadState(neutralNPC);
+                return new ManagerDeadState(neutralNPC, anim);
             default:
                 return null;
         }
