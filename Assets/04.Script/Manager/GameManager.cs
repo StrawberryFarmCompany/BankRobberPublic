@@ -104,7 +104,7 @@ class GameManager : SingleTon<GameManager>
         GatheredGold = 0;
         GatheredCost = 0;
         SecurityData.Reset();
-        //OnNodeReset();            //나중에 nodeInteractions 가 Null 뜨는 거 잡기
+        OnNodeReset();            //나중에 nodeInteractions 가 Null 뜨는 거 잡기
         noneBattleTurn.OnSceneChange();
         OnEntityReset();
         battleTurn = new BattleTurnStateMachine();
