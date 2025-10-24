@@ -33,5 +33,6 @@ public class GunData : ScriptableObject
     public int thirdRange;
     public int thirdRangeAccuracy;
     public int awayRangeAccuracy;
-
+    public int price;
+    public Sprite WeaponSprite;
 }

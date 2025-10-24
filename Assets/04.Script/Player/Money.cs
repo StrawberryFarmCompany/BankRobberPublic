@@ -42,6 +42,12 @@ public static class Money
         OnChanged?.Invoke(Value);
     }
 
+    public static int Get()
+    {
+        Load();
+        return Value;
+    }
+
     public static bool TrySpend(int price)
     {
         if (price <= 0) return true;
