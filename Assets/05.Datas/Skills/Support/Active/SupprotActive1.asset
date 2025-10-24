@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48f4361ba35170f48a7b11315e8fd9bc, type: 3}
-  m_Name: Upgrade2 2
+  m_Name: SupprotActive1
   m_EditorClassIdentifier: 
-  group: 0
+  group: 2
   kind: 0
-  title: "\uCCB4\uB825 \uD68C\uBCF5"
-  effect: 
+  title: "\uD589\uB3D9\uB825 \uD68C\uBCF5"
+  effect: "\uC0AC\uC6A9\uD55C \uC5D4\uD2F0\uD2F0\uC758 \uD589\uB3D9\uB825\uC744 3\uD68C\uBCF5(\uCD08\uACFC\uB41C
+    \uD68C\uBCF5\uB7C9\uC740 \uC0AC\uB77C\uC9D0)"
   price: 0
   idNum: 1

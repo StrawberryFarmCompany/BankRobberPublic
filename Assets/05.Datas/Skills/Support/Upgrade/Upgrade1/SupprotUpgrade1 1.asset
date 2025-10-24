@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48f4361ba35170f48a7b11315e8fd9bc, type: 3}
-  m_Name: Skill 1
+  m_Name: SupprotUpgrade1 1
   m_EditorClassIdentifier: 
-  group: 0
-  kind: 0
-  title: "\uCCB4\uB825 \uD68C\uBCF5"
-  effect: 
+  group: 2
+  kind: 2
+  title: "\uD589\uB3D9\uB825 \uD68C\uBCF5 \uAC15\uD654"
+  effect: "\uD589\uB3D9\uB825 3\uD68C\uBCF5\uC5D0\uC11C \uC804\uBD80 \uD68C\uBCF5\uC73C\uB85C
+    \uBCC0\uACBD"
   price: 0
   idNum: 1

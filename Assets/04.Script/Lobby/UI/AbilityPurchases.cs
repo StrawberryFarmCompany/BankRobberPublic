@@ -91,4 +91,13 @@ public static class AbilityPurchases
         }
         data = new AbilityPurchaseData();
     }
+
+    //테스트용 모두 초기화
+    public static void ForceClear()
+    {
+        data.purchased.Clear();
+        Save();
+        OnChanged?.Invoke();
+        Debug.Log("[AbilityPurchases] 구매 데이터 초기화");
+    }
 }
