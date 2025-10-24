@@ -21,6 +21,7 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual IEnumerator Start()
     {
+        //SecurityLevel1();
         if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
         stats.NodeUpdates(transform.position);
@@ -99,6 +100,7 @@ public class EnemyNPC : MonoBehaviour
                 Debug.Log(nearPlayerLocation);
                 Witness();
                 SecurityCall();
+                SecurityLevel2();
             }
         }
         
@@ -168,6 +170,20 @@ public class EnemyNPC : MonoBehaviour
     {
         curNoise = noisePos;
     }
+
+    public void SecurityLevel1()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6000, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
     public void SecurityLevel2()
     {
         if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6001, out BuffData item))
@@ -194,18 +210,6 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
-    public void SecurityLevel3Buff()
-    {
-        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6003, out BuffData item))
-        {
-            stats.RegistBuff(item);
-        }
-
-        else
-        {
-            Debug.Log("키 값 조회 실패");
-        }
-    }
 
     public void SecurityCall()
     {
