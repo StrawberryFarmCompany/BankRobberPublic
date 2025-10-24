@@ -47,9 +47,6 @@ public class SecurityData
         if (level == 2)
         {
             sharedSec = IBuff.Factory(data, stat, BuffType.securityLevel);
-            ResourceManager.GetInstance.GetBuffData.TryGetValue(6003, out BuffData move);
-            currSec = IBuff.Factory(move, stat, BuffType.securityLevel);
-            currSec.RegistBuff();
             OnBattlePhase?.Invoke();
         }
         else

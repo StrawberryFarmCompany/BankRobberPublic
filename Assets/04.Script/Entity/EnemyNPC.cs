@@ -21,13 +21,13 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual IEnumerator Start()
     {
-        //SecurityLevel1();
         if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
         stats.NodeUpdates(transform.position);
         gun = GetComponent<Gun>();
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
+        SecurityLevel(0);
     }
 
     protected virtual void FixedUpdate()
@@ -100,7 +100,7 @@ public class EnemyNPC : MonoBehaviour
                 Debug.Log(nearPlayerLocation);
                 Witness();
                 SecurityCall();
-                SecurityLevel2();
+                SecurityLevel(1);
             }
         }
         
@@ -171,45 +171,10 @@ public class EnemyNPC : MonoBehaviour
         curNoise = noisePos;
     }
 
-    public void SecurityLevel1()
+    public void SecurityLevel(ushort level)
     {
-        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6000, out BuffData item))
-        {
-            stats.RegistBuff(item);
-        }
-
-        else
-        {
-            Debug.Log("키 값 조회 실패");
-        }
+        stats.secData.SetSecLevel(level);
     }
-
-    public void SecurityLevel2()
-    {
-        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6001, out BuffData item))
-        {
-            stats.RegistBuff(item);
-        }
-
-        else
-        {
-            Debug.Log("키 값 조회 실패");
-        }
-    }
-
-    public void SecurityLevel3()
-    {
-        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6002, out BuffData item))
-        {
-            stats.RegistBuff(item);
-        }
-
-        else
-        {
-            Debug.Log("키 값 조회 실패");
-        }
-    }
-
 
     public void SecurityCall()
     {
