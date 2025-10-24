@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48f4361ba35170f48a7b11315e8fd9bc, type: 3}
-  m_Name: Skill 2
+  m_Name: SupprotPassive1
   m_EditorClassIdentifier: 
-  group: 0
-  kind: 0
-  title: "\uCCB4\uB825 \uD68C\uBCF5"
-  effect: 
+  group: 2
+  kind: 1
+  title: "\uD589\uB3D9\uB825 \uC99D\uAC00"
+  effect: "\uCD5C\uB300 \uD589\uB3D9\uB825 +1"
   price: 0
   idNum: 1

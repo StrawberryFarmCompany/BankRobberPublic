@@ -776,6 +776,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 101980585}
   m_CullTransparentMesh: 1
+--- !u!1 &103407587
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 103407589}
+  - component: {fileID: 103407588}
+  m_Layer: 0
+  m_Name: TestMoney
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &103407588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103407587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e1c214d1adcb27448bbd0444bd3450d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  addKey: 109
+  addAmount: 100000
+--- !u!4 &103407589
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103407587}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 116.391945, y: 105.4132, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &113776185
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8781,7 +8827,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 789758672}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 98377475}
+        m_TargetAssemblyTypeName: SetUI, Assembly-CSharp
+        m_MethodName: CloseUI
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &789758672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17650,6 +17708,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3f4b17c8e27c1c443b115cce08a354db, type: 2}
   - {fileID: 11400000, guid: 6863c161ea020334cb23667fd12149a5, type: 2}
   - {fileID: 11400000, guid: 9452c84c8c15b4b4bb4c498c65265265, type: 2}
+  - {fileID: 11400000, guid: eace9fce88155e84d8e506494bff7e6a, type: 2}
+  - {fileID: 11400000, guid: 5ea48bffd2ff444458e34088245ef4f1, type: 2}
+  - {fileID: 11400000, guid: c6caa21ec88702c44b87182a42979964, type: 2}
+  - {fileID: 11400000, guid: 8f4396586ead40844a850bb0f19570f2, type: 2}
+  - {fileID: 11400000, guid: 1818053ce1cede042abb46a7e7c3eea1, type: 2}
+  - {fileID: 11400000, guid: 4b8a5861c116ef446ac72228d5958626, type: 2}
+  - {fileID: 11400000, guid: 92ec2c8404337b44a9f06ecfe8d841c3, type: 2}
+  - {fileID: 11400000, guid: dfb78354a25258d468a635f9eba2efc3, type: 2}
   skillAreaSets:
   - group: 0
     kind: 0
@@ -28105,6 +28171,7 @@ SceneRoots:
   - {fileID: 923369211}
   - {fileID: 1911565984}
   - {fileID: 1335568906}
+  - {fileID: 103407589}
   - {fileID: 202118720}
   - {fileID: 832595046}
   - {fileID: 886855952}
