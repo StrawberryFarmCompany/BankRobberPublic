@@ -125,19 +125,14 @@ public class NodePlayerController : MonoBehaviour
     }
     public bool ViewBuffData(Vector3 mouseScreenPos)
     {
-        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        Node node = GameManager.GetInstance.GetNode(NodePlayerManager.GetInstance.GetCurrentPlayer().GetNodeVector3ByRay(mouseScreenPos, 1 << 8, true));
+        if (node != null && node.Standing.Count > 0)
         {
-            Node node = GameManager.GetInstance.GetNode(hit.point);
-            if (node != null && node.Standing.Count > 0)
-            {
-                UIManager.GetInstance.BuffPannel.UpdateBuffList(node);
-                UIManager.GetInstance.BuffPannel.Description.TurnOn(false);
-                return true;
-            }
+            UIManager.GetInstance.BuffPannel.UpdateBuffList(node);
+            UIManager.GetInstance.BuffPannel.Description.TurnOn(false);
+            return true;
         }
-        if(!EventSystem.current.IsPointerOverGameObject()) UIManager.GetInstance.BuffPannel.TurnOn(false);
+        if (!EventSystem.current.IsPointerOverGameObject()) UIManager.GetInstance.BuffPannel.TurnOn(false);
         return false;
     }
     public void OnClickNode(InputAction.CallbackContext context)
