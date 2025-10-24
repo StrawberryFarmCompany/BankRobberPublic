@@ -28,7 +28,6 @@ public class ResourceManager : SingleTon<ResourceManager>
         LoadAsync<TextAsset>("BuffStatus", (cb) =>
         {
             DataWrapper<ParsingBuffData> data = JsonUtility.FromJson<DataWrapper<ParsingBuffData>>(cb.text);
-            buffDatas = new Dictionary<ushort, BuffData>();
             foreach (ParsingBuffData item in data.data)
             {
                 buffDatas.Add(item.key, new BuffData(item));
