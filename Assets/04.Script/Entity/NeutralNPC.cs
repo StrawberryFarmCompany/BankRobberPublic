@@ -1,3 +1,4 @@
+using BuffDefine;
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
@@ -116,6 +117,32 @@ public class NeutralNPC : MonoBehaviour
             // 막히지 않았다면 초록색 선
             Debug.DrawRay(start, (target - start), Color.green, 10f);
             return true;
+        }
+    }
+
+    public void CitizenWitness()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6006, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void BankManagerWitness()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6007, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
         }
     }
 }

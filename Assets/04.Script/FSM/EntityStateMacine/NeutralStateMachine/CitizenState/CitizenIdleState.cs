@@ -5,12 +5,10 @@ using UnityEngine;
 
 public class CitizenIdleState : NeutralState
 {
-    //IdleState idleState;
-
-    public NeutralNPC citizen;
-    public CitizenIdleState(NeutralNPC citizen)
+    public CitizenIdleState(NeutralNPC citizen,Animator anim)
     {
-        this.citizen = citizen;
+        this.neutralNPC = citizen;
+        this.anim = anim;
     }
 
     public override void Enter()

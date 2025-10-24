@@ -1,6 +1,7 @@
+using BuffDefine;
 using NodeDefines;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -94,6 +95,8 @@ public class EnemyNPC : MonoBehaviour
                 visibleTargets.Add(target);
                 nearPlayerLocation = target;
                 Debug.Log(nearPlayerLocation);
+                Witness();
+                SecurityCall();
             }
         }
         
@@ -156,6 +159,84 @@ public class EnemyNPC : MonoBehaviour
             // 막히지 않았다면 초록색 선
             Debug.DrawRay(start, (target - start), Color.green, 10f);
             return true;
+        }
+    }
+
+    public void SecurityLevel2()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6001, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void SecurityLevel3()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6002, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void SecurityLevel3Buff()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6003, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void SecurityCall()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6004, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void CopCall()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6005, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void Witness()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6008, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
         }
     }
 

@@ -2,17 +2,16 @@ using UnityEngine;
 
 public class ManagerDeadState : NeutralState
 {
-    public NeutralNPC managerNPC;
-
-    public ManagerDeadState(NeutralNPC managerNPC)
+    public ManagerDeadState(NeutralNPC manager, Animator anim)
     {
-        this.managerNPC = managerNPC;
+        this.neutralNPC = manager;
+        this.anim = anim;
     }
 
     public override void Enter()
     {
         Debug.Log("Manager 죽음");
         // TODO: 애니메이션 재생 -> 코루틴으로 딜레이 후 Destroy
-        GameObject.Destroy(managerNPC.gameObject);
+        GameObject.Destroy(neutralNPC.gameObject);
     }
 }
