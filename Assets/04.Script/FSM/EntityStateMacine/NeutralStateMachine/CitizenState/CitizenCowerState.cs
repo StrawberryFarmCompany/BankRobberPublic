@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class CitizenCowerState : NeutralState
 {
-    public NeutralNPC citizen;
 
-    public CitizenCowerState(NeutralNPC citizen)
+    public CitizenCowerState(NeutralNPC citizen, Animator anim)
     {
-        this.citizen = citizen;
+        this.neutralNPC = citizen;
+        this.anim = anim;
     }
     public override void Enter()
     {
