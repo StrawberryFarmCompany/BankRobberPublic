@@ -42,7 +42,7 @@ public class CitizenNPC : NeutralNPC
         if (visibleTargets.Count > 0 && isDetection == false)
         { 
             isDetection = true;
-            CitizenWitness();
+            //CitizenWitness();
             Debug.Log("발견함");
         }
 

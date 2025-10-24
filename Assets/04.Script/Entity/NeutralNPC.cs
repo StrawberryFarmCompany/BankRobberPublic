@@ -120,6 +120,19 @@ public class NeutralNPC : MonoBehaviour
         }
     }
 
+    public void SecurityLevel1()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6000, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
     public void CitizenWitness()
     {
         if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6006, out BuffData item))
