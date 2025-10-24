@@ -11,14 +11,14 @@ public class MoveRangeHighlighter : MonoBehaviour
     [SerializeField] private GameObject interactableHighlighter;
 
     [SerializeField] private GameObject ParentTransform;
-    private void Awake()
+    public void Init()
     {
         if (normalHighlighter == null)
             normalHighlighter = new NodePreviewer();
     }
     public void ShowMoveRange(Vector3Int start, int range)
     {
-        ClearHighlights();
+        if (range <= 0) return;
         HashSet<Vector3Int> map = new HashSet<Vector3Int>();
         //start위치까지 포함하여야 하고 음수처리 때문에 값 비교 array는 (range*2)+1
         GetPath(start, start, map,new int[(range*2)+1, (range * 2) + 1], range);
@@ -97,8 +97,4 @@ public class MoveRangeHighlighter : MonoBehaviour
         activeHighlights.Add(obj);
     }*/
 
-    public void ClearHighlights()
-    {
-        normalHighlighter.Enable(false);
-    }
 }

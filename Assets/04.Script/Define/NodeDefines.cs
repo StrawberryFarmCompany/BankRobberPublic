@@ -101,12 +101,15 @@ namespace NodeDefines
         }
         public void ResetInteraction()
         {
-            string[] keys = nodeInteractions.Keys.ToArray();
-            for (int i = 0; i < keys.Length; i++)
+            if(nodeInteractions != null)
             {
-                nodeInteractions[keys[i]] = null;
+                string[] keys = nodeInteractions.Keys.ToArray();
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    nodeInteractions[keys[i]] = null;
+                }
+                nodeInteractions.Clear();
             }
-            nodeInteractions.Clear();
         }
         public void InvokeEvent(EntityStats stat)
         {

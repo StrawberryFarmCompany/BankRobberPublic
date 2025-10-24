@@ -51,6 +51,10 @@ public class StageButton : MonoBehaviour
         }
 
         checkConditionTextObject.text = $"{ScoreManager.GetInstance.GetScore(sceneType - 1)} / {LoadSceneManager.GetInstance.GetRequireScore(sceneType)}";
+        if (ScoreManager.GetInstance.IsStageCleared(sceneType) || LoadSceneManager.GetInstance.GetRequireScore(sceneType)==0)
+        {
+            checkConditionTextObject.text = "완료";
+        }
         checkConditionTextObject.color = color;
 
         stageUI.startButton.interactable = condition;

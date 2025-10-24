@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private CharacterType character;
     public PlayerController controller;
     public DialogueManager dialogueManager;
     public PlayerInput playerInput;
