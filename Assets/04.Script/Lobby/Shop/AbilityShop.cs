@@ -11,17 +11,28 @@ public class AbilityShop : MonoBehaviour
     [SerializeField] private GameObject skillButtonPrefab;  // 버튼 프리팹
     [SerializeField] private TextMeshProUGUI moneyText;     // 돈 표시 텍스트
 
-    [Header("부모 오브젝트")]
-    [SerializeField] private Transform combatParent;
-    [SerializeField] private Transform stealthParent;
-    [SerializeField] private Transform supportParent;
-
     [Header("스킬 데이터")]
     [SerializeField] private List<Skill> allSkills;
 
-    private readonly Dictionary<string, Button> buttonMap = new();
+    [Header("스킬 영역 매핑")]
+    [SerializeField] private List<SkillAreaSet> skillAreaSets;
 
+    private readonly Dictionary<(Group, Kind), Transform> skillAreas = new();
+    private readonly Dictionary<string, Button> buttonMap = new();
     private Action<int> onMoneyChanged;
+
+    void Awake()
+    {
+        foreach (var set in skillAreaSets)
+        {
+            if (set.area == null)
+            {
+                continue;
+            }
+
+            skillAreas[(set.group, set.kind)] = set.area;
+        }
+    }
 
     void Start()
     {
@@ -45,8 +56,10 @@ public class AbilityShop : MonoBehaviour
     {
         foreach (Skill skill in allSkills)
         {
-            Transform parent = GetParent(skill.group);
-            if (parent == null) continue;
+            if (!skillAreas.TryGetValue((skill.group, skill.kind), out Transform parent))
+            {
+                continue;
+            }
 
             GameObject btnObj = Instantiate(skillButtonPrefab, parent);
             Button btn = btnObj.GetComponent<Button>();
@@ -59,18 +72,6 @@ public class AbilityShop : MonoBehaviour
             buttonMap[key] = btn;
 
             btn.onClick.AddListener(() => OnClickPurchase(skill, btn));
-        }
-    }
-
-    //그룹별 부모 오브젝트 반환
-    private Transform GetParent(Group group)
-    {
-        switch (group)
-        {
-            case Group.Combat: return combatParent;
-            case Group.Stealth: return stealthParent;
-            case Group.Support: return supportParent;
-            default: return null;
         }
     }
 
@@ -145,4 +146,12 @@ public class AbilityShop : MonoBehaviour
         if (moneyText != null)
             moneyText.text = $"{Money.Value:N0}";
     }
+}
+
+[Serializable]
+public class SkillAreaSet
+{
+    public Group group;
+    public Kind kind;
+    public Transform area;
 }
