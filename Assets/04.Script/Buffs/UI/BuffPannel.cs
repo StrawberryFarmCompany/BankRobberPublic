@@ -73,7 +73,8 @@ public class BuffPannel : MonoBehaviour
     }
     private void CreateBuffIcon(int index)
     {
-        GameObject obj = GameObject.Instantiate((GameObject)(ResourceManager.GetInstance.GetPreLoad["BuffIcon"]), transform.Find("BuffSlot"));
+        GameObject obj = GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["BuffIcon"], transform.Find("BuffSlot"));
+        obj.name = $"BuffIcon{index}";
         if (obj.TryGetComponent<BuffIcon>(out BuffIcon result))
         {
             icons.Add(result);
@@ -81,9 +82,9 @@ public class BuffPannel : MonoBehaviour
         else
         {
             result = obj.AddComponent<BuffIcon>();
+            icons.Add(result);
         }
 
-        icons.Add(result);
         result.Init(index);
         Sprite sprite = ((UnityEngine.U2D.SpriteAtlas)ResourceManager.GetInstance.GetPreLoad["UIAtlas"]).GetSprite(datas[index].Key.ToString());
         icons[index].SetImage(sprite);
