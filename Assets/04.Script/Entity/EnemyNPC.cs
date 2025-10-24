@@ -101,15 +101,14 @@ public class EnemyNPC : MonoBehaviour
                 visibleTargets.Add(target);
                 nearPlayerLocation = target;
                 Debug.Log(nearPlayerLocation);
-                Witness();
-                SecurityCall();
-                SecurityLevel(1);
             }
         }
         
-        if (visibleTargets.Count > 0)
+        if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 0)
         {
-            stats.secData.SetSecLevel(1);
+            SecurityLevel(1);
+            SecurityCall();
+            Witness();
             Debug.LogError("씨ㅣㅣ바라라라라랄ㄹㄹㄹㄹ");
         }
         return visibleTargets;
@@ -204,7 +203,7 @@ public class EnemyNPC : MonoBehaviour
             Debug.Log("키 값 조회 실패");
         }
     }
-
+    
     public void Witness()
     {
         if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6008, out BuffData item))

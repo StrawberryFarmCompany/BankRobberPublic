@@ -46,7 +46,7 @@ public class PatrolEnemyNPC : EnemyNPC
     protected override void CalculateBehaviour()
     {
         DetectVisibleTargets();
-
+        Debug.Log(stats.secData.GetSecLevel);
         if (stats.secData.GetSecLevel == 0)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
@@ -94,7 +94,7 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        else if(stats.secData.GetSecLevel >= 2)
+        else if(stats.secData.GetSecLevel >= 1)
         {
             DetectVisibleTargets();
             if (nearPlayerLocation.currNode.GetCenter != null)
