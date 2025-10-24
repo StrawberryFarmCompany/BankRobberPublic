@@ -44,7 +44,7 @@ public class BuffPannel : MonoBehaviour
     }
     public void UpdateBuffList(NodeDefines.Node node)
     {
-        if (node.Standing.Count <= 0) return;
+        if (node.Standing  == null|| node.Standing.Count <= 0) return;
         gameObject.SetActive(true);
         stat = node.Standing[0];
         characterName.text = stat.characterName;
