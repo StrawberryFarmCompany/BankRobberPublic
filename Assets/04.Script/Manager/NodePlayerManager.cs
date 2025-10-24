@@ -172,6 +172,11 @@ public class NodePlayerManager : MonoBehaviour
     {
         if (players.Contains(player))
         {
+            if (NodePlayerManager.GetInstance.GetCurrentPlayer() == player)
+            {
+                Invoke("SwitchToNextPlayer", 0.1f);
+            }
+
             int removedIndex = players.IndexOf(player);
             players.Remove(player);
 
@@ -195,12 +200,6 @@ public class NodePlayerManager : MonoBehaviour
             // 인덱스 범위 보정
             if (currentPlayerIndex >= players.Count)
                 currentPlayerIndex = 0;
-            if (NodePlayerManager.GetInstance.GetCurrentPlayer() == player)
-            {
-                SwitchToPlayer(currentPlayerIndex);
-
-            }
-
         }
     }
 
