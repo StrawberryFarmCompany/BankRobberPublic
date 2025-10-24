@@ -20,6 +20,10 @@ public class NeutralNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
         stats.currNode = GameManager.GetInstance.GetNode(transform.position);
+
+        yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
+        stats.secData.SetSecLevel(0);
+
     }
 
     protected virtual void FixedUpdate()
