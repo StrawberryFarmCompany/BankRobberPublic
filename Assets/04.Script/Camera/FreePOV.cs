@@ -37,6 +37,7 @@ public class FreePOV : MonoBehaviour
     [SerializeField] private float minZ;
     [SerializeField] private float maxZ;
 
+    private static bool isQuitting = false;
 
     void Start()
     {
@@ -53,11 +54,19 @@ public class FreePOV : MonoBehaviour
         ApplyRotation();
     }
 
+    private void OnEnable()
+    {
+        Application.quitting += () => isQuitting = true;
+    }
+
     private void OnDestroy()
     {
         //씬 전환 등으로 FreePOV가 사라질 때 정리
-        if (CameraSensitivityManager.GetInstance != null)
-            CameraSensitivityManager.GetInstance.OnSensitivityChanged -= ApplySensitivity;
+        if (Application.isPlaying && isQuitting)
+        {
+            if (CameraSensitivityManager.GetInstance != null)
+                CameraSensitivityManager.GetInstance.OnSensitivityChanged -= ApplySensitivity;
+        }
     }
 
     private void ApplySensitivity()

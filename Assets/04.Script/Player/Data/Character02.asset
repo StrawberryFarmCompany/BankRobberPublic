@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86d7d9a2629ed77458bf2a328da7207d, type: 3}
   m_Name: Character02
   m_EditorClassIdentifier: 
-  displayName: "2\uBC88\uCE90\uB9AD\uD130"
-  description: "2\uBC88\uCE90\uB9AD\uD130\uC784 "
+  displayName: "\uB8E8\uD06C"
+  description: "\uC804\uD22C \uD2B9\uD654 \uCE90\uB9AD\uD130"
   Tag: 3
   maxActionPoint: 4
   curActionPoint: 4
   movementSpeed: 3
   movementPoint: 3
-  maxHp: 50
-  curHp: 50
+  maxHp: 20
+  curHp: 20
   evasionRate: 3
   accuracyModifier: 3
   attackRange: 50
   detectingDistance: 0
   isCombat: 0
+  characterType: 2
   playerSkill: 1
   sabotage: 1
   aggroControl: 1

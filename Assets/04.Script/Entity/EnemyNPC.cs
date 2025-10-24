@@ -16,6 +16,8 @@ public class EnemyNPC : MonoBehaviour
 
     [SerializeField] protected EntityStats nearPlayerLocation;
 
+    public Vector3? curNoise = null;
+
 
     protected virtual IEnumerator Start()
     {
@@ -162,6 +164,10 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
+    public void SetNoise(Vector3 noisePos)
+    {
+        curNoise = noisePos;
+    }
     public void SecurityLevel2()
     {
         if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6001, out BuffData item))
