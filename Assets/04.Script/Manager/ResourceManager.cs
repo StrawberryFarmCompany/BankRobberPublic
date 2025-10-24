@@ -20,6 +20,7 @@ public class ResourceManager : SingleTon<ResourceManager>
         base.Init();
         preloaded = new Dictionary<string, object>();
         buffDatas = new Dictionary<ushort, BuffData>();
+
         SetBuffData();
         PreLoadAsyncAll("PreLoad",null);
     }
@@ -28,11 +29,12 @@ public class ResourceManager : SingleTon<ResourceManager>
         LoadAsync<TextAsset>("BuffStatus", (cb) =>
         {
             DataWrapper<ParsingBuffData> data = JsonUtility.FromJson<DataWrapper<ParsingBuffData>>(cb.text);
-            buffDatas = new Dictionary<ushort, BuffData>();
+            Dictionary<ushort, BuffData> tempData = new Dictionary<ushort, BuffData>();
             foreach (ParsingBuffData item in data.data)
             {
-                buffDatas.Add(item.key, new BuffData(item));
+                tempData.Add(item.key, new BuffData(item));
             }
+            buffDatas = tempData;
         }, false);
     }
     /// <summary>

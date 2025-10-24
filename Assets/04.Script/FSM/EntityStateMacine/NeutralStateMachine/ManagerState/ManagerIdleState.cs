@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class ManagerIdleState : NeutralState
 {
-    public ManagerNPC managerNPC;
     
-    public ManagerIdleState(NeutralNPC neutral)
+    public ManagerIdleState(NeutralNPC manager, Animator anim)
     {
-        managerNPC = neutral as ManagerNPC;
+        this.neutralNPC = manager;
+        this.anim = anim;
     }
 
     public override void Enter()

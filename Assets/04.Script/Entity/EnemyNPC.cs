@@ -1,6 +1,7 @@
+using BuffDefine;
 using NodeDefines;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -26,6 +27,10 @@ public class EnemyNPC : MonoBehaviour
         gun = GetComponent<Gun>();
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
+
+        yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
+
+        SecurityLevel(0);
     }
 
     protected virtual void FixedUpdate()
@@ -96,6 +101,9 @@ public class EnemyNPC : MonoBehaviour
                 visibleTargets.Add(target);
                 nearPlayerLocation = target;
                 Debug.Log(nearPlayerLocation);
+                Witness();
+                SecurityCall();
+                SecurityLevel(1);
             }
         }
         
@@ -165,4 +173,49 @@ public class EnemyNPC : MonoBehaviour
     {
         curNoise = noisePos;
     }
+
+    public void SecurityLevel(ushort level)
+    {
+        stats.secData.SetSecLevel(level);
+    }
+
+    public void SecurityCall()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6004, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void CopCall()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6005, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void Witness()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6008, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
 }

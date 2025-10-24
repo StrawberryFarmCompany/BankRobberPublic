@@ -1,3 +1,4 @@
+using BuffDefine;
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,10 @@ public class NeutralNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
         stats.currNode = GameManager.GetInstance.GetNode(transform.position);
+
+        yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
+        stats.secData.SetSecLevel(0);
+
     }
 
     protected virtual void FixedUpdate()
@@ -116,6 +121,45 @@ public class NeutralNPC : MonoBehaviour
             // 막히지 않았다면 초록색 선
             Debug.DrawRay(start, (target - start), Color.green, 10f);
             return true;
+        }
+    }
+
+    public void SecurityLevel1()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6000, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void CitizenWitness()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6006, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
+        }
+    }
+
+    public void BankManagerWitness()
+    {
+        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6007, out BuffData item))
+        {
+            stats.RegistBuff(item);
+        }
+
+        else
+        {
+            Debug.Log("키 값 조회 실패");
         }
     }
 }
