@@ -609,6 +609,7 @@ public class NodePlayerController : MonoBehaviour
             UIManager.GetInstance.ShowActionPanel(true);
             Debug.Log("훔치기 성공!");
             RefreshPipAllSafe();
+            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Steal);
         }
         else
         {
