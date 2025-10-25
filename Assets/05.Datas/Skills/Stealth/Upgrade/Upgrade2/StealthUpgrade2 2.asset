@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48f4361ba35170f48a7b11315e8fd9bc, type: 3}
+  m_Name: StealthUpgrade2 2
+  m_EditorClassIdentifier: 
+  group: 1
+  kind: 2
+  title: "\uBAA8\uB4E0 \uC544\uAD70 \uC18C\uC74C \uC81C\uAC70"
+  effect: "1\uD134 \uB3D9\uC548 \uBAA8\uB4E0 \uC544\uAD70 \uC5D4\uD2F0\uD2F0 \uC18C\uC74C
+    \uC81C\uAC70"
+  price: 0
+  idNum: 2
