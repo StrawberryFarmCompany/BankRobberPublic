@@ -326,12 +326,20 @@ public class HoldEnemyNPC : EnemyNPC
                 // 이미 감지 상태라면 무시
                 if (isNoise) return;
 
-                isNoise = true;
-                noiseLocation = noise.pos;
-                isHomePlace = false;
+                float detectChance = 0.5f;
+                float roll = Random.value;
 
-                Debug.Log($"{gameObject.name} 가 {noise.pos}에서 소음 감지함.");
-                break;
+                if (roll <= detectChance)
+                {
+                    isNoise = true;
+                    noiseLocation = noise.pos;
+                    isHomePlace = false;
+                    Debug.Log($"{gameObject.name} 가 {noise.pos}에서 소음 감지함.");
+                }
+                else
+                    Debug.Log($"{gameObject.name}이(가) 소음을 듣지 못함. (roll={roll:F2})");
+
+                break; // 첫 번째 소음만 처리
             }
         }
     }
