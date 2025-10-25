@@ -7,6 +7,7 @@ public class MoneyUI : MonoBehaviour
 
     private void Start()
     {
+        Money.moneyUI = this;
         UpdateGoldText();
     }
 
