@@ -493,6 +493,7 @@ public class NodePlayerController : MonoBehaviour
     {
         isHide = false;
         UIManager.GetInstance.pip.HideAndSneakText();
+        NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Unstealth);
     }
 
     private void CheckSneakAttack(Vector3 mouseScreenPos)
@@ -527,11 +528,12 @@ public class NodePlayerController : MonoBehaviour
         {
             targetNodePos = targetNodeCenter;
             bestNearNodePos = bestNode;
+
+            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Ambush);
+
             RemoveHideMode();
 
             animationController.OnUnEquipForSneak();
-
-            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Ambush);
 
             StartMode(PlayerStatus.isMoveMode);
 
@@ -720,16 +722,7 @@ public class NodePlayerController : MonoBehaviour
         RefreshPipAllSafe();
         StartMode(PlayerStatus.isMoveMode);
 
-        if (gun.makeNoise == true)
-        {
-            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger);
-            return;
-        }
-
-        if (gun.makeNoise == false)
-        {
-            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger, false);
-        }
+        NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger, gun.makeNoise);
     }
 
 
