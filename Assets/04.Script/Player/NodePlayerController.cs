@@ -61,7 +61,10 @@ public class NodePlayerController : MonoBehaviour
     private void Awake()
     {
         playerStats = new EntityStats(playerData, gameObject);
+
         if (gun == null) gun = GetComponent<Gun>();
+        gun.SetGun(WeaponManager.GetInstance.GetEquipData(playerStats.characterType));
+
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
         isHide = true;

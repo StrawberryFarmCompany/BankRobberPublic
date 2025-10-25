@@ -29,5 +29,5 @@ MonoBehaviour:
   thirdRange: 18
   thirdRangeAccuracy: 0
   awayRangeAccuracy: 0
-  price: 0
+  price: 150000
   WeaponSprite: {fileID: 21300000, guid: 3d40ae89c2d909540a7e7b37c7fc4966, type: 3}
