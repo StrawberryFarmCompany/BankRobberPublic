@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using TMPro;
 
 class MoneyData
 {
@@ -18,6 +17,8 @@ public static class Money
     const string FileName = "money.json";
     static string FilePath => Path.Combine(Application.persistentDataPath, FileName);
 
+    public static MoneyUI moneyUI;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
@@ -31,6 +32,7 @@ public static class Money
         Value = amount;
         Save();
         OnChanged?.Invoke(Value);
+        moneyUI.UpdateGoldText();
     }
 
     public static void Add(int amount)
@@ -40,6 +42,7 @@ public static class Money
         Value = (sum > int.MaxValue) ? int.MaxValue : (int)sum;
         Save();
         OnChanged?.Invoke(Value);
+        moneyUI.UpdateGoldText();
     }
 
     public static int Get()
@@ -55,6 +58,7 @@ public static class Money
         Value -= price;
         Save();
         OnChanged?.Invoke(Value);
+        moneyUI.UpdateGoldText();
         return true;
     }
 
@@ -88,6 +92,7 @@ public static class Money
             Debug.LogWarning("[Money] 불러오기 실패, 리셋: " + e);
         }
         Value = 0;
+        moneyUI.UpdateGoldText();
     }
 }
 
