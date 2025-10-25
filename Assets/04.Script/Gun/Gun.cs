@@ -5,7 +5,8 @@ using NodeDefines;
 
 public class Gun : MonoBehaviour
 {
-    [SerializeField] private GunData gunData;
+    [Tooltip("에너미는 할당해주고, 플레이어는 할당하지 읺기")]
+    [SerializeField] private GunData data;
 
     [Header("현재 총기 정보")]
     public string gunName;
@@ -33,10 +34,11 @@ public class Gun : MonoBehaviour
 
     private void Awake()
     {
-        SetGun();
+        if (data != null)
+            SetGun(data);
     }
 
-    public void SetGun()
+    public void SetGun(GunData gunData)
     {
         gunName = gunData.gunName;
         gunDescription = gunData.gunDescription;
