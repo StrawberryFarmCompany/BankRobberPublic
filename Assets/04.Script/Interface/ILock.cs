@@ -42,11 +42,13 @@ public class LockPick : ILock
                 if (!released)
                 {
                     Debug.Log("해제 실패, 경고발동");
+                    NoiseManager.AddNoise(stat.currNode.GetCenter, NoiseType.Disarm, false);
                     ActivateWarning();
                 }
                 else
                 {
                     Debug.Log("해제 성공");
+                    NoiseManager.AddNoise(stat.currNode.GetCenter, NoiseType.Disarm);
                 }
 
             });
