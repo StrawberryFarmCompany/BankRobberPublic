@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392a583a8ea20824aaf005deb40bacaf, type: 3}
+  m_Name: G18
+  m_EditorClassIdentifier: 
+  gunName: G18
+  gunDescription: "\uB3C8\uC880 \uB9CC\uC838\uBCF8 \uAC15\uB3C4\uB77C\uBA74 \uC0AC\uC6A9\uD560
+    \uAD8C\uCD1D\uC774\uB2E4. \uB370\uBBF8\uC9C0\uAC00 \uC57D\uAC04 \uB354 \uB192\uB2E4."
+  type: 0
+  maxRounds: 5
+  bulletPerOneShot: 1
+  noise: 0
+  damagePerOneBulletMultiplier: 0.7
+  firstRange: 3
+  firstRangeAccuracy: 0
+  secondRange: 7
+  secondRangeAccuracy: -5
+  thirdRange: 10
+  thirdRangeAccuracy: -7
+  awayRangeAccuracy: -15
+  price: 5000
+  WeaponSprite: {fileID: 21300000, guid: bae6d66db54568941a37e72d3de8db93, type: 3}

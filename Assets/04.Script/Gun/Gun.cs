@@ -27,6 +27,9 @@ public class Gun : MonoBehaviour
     public int thirdrangeAccuracy;
     public int awayRangeAccuracy;
 
+    private int ishit = 0;
+    public bool makeNoise = false;
+
 
     private void Awake()
     {
@@ -89,11 +92,17 @@ public class Gun : MonoBehaviour
                 int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
                 entityStats.Damaged(result * damagePerOneBulletMultiplier);
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
+                ishit++;
             }
             else
             {
                 Debug.Log($"{i + 1}번째 격발 결과\n불발");
             }
+        }
+
+        if (ishit >= 1)
+        {
+            makeNoise = true;
         }
     }
 
