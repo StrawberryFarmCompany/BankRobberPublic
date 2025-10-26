@@ -3408,7 +3408,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB808\uC2A4\uD130"
+  m_text: "\uD3F0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 50be2f86e8ee95641b5788d1924151f1, type: 2}
   m_sharedMaterial: {fileID: -6462086702290287606, guid: 50be2f86e8ee95641b5788d1924151f1,
@@ -4124,9 +4124,9 @@ RectTransform:
   - {fileID: 637355552}
   m_Father: {fileID: 1518363616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1105, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 350, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &337808991
@@ -9517,9 +9517,9 @@ RectTransform:
   - {fileID: 1154635643}
   m_Father: {fileID: 1518363616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1545, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 350, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &710580691
@@ -11698,14 +11698,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   csvDialogueFile: {fileID: 4900000, guid: 1f69c626eab280e46bb6f4e21b83cea9, type: 3}
-  npcName: "\uB808\uC2A4\uD130"
+  npcName: "\uD3F0"
   npcDescription: "\uC218\uC0C1\uD55C \uD574\uCEE4"
   npcCamera: {fileID: 1243738170}
   npcCameraOriginPosition: {x: 0, y: 1.3, z: 1.4}
   npcCameraZoomPosition: {x: 0, y: 1.3, z: 0.7}
   npcAnimator: {fileID: 5691741111837969723}
   npcRewards: []
-  npcKey: 1
+  npcKey: 0
   gameObjects:
   - {fileID: 832595043}
   npcPos:
@@ -13901,9 +13901,9 @@ RectTransform:
   - {fileID: 1109226021}
   m_Father: {fileID: 1518363616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 665, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 350, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1014493097
@@ -16472,7 +16472,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -25400,9 +25400,9 @@ RectTransform:
   - {fileID: 1945475977}
   m_Father: {fileID: 1518363616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 225, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 350, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1931846607
@@ -25545,9 +25545,9 @@ RectTransform:
   - {fileID: 1434143352}
   m_Father: {fileID: 1518363616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1985, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 350, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1941457617
@@ -26320,6 +26320,7 @@ MonoBehaviour:
   dialogueData: []
   currentBranch: 1
   currentIndex: 1
+  interaction: {fileID: 0}
   npcAnimator: {fileID: 0}
   npcDialogueStateKey: 1
   npc: {fileID: 0}
@@ -29143,12 +29144,40 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1867365509}
+        m_TargetAssemblyTypeName: UIQuest, Assembly-CSharp
+        m_MethodName: OnCloseUI
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: ee3deac0-cd93-4cb2-a02c-9254a69918ed
     m_ActionName: Player/CloseUI[/Keyboard/escape]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 2f2ce2e8-6657-4bd7-98df-0364a6b56472
     m_ActionName: NodePlayer/NodeSelect[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4392594149221849904}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnQuesttButton
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: da198627-1215-43b1-a3a0-854fe52e6882
+    m_ActionName: Player/Quest[/Keyboard/q]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -29243,6 +29272,7 @@ MonoBehaviour:
   minXLook: -85
   maxXLook: 85
   lookSensitivity: 0.1
+  playerInput: {fileID: 0}
   crosshair: {fileID: 2004232491}
   canLook: 1
 --- !u!136 &4464441529818121201

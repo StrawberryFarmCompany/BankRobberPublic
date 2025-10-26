@@ -8,7 +8,13 @@ using UnityEngine.SceneManagement;
 public class NPCLoadScene : MonoBehaviour
 {
     private string[] sceneNames = {
-        "MainScene"
+        "MainTitle",
+        "LobbyScene",
+        "TutorialScene",
+        "Stage01Scene",
+        "Stage02Scene",
+        "Stage03Scene",
+        "Stage04Scene"
     };
     private bool isSceneName = false;
     public DialogueManager dialogueManager;

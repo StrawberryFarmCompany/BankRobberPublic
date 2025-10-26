@@ -40,7 +40,7 @@ public class DialogueManager : MonoBehaviour
     private List<DialogueLine> currentLines = new List<DialogueLine>();
     private int currentLineIndex = 0;
 
-    private LobbyInteraction interaction;
+    public LobbyInteraction interaction;
     public Animator npcAnimator; // NPC 애니메이터 (필요시 사용)
 
     public Dictionary<ENPC, (int branch, int index)> npcDialogueStates = new Dictionary<ENPC, (int, int)>();
@@ -249,7 +249,7 @@ public class DialogueManager : MonoBehaviour
             }
 
             HandleQuest(line); // 퀘스트 처리
-            QuestManager.Instance.UpdateQuestProgressNPC(npcDialogueStateKey, line.branch, line.index); // 퀘스트 완료 체크
+            QuestManager.GetInstance.UpdateQuestProgressNPC(npcDialogueStateKey, line.branch, line.index); // 퀘스트 완료 체크
             DestroyNPCObjects(line); // NPC 오브젝트 파괴 처리
             SpawnObjects(line); // NPC 오브젝트 생성 처리
             if (line.transPosObjects != null || line.transPos != null)
@@ -435,13 +435,13 @@ public class DialogueManager : MonoBehaviour
         switch (line.questState)
         {
             case 0:
-                QuestManager.Instance.AcceptQuest(quest);
+                QuestManager.GetInstance.AcceptQuest(quest);
                 break;
             case 1:
-                QuestManager.Instance.CompleteQuest(quest);
+                QuestManager.GetInstance.CompleteQuest(quest);
                 break;
             case 2:
-                QuestManager.Instance.FailQuest(quest);
+                QuestManager.GetInstance.FailQuest(quest);
                 break;
         }
     }

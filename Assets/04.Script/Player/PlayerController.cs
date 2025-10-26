@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
     private float camCurXRot;
     public float lookSensitivity;
 
+    public PlayerInput playerInput;
+
     public void SetLookSensitivity(float v)
     {
         lookSensitivity = Mathf.Clamp(v, 0.01f, 0.5f);
@@ -37,6 +39,8 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        if(playerInput == null ) 
+            playerInput = GetComponent<PlayerInput>();
     }
 
     private void FixedUpdate()
@@ -127,5 +131,51 @@ public class PlayerController : MonoBehaviour
         bool toggle = Cursor.lockState == CursorLockMode.Locked;
         Cursor.lockState = toggle ? CursorLockMode.None : CursorLockMode.Locked;
         canLook = !toggle;
+    }
+
+    public void OnQuesttButton(InputAction.CallbackContext callbackContext)
+    {
+        if (callbackContext.phase == InputActionPhase.Started)
+        {
+            quest?.Invoke();
+        }
+    }
+
+    public void DisableActions()
+    {
+        foreach (var action in playerInput.actions)
+        {
+            if (action.name == "Interaction")
+                continue; // Interact액션은 제외
+            if (action.name == "CloseUI")
+                continue; // CloseUI액션은 제외
+            if (action.name == "Quest")
+                continue;
+            action.Disable();
+        }
+    }
+    public void EnableActions()
+    {
+        foreach (var action in playerInput.actions)
+        {
+            if (action.name == "Interaction")
+                continue; // Interact액션은 제외
+            if (action.name == "CloseUI")
+                continue; // CloseUI액션은 제외
+            if (action.name == "Quest")
+                continue;
+            action.Enable();
+        }
+    }
+    public void LockCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void UnlockCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }

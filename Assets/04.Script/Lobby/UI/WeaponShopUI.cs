@@ -41,10 +41,15 @@ public class WeaponShopUI : MonoBehaviour
     public TextMeshProUGUI knightText;
     public WeaponCharacterButton knightWCB;
 
-    //private void OnEnable()
-    //{
-    //    DisplayGunData(0);
-    //}
+    private void OnEnable()
+    {
+        DisplayGunData(0);
+        foreach (var type in characterTypes)
+        {
+            DeBindingButton(type);
+            SetCharacterButton(type);
+        }
+    }
 
     private void Start()
     {
@@ -78,7 +83,7 @@ public class WeaponShopUI : MonoBehaviour
 
         // 버튼에 인덱스만 넘김
         btn.Initialize(this, index);
-        btn.SetImage(gunDatas[index].WeaponSprite);
+        btn.SetImage(gunDatas[index].weaponSprite);
     }
 
     public void DisplayGunData(int index)
@@ -103,6 +108,7 @@ public class WeaponShopUI : MonoBehaviour
     public void SetCharacterButton(CharacterType type)
     {
         GunData gunData = gunDatas[curIndex];
+        DeBindingButton(type);
 
         if(!WeaponManager.GetInstance.IsPurcahedWeapon(type, gunData))
         {
