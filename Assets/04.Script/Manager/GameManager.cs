@@ -355,6 +355,7 @@ class GameManager : SingleTon<GameManager>
         if (NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Perfect)
         {
             UIManager.GetInstance.gameEndUI.SetPerfect();
+            //QuestManager.GetInstance.UpdateQuestProgressScore()
         }
         else if (NodePlayerManager.GetInstance.GetEscapeSuccess() == GameResult.Failed)
         {

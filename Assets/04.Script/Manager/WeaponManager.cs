@@ -21,6 +21,7 @@ public class WeaponManager : SingleTon<WeaponManager>
 {
     private Dictionary<CharacterType, WeaponEquipData> WeaponDataDict = new Dictionary<CharacterType, WeaponEquipData>();
     private string savePath;
+    public GunData basicGun = Resources.Load<GunData>("Guns/" + "1911");
 
     protected override void Init()
     {
@@ -35,9 +36,10 @@ public class WeaponManager : SingleTon<WeaponManager>
             WeaponDataDict[characterType] = new WeaponEquipData
             {
                 characterType = characterType,
-                equipGunData = null,                        //나중에 null일 때 1911 착용해주는 방법 생각해보자.
+                equipGunData = basicGun,
                 purchasedData = new List<GunData>()
             };
+            WeaponDataDict[characterType].purchasedData.Add(basicGun);
         }
 
         WeaponDataDict[characterType].equipGunData = gun;
@@ -61,9 +63,10 @@ public class WeaponManager : SingleTon<WeaponManager>
             WeaponDataDict[characterType] = new WeaponEquipData
             {
                 characterType = characterType,
-                equipGunData = null,
-                purchasedData= new List<GunData>()
+                equipGunData = basicGun,
+                purchasedData = new List<GunData>()
             };
+            WeaponDataDict[characterType].purchasedData.Add(basicGun);
         }
         WeaponDataDict[characterType].purchasedData.Add(gun);
         SaveWeapon();
@@ -91,13 +94,13 @@ public class WeaponManager : SingleTon<WeaponManager>
             Debug.Log("저장된 무기정보가 없어 새로 생성합니다.");
             foreach (CharacterType type in Enum.GetValues(typeof(CharacterType)))
             {
-                if (type.ToString().StartsWith("Stage"))
-                    WeaponDataDict[type] = new WeaponEquipData
-                    {
-                        characterType = type,
-                        equipGunData = null,
-                        purchasedData = new List<GunData>()
-                    };
+                WeaponDataDict[type] = new WeaponEquipData
+                {
+                    characterType = type,
+                    equipGunData = basicGun,
+                    purchasedData = new List<GunData>()
+                };
+                WeaponDataDict[type].purchasedData.Add(basicGun);
             }
             SaveWeapon();
             return;

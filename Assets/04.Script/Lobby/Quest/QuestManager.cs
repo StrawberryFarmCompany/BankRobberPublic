@@ -3,15 +3,15 @@ using UnityEngine;
 
 public class QuestManager : MonoBehaviour
 {
-    public static QuestManager Instance;
+    public static QuestManager GetInstance;
 
     public List<QuestData> activeQuests = new List<QuestData>();
 
     private void Awake()
     {
-        if (Instance == null)
+        if (GetInstance == null)
         {
-            Instance = this;
+            GetInstance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -27,7 +27,7 @@ public class QuestManager : MonoBehaviour
         if (!activeQuests.Contains(quest))
         {
             quest.status = QuestStatus.InProgress;
-            quest.currentAmount = 0;
+            quest.currentScore = 0;
             activeQuests.Add(quest);
             Debug.Log($"퀘스트 수락: {quest.questName}");
         }
@@ -93,14 +93,41 @@ public class QuestManager : MonoBehaviour
     }
 
     //==================================================퀘스트 조건 체크. 근데 복합 퀘스트는 미구현=======================================================================
-    public void UpdateQuestProgressMonster(string targetID, int amount = 1) // 특정 목표 몬스터를 잡을 때 퀘스트 진행 업데이트
+    public void UpdateQuestProgressScore(SceneType scene, GameResult result = GameResult.Failed, int scoreAmount = 0) // 특정 씬에서 퀘스트 진행 업데이트
     {
         foreach (var quest in activeQuests)
         {
-            if (quest.targetID == targetID && quest.status == QuestStatus.InProgress)
+            if (quest.scene == scene && quest.status == QuestStatus.InProgress)
             {
-                quest.currentAmount += amount;
-                if (quest.currentAmount >= quest.requiredAmount)
+                if(!quest.isScoreCompleted)
+                {
+                    quest.currentScore += scoreAmount;
+                    if (quest.currentScore >= quest.requiredScore) 
+                        quest.isScoreCompleted = true;
+                }
+
+                if (!quest.isFailedCompleted && result == GameResult.Failed)
+                {
+                    quest.currentFails += 1;
+                    if (quest.currentFails >= quest.requiredFails)
+                        quest.isFailedCompleted = true;
+                }
+
+                if (!quest.isSuccessesCompleted && result == GameResult.Succeeded)
+                {
+                    quest.currentSuccesses += 1;
+                    if(quest.currentSuccesses >= quest.requiredSuccesses)
+                        quest.isSuccessesCompleted = true;
+                }
+
+                if(!quest.isPerfectsCompleted && result == GameResult.Perfect)
+                {
+                    quest.currentPerfects += 1;
+                    if(quest.currentPerfects >= quest.requiredPerfects)
+                        quest.isPerfectsCompleted = true;
+                }
+
+                if (quest.isScoreCompleted && quest.isFailedCompleted && quest.isSuccessesCompleted && quest.isPerfectsCompleted)
                 {
                     quest.status = QuestStatus.CanComplete;
                     Debug.Log($"퀘스트 완료 가능: {quest.questName}");
@@ -108,14 +135,15 @@ public class QuestManager : MonoBehaviour
             }
         }
     }
+
     public void UpdateQuestProgressNPC(ENPC targetNpc, int branch, int index) // 특정 인물의 특정 대화를 들을 때 퀘스트 진행 업데이트
     {
         foreach (var quest in activeQuests)
         {
             if (quest.targetNpc == targetNpc && quest.branch == branch && quest.index == index && quest.status == QuestStatus.InProgress)
             {
-                quest.currentAmount++;
-                if (quest.currentAmount >= quest.requiredAmount)
+                quest.currentScore++;
+                if (quest.currentScore >= quest.requiredScore)
                 {
                     quest.status = QuestStatus.CanComplete;
                     Debug.Log($"퀘스트 완료 가능: {quest.questName}");
