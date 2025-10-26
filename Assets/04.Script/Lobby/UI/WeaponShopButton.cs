@@ -29,7 +29,7 @@ public class WeaponShopButton : MonoBehaviour
         main.DisplayGunData(index);
         foreach(var type in main.characterTypes)
         {
-            main.DeBindingButton(type);
+            //main.DeBindingButton(type);
             main.SetCharacterButton(type);
         }
     }

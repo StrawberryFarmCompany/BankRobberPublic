@@ -34,5 +34,6 @@ public class GunData : ScriptableObject
     public int thirdRangeAccuracy;
     public int awayRangeAccuracy;
     public int price;
-    public Sprite WeaponSprite;
+    public Sprite weaponSprite;
+    public GameObject gunPrefab;
 }
