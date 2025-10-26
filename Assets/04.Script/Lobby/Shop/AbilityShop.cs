@@ -17,6 +17,8 @@ public class AbilityShop : MonoBehaviour
     [Header("스킬 영역 매핑")]
     [SerializeField] private List<SkillAreaSet> skillAreaSets;
 
+    [SerializeField] private SkillInfo skillInfo;
+
     private readonly Dictionary<(Group, Kind), Transform> skillAreas = new();
     private readonly Dictionary<string, Button> buttonMap = new();
     private Action<int> onMoneyChanged;
@@ -41,6 +43,7 @@ public class AbilityShop : MonoBehaviour
         RefreshMoney();
 
         AbilityPurchases.OnChanged += RefreshAllButtons;
+        EquippedSkills.OnChanged += RefreshAllButtons;
         onMoneyChanged = (int value) => RefreshMoney();
         Money.OnChanged += onMoneyChanged;
     }
@@ -48,6 +51,7 @@ public class AbilityShop : MonoBehaviour
     void OnDestroy()
     {
         AbilityPurchases.OnChanged -= RefreshAllButtons;
+        EquippedSkills.OnChanged -= RefreshAllButtons;
         if (onMoneyChanged != null) Money.OnChanged -= onMoneyChanged;
     }
 
@@ -72,6 +76,9 @@ public class AbilityShop : MonoBehaviour
             buttonMap[key] = btn;
 
             btn.onClick.AddListener(() => OnClickPurchase(skill, btn));
+
+            SkillInfoTrigger trigger = btnObj.AddComponent<SkillInfoTrigger>();
+            trigger.Init(skill, skillInfo);
         }
     }
 
@@ -81,18 +88,27 @@ public class AbilityShop : MonoBehaviour
         string key = skill.GetKey();
         int price = AbilityPurchases.GetPrice(skill);
 
-        //이미 구매된 스킬
-        if (AbilityPurchases.IsPurchased(key))
-        {
-            Debug.Log($"[AbilityShop] 이미 구매: {skill.title}");
-            return;
-        }
+        bool purchased = AbilityPurchases.IsPurchased(key);
+        bool equipped = EquippedSkills.IsEquipped(key);
 
-        //돈 부족
-        if (!AbilityPurchases.TryPurchase(key, price))
+        if (!purchased)
         {
-            Debug.Log($"[AbilityShop] 돈 없엉 {skill.title}");
-            return;
+            if (!AbilityPurchases.TryPurchase(key, price))
+            {
+                Debug.Log($"[AbilityShop] 돈 없엉: {skill.title}");
+                return;
+            }
+        }
+        else //장착/해제
+        {
+            if (!equipped)
+            {
+                EquippedSkills.Equip(skill);
+            }
+            else
+            {
+                EquippedSkills.Unequip(skill);
+            }
         }
 
         RefreshButtonState(skill, btn);
@@ -107,26 +123,26 @@ public class AbilityShop : MonoBehaviour
         Image bgImage = btn.GetComponent<Image>();
 
         bool purchased = AbilityPurchases.IsPurchased(key);
+        bool equipped = EquippedSkills.IsEquipped(key);
 
-        label.text = GetButtonLabel(skill, purchased);
-        btn.interactable = !purchased;
-
-        //구매 상태에 따른 버튼 색상 변경
-        if (bgImage != null)
+        if (!purchased)
         {
-            if (purchased)
-                bgImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
-            else
-                bgImage.color = Color.white;
+            label.text = $"{skill.title}\n${AbilityPurchases.GetPrice(skill):N0}";
+            bgImage.color = Color.white;
+            btn.interactable = true;
         }
-    }
-
-    private string GetButtonLabel(Skill skill, bool purchased)
-    {
-        if (purchased)
-            return $"{skill.title}\n구매완료";
+        else if (equipped)
+        {
+            label.text = $"{skill.title}\n장착중";
+            bgImage.color = new Color(0.75f, 0.75f, 0.75f);
+            btn.interactable = true;
+        }
         else
-            return $"{skill.title}\n${AbilityPurchases.GetPrice(skill):N0}";
+        {
+            label.text = $"{skill.title}\n장착하기";
+            bgImage.color = new Color(0.85f, 0.95f, 1f);
+            btn.interactable = true;
+        }
     }
 
     //전체 버튼 갱신

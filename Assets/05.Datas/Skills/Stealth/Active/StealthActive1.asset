@@ -18,5 +18,7 @@ MonoBehaviour:
   effect: "\uC815\uADDC\uD589\uB3D9\uD310\uC815(3d6)\uC744 \uD1B5\uD574 \uB300\uC0C1\uC758
     \uD68C\uD53C\uC728 \uBCF4\uB2E4 \uB192\uAC8C \uB098\uC624\uBA74 \uBC14\uB85C
     \uCC98\uB9AC"
+  coolTime: "1\uD134\t"
+  cost: "\uD589\uB3D9\uB825 1\uCE78"
   price: 0
   idNum: 1

@@ -17,5 +17,7 @@ MonoBehaviour:
   title: "\uD68C\uD53C\uC728 \uC99D\uAC00"
   effect: "3\uD134 \uB3D9\uC548 \uC0AC\uC6A9\uD55C \uC5D4\uD2F0\uD2F0\uC758 \uD68C\uD53C\uC728\uC5D0
     +2"
+  coolTime: "5\uD134"
+  cost: "\uD589\uB3D9\uB825 2\uCE78"
   price: 0
   idNum: 2

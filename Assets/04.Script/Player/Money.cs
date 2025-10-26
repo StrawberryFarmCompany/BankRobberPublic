@@ -42,7 +42,7 @@ public static class Money
         Value = (sum > int.MaxValue) ? int.MaxValue : (int)sum;
         Save();
         OnChanged?.Invoke(Value);
-        moneyUI.UpdateGoldText();
+        moneyUI?.UpdateGoldText();
     }
 
     public static int Get()
@@ -58,7 +58,7 @@ public static class Money
         Value -= price;
         Save();
         OnChanged?.Invoke(Value);
-        moneyUI.UpdateGoldText();
+        moneyUI?.UpdateGoldText();
         return true;
     }
 
