@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392a583a8ea20824aaf005deb40bacaf, type: 3}
+  m_Name: AR-15
+  m_EditorClassIdentifier: 
+  gunName: AR-15
+  gunDescription: "\uAE30\uBCF8\uC801\uC778 \uB3CC\uACA9\uC18C\uCD1D\uC774\uB2E4.
+    \uBB34\uB09C\uD55C \uC131\uB2A5\uC744 \uBCF4\uC5EC\uC900\uB2E4."
+  type: 2
+  maxRounds: 5
+  bulletPerOneShot: 1
+  noise: 0
+  damagePerOneBulletMultiplier: 1
+  firstRange: 5
+  firstRangeAccuracy: 0
+  secondRange: 9
+  secondRangeAccuracy: -2
+  thirdRange: 20
+  thirdRangeAccuracy: -5
+  awayRangeAccuracy: -10
+  price: 60000
+  weaponSprite: {fileID: 21300000, guid: 7b8b6863a9ebb134a9c959d31ff0ef89, type: 3}
+  gunPrefab: {fileID: 5154483734239374005, guid: 4614fda0c9223ad44be1881cde34aa46,
+    type: 3}

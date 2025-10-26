@@ -96,26 +96,33 @@ public class AnimationStateController : MonoBehaviour
 
         if (gun != null)
         {
-            switch (gun.type)
+            if(playerController != null)
             {
-                case GunType.HandGun:
-                    currentGun = Instantiate(handGun, gunHoldPosition);
-                    break;
-                case GunType.AssaultRifle:
-                    currentGun = Instantiate(rifle, gunHoldPosition);
-                    break;
-                case GunType.SniperRifle:
-                    currentGun = Instantiate(sniperRifle, gunHoldPosition);
-                    break;
-                case GunType.ShotGun:
-                    currentGun = Instantiate(shotGun, gunHoldPosition);
-                    break;
-                case GunType.SubMachineGun:
-                    currentGun = Instantiate(subMachineGun, gunHoldPosition);
-                    break;
-                default:
-                    currentGun = null;
-                    break;
+                currentGun = Instantiate((WeaponManager.GetInstance.GetEquipData(playerController.playerStats.characterType).gunPrefab), gunHoldPosition); 
+            }
+            else
+            {
+                switch (gun.type)
+                {
+                    case GunType.HandGun:
+                        currentGun = Instantiate(handGun, gunHoldPosition);
+                        break;
+                    case GunType.AssaultRifle:
+                        currentGun = Instantiate(rifle, gunHoldPosition);
+                        break;
+                    case GunType.SniperRifle:
+                        currentGun = Instantiate(sniperRifle, gunHoldPosition);
+                        break;
+                    case GunType.ShotGun:
+                        currentGun = Instantiate(shotGun, gunHoldPosition);
+                        break;
+                    case GunType.SubMachineGun:
+                        currentGun = Instantiate(subMachineGun, gunHoldPosition);
+                        break;
+                    default:
+                        currentGun = null;
+                        break;
+                }
             }
         }
 

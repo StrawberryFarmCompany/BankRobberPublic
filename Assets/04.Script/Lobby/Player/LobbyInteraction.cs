@@ -23,6 +23,7 @@ public class LobbyInteraction : MonoBehaviour
     {
         camera = Camera.main;
         dialogueManager = CharacterManager.Instance.player.dialogueManager;
+        dialogueManager.interaction = this;
         playerInput = CharacterManager.Instance.player.playerInput;
     }
 

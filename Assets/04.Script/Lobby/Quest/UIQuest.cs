@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIQuest : MonoBehaviour
@@ -22,9 +24,30 @@ public class UIQuest : MonoBehaviour
     {
         controller = CharacterManager.Instance.player.controller;
         controller.quest += Toggle;
-        activeQuests = QuestManager.Instance.activeQuests;
+        activeQuests = QuestManager.GetInstance.activeQuests;
 
         QuestWindow.SetActive(false);
+    }
+
+    public void CloseUI()
+    {
+        QuestWindow.SetActive(false);
+        CharacterManager.Instance.player.controller.crosshair.SetActive(true);
+        CharacterManager.Instance.player.controller.LockCursor();
+        CharacterManager.Instance.player.controller.EnableActions();
+        if (CharacterManager.Instance.player.curUIPanel == QuestWindow)
+        {
+            CharacterManager.Instance.player.curUIPanel = null;
+        }
+        EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    public void OnCloseUI(InputAction.CallbackContext context)
+    {
+        if (QuestWindow.activeInHierarchy && context.started)
+        {
+            CloseUI();
+        }
     }
 
     void Toggle()
@@ -32,11 +55,19 @@ public class UIQuest : MonoBehaviour
         if (IsOpen())
         {
             QuestWindow.SetActive(false);
+            CharacterManager.Instance.player.controller.crosshair.SetActive(true);
+            CharacterManager.Instance.player.controller.EnableActions();
+            CharacterManager.Instance.player.controller.LockCursor();
+            CharacterManager.Instance.player.curUIPanel = null;
             UpdateQuestList();
         }
         else
         {
             QuestWindow.SetActive(true);
+            CharacterManager.Instance.player.controller.crosshair.SetActive(false);
+            CharacterManager.Instance.player.controller.DisableActions();
+            CharacterManager.Instance.player.controller.UnlockCursor();
+            CharacterManager.Instance.player.curUIPanel = QuestWindow;
             UpdateQuestList();
         }
     }
@@ -74,19 +105,19 @@ public class UIQuest : MonoBehaviour
             questStateText.color = Color.green;
         }
 
-        if (quest.targetID == null || quest.targetID == "")
+        if (quest.sceneName == null)
         {
             questProgressText.text = $"{quest.targetDialogue}";
             return;
         }
         if (quest.targetDialogue == null || quest.targetDialogue == "")
         {
-            questProgressText.text = $"{quest.targetID}óġ : {quest.currentAmount} / {quest.requiredAmount}";
+            questProgressText.text = $"{quest.sceneName} : {quest.currentScore} / {quest.requiredScore}";
             return;
         }
         else
         {
-            questProgressText.text = $"{quest.targetID.ToString()} óġ: {quest.currentAmount} / {quest.requiredAmount}\n{quest.targetDialogue}";
+            questProgressText.text = $"{quest.sceneName.ToString()} : {quest.currentScore} / {quest.requiredScore}\n{quest.targetDialogue}";
             return;
         }
 
