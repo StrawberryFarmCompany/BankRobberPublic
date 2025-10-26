@@ -13,8 +13,10 @@ public class Skill : ScriptableObject
     public Kind kind;       //액티브,패시브,강화
 
     [Header("표시 정보")]
-    public string title = "체력 회복";
-    [TextArea] public string effect;    //설명
+    public string title = "체력 회복";           //스킬 이름
+    [TextArea(2, 4)] public string effect;      //설명
+    [TextArea(1, 2)] public string coolTime;    //쿨타임
+    [TextArea(1, 2)] public string cost;        //소모 자원
 
     [Header("가격 자동 설정")]
     [SerializeField, HideInInspector] private int price;

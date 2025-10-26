@@ -17,5 +17,7 @@ MonoBehaviour:
   title: "\uC18C\uC74C \uC81C\uAC70"
   effect: "\uC2DC\uC804\uC790\uC758 \uC18C\uC74C\uD310\uC815\uC744 1\uD134 \uB3D9\uC548
     \uC81C\uAC70"
+  coolTime: "5\uD134"
+  cost: "\uD589\uB3D9\uB825 2\uCE78"
   price: 0
   idNum: 2
