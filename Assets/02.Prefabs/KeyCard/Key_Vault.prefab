@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5863134432093875441}
@@ -48,7 +48,7 @@ MonoBehaviour:
   type: 4
   isWalkAble: 0
   target: {fileID: 3177147708665143966}
-  doorValue: 2
+  doorValue: 3
   lockType: 0
   consumeItems: []
 --- !u!1001 &6256820184790354714

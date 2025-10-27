@@ -45,14 +45,14 @@ public class AbilityShop : MonoBehaviour
         AbilityPurchases.OnChanged += RefreshAllButtons;
         EquippedSkills.OnChanged += RefreshAllButtons;
         onMoneyChanged = (int value) => RefreshMoney();
-        Money.OnChanged += onMoneyChanged;
+        Money.GetInstance.OnChanged += onMoneyChanged;
     }
 
     void OnDestroy()
     {
         AbilityPurchases.OnChanged -= RefreshAllButtons;
         EquippedSkills.OnChanged -= RefreshAllButtons;
-        if (onMoneyChanged != null) Money.OnChanged -= onMoneyChanged;
+        if (onMoneyChanged != null) Money.GetInstance.OnChanged -= onMoneyChanged;
     }
 
     //버튼 동적 생성
@@ -160,7 +160,7 @@ public class AbilityShop : MonoBehaviour
     private void RefreshMoney()
     {
         if (moneyText != null)
-            moneyText.text = $"{Money.Value:N0}";
+            moneyText.text = $"{Money.GetInstance.MoneyValue:N0}";
     }
 }
 
