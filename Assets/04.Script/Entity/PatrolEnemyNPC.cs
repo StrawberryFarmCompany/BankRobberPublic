@@ -14,6 +14,7 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
+
     private float eta;
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
@@ -46,14 +47,17 @@ public class PatrolEnemyNPC : EnemyNPC
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
     {
+        DetectNoise();
         DetectVisibleTargets();
         Debug.Log(stats.secData.GetSecLevel);
         if (stats.secData.GetSecLevel == 0)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
             {
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(noiseLocation); }, 0f));
+                efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
-                
+
                 if (this.gameObject.transform.position == noiseLocation)
                 {
                     isArrivedNoisePlace = true;
@@ -447,5 +451,12 @@ public class PatrolEnemyNPC : EnemyNPC
         }
 
         return best;
+    }
+
+    protected override void OnNoiseDetected(Vector3 noisePos)
+    {
+        isNoise = true;
+        isArrivedNoisePlace = false;
+        noiseLocation = noisePos;
     }
 }

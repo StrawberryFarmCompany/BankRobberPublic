@@ -44,7 +44,7 @@ public static class NoiseManager
         switch (type)
         {
             case NoiseType.Move:
-                return 5; // 이동 시 9*9 → 중심으로부터 4칸
+                return 5; // 이동 시 9*9 소음 발생 (캐릭터 위치 미포함 기준 모든 방면으로 4칸)
             case NoiseType.Disarm:
                 return isSuccess ? 2 : 6;
             case NoiseType.Trigger:

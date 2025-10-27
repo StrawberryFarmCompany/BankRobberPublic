@@ -149,6 +149,10 @@ public class NodePlayerController : MonoBehaviour
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             Move(mousePos);
+
+            // 은신 중이 아닐 때 소음 발생
+            if (!isHide)
+                NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Move);
         }
         else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRunMode)
         {
