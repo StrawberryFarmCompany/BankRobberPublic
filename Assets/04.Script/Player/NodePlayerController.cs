@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -62,7 +61,10 @@ public class NodePlayerController : MonoBehaviour
     private void Awake()
     {
         playerStats = new EntityStats(playerData, gameObject);
+
         if (gun == null) gun = GetComponent<Gun>();
+        gun.SetGun(WeaponManager.GetInstance.GetEquipData(playerStats.characterType));
+
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
         isHide = true;
@@ -494,6 +496,7 @@ public class NodePlayerController : MonoBehaviour
     {
         isHide = false;
         UIManager.GetInstance.pip.HideAndSneakText();
+        NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Unstealth);
     }
 
     private void CheckSneakAttack(Vector3 mouseScreenPos)
@@ -528,10 +531,13 @@ public class NodePlayerController : MonoBehaviour
         {
             targetNodePos = targetNodeCenter;
             bestNearNodePos = bestNode;
+
+            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Ambush);
+
             RemoveHideMode();
 
             animationController.OnUnEquipForSneak();
-            
+
             StartMode(PlayerStatus.isMoveMode);
 
             RefreshPipAllSafe();
@@ -606,6 +612,7 @@ public class NodePlayerController : MonoBehaviour
             UIManager.GetInstance.ShowActionPanel(true);
             Debug.Log("훔치기 성공!");
             RefreshPipAllSafe();
+            NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Steal);
         }
         else
         {
@@ -718,6 +725,8 @@ public class NodePlayerController : MonoBehaviour
         }
         RefreshPipAllSafe();
         StartMode(PlayerStatus.isMoveMode);
+
+        NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger, gun.makeNoise);
     }
 
 

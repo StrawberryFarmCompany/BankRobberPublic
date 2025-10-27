@@ -5,7 +5,8 @@ using NodeDefines;
 
 public class Gun : MonoBehaviour
 {
-    [SerializeField] private GunData gunData;
+    [Tooltip("에너미는 할당해주고, 플레이어는 할당하지 읺기")]
+    [SerializeField] private GunData data;
 
     [Header("현재 총기 정보")]
     public string gunName;
@@ -27,13 +28,17 @@ public class Gun : MonoBehaviour
     public int thirdrangeAccuracy;
     public int awayRangeAccuracy;
 
+    private int ishit = 0;
+    public bool makeNoise = false;
+
 
     private void Awake()
     {
-        SetGun();
+        if (data != null)
+            SetGun(data);
     }
 
-    public void SetGun()
+    public void SetGun(GunData gunData)
     {
         gunName = gunData.gunName;
         gunDescription = gunData.gunDescription;
@@ -89,11 +94,17 @@ public class Gun : MonoBehaviour
                 int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
                 entityStats.Damaged(result * damagePerOneBulletMultiplier);
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
+                ishit++;
             }
             else
             {
                 Debug.Log($"{i + 1}번째 격발 결과\n불발");
             }
+        }
+
+        if (ishit >= 1)
+        {
+            makeNoise = true;
         }
     }
 

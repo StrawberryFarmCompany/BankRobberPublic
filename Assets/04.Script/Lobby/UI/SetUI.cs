@@ -11,12 +11,12 @@ public class SetUI : MonoBehaviour, INPCInteractable
 {
     [SerializeField] private GameObject uiToShow;
     public string promptMessage;
-    private PlayerInput playerInput;
+    
 
     void Start()
     {
         uiToShow.SetActive(false);
-        playerInput = CharacterManager.Instance.player.playerInput;
+        
     }
 
     public string GetInteractPrompt()
@@ -28,8 +28,8 @@ public class SetUI : MonoBehaviour, INPCInteractable
     {
         uiToShow.SetActive(true);
         CharacterManager.Instance.player.controller.crosshair.SetActive(false);
-        UnlockCursor();
-        DisableActions();
+        CharacterManager.Instance.player.controller.UnlockCursor();
+        CharacterManager.Instance.player.controller.DisableActions();
         CharacterManager.Instance.player.curUIPanel = uiToShow;
     }
 
@@ -37,8 +37,8 @@ public class SetUI : MonoBehaviour, INPCInteractable
     {
         uiToShow.SetActive(false);
         CharacterManager.Instance.player.controller.crosshair.SetActive(true);
-        LockCursor();
-        EnableActions();
+        CharacterManager.Instance.player.controller.LockCursor();
+        CharacterManager.Instance.player.controller.EnableActions();
         if (CharacterManager.Instance.player.curUIPanel == uiToShow)
         {
             CharacterManager.Instance.player.curUIPanel = null;
@@ -51,41 +51,6 @@ public class SetUI : MonoBehaviour, INPCInteractable
         if (uiToShow.activeInHierarchy && context.started)
         {
             CloseUI();
-        }
-    }
-
-    public void LockCursor()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
-    public void UnlockCursor()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
-
-    public void DisableActions()
-    {
-        foreach (var action in playerInput.actions)
-        {
-            if (action.name == "Interaction")
-                continue; // Interact액션은 제외
-            if (action.name == "CloseUI")
-                continue; // CloseUI액션은 제외
-            action.Disable();
-        }
-    }
-    public void EnableActions()
-    {
-        foreach (var action in playerInput.actions)
-        {
-            if (action.name == "Interaction")
-                continue; // Interact액션은 제외
-            if (action.name == "CloseUI")
-                continue; // CloseUI액션은 제외
-            action.Enable();
         }
     }
 }
