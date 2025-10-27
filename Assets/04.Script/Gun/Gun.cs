@@ -6,7 +6,7 @@ using NodeDefines;
 public class Gun : MonoBehaviour
 {
     [Tooltip("에너미는 할당해주고, 플레이어는 할당하지 읺기")]
-    [SerializeField] private GunData data;
+    public GunData data;
 
     [Header("현재 총기 정보")]
     public string gunName;

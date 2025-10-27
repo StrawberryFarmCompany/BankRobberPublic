@@ -13,6 +13,7 @@ public class LobbyInteraction : MonoBehaviour
     private INPCInteractable curInteractable;
     private PlayerInput playerInput;
 
+    public GameObject promptBG;
     public TextMeshProUGUI promptText;
     private Camera camera;
     public GameObject npcObject;
@@ -50,14 +51,14 @@ public class LobbyInteraction : MonoBehaviour
             {
                 curInteractGameObject = null;
                 curInteractable = null;
-                promptText.gameObject.SetActive(false);
+                promptBG.gameObject.SetActive(false);
             }
         }
     }
 
     private void SetPromptText()
     {
-        promptText.gameObject.SetActive(true);
+        promptBG.gameObject.SetActive(true);
         promptText.text = curInteractable.GetInteractPrompt();
     }
 
@@ -68,7 +69,7 @@ public class LobbyInteraction : MonoBehaviour
             curInteractable.OnInteract();
             curInteractGameObject = null;
             curInteractable = null;
-            promptText.gameObject.SetActive(false);
+            promptBG.gameObject.SetActive(false);
             //UI가 뜨는 인터랙트일 때 CharacterManager.Instance.player.controller.ToggleCursor();
 
         }

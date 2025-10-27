@@ -512,7 +512,7 @@
                     "name": "Run",
                     "type": "Button",
                     "id": "f2ba02ef-0a2a-43f0-a83f-e2f55c89b8a7",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -521,7 +521,7 @@
                     "name": "HideAndSneakAttack",
                     "type": "Button",
                     "id": "e3715812-a865-493f-b50c-bedd0df30bab",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -530,7 +530,7 @@
                     "name": "RangeAttack",
                     "type": "Button",
                     "id": "7f963bb4-bc71-4a3d-9ec9-c91ba2a95757",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -539,7 +539,7 @@
                     "name": "Cancel",
                     "type": "Button",
                     "id": "a37846f2-3923-4be7-8e0b-74a4595eab93",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -548,7 +548,7 @@
                     "name": "Throw",
                     "type": "Button",
                     "id": "e751d7f3-a51f-4710-be6f-660792b0cc56",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -557,7 +557,7 @@
                     "name": "PickPocket",
                     "type": "Button",
                     "id": "42be2845-0ca1-4bdb-902d-38d4301ecfc1",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -575,7 +575,7 @@
                     "name": "PerkAction",
                     "type": "Button",
                     "id": "0ceee91d-e17b-4be4-bcc3-f94c687563bf",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -691,7 +691,7 @@
                 {
                     "name": "",
                     "id": "61ea7add-8906-412a-bd6d-eb3efeda42c8",
-                    "path": "<Keyboard>/r",
+                    "path": "<Keyboard>/t",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -702,7 +702,7 @@
                 {
                     "name": "",
                     "id": "d3f79ad0-3d08-4a8a-969e-8d6a2918a2ea",
-                    "path": "<Keyboard>/p",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

@@ -48,6 +48,7 @@ class GameManager : SingleTon<GameManager>
     private int gatheredCost;
     public int GatheredCost { get { return gatheredCost; } set { gatheredCost = value; } }
 
+    public DamageProjector damageProjector = new DamageProjector();
 
     //public void RegisterActor(NodePlayerController actor)
     //{
@@ -453,11 +454,12 @@ class GameManager : SingleTon<GameManager>
     {
         int totalBenefit = GatheredGold - GetProjectCost() - GatheredCost;
         ScoreManager.GetInstance.AddScore(LoadSceneManager.GetInstance.curSceneType, totalBenefit);
-        Money.Add(totalBenefit);
+        Money.GetInstance.Add(totalBenefit);
     }
 
     public void DoReset()
     {
+        damageProjector.OnReset();
         Reset();
     }
 }
