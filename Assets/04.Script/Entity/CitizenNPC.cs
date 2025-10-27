@@ -11,7 +11,7 @@ public class CitizenNPC : NeutralNPC
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     Vector3Int curTargetPos;
-    bool isMoving;
+    public bool isMoving;
     bool canNextMove;
 
     protected override IEnumerator Start()
@@ -19,7 +19,6 @@ public class CitizenNPC : NeutralNPC
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         nfsm = new NeutralStateMachine(this, transform.GetComponentInChildren<Animator>(), NeutralStates.CitizenIdleState);
-        yield return null;
     }
 
     protected override void FixedUpdate()
@@ -40,10 +39,9 @@ public class CitizenNPC : NeutralNPC
         List<EntityStats> visibleTargets = DetectVisibleTargets();
         
         if (visibleTargets.Count > 0 && isDetection == false)
-        { 
+        {
             isDetection = true;
-            //CitizenWitness();
-            Debug.Log("발견함");
+            CitizenWitness();
         }
 
         else if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
@@ -52,7 +50,7 @@ public class CitizenNPC : NeutralNPC
             ChangeToDead();
         }
 
-        else if(stats.secData.GetSecLevel >= 3)
+        else if(stats.secData.GetSecLevel >= 2)
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();
@@ -62,7 +60,7 @@ public class CitizenNPC : NeutralNPC
         {
             Debug.Log("존나 튀는 상태");
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(exitArea); }, 0f));
-            nfsm.eta = 3f;
+            nfsm.eta = 3;
             nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
         }
 
@@ -150,10 +148,41 @@ public class CitizenNPC : NeutralNPC
 
         if (pathQueue.Count > 0)
         {
+            float totalDistance = 0f;
+            Vector3 lastPos = transform.position;
+            foreach (var step in pathQueue)
+            {
+                totalDistance += Vector3.Distance(lastPos, step);
+                lastPos = step;
+            }
+
+            if (agent == null)
+                agent = GetComponent<NavMeshAgent>();
+
+            if (agent.speed <= 0f)
+                agent.speed = 2f;
+
+            float eta = totalDistance / agent.speed;
+
+            if (nfsm.currentState != null)
+            {
+                nfsm.Current.duration = eta;
+                Debug.Log($"[ETA] {eta:F2}초 / 거리 {totalDistance:F2} / 속도 {agent.speed:F2}");
+            }
+            else
+            {
+                Debug.LogWarning("efsm.Current가 null입니다.");
+            }
+
             //최종 이동 구현
             isMoving = true;
             canNextMove = true;
         }
+        //else 
+        //{
+        //    Debug.LogWarning("pathQueue가 비어있어 ETA계산 불가");
+        //}
+
     }
 
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
@@ -258,7 +287,6 @@ public class CitizenNPC : NeutralNPC
 
     }
 
-    // 가장 가까운 노드 찾기
     private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
     {
         Vector3Int best = center;

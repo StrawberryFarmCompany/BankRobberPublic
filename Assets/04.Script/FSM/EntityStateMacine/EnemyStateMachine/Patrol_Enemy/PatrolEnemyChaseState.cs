@@ -14,7 +14,7 @@ public class PatrolEnemyChaseState : EnemyState
 
 public override void Enter()
     {
-
+        anim.Play("HG_Move");
     }
 
     public override void Execute()
@@ -24,6 +24,6 @@ public override void Enter()
 
     public override void Exit()
     {
-
+        anim.Play("HG_Idle_Pose");
     }
 }

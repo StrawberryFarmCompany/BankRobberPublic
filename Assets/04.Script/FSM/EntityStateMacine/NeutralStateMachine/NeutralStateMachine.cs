@@ -7,7 +7,7 @@ public class NeutralStateMachine : IStateMachineBase<NeutralState>
 {
     private Dictionary<NeutralStates, NeutralState> neutralStates;
     public float eta;
-    private NeutralState currentState;
+    public NeutralState currentState;
 
     public NeutralState Current => currentState;
 

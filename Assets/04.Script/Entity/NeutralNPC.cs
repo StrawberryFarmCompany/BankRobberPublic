@@ -15,12 +15,11 @@ public class NeutralNPC : MonoBehaviour
 
     protected virtual IEnumerator Start()
     {
-        yield return new WaitUntil(()=> ResourceManager.GetInstance.IsLoaded);
+        if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData);
         stats.NodeUpdates(transform.position);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
-        stats.currNode = GameManager.GetInstance.GetNode(transform.position);
 
         yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.secData.SetSecLevel(0);
@@ -40,7 +39,6 @@ public class NeutralNPC : MonoBehaviour
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
         {
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
 /*        else
@@ -98,9 +96,9 @@ public class NeutralNPC : MonoBehaviour
             }
         }
 
-        if (visibleTargets.Count > 0)
+        if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 0)
         {
-            stats.secData.SetSecLevel(2);
+            SecurityLevel(1);
         }
         return visibleTargets;
     }
@@ -125,17 +123,9 @@ public class NeutralNPC : MonoBehaviour
         }
     }
 
-    public void SecurityLevel1()
+    public void SecurityLevel(ushort level)
     {
-        if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6000, out BuffData item))
-        {
-            stats.RegistBuff(item);
-        }
-
-        else
-        {
-            Debug.Log("키 값 조회 실패");
-        }
+        stats.secData.SetSecLevel(level);
     }
 
     public void CitizenWitness()

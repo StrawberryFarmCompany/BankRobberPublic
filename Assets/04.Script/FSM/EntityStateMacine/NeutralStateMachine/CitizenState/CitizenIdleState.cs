@@ -13,7 +13,7 @@ public class CitizenIdleState : NeutralState
 
     public override void Enter()
     {
-        //idleState.Enter();
+        anim.Play("HG_Idle_Pose");
     }
 
     public override void Execute()
@@ -23,11 +23,6 @@ public class CitizenIdleState : NeutralState
 
     public override void Exit() 
     {
-        //idleState.Exit();
-    }
-
-    public void Idle()
-    {
-
+        
     }
 }

@@ -32,14 +32,15 @@ public class PatrolEnemyNPC : EnemyNPC
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-    }
-    
-    private void Update()
-    {
         if (isMoving)
         {
             SequentialMove();
         }
+    }
+    
+    private void Update()
+    {
+
     }
 
     // 턴마다 실행될 매서드
@@ -83,8 +84,10 @@ public class PatrolEnemyNPC : EnemyNPC
 
             else if (departurePoint == false && destinationPoint == true)
             {
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(firstLocation); }, 0f));
+                efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
-                Move(homeLocation);
+
                 if (this.gameObject.transform.position == homeLocation)
                 {
                     LookAround();
@@ -106,10 +109,11 @@ public class PatrolEnemyNPC : EnemyNPC
             // 공격이 실패했거나 행동력이 남았으면 추적 후 공격
             if (stats.curActionPoint > 0)
             {
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyChaseState));
                 if (nearPlayerLocation != null)
                 {
-                    Move(nearPlayerLocation.GetPosition());
+                    TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
+                    efsm.eta = 3;
+                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyChaseState));
                 }
 
                 else
