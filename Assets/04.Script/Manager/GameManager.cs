@@ -48,6 +48,7 @@ class GameManager : SingleTon<GameManager>
     private int gatheredCost;
     public int GatheredCost { get { return gatheredCost; } set { gatheredCost = value; } }
 
+    public DamageProjector damageProjector = new DamageProjector();
 
     //public void RegisterActor(NodePlayerController actor)
     //{
@@ -458,6 +459,7 @@ class GameManager : SingleTon<GameManager>
 
     public void DoReset()
     {
+        damageProjector.OnReset();
         Reset();
     }
 }
