@@ -9,6 +9,7 @@ public class AbilityShop : MonoBehaviour
 {
     [Header("특성 상점UI 프리팹")]
     [SerializeField] private GameObject skillButtonPrefab;  // 버튼 프리팹
+    [SerializeField] private GameObject upgradeButtonPrefab;
     [SerializeField] private TextMeshProUGUI moneyText;     // 돈 표시 텍스트
 
     [Header("스킬 데이터")]
@@ -64,15 +65,16 @@ public class AbilityShop : MonoBehaviour
             {
                 continue;
             }
+            GameObject prefabToUse = (skill.kind == Kind.Upgrade) ? upgradeButtonPrefab : skillButtonPrefab;
 
-            GameObject btnObj = Instantiate(skillButtonPrefab, parent);
+            GameObject btnObj = Instantiate(prefabToUse, parent);
             Button btn = btnObj.GetComponent<Button>();
             TMP_Text label = btnObj.GetComponentInChildren<TMP_Text>();
 
             string key = skill.GetKey();
             int price = AbilityPurchases.GetPrice(skill);
 
-            label.text = $"{skill.title}\n${price:N0}";
+            label.text = $"{skill.title}";
             buttonMap[key] = btn;
 
             btn.onClick.AddListener(() => OnClickPurchase(skill, btn));
@@ -127,7 +129,7 @@ public class AbilityShop : MonoBehaviour
 
         if (!purchased)
         {
-            label.text = $"{skill.title}\n${AbilityPurchases.GetPrice(skill):N0}";
+            label.text = $"{skill.title}";
             bgImage.color = Color.white;
             btn.interactable = true;
         }
