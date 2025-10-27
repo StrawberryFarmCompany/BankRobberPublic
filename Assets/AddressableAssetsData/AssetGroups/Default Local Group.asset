@@ -22,6 +22,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38f7c878ee9722947b104f4a4c52ce76
+    m_Address: DamageText
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5666c8f1344c51049ae8b0e602f12d0c
     m_Address: BuffDescription
     m_ReadOnly: 0
