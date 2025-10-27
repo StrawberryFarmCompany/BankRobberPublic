@@ -12,8 +12,8 @@ public class TestAddMoney : MonoBehaviour
     {
         if (Input.GetKeyDown(addKey))
         {
-            Money.Add(addAmount);
-            Debug.Log($"[테스트] {addAmount:N0}원 추가됨 → 현재 잔액: {Money.Value:N0}");
+            Money.GetInstance.Add(addAmount);
+            Debug.Log($"[테스트] {addAmount:N0}원 추가됨 → 현재 잔액: {Money.GetInstance.MoneyValue:N0}");
         }
     }
 }
