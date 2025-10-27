@@ -168,11 +168,6 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
-    public void SetNoise(Vector3 noisePos)
-    {
-        curNoise = noisePos;
-    }
-
     public void SecurityLevel(ushort level)
     {
         stats.secData.SetSecLevel(level);
