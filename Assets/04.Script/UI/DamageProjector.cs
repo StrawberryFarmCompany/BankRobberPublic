@@ -33,10 +33,10 @@ public class DamageProjector
             temp = textQueue.Dequeue();
         }
         temp.gameObject.SetActive(true);
-        temp.text = $"- {v.ToString("N2")}";
+        temp.text = $"- {v.ToString("n2")}";
         temp.transform.position = pos;
 
-        temp.transform.DOMoveY(1.8f, 1f).OnComplete(()=> 
+        temp.transform.DOMoveY(pos.y+1.8f, 1f).OnComplete(()=> 
         {
             EnQueue(temp);
         });
