@@ -8,65 +8,65 @@ class MoneyData
     public int money = 0;
 }
 
-public static class Money
+public class Money : SingleTon<Money>
 {
-    public static int Value { get; private set; }
+    private int moneyValue;
+    public int MoneyValue { get { return moneyValue; } set { moneyValue = value; } }
 
-    public static event Action<int> OnChanged;
+    public event Action<int> OnChanged;
 
     const string FileName = "money.json";
     static string FilePath => Path.Combine(Application.persistentDataPath, FileName);
 
-    public static MoneyUI moneyUI;
+    public MoneyUI moneyUI;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    static void Init()
+    protected override void Init()
     {
         Load();
-        OnChanged?.Invoke(Value);
+        OnChanged?.Invoke(MoneyValue);
     }
 
-    public static void Set(int amount)
+    public void Set(int amount)
     {
         if (amount < 0) amount = 0;
-        Value = amount;
+        MoneyValue = amount;
         Save();
-        OnChanged?.Invoke(Value);
+        OnChanged?.Invoke(MoneyValue);
         moneyUI.UpdateGoldText();
     }
 
-    public static void Add(int amount)
+    public void Add(int amount)
     {
         if (amount <= 0) return;
-        long sum = (long)Value + amount;
-        Value = (sum > int.MaxValue) ? int.MaxValue : (int)sum;
+        long sum = (long)MoneyValue + amount;
+        MoneyValue = (sum > int.MaxValue) ? int.MaxValue : (int)sum;
         Save();
-        OnChanged?.Invoke(Value);
+        OnChanged?.Invoke(MoneyValue);
         moneyUI?.UpdateGoldText();
     }
 
-    public static int Get()
+    public int Get()
     {
         Load();
-        return Value;
+        return MoneyValue;
     }
 
-    public static bool TrySpend(int price)
+    public bool TrySpend(int price)
     {
         if (price <= 0) return true;
-        if (Value < price) return false;
-        Value -= price;
+        if (MoneyValue < price) return false;
+        MoneyValue -= price;
         Save();
-        OnChanged?.Invoke(Value);
+        OnChanged?.Invoke(MoneyValue);
         moneyUI?.UpdateGoldText();
         return true;
     }
 
-    static void Save()
+    public void Save()
     {
         try
         {
-            string json = JsonUtility.ToJson(new MoneyData { money = Value });
+            string json = JsonUtility.ToJson(new MoneyData { money = MoneyValue });
             File.WriteAllText(FilePath, json);
         }
         catch (Exception e)
@@ -75,7 +75,7 @@ public static class Money
         }
     }
 
-    static void Load()
+    public void Load()
     {
         try
         {
@@ -83,7 +83,7 @@ public static class Money
             {
                 string json = File.ReadAllText(FilePath);
                 MoneyData data = JsonUtility.FromJson<MoneyData>(json);
-                Value = (data != null) ? Mathf.Max(0, data.money) : 0;
+                MoneyValue = (data != null) ? Mathf.Max(0, data.money) : 0;
                 return;
             }
         }
@@ -91,8 +91,9 @@ public static class Money
         {
             Debug.LogWarning("[Money] 불러오기 실패, 리셋: " + e);
         }
-        Value = 0;
-        moneyUI.UpdateGoldText();
+        MoneyValue = 0;
+        Save();
+        if(moneyUI != null) moneyUI.UpdateGoldText();
     }
 }
 

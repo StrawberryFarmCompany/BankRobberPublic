@@ -453,7 +453,7 @@ class GameManager : SingleTon<GameManager>
     {
         int totalBenefit = GatheredGold - GetProjectCost() - GatheredCost;
         ScoreManager.GetInstance.AddScore(LoadSceneManager.GetInstance.curSceneType, totalBenefit);
-        Money.Add(totalBenefit);
+        Money.GetInstance.Add(totalBenefit);
     }
 
     public void DoReset()
