@@ -61,6 +61,8 @@ public class EntityStats
     /// </summary>
     public Action OnReset;
 
+    private HPBar hpbar;
+
     public EntityStats(EntityData baseStats, GameObject gameObject = null)
     {
         entityTag = baseStats.Tag;
@@ -84,6 +86,8 @@ public class EntityStats
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
+        hpbar = new HPBar();
+        hpbar.Init(maxHp,CurHp,UIManager.GetInstance.CanvasRoot);
         if (baseStats.characterType != CharacterType.None) 
         {
             this.characterType = baseStats.characterType;
@@ -166,10 +170,7 @@ public class EntityStats
     public void Damaged(float damage)
     {
         CurHp -= damage;
-        if (currNode != null)
-        {
-            GameManager.GetInstance.damageProjector.DeQueue(damage, currNode.GetCenter+ (Vector3.up * 2));
-        }
+        hpbar.SetCurrHP(CurHp);
         if (CurHp <= 0)
         {
             CurHp = 0;
@@ -180,6 +181,7 @@ public class EntityStats
     private void Dead()
     {
         GameManager.GetInstance.GatherCostAndScore();
+        hpbar.Destroy();
         //thisGameObject.SetActive(false);
         if (characterType != CharacterType.None)
         {
@@ -201,6 +203,7 @@ public class EntityStats
         if (CurHp > maxHp)
         {
             CurHp = maxHp;
+            hpbar.SetCurrHP(CurHp);
         }
     }
 
@@ -224,9 +227,8 @@ public class EntityStats
         movement = movementSpeed;
         evasionRate = baseEvasionRate;                                  // 매 턴마다 회피율을 기본값으로 리셋 임시적으로 넣은거라서 나중에 바꿔야함
     }
-    public void SetCurrentNode(Vector3 pos)
+    public void GetTileInteraction(Vector3 pos)
     {
-        currNode = GameManager.GetInstance.GetNode(pos);
         if (this == NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats)
         {
             UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
@@ -242,6 +244,8 @@ public class EntityStats
             if(currNode != null)currNode.RemoveCharacter(this);
             currNode = GameManager.GetInstance.GetNode(tempPos);
             currNode.AddCharacter(this);
+            Debug.Log($"{pos}로 이동");
+            hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
         }
     }
 

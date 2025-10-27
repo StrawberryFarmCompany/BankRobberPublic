@@ -61,7 +61,7 @@ namespace NodeDefines
         public void RemoveCharacter(EntityStats stat)
         {
             standing.Remove(stat);
-            if (standing.Count == 0) standing = new List<EntityStats>();//더블링 해소
+            if (standing.Count == 0) standing.Clear();//더블링 해소
         }
 
         public void RemoveInteraction(Interaction remove, string interactionName)
