@@ -11,7 +11,8 @@ public class InteractionSetter : MonoBehaviour
 
     [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.GoldBar,(int)InteractionType.VaultDoor)]//금고문,문 카드키
     public Transform target;
-    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard)]//금고문,문 카드키
+
+    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.VaultDoor)]//금고문,문 카드키
     public int doorValue;
     [ConditionalHide("type", (int)InteractionType.Door)]//금고문,문
     public DoorLockType lockType;
