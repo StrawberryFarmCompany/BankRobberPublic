@@ -13,12 +13,23 @@ public class CitizenFleeState : NeutralState
     }
     public override void Enter()
     {
-
+        anim.Play("HG_Move");
     }
 
     public override void Exit() 
     {
-
+        anim.Play("HG_Idle_Pose");
     }
+    
+    //void OnAnimatorMove()
+    //{
+    //    if(anim)
+    //    {
+    //        for (int i=0; i < 5; i++)
+    //        {
+    //            neutralNPC.gameObject.transform.position += Vector3.forward * 1;
+    //        }
+    //    }
+    //}
 
 }
