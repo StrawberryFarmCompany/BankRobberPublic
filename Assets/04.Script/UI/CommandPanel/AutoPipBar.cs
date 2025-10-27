@@ -11,6 +11,7 @@ public class AutoPipBar : MonoBehaviour
     [SerializeField] GameObject compact;
     [SerializeField] TextMeshProUGUI movementText;
     [SerializeField] TextMeshProUGUI healthText;
+    [SerializeField] TextMeshProUGUI ammoText;
     [SerializeField] TextMeshProUGUI hideAndSneakAttackText;
     [SerializeField] Image portraitImage; // 캐릭터 초상화 이미지
 
@@ -32,6 +33,7 @@ public class AutoPipBar : MonoBehaviour
         RefreshActionPoint();
         UpdatePortrait();
         RefreshHealth();
+        RefreshAmmo();
     }
 
     public void RefreshMovement()
@@ -60,6 +62,15 @@ public class AutoPipBar : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void RefreshAmmo()
+    {
+        Gun gun = NodePlayerManager.GetInstance.GetCurrentPlayer().gun;
+
+        Color color = new Color(1, (155 * ((float)gun.curRounds/ (float)gun.maxRounds)+100)/255, ( 155 * ((float)gun.curRounds / (float)gun.maxRounds) + 100)/255);
+        ammoText.text = $"{gun.curRounds} / {gun.maxRounds}";
+        ammoText.color = color;
     }
 
     public void RefreshActionPoint()
