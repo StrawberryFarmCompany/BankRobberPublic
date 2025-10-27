@@ -49,7 +49,7 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
             case SceneType.MainTitle: return "MainTitle";
             case SceneType.LobbyScene: return "LobbyScene";
             case SceneType.TutorialScene: return "ProtoTypeScene";
-            case SceneType.Stage01Scene: return "ProtoTypeScene";
+            case SceneType.Stage01Scene: return "Stage01Scene";
             case SceneType.Stage02Scene: return "Stage02Scene";
             case SceneType.Stage03Scene: return "Stage03Scene";
             case SceneType.Stage04Scene: return "Stage04Scene";
