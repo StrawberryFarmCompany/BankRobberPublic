@@ -63,7 +63,8 @@ public class NodePlayerController : MonoBehaviour
         playerStats = new EntityStats(playerData, gameObject);
 
         if (gun == null) gun = GetComponent<Gun>();
-        gun.SetGun(WeaponManager.GetInstance.GetEquipData(playerStats.characterType));
+        if (gun.data == null)
+            gun.SetGun(WeaponManager.GetInstance.GetEquipData(playerStats.characterType));
 
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForcMove;
@@ -232,6 +233,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckRangeAttack(mousePos);
+            RefreshPipAllSafe();
         }
 
         if(context.canceled && IsMyTurn() && (currPlayerStatus == PlayerStatus.isRunMode ||
@@ -752,7 +754,7 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnReload(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && currPlayerStatus != PlayerStatus.isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(PlayerStatus.isReloadMode);

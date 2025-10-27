@@ -62,7 +62,10 @@ public class Door : IInteractable
 
             ReleaseInteraction(OnInteraction);
             RegistInteraction(UnInteraction);
+
+            NodePlayerManager.GetInstance.GetCurrentPlayer().TurnOnHighlighter();
         }
+
     }
     public void UnInteraction(EntityStats stat)
     {
