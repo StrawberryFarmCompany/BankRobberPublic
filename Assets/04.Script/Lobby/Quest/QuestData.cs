@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 public enum QuestStatus
 {
@@ -20,6 +21,13 @@ public class NpcDialogueChange
     public int newIndex;
 }
 
+[Serializable]
+public class CharacterWithGun
+{
+    public CharacterType type;
+    public GunData gun;
+}
+
 [CreateAssetMenu(fileName = "NewQuest", menuName = "New Quest")]
 public class QuestData : ScriptableObject
 {
@@ -28,10 +36,31 @@ public class QuestData : ScriptableObject
     public string questName;
     [TextArea] public string description;
 
-    [Header("목표")]
-    public int requiredAmount;
-    public string targetID;
-    public int currentAmount;
+    [Header("목표 스테이지 및 점수")]
+    public SceneType scene;
+    public string sceneName;
+
+    public int requiredScore;
+    public int currentScore;
+    [Tooltip("안 쓸 거면 체크")]
+    public bool isScoreCompleted;
+
+    public int requiredSuccesses;
+    public int currentSuccesses;
+    [Tooltip("안 쓸 거면 체크")]
+    public bool isSuccessesCompleted;
+
+    public int requiredPerfects;
+    public int currentPerfects;
+    [Tooltip("안 쓸 거면 체크")]
+    public bool isPerfectsCompleted;
+
+    public int requiredFails;
+    public int currentFails;
+    [Tooltip("안 쓸 거면 체크")]
+    public bool isFailedCompleted;
+
+    public CharacterWithGun[] characterWithGuns; 
 
     [Header("목표 NPC 대화")]
     public ENPC targetNpc; // 퀘스트 목표 NPC

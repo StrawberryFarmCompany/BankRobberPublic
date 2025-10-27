@@ -47,6 +47,10 @@ public class ThrowObject : MonoBehaviour
         }
 
         transform.position = endPos;
+
+        Vector3Int noisePos = Vector3Int.RoundToInt(endPos);
+        NoiseManager.AddNoise(noisePos, NoiseType.ThrowCoin);
+        
         OnHit();
     }
 

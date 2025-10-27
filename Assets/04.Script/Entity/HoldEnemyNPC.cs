@@ -320,17 +320,26 @@ public class HoldEnemyNPC : EnemyNPC
         {
             float distance = Vector3.Distance(transform.position, noise.pos);
 
-            // 🔸 감지 반경 내에 들어왔다면
+            // 감지 반경 내에 들어왔다면
             if (distance <= noise.radius)
             {
                 // 이미 감지 상태라면 무시
                 if (isNoise) return;
 
-                isNoise = true;
-                noiseLocation = noise.pos;
+                float detectChance = 0.5f;
+                float roll = Random.value;
 
-                Debug.Log($"{gameObject.name} 가 {noise.pos}에서 소음 감지함.");
-                break;
+                if (roll <= detectChance)
+                {
+                    isNoise = true;
+                    noiseLocation = noise.pos;
+                    isHomePlace = false;
+                    Debug.Log($"{gameObject.name} 가 {noise.pos}에서 소음 감지함.");
+                }
+                else
+                    Debug.Log($"{gameObject.name}이(가) 소음을 듣지 못함. (roll={roll:F2})");
+
+                break; // 첫 번째 소음만 처리
             }
         }
     }

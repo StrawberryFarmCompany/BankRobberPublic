@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392a583a8ea20824aaf005deb40bacaf, type: 3}
+  m_Name: M1897
+  m_EditorClassIdentifier: 
+  gunName: M1897
+  gunDescription: "\uC7A5\uAC70\uB9AC \uBA85\uC911\uB960\uC740 \uB098\uC058\uC9C0\uB9CC,
+    \uADFC\uAC70\uB9AC\uC5D0 \uC788\uB294 \uC801\uC744 \uAC00\uB8E8\uB85C \uB9CC\uB4E4\uC5B4\uBC84\uB9B4
+    \uC218 \uC788\uB2E4. \uB9DE\uC744 \uC0AC\uB78C\uC5D0\uAC8C \uBBF8\uB9AC \uC591\uD574\uB97C
+    \uAD6C\uD558\uC790."
+  type: 4
+  maxRounds: 3
+  bulletPerOneShot: 8
+  noise: 0
+  damagePerOneBulletMultiplier: 0.2
+  firstRange: 3
+  firstRangeAccuracy: 0
+  secondRange: 7
+  secondRangeAccuracy: -5
+  thirdRange: 10
+  thirdRangeAccuracy: -10
+  awayRangeAccuracy: -17
+  price: 12000
+  weaponSprite: {fileID: 21300000, guid: 2b09a5ce38122d943a632fa12511c354, type: 3}
+  gunPrefab: {fileID: 3710723296215505721, guid: 88af619b24577114c8f4842169c3e6cc,
+    type: 3}
