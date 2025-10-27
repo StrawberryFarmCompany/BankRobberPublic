@@ -33,15 +33,14 @@ public class PatrolEnemyNPC : EnemyNPC
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        if (isMoving)
-        {
-            SequentialMove();
-        }
     }
     
     private void Update()
     {
-
+        if (isMoving)
+        {
+            SequentialMove();
+        }
     }
 
     // 턴마다 실행될 매서드
@@ -117,7 +116,7 @@ public class PatrolEnemyNPC : EnemyNPC
                 {
                     TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
                     efsm.eta = 3;
-                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyChaseState));
+                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 }
 
                 else

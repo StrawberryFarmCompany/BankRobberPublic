@@ -43,7 +43,7 @@ public class EnemyStateMachine : IStateMachineBase<EnemyState>
 public enum EnemyStates
 {
     PatrolEnemyIdleRotationState,
-    PatrolEnemyChaseState,
+    PatrolEnemyReloadState,
     PatrolEnemyCombatState,
     PatrolEnemyDamagedState,
     PatrolEnemyDeadState,    
@@ -89,8 +89,8 @@ public class EnemyState : IStateBase
         {
             case EnemyStates.PatrolEnemyIdleRotationState:
                 return new PatrolEnemyIdleRotationState(enemyNPC,anim);
-            case EnemyStates.PatrolEnemyChaseState:
-                return new PatrolEnemyChaseState(enemyNPC, anim);
+            case EnemyStates.PatrolEnemyReloadState:
+                return new PatrolEnemyReloadState(enemyNPC, anim);
             case EnemyStates.PatrolEnemyCombatState:
                 return new PatrolEnemyCombatState(enemyNPC, anim);
             case EnemyStates.PatrolEnemyDamagedState:
