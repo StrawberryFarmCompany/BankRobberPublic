@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PatrolEnemyChaseState : EnemyState
+public class PatrolEnemyReloadState : EnemyState
 {
 
-    public PatrolEnemyChaseState(EnemyNPC enemyNPC, Animator anim)
+    public PatrolEnemyReloadState(EnemyNPC enemyNPC, Animator anim)
     {
         this.patrolEnemy = enemyNPC;
         this.anim = anim;
@@ -14,7 +14,7 @@ public class PatrolEnemyChaseState : EnemyState
 
 public override void Enter()
     {
-        anim.Play("HG_Move");
+        anim.Play("HG_Reload");
     }
 
     public override void Execute()

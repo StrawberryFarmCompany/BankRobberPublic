@@ -133,12 +133,16 @@ public class EnemyNPC : MonoBehaviour
         {
             if (gun.curRounds > 0)
             {
-                gun.Shoot(chosenTarget.currNode.GetCenter, 1);
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { gun.Shoot(chosenTarget.currNode.GetCenter, 1); }, 0f));
+                efsm.eta = 1f;
+                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
             }
 
             else
             {
-                gun.Reload();
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { gun.Reload(); }, 0f));
+                efsm.eta = 1f;
+                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
                 Debug.Log($"장전 완료 남은 총알 {gun.curRounds}발");
             }
         }
