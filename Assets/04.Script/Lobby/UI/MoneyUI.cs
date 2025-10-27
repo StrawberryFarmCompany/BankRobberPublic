@@ -5,15 +5,15 @@ public class MoneyUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI moneyText;
 
-    private void Start()
+    private void Awake()
     {
-        Money.moneyUI = this;
+        Money.GetInstance.moneyUI = this;
         UpdateGoldText();
     }
 
     public void UpdateGoldText()
     {
-        int amount = Money.Get();
+        int amount = Money.GetInstance.Get();
         moneyText.text = amount.ToString("N0");
     }
 

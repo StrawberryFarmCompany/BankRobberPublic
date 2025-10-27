@@ -39,7 +39,7 @@ public static class AbilityPurchases
         if (string.IsNullOrEmpty(skillId)) return false;
         if (IsPurchased(skillId)) return true;
 
-        if (!Money.TrySpend(price)) return false;
+        if (!Money.GetInstance.TrySpend(price)) return false;
 
         data.purchased.Add(skillId);
         Save();
