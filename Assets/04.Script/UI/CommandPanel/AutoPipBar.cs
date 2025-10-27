@@ -69,8 +69,8 @@ public class AutoPipBar : MonoBehaviour
         Gun gun = NodePlayerManager.GetInstance.GetCurrentPlayer().gun;
 
         Color color = new Color(1, (155 * ((float)gun.curRounds/ (float)gun.maxRounds)+100)/255, ( 155 * ((float)gun.curRounds / (float)gun.maxRounds) + 100)/255);
-        ammoText.text = $"{gun.curRounds} / {gun.maxRounds}";
-        ammoText.color = color;
+        //ammoText.text = $"{gun.curRounds} / {gun.maxRounds}";
+        //ammoText.color = color;
     }
 
     public void RefreshActionPoint()

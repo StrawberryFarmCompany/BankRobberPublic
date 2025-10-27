@@ -166,6 +166,10 @@ public class EntityStats
     public void Damaged(float damage)
     {
         CurHp -= damage;
+        if (currNode != null)
+        {
+            GameManager.GetInstance.damageProjector.DeQueue(damage, currNode.GetCenter+ (Vector3.up * 2));
+        }
         if (CurHp <= 0)
         {
             CurHp = 0;

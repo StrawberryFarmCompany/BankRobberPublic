@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
-public class DamageText
+public class DamageProjector
 {
     Queue<TextMeshPro> textQueue = new Queue<TextMeshPro>();
     Transform dtParent;
@@ -20,7 +20,7 @@ public class DamageText
             tmp.gameObject.SetActive(false);
         }
     }
-    private void DeQueue(int v,Vector3 pos)
+    public void DeQueue(float v,Vector3 pos)
     {
         TextMeshPro temp;
         if (textQueue.Count > 0)
@@ -33,7 +33,7 @@ public class DamageText
             temp = textQueue.Dequeue();
         }
         temp.gameObject.SetActive(true);
-        temp.text = v.ToString();
+        temp.text = $"- {v.ToString("N2")}";
         temp.transform.position = pos;
 
         temp.transform.DOMoveY(1.8f, 1f).OnComplete(()=> 
