@@ -51,9 +51,11 @@ public class HoldEnemyNPC : EnemyNPC
 
             else if (isNoise == false && isHomePlace == false)
             {
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(homeLocation); }, 0f));
+                efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyMoveReturnState));
-                Move(homeLocation);
-                if(this.gameObject.transform.position == homeLocation)
+
+                if (this.gameObject.transform.position == homeLocation)
                 {
                     isHomePlace = true;
                 }
@@ -61,8 +63,10 @@ public class HoldEnemyNPC : EnemyNPC
 
             else if (isNoise == true && isNoisePlace == false)
             {
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(noiseLocation); }, 0f));
+                efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
-                Move(noiseLocation);//소음 재 감지시 외부에서 isNoise를 true로 만들어주기
+
                 if (this.gameObject.transform.position == noiseLocation)
                 {
                     isNoise = false;
@@ -90,10 +94,11 @@ public class HoldEnemyNPC : EnemyNPC
             //공격이 실패했거나 행동력이 남았으면 추적 후 공격
             if (stats.curActionPoint > 0)
             {
-                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
                 if (nearPlayerLocation != null)
                 {
-                    Move(nearPlayerLocation.GetPosition());
+                    TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
+                    efsm.eta = 3;
+                    efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
                 }
 
                 else
@@ -311,36 +316,10 @@ public class HoldEnemyNPC : EnemyNPC
         return best;
     }
 
-    private void DetectNoise()
+    protected override void OnNoiseDetected(Vector3 noisePos)
     {
-        var noises = NoiseManager.GetActiveNoises();
-        if (noises == null || noises.Count == 0) return;
-
-        foreach (var noise in noises)
-        {
-            float distance = Vector3.Distance(transform.position, noise.pos);
-
-            // 감지 반경 내에 들어왔다면
-            if (distance <= noise.radius)
-            {
-                // 이미 감지 상태라면 무시
-                if (isNoise) return;
-
-                float detectChance = 0.5f;
-                float roll = Random.value;
-
-                if (roll <= detectChance)
-                {
-                    isNoise = true;
-                    noiseLocation = noise.pos;
-                    isHomePlace = false;
-                    Debug.Log($"{gameObject.name} 가 {noise.pos}에서 소음 감지함.");
-                }
-                else
-                    Debug.Log($"{gameObject.name}이(가) 소음을 듣지 못함. (roll={roll:F2})");
-
-                break; // 첫 번째 소음만 처리
-            }
-        }
+        isNoise = true;
+        isHomePlace = false;
+        noiseLocation = noisePos;
     }
 }

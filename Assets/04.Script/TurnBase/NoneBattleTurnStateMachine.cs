@@ -20,22 +20,31 @@ public class NoneBattleTurnStateMachine
     public void ChangeState()
     {
         currState.Exit();
+
+        NoiseManager.ClearNoises();
+
         int typeLen = Enum.GetValues(typeof(TurnTypes)).Length;
         currState = states[(((int)GetCurrState()+1) % (typeLen))];
+
         if ((int)GetCurrState() + 1 > typeLen)
         {
             round++;
             BuffCount?.Invoke();
         }
+
         Debug.Log(GetCurrState());
+        
         if(GetCurrState() == TurnTypes.ally) GameManager.GetInstance.StartPlayerTurn();
+        
         currState.Enter();
+        
         if (currState.StartPointer == null || currState.StartPointer.Method == null|| currState.StartPointer.GetInvocationList().Length  <= 0)
         {
             Debug.Log($"논 배틀턴 등록된 이벤트 없음, 타입 {GetCurrState()}");
             ChangeState();
         }
     }
+
     public void ForceSet(int index)
     {
         round++;
@@ -43,6 +52,7 @@ public class NoneBattleTurnStateMachine
         currState = states[index];
         currState.Enter();
     }
+
     /// <summary>
     /// 스크립트를 Reset함는 함수
     /// </summary>
@@ -52,6 +62,7 @@ public class NoneBattleTurnStateMachine
         BuffCount = null;
         ReleaseDelegateChain();
     }
+
     public NoneBattleTurnStateMachine(TurnTypes startType = TurnTypes.ally)
     {
         ReleaseDelegateChain();
@@ -65,6 +76,7 @@ public class NoneBattleTurnStateMachine
         currState = states[(int)startType];
         OnSceneChange();
     }
+
     private void ReleaseDelegateChain()
     {
         if (states == null) return;
@@ -83,6 +95,7 @@ public class NoneBattleTurnStateMachine
         TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
         TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
     }
+
     /// <summary>
     /// 턴 시작 이벤트를 추가하는 함수
     /// </summary>
@@ -139,7 +152,6 @@ public class NoneBattleTurnStateMachine
         }
     }
 
-
     /// <summary>
     /// 사망 시 삭제할 엔드 이벤트
     /// </summary>
@@ -192,6 +204,7 @@ public class NoneBattleTurnStateBase : IStateBase
         }
     }
 }
+
 public class EnemyTurnState : NoneBattleTurnStateBase
 {
     public override TurnTypes StateType() => TurnTypes.enemy;
@@ -205,6 +218,7 @@ public class EnemyTurnState : NoneBattleTurnStateBase
         EndPointer?.Invoke();
     }
 }
+
 public class NeutralTurnState : NoneBattleTurnStateBase
 {
     public override TurnTypes StateType() => TurnTypes.neutral;
@@ -218,6 +232,7 @@ public class NeutralTurnState : NoneBattleTurnStateBase
         EndPointer?.Invoke();
     }
 }
+
 public class AllayTurnState : NoneBattleTurnStateBase
 {
     public override TurnTypes StateType() => TurnTypes.ally;

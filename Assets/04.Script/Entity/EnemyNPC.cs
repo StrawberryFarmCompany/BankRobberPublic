@@ -217,4 +217,35 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
+    protected virtual bool DetectNoise()
+    {
+        var noises = NoiseManager.GetActiveNoises();
+        if (noises == null || noises.Count == 0) return false;
+
+        foreach (var noise in noises)
+        {
+            float distance = Vector3.Distance(transform.position, noise.pos);
+            if (distance <= noise.radius)
+            {
+                float roll = Random.value;
+                if (roll <= 0.5f) // 50% 확률 감지
+                {
+                    Debug.Log($"[{name}] 소음 감지 성공!");
+                    OnNoiseDetected(noise.pos);
+                    return true;
+                }
+                else
+                {
+                    Debug.Log($"[{name}] 소리를 듣지 못함.");
+                }
+            }
+        }
+        return false;
+    }
+
+    // 자식에서 오버라이드
+    protected virtual void OnNoiseDetected(Vector3 noisePos)
+    {
+        // 기본은 아무 것도 안 함
+    }
 }
