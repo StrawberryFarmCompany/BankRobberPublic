@@ -28,8 +28,8 @@ public class PauseManager : MonoBehaviour
 
     public static bool isPaused { get; private set; } = false;
 
-    private const string LOBBY_SCENE = "LobbyNPCTEST";
-    private const string TITLE_SCENE = "MainTitleUIScene";
+    private const string LOBBY_SCENE = "LobbyScene";
+    private const string TITLE_SCENE = "MainTitleScene";
 
     void Start()
     {
