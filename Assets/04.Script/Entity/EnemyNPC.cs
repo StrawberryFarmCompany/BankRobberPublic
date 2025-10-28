@@ -152,24 +152,61 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
-    private bool CheckRangeAttack(Vector3Int targetPos)
+    private bool CheckRangeAttack(Vector3 targetPos)
     {
-        Vector3 start = transform.position;
-        Vector3 target = targetPos;
-        // 1. NavMesh 상에서 장애물 체크
-        if (NavMesh.Raycast(start, target, out NavMeshHit hit, NavMesh.AllAreas))
+        Vector3 start = transform.position + Vector3.up * 1.5f; // 적기준 몸통?에서 발싸
+        Vector3 target = targetPos + Vector3.up * 1.5f;         // 플레이어 몸통 높이 정도에서 맞기.
+        Vector3 direction = (target - start).normalized;
+        float distance = Vector3.Distance(start, target);
+
+        int layerMask = ~LayerMask.GetMask("Entity"); // Entity레이어만 제외하고 다
+
+        // Raycast 상에서 장애물 체크
+        if (Physics.Raycast(start, direction, out RaycastHit hit, distance, layerMask))
         {
-            Debug.DrawRay(start, (hit.position - start), Color.red, 10f);
-            Debug.Log("무언가로 막혀있음");
-            return false;
+            // 맞은 오브젝트 로그
+            Debug.Log($"[CheckRangeAttack] Raycast hit: {hit.collider.name}");
+
+            // 1️. 맞은 대상에서 EntityStats 가져오기
+            EntityStats hitStats = hit.collider.GetComponent<EntityStats>();
+
+            if (hitStats != null)
+            {
+                // 2️. EntityType으로 분기
+                if (hitStats.entityTag == EntityTag.ally)
+                {
+                    Debug.DrawLine(start, direction * distance, Color.green, 10f);
+                    Debug.Log("플레이어에 맞음");
+                }
+                else if (hitStats.entityTag == EntityTag.enemy)
+                {
+                    Debug.DrawLine(start, direction * distance, Color.red, 10f);
+                    Debug.Log("적에 맞음");
+                }
+                else
+                {
+                    Debug.DrawLine(start, direction * distance, Color.yellow, 10f);
+                    Debug.Log("기타 오브젝트에 맞음");
+                }
+            }
+            else
+            {
+                Debug.DrawLine(start, direction * distance, Color.blue, 10f);
+                Debug.Log("EntityStats가 없는 기물에 맞음 (예: 벽, 장애물 등)");
+            }
+
+            // 3️. 장애물 판정 (플레이어에 맞으면 통과, 벽이면 차단)
+            Node node = GameManager.GetInstance.GetNode(hit.point);
+            if (node != null && node.GetCenter == targetPos)
+            {
+                
+                return true; // 시야 확보됨
+            }
+            
+            return false; // 막힘
         }
-        else
-        {
-            Debug.Log("NavMesh 상에서 막히지 않음");
-            // 막히지 않았다면 초록색 선
-            Debug.DrawRay(start, (target - start), Color.green, 10f);
-            return true;
-        }
+
+        return true; // 아무것도 안 맞았으면 시야 확보됨
     }
 
     public void SecurityLevel(ushort level)
