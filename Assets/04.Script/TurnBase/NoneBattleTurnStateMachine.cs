@@ -21,8 +21,6 @@ public class NoneBattleTurnStateMachine
     {
         currState.Exit();
 
-        NoiseManager.ClearNoises();
-
         int typeLen = Enum.GetValues(typeof(TurnTypes)).Length;
         currState = states[(((int)GetCurrState()+1) % (typeLen))];
 

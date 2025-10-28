@@ -71,7 +71,6 @@ public class NodePlayerController : MonoBehaviour
         isHide = true;
         isEndReady = false;
         highlighter.Init();
-        StartMode(PlayerStatus.isMoveMode);
         playerStats.OnDead += UnsubscribePlayer;
         playerStats.OnReset += UnsubscribePlayer;
 
@@ -81,6 +80,7 @@ public class NodePlayerController : MonoBehaviour
 
     void Start()
     {
+        StartMode(PlayerStatus.isMoveMode);
         playerInput.DeactivateInput();
         playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
 

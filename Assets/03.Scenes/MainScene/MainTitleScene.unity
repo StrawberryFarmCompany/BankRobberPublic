@@ -7572,8 +7572,8 @@ MonoBehaviour:
   fpsPlayers: []
   fpsMin: 0.01
   fpsMax: 0.5
-  bgmSlider: {fileID: 0}
-  sfxSlider: {fileID: 0}
+  bgmSlider: {fileID: 439678489}
+  sfxSlider: {fileID: 1850022863}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
