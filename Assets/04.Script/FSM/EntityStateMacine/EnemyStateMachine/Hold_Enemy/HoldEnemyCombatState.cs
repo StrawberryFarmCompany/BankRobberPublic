@@ -12,7 +12,7 @@ public class HoldEnemyCombatState : EnemyState
 
     public override void Enter()
     {
-
+        anim.Play("HG_HipAim_Enter");
     }
 
     public override void Execute()
@@ -22,6 +22,6 @@ public class HoldEnemyCombatState : EnemyState
 
     public override void Exit()
     {
-
+        anim.Play("HG_Idle_Pose");
     }
 }

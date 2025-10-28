@@ -5,8 +5,6 @@ using UnityEngine.AI;
 
 public class HoldEnemyIdleRotationState : EnemyState
 {
-    public NavMeshAgent agent;
-    public Vector3 pos;
     public HoldEnemyIdleRotationState(EnemyNPC enemyNPC, Animator anim)
     {
         this.patrolEnemy = enemyNPC;
@@ -16,7 +14,7 @@ public class HoldEnemyIdleRotationState : EnemyState
 
     public override void Enter()
     {
-        agent.SetDestination(pos);
+
     }
 
     public override void Execute()

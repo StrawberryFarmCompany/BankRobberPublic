@@ -38,7 +38,6 @@ public class HoldEnemyNPC : EnemyNPC
     protected override void CalculateBehaviour()
     {
         DetectNoise();
-
         DetectVisibleTargets();
 
         if (stats.secData.GetSecLevel == 0)
@@ -53,7 +52,7 @@ public class HoldEnemyNPC : EnemyNPC
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(homeLocation); }, 0f));
                 efsm.eta = 3;
-                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyMoveReturnState));
+                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
 
                 if (this.gameObject.transform.position == homeLocation)
                 {
@@ -81,14 +80,13 @@ public class HoldEnemyNPC : EnemyNPC
             }
         }
 
-        else if (stats.secData.GetSecLevel >= 2)
+        else if (stats.secData.GetSecLevel >= 1)
         {
-            efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyCombatState));
-
             DetectVisibleTargets();
-
-            transform.LookAt(nearPlayerLocation.currNode.GetCenter);
-
+            if (nearPlayerLocation.currNode.GetCenter != null)
+            {
+                transform.LookAt(nearPlayerLocation.currNode.GetCenter);
+            }
             TryAttack();
 
             //공격이 실패했거나 행동력이 남았으면 추적 후 공격
