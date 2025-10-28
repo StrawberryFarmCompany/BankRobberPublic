@@ -63,10 +63,11 @@ public class NodePlayerController : MonoBehaviour
         playerStats = new EntityStats(playerData, gameObject);
 
         if (gun == null) gun = GetComponent<Gun>();
-        gun.SetGun(WeaponManager.GetInstance.GetEquipData(playerStats.characterType));
+        if (gun.data == null)
+            gun.SetGun(WeaponManager.GetInstance.GetEquipData(playerStats.characterType));
 
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
-        playerStats.ForceMove += WindowForcMove;
+        playerStats.ForceMove += WindowForceMove;
         isHide = true;
         isEndReady = false;
         highlighter.Init();
@@ -86,8 +87,8 @@ public class NodePlayerController : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(true); });
         GameManager.GetInstance.NoneBattleTurn.AddEndPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(false); });
 
-        playerStats.SetCurrentNode(transform.position);
         playerStats.NodeUpdates(transform.position, true);
+        playerStats.GetTileInteraction(transform.position);
         transform.position = playerStats.currNode.GetCenter;
         GameManager.GetInstance.RegisterEntity(playerStats);
         NodePlayerManager.GetInstance.SwitchToPlayer(0); // 첫 번째 플레이어로 시작
@@ -236,6 +237,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             CheckRangeAttack(mousePos);
+            RefreshPipAllSafe();
         }
 
         if(context.canceled && IsMyTurn() && (currPlayerStatus == PlayerStatus.isRunMode ||
@@ -300,8 +302,6 @@ public class NodePlayerController : MonoBehaviour
             if (pathQueue.Count > 0)
             {
                 animationController.MoveState();
-                playerVec = pathQueue.Last();
-                playerStats.NodeUpdates(playerVec);
                 MoveRangeHighlighter.normalHighlighter.Enable(false);
                 //최종 이동 구현
                 isMoving = true;
@@ -392,8 +392,8 @@ public class NodePlayerController : MonoBehaviour
             if (pathQueue.Count <= 1)
             {
                 eta = DoMoveAndRotate(Ease.Unset, pathQueue.Dequeue(), 0.2f, 0.3f, () => {
-                    playerStats.SetCurrentNode(transform.position);
                     playerStats.NodeUpdates(transform.position);
+                    playerStats.GetTileInteraction(transform.position);
 
                     highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
                     StartMode(PlayerStatus.isMoveMode);
@@ -402,8 +402,8 @@ public class NodePlayerController : MonoBehaviour
             else
             {
                 eta = DoMoveAndRotate(Ease.Unset, pathQueue.Dequeue(), 0.2f, 0.3f, () => {
-                    playerStats.SetCurrentNode(transform.position);
                     playerStats.NodeUpdates(transform.position);
+                    playerStats.GetTileInteraction(transform.position);
                 });
             }
 
@@ -421,8 +421,8 @@ public class NodePlayerController : MonoBehaviour
 
             if (NodePlayerManager.GetInstance.GetCurrentPlayer() == this)
             {
-                playerStats.SetCurrentNode(transform.position);
                 playerStats.NodeUpdates(transform.position);
+                playerStats.GetTileInteraction(transform.position);
                 TurnOnHighlighter();
                 RefreshPipAllSafe();
             }
@@ -756,7 +756,7 @@ public class NodePlayerController : MonoBehaviour
 
     public void OnReload(InputAction.CallbackContext context)
     {
-        if (context.started && IsMyTurn() && currPlayerStatus != PlayerStatus.isMoveMode)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(PlayerStatus.isReloadMode);
@@ -995,7 +995,7 @@ public class NodePlayerController : MonoBehaviour
         fullBackPack = Instantiate(fullBackPackPrefab, backPackParent.transform);
     }
 
-    private void WindowForcMove(Vector3Int nextTile)
+    private void WindowForceMove(Vector3Int nextTile)
     {
         Debug.Log("강제 이동");
         Node targetNode = GameManager.GetInstance.GetNode(nextTile);
@@ -1009,8 +1009,9 @@ public class NodePlayerController : MonoBehaviour
 
         DoMoveAndRotate(Ease.InCirc, nextTile, 0.2f, 0.1f,()=> 
         {
-            playerStats.SetCurrentNode(transform.position);
-            playerStats.NodeUpdates(transform.position);
+            playerStats.NodeUpdates(transform.position,true);
+            playerStats.GetTileInteraction(transform.position);
+
             TurnOnHighlighter();
             RefreshPipAllSafe();
         });
@@ -1039,12 +1040,9 @@ public class NodePlayerController : MonoBehaviour
             rotationDuration = originRotDur*rotAngle;
             rotationDuration = MathF.Abs(rotationDuration);
         }
-        var rotationSeq = transform.DORotate(Vector3.up* angle, rotationDuration).OnComplete(()=> 
+        transform.DORotate(Vector3.up* angle, rotationDuration).OnComplete(()=> 
         {
-            var moveSeq = transform.DOMove(pos, moveDuration);
-
-            moveSeq.SetEase(ease);
-            moveSeq.OnComplete(() =>
+            transform.DOMove(pos, moveDuration).SetEase(ease).OnComplete(() =>
             {
                 if (playerStats == null) return;
                 action?.Invoke();
