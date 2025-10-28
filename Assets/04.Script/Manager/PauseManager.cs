@@ -28,9 +28,6 @@ public class PauseManager : MonoBehaviour
 
     public static bool isPaused { get; private set; } = false;
 
-    private const string LOBBY_SCENE = "LobbyScene";
-    private const string TITLE_SCENE = "MainTitleScene";
-
     void Start()
     {
         if (pausePanel) pausePanel.SetActive(false);
@@ -49,7 +46,11 @@ public class PauseManager : MonoBehaviour
     {
         if (context.started)
         {
-            if (quitConfirmUI && quitConfirmUI.activeSelf) { CloseQuitConfirm(); return; }
+            if (quitConfirmUI && quitConfirmUI.activeSelf)
+            {
+                CloseQuitConfirm(); 
+                return;
+            }
             if (optionUI && optionUI.activeSelf)
             {
                 CloseOption();
@@ -104,7 +105,7 @@ public class PauseManager : MonoBehaviour
         if (!quitConfirmUI) return;
 
         string cur = SceneManager.GetActiveScene().name;
-        string msg = (cur == LOBBY_SCENE) ? "메인메뉴로 돌아가겠습니까?" : "로비로 돌아가겠습니까?";
+        string msg = (cur == "LobbyScene") ? "메인메뉴로 돌아가겠습니까?" : "로비로 돌아가겠습니까?";
         if (quitText) quitText.text = msg;
 
         quitConfirmUI.SetActive(true);
@@ -127,18 +128,18 @@ public class PauseManager : MonoBehaviour
         string cur = SceneManager.GetActiveScene().name;
 
         //로비에서 메인타이틀
-        if (cur == LOBBY_SCENE)
+        if (cur == "LobbyScene")
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            SceneManager.LoadScene(TITLE_SCENE);
+            LoadSceneManager.GetInstance.SceneLoad(SceneType.MainTitleScene);
         }
         //인게임에서 로비
         else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            SceneManager.LoadScene(LOBBY_SCENE);
+            LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
         }
     }
 }
