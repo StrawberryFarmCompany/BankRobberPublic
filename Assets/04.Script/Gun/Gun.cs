@@ -28,9 +28,8 @@ public class Gun : MonoBehaviour
     public int thirdrangeAccuracy;
     public int awayRangeAccuracy;
 
-    private int ishit = 0;
+    public int ishit = 0;
     public bool makeNoise = false;
-
 
     private void Awake()
     {
@@ -72,6 +71,9 @@ public class Gun : MonoBehaviour
     /// <param name="hitBonus"></param>
     public void Shoot(Vector3Int targetPos, int hitBonus)
     {
+        ishit = 0;
+        makeNoise = false;
+
         if(!ConsumeRounds(1/*useRoundsPerShot*/))
         {
             Debug.Log("잔탄수 부족, 불발");

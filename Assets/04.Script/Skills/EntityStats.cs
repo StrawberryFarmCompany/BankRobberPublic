@@ -86,8 +86,8 @@ public class EntityStats
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
-        hpbar = new HPBar();
-        hpbar.Init(maxHp,CurHp,UIManager.GetInstance.CanvasRoot);
+        //hpbar = new HPBar();
+        //hpbar.Init(maxHp,CurHp,UIManager.GetInstance.CanvasRoot);
         if (baseStats.characterType != CharacterType.None) 
         {
             this.characterType = baseStats.characterType;
@@ -170,7 +170,7 @@ public class EntityStats
     public void Damaged(float damage)
     {
         CurHp -= damage;
-        hpbar.SetCurrHP(CurHp);
+        //hpbar.SetCurrHP(CurHp);
         if (CurHp <= 0)
         {
             CurHp = 0;
@@ -245,7 +245,7 @@ public class EntityStats
             currNode = GameManager.GetInstance.GetNode(tempPos);
             currNode.AddCharacter(this);
             Debug.Log($"{pos}로 이동");
-            hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
+            //hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
         }
     }
 
