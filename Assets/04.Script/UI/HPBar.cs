@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-
+using FOW;
 public class HPBar
 {
     private RectTransform slotParent;
@@ -29,7 +29,7 @@ public class HPBar
         hpSlots = new Image[Mathf.CeilToInt(maxHP)];
 
         slotParent = (RectTransform)GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["HPParent"]).transform;
-        
+
         slotParent.parent = hpCanvas.transform;
         GameObject prefab = (GameObject)ResourceManager.GetInstance.GetPreLoad["HPSlot"];
         float parentTotal = hpSlots.Length*slotParent.sizeDelta.x;
@@ -46,6 +46,10 @@ public class HPBar
         slotParent.sizeDelta = new Vector2(parentTotal, slotParent.sizeDelta.y);
         SetCurrHP(currHP);
         slotParent.gameObject.AddComponent<BillBoard>();
+    }
+    public void RegistHideOBJ(HiderDisableObjects disCtrl)
+    {
+        disCtrl.ModifyHiddenObjects(new GameObject[1] {slotParent.gameObject });
     }
     public void SetCurrHP(float currHP)
     {

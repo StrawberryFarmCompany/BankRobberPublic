@@ -545,6 +545,14 @@ MonoBehaviour:
   moveSlider: {fileID: 335238544}
   zoomSlider: {fileID: 1457299484}
   clickSlider: {fileID: 1682600879}
+  rotationMin: 30
+  rotationMax: 100
+  moveMin: 10
+  moveMax: 40
+  zoomMin: 0.05
+  zoomMax: 0.3
+  clickMin: 0.05
+  clickMax: 0.3
   fpsLookSlider: {fileID: 974679001}
   fpsPlayers:
   - {fileID: 4392594149221849904}
