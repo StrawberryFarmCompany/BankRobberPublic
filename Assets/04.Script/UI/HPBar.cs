@@ -10,7 +10,7 @@ public class HPBar
     private Image[] hpSlots;
     private static Canvas hpCanvas;
 
-    public void Init(float maxHP,float currHP,Transform parent)
+    public void Init(float maxHP,float currHP)
     {
         if (hpCanvas == null || hpCanvas.Equals(null))
         {

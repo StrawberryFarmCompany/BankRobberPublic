@@ -87,7 +87,7 @@ public class EntityStats
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
         hpbar = new HPBar();
-        hpbar.Init(maxHp,CurHp,UIManager.GetInstance.CanvasRoot);
+        hpbar.Init(maxHp,CurHp);
         if (baseStats.characterType != CharacterType.None) 
         {
             this.characterType = baseStats.characterType;
