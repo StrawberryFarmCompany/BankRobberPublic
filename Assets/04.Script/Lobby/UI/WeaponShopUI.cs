@@ -116,19 +116,19 @@ public class WeaponShopUI : MonoBehaviour
             {
                 case CharacterType.Bishop: 
                     bishopButton.onClick.AddListener(bishopWCB.OnPressPurchaseBtn);
-                    if (Money.Get() < gunData.price) bishopButton.interactable = false;
+                    if (Money.GetInstance.Get() < gunData.price) bishopButton.interactable = false;
                     bishopText.text = $"{gunData.price.ToString("N0")}\n구매하기";
                     bishopText.fontSize = 40;
                     break;
                 case CharacterType.Rook:
                     rookButton.onClick.AddListener(rookWCB.OnPressPurchaseBtn);
-                    if (Money.Get() < gunData.price) rookButton.interactable = false;
+                    if (Money.GetInstance.Get() < gunData.price) rookButton.interactable = false;
                     rookText.text = $"{gunData.price.ToString("N0")}\n구매하기";
                     rookText.fontSize = 40;
                     break;
                 case CharacterType.Knight:
                     knightButton.onClick.AddListener(knightWCB.OnPressPurchaseBtn);
-                    if (Money.Get() < gunData.price) knightButton.interactable = false;
+                    if (Money.GetInstance.Get() < gunData.price) knightButton.interactable = false;
                     knightText.text = $"{gunData.price.ToString("N0")}\n구매하기";
                     knightText.fontSize = 40;
                     break;
@@ -206,7 +206,7 @@ public class WeaponShopUI : MonoBehaviour
 
     public void Purchase(CharacterType type)
     {
-        if (Money.TrySpend(gunDatas[curIndex].price))
+        if (Money.GetInstance.TrySpend(gunDatas[curIndex].price))
         {
             WeaponManager.GetInstance.SetPurchase(type, gunDatas[curIndex]);
         }

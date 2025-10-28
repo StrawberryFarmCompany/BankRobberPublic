@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -53,23 +54,27 @@ public static class EquippedSkills
 
         data.equipped.RemoveAll(k => k.StartsWith($"{skill.group}.{skill.kind}."));
 
-        if (skill.kind == Kind.Upgrade)
-        {
-            int parentActiveId = ((skill.idNum - 1) / 2) + 1;
-            data.equipped.RemoveAll(k => k.StartsWith($"{skill.group}.{skill.kind}.Active{parentActiveId}"));
-        }
-
+        //액티브 바꿀 때 업그레이드 해제
         if (skill.kind == Kind.Active)
-        {
-            data.equipped.RemoveAll(k =>
-            {
-                return k.StartsWith($"{skill.group}.Upgrade.");
-            });
-        }
+            data.equipped.RemoveAll(k => k.StartsWith($"{skill.group}.Upgrade."));
+
+        //패시브 교체
+        if (skill.kind == Kind.Passive)
+            data.equipped.RemoveAll(k => k.StartsWith($"{skill.group}.Passive."));
 
         data.equipped.Add(key);
         Save();
         OnChanged?.Invoke();
+
+        if (skill.kind == Kind.Passive)
+        {
+            NodePlayerController currentPlayer = NodePlayerManager.GetInstance?.GetCurrentPlayer();
+            if (currentPlayer != null && currentPlayer.playerStats != null)
+            {
+                ApplyEquippedPassives(currentPlayer.playerStats);
+                Debug.Log($"[EquippedSkills] 새 패시브 적용됨: {skill.title}");
+            }
+        }
     }
 
     //스킬 해제
@@ -80,10 +85,43 @@ public static class EquippedSkills
 
         bool removed = data.equipped.Remove(key);
 
-        data.equipped.RemoveAll(k => k.StartsWith($"{skill.group}.Upgrade."));
+        if (skill.kind == Kind.Active) data.equipped.RemoveAll(k => k.StartsWith($"{skill.group}.Upgrade."));
 
         Save();
         OnChanged?.Invoke();
+    }
+
+    public static SkillState GetSkillState(string group)
+    {
+        bool hasActive = data.equipped.Any(k => k.StartsWith($"{group}.Active."));
+        bool hasUpgrade1 = data.equipped.Contains($"{group}.Upgrade.1");
+        bool hasUpgrade2 = data.equipped.Contains($"{group}.Upgrade.2");
+
+        if (!hasActive) return SkillState.Locked;
+        if (hasUpgrade1) return SkillState.UpgradeA;
+        if (hasUpgrade2) return SkillState.UpgradeB;
+        return SkillState.Basic;
+    }
+
+    public static List<string> GetEquippedPassives()
+    {
+        return data.equipped.Where(k => k.Contains(".Passive.")).ToList();
+    }
+
+    public static void ApplyEquippedPassives(EntityStats target)
+    {
+        if (target == null) return;
+
+        target.UnequipPassive(null);
+
+        string key = data.equipped.FirstOrDefault(k => k.Contains(".Passive."));
+        if (string.IsNullOrEmpty(key)) return;
+
+        PassiveSkill passive = PassiveSkillManager.GetPassive(key);
+        if (passive == null) return;
+
+        target.EquipPassive(passive);
+        Debug.Log($"[EquippedSkills] 패시브 적용됨: {passive.skillName}");
     }
 
     //모든 장착된 스킬 조회
@@ -126,4 +164,12 @@ public static class EquippedSkills
 
         data = new EquippedSkillData();
     }
+}
+
+public enum SkillState
+{
+    Locked,    // 액티브 미장착
+    Basic,     // 액티브만 장착
+    UpgradeA,  // 강화A 장착
+    UpgradeB   // 강화B 장착
 }

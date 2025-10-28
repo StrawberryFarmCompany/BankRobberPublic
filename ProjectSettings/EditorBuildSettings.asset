@@ -5,27 +5,21 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/03.Scenes/LobbyPlayerChange.unity
-    guid: 6780cfd7eddfed14984748bfdbb9712a
+    path: Assets/03.Scenes/MainScene/MainTitleScene.unity
+    guid: dde3803dae8bdca42a6b9d07cc08985f
   - enabled: 1
-    path: Assets/03.Scenes/MainScene/MainScene.unity
+    path: Assets/03.Scenes/MainScene/LobbyScene.unity
+    guid: 89d67790c2b0d81428ba306cc8987c4d
+  - enabled: 1
+    path: Assets/03.Scenes/MainScene/PrototypeScene.unity
     guid: 11d8ac40d7f51194d9e64792c6e4c559
   - enabled: 1
-    path: Assets/03.Scenes/TestSJW/MainTitleUIScene.unity
-    guid: e946308e6ab91684e86f7d6c619753a5
+    path: Assets/03.Scenes/MainScene/Stage01Scene.unity
+    guid: c5c0ffaef28e378439ea8d82612a0138
   - enabled: 1
-    path: Assets/03.Scenes/TestSJW/PauseUIMainScene.unity
-    guid: afbe8028e5c92a14ba738918f787c2ac
-  - enabled: 1
-    path: Assets/03.Scenes/TestJYJ/LobbyNPCTEST.unity
-    guid: f567799caeb65804f8a8909d9ad4a8e9
-  - enabled: 1
-    path: Assets/03.Scenes/TestJYJ/EscapeTest.unity
-    guid: a3f047e09e69c8444a592a4e7781a8d1
+    path: Assets/03.Scenes/MainScene/Stage02Scene.unity
+    guid: 37f4054e3f250ae4d82cb9a60ad0c8a6
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e143ca59767af404d91e1de6e2e8c3a5,
       type: 2}

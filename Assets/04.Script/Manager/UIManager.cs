@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour
     private GameObject interactionCanvasInstance;
     private BuffPannel buffPannel;
 
+    public Transform CanvasRoot { get { return canvasRoot; } }
+
     public bool SelectionLocked { get; private set; }
 
     public LeftInteractionPanel leftInteractionPanel;
