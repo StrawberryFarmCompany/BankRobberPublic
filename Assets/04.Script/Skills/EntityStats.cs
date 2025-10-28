@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using BuffDefine;
+using FOW;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class EntityStats
@@ -63,7 +64,7 @@ public class EntityStats
 
     private HPBar hpbar;
 
-    public EntityStats(EntityData baseStats, GameObject gameObject = null)
+    public EntityStats(EntityData baseStats, GameObject gameObject)
     {
         entityTag = baseStats.Tag;
         characterName = baseStats.displayName;
@@ -86,12 +87,19 @@ public class EntityStats
         portrait = baseStats.portrait;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
-        //hpbar = new HPBar();
-        //hpbar.Init(maxHp,CurHp,UIManager.GetInstance.CanvasRoot);
+
+
+
         if (baseStats.characterType != CharacterType.None) 
         {
             this.characterType = baseStats.characterType;
             isFullBag = false;
+        }
+        else
+        {
+            hpbar = new HPBar();
+            hpbar.Init(maxHp, CurHp);
+            hpbar.RegistHideOBJ(gameObject.AddComponent<HiderDisableObjects>());
         }
 
         if (gameObject != null)
@@ -245,7 +253,7 @@ public class EntityStats
             currNode = GameManager.GetInstance.GetNode(tempPos);
             currNode.AddCharacter(this);
             Debug.Log($"{pos}로 이동");
-            //hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
+            if(hpbar != null)hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
         }
     }
 

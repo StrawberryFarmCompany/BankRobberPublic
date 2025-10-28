@@ -13,7 +13,7 @@ public class HoldEnemyIdleState : EnemyState
 
     public override void Enter()
     {
-        Debug.Log("대기중");
+        anim.Play("HG_Idle_Pose");
     }
 
     public override void Execute()

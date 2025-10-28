@@ -12,7 +12,7 @@ public class CopEnemyChaseState : EnemyState
 
     public override void Enter()
     {
-
+        anim.Play("HG_Move");
     }
 
     public override void Execute()
@@ -22,6 +22,6 @@ public class CopEnemyChaseState : EnemyState
 
     public override void Exit()
     {
-
+        anim.Play("HG_Idle_Pose");
     }
 }
