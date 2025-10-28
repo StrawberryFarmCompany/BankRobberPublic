@@ -17,10 +17,22 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 578ea37035c53d2448957564a823b529
   m_SerializeEntries:
+  - m_GUID: 0ceb87c4fe6c9ce498d51669e9ce7fe8
+    m_Address: HPParent
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 19d4586faad2d474b9e6639dc4b52868
     m_Address: BuffStatus
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38f7c878ee9722947b104f4a4c52ce76
+    m_Address: DamageText
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5666c8f1344c51049ae8b0e602f12d0c
     m_Address: BuffDescription
@@ -57,6 +69,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c05591d701364984dbe289a109f08be2
     m_Address: BuffIcon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e2d43d19fae49fe489f2900c6242f499
+    m_Address: HPSlot
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

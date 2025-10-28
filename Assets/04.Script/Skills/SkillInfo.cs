@@ -47,10 +47,20 @@ public class SkillInfo : MonoBehaviour
         panelRoot.SetActive(true);
 
         Vector3 worldPos = buttonRect.TransformPoint(new Vector3(buttonRect.rect.width / 2f, 0f, 0f));
-        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, worldPos);
-        Vector2 anchoredPos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, screenPos, canvas.worldCamera, out anchoredPos);
-        backgroundRect.anchoredPosition = anchoredPos + offset;
+
+        Camera cam = (canvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : canvas.worldCamera;
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(cam, worldPos);
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, screenPos, cam, out Vector2 anchoredPos);
+
+        Vector2 finalOffset;
+        if (skill.group == Group.Support)
+            finalOffset = new Vector2(-Mathf.Abs(offset.x + 700f), offset.y);
+        else
+            finalOffset = new Vector2(Mathf.Abs(offset.x), offset.y);
+
+        backgroundRect.anchoredPosition = anchoredPos + finalOffset;
+
         LayoutRebuilder.ForceRebuildLayoutImmediate(backgroundRect);
     }
 

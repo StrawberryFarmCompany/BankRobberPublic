@@ -6,7 +6,7 @@ using NodeDefines;
 public class Gun : MonoBehaviour
 {
     [Tooltip("에너미는 할당해주고, 플레이어는 할당하지 읺기")]
-    [SerializeField] private GunData data;
+    public GunData data;
 
     [Header("현재 총기 정보")]
     public string gunName;
@@ -87,19 +87,27 @@ public class Gun : MonoBehaviour
         }
 
         Debug.Log($"{entityStats.characterName}에게 격발 데미지를 가했음");
+        float totalDamage = 0f;
         for(int i = 0; i < bulletPerOneShot; i++)
         {
             if(CheckBulletHit(targetPos, hitBonus))
             {
                 int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
-                entityStats.Damaged(result * damagePerOneBulletMultiplier);
+                float currDamage = result * damagePerOneBulletMultiplier;
+                entityStats.Damaged(currDamage);
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
                 ishit++;
+                totalDamage += currDamage;
             }
             else
             {
                 Debug.Log($"{i + 1}번째 격발 결과\n불발");
             }
+        }
+
+        if (entityStats.currNode != null)
+        {
+            GameManager.GetInstance.damageProjector.DeQueue(totalDamage, entityStats.currNode.GetCenter + (Vector3.up * 2));
         }
 
         if (ishit >= 1)

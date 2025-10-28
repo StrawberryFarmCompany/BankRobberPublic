@@ -26,7 +26,7 @@ public class WeaponManager : SingleTon<WeaponManager>
     protected override void Init()
     {
         savePath = Application.persistentDataPath + "/weapons.json";
-        LoadScores();
+        LoadWeapon();
     }
 
     public void EquipWeapon(CharacterType characterType, GunData gun)
@@ -85,7 +85,7 @@ public class WeaponManager : SingleTon<WeaponManager>
         Debug.Log($"무기 정보 저장 완료 → {savePath}");
     }
 
-    public void LoadScores()
+    public void LoadWeapon()
     {
         WeaponDataDict.Clear();
 

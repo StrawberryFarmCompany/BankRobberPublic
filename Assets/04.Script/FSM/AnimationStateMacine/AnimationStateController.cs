@@ -96,7 +96,7 @@ public class AnimationStateController : MonoBehaviour
 
         if (gun != null)
         {
-            if(playerController != null)
+            if(playerController.gun.data == null)
             {
                 currentGun = Instantiate((WeaponManager.GetInstance.GetEquipData(playerController.playerStats.characterType).gunPrefab), gunHoldPosition); 
             }
