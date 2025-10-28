@@ -435,7 +435,7 @@
                     "name": "Player1",
                     "type": "Button",
                     "id": "21467bbd-3844-40a3-ad5b-247d44804f17",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -731,7 +731,7 @@
                     "name": "Player1",
                     "type": "Button",
                     "id": "0c17c152-c897-4c5c-9ae9-b181ea75fa39",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -759,6 +759,15 @@
                     "type": "Button",
                     "id": "c9daa350-dcbc-4f94-bdb9-bea03ffbf1cd",
                     "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CloseUI",
+                    "type": "Button",
+                    "id": "04a01ef2-2815-4969-aa4c-c76030013530",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -806,6 +815,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "EndTurn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "43efb330-6de1-4f1e-8561-7c70c39b525e",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CloseUI",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
