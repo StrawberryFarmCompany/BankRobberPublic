@@ -13,10 +13,10 @@ public class CopEnemyNPC : EnemyNPC
 
     protected override IEnumerator Start()
     {
-        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>(), EnemyStates.CopEnemyChaseState);
         StartCoroutine(base.Start());
-        if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
-        yield return null;
+        yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
+        efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>(), EnemyStates.PatrolEnemyIdleRotationState);
+
     }
 
     private void Update()
@@ -35,18 +35,21 @@ public class CopEnemyNPC : EnemyNPC
     protected override void CalculateBehaviour()
     {
         DetectVisibleTargets();
-        if (nearPlayerLocation != null)
+        if (nearPlayerLocation.currNode.GetCenter != null)
+        {
             transform.LookAt(nearPlayerLocation.currNode.GetCenter);
-
+        }
         TryAttack();
 
         // 공격이 실패했거나 이동력이 남았으면 추적
         if (stats.curActionPoint > 0)
         {
-            efsm.ChangeState(efsm.FindState(EnemyStates.CopEnemyChaseState));
+            
             if (nearPlayerLocation != null)
             {
-                Move(nearPlayerLocation.GetPosition());
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
+                efsm.eta = 3;
+                efsm.ChangeState(efsm.FindState(EnemyStates.CopEnemyChaseState));
             }
 
             else

@@ -48,7 +48,7 @@ public class PatrolEnemyNPC : EnemyNPC
     {
         DetectNoise();
         DetectVisibleTargets();
-        Debug.Log(stats.secData.GetSecLevel);
+
         if (stats.secData.GetSecLevel == 0)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
