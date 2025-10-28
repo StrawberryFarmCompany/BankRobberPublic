@@ -66,13 +66,13 @@ public static class EquippedSkills
         Save();
         OnChanged?.Invoke();
 
-        if (skill.kind == Kind.Passive)
+        if (skill.kind == Kind.Passive || skill.kind == Kind.Active || skill.kind == Kind.Upgrade)
         {
             NodePlayerController currentPlayer = NodePlayerManager.GetInstance?.GetCurrentPlayer();
             if (currentPlayer != null && currentPlayer.playerStats != null)
             {
-                ApplyEquippedPassives(currentPlayer.playerStats);
-                Debug.Log($"[EquippedSkills] 새 패시브 적용됨: {skill.title}");
+                ApplyEquippedSkills(currentPlayer.playerStats);
+                Debug.Log($"[EquippedSkills] ({skill.kind}) 새 스킬 세트 적용됨: {skill.title}");
             }
         }
     }
@@ -108,20 +108,54 @@ public static class EquippedSkills
         return data.equipped.Where(k => k.Contains(".Passive.")).ToList();
     }
 
-    public static void ApplyEquippedPassives(EntityStats target)
+    public static void ApplyEquippedSkills(EntityStats target)
     {
         if (target == null) return;
 
-        target.UnequipPassive(null);
+        string group = target.skillGroup.ToString();
 
-        string key = data.equipped.FirstOrDefault(k => k.Contains(".Passive."));
-        if (string.IsNullOrEmpty(key)) return;
+        //패시브 적용
+        string passiveKey = data.equipped.FirstOrDefault(k => k.StartsWith($"{group}.Passive."));
+        if (!string.IsNullOrEmpty(passiveKey))
+        {
+            PassiveSkill passive = PassiveSkillManager.GetPassive(passiveKey);
+            if (passive != null)
+            {
+                target.UnequipPassive(null);
+                target.EquipPassive(passive);
+                Debug.Log($"[EquippedSkills] ({group}) 패시브 적용됨: {passive.skillName}");
+            }
+            else
+            {
+                Debug.LogWarning($"[EquippedSkills] ({group}) 패시브 스킬 데이터 없음: {passiveKey}");
+            }
+        }
 
-        PassiveSkill passive = PassiveSkillManager.GetPassive(key);
-        if (passive == null) return;
+        //액티브 적용
+        string activeKey = data.equipped.FirstOrDefault(k => k.StartsWith($"{group}.Active."));
+        if (!string.IsNullOrEmpty(activeKey))
+        {
+            string[] parts = activeKey.Split('.');
+            if (parts.Length >= 3 && int.TryParse(parts[2], out int idNum))
+            {
+                switch (idNum)
+                {
+                    case 1: target.playerSkill = PlayerSkill.SneakAttack; break;
+                    case 2: target.playerSkill = PlayerSkill.Heal; break;
+                    case 3: target.playerSkill = PlayerSkill.Ready; break;
+                    default: target.playerSkill = PlayerSkill.Ready; break;
+                }
+                Debug.Log($"[EquippedSkills] ({group}) 액티브 적용됨: {target.playerSkill}");
+            }
+        }
 
-        target.EquipPassive(passive);
-        Debug.Log($"[EquippedSkills] 패시브 적용됨: {passive.skillName}");
+        //강화 상태
+        string upgradeKey = data.equipped.FirstOrDefault(k => k.StartsWith($"{group}.Upgrade."));
+        if (!string.IsNullOrEmpty(upgradeKey))
+        {
+            var state = GetSkillState(group);
+            Debug.Log($"[EquippedSkills] ({group}) 강화 상태: {state}");
+        }
     }
 
     //모든 장착된 스킬 조회

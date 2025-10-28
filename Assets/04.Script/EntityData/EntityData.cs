@@ -27,6 +27,13 @@ public enum CharacterType
     Knight
 }
 
+public enum SkillGroupType
+{
+    Combat,
+    Stealth,
+    Support
+}
+
 [CreateAssetMenu(fileName = "Entity",menuName = "New Entity")]
 public class EntityData : ScriptableObject
 {
@@ -57,4 +64,7 @@ public class EntityData : ScriptableObject
     public int curRerollCount;     //현재 리롤 횟수
 
     public Sprite portrait;
+
+    [Header("Skill Group")]
+    public SkillGroupType skillGroup;
 }
