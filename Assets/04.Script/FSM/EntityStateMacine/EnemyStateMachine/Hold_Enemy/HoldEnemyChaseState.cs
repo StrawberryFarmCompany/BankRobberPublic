@@ -6,26 +6,15 @@ using static UnityEditor.PlayerSettings;
 
 public class HoldEnemyChaseState : EnemyState
 {
-    public NavMeshAgent agent;
-    public Queue<Vector3> pos;
     public HoldEnemyChaseState(EnemyNPC enemyNPC, Animator anim)
     {
         this.patrolEnemy = enemyNPC;
         this.anim = anim;
-        pos = new Queue<Vector3>();
     }
 
 public override void Enter()
     {
-        if (pos.TryDequeue(out Vector3 current))
-        {
-            agent.SetDestination(current);
-        }
-
-        else
-        {
-            Debug.LogError("이동 경로 없음");
-        }
+        anim.Play("HG_Move");
     }
 
     public override void Execute()
@@ -35,6 +24,6 @@ public override void Enter()
 
     public override void Exit()
     {
-
+        anim.Play("HG_Idle_Pose");
     }
 }
