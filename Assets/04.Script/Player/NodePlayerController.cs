@@ -92,6 +92,7 @@ public class NodePlayerController : MonoBehaviour
         transform.position = playerStats.currNode.GetCenter;
         GameManager.GetInstance.RegisterEntity(playerStats);
         NodePlayerManager.GetInstance.SwitchToPlayer(0); // 첫 번째 플레이어로 시작
+        EquippedSkills.ApplyEquippedSkills(playerStats);
     }
 
     void Update()

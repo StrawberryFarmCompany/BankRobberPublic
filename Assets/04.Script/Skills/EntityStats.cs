@@ -42,6 +42,7 @@ public class EntityStats
     public int curRerollCount;
     public Sprite portrait;
     public CharacterType characterType;
+    public SkillGroupType skillGroup;
     public Node currNode;
 
     public PlayerSkill playerSkill; //플레이어 스킬
@@ -84,6 +85,7 @@ public class EntityStats
         curRerollCount = baseStats.curRerollCount;
         playerSkill = baseStats.playerSkill;
         portrait = baseStats.portrait;
+        skillGroup = baseStats.skillGroup;
         buffs = new List<IBuff>();
         secData = new SecurityData(this);
         hpbar = new HPBar();
@@ -93,7 +95,7 @@ public class EntityStats
             this.characterType = baseStats.characterType;
             isFullBag = false;
         }
-
+        
         if (gameObject != null)
         {
             thisGameObject = gameObject;
