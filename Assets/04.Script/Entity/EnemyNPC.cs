@@ -109,7 +109,7 @@ public class EnemyNPC : MonoBehaviour
             SecurityLevel(1);
             SecurityCall();
             Witness();
-            Debug.LogError("씨ㅣㅣ바라라라라랄ㄹㄹㄹㄹ");
+            Debug.LogError($"발견 된 쁠레이어 : {visibleTargets.Count}");
         }
         return visibleTargets;
     }
