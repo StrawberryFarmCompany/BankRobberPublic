@@ -155,15 +155,42 @@ public class NodePlayerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어 등록
+    /// 플레이어 등록 (자동 정렬: Bishop → Rook → Knight)
     /// </summary>
     public void RegisterPlayer(NodePlayerController player)
     {
         if (!players.Contains(player))
         {
             players.Add(player);
+
+            // 등록 후 캐릭터 타입 기준으로 정렬
+            players.Sort((a, b) =>
+            {
+                int orderA = GetCharacterOrder(a.playerStats.characterType);
+                int orderB = GetCharacterOrder(b.playerStats.characterType);
+                return orderA.CompareTo(orderB);
+            });
         }
     }
+
+    /// <summary>
+    /// 캐릭터 타입별 정렬 우선순위
+    /// </summary>
+    private int GetCharacterOrder(CharacterType type)
+    {
+        switch (type)
+        {
+            case CharacterType.Bishop:
+                return 0;
+            case CharacterType.Rook:
+                return 1;
+            case CharacterType.Knight:
+                return 2;
+            default:
+                return 99;
+        }
+    }
+
 
     /// <summary>
     /// 플레이어 제거 및 다음 플레이어로 전환 처리
