@@ -3,7 +3,7 @@ using UnityEngine;
 
 public enum SceneType
 {
-    MainTitle,
+    MainTitleScene,
     LobbyScene,
     TutorialScene,
     Stage01Scene,
@@ -46,7 +46,7 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
     {
         switch (sceneType)
         {
-            case SceneType.MainTitle: return "MainTitle";
+            case SceneType.MainTitleScene: return "MainTitleScene";
             case SceneType.LobbyScene: return "LobbyScene";
             case SceneType.TutorialScene: return "ProtoTypeScene";
             case SceneType.Stage01Scene: return "Stage01Scene";

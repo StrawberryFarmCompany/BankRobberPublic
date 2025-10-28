@@ -11,6 +11,18 @@ public class OptionUI : MonoBehaviour
     [SerializeField] private Slider zoomSlider;
     [SerializeField] private Slider clickSlider;
 
+    [SerializeField] private float rotationMin = 30f;
+    [SerializeField] private float rotationMax = 100f;
+
+    [SerializeField] private float moveMin = 10f;
+    [SerializeField] private float moveMax = 40f;
+
+    [SerializeField] private float zoomMin = 0.05f;
+    [SerializeField] private float zoomMax = 0.3f;
+
+    [SerializeField] private float clickMin = 0.05f;
+    [SerializeField] private float clickMax = 0.3f;
+
     [Header("1인칭 카메라 감도")]
     [SerializeField] private Slider fpsLookSlider;
     [SerializeField] private List<PlayerController> fpsPlayers;
@@ -28,6 +40,18 @@ public class OptionUI : MonoBehaviour
     void Start()
     {
         csmg = CameraSensitivityManager.GetInstance;
+
+        rotationSlider.minValue = rotationMin;
+        rotationSlider.maxValue = rotationMax;
+
+        moveSlider.minValue = moveMin;
+        moveSlider.maxValue = moveMax;
+
+        zoomSlider.minValue = zoomMin;
+        zoomSlider.maxValue = zoomMax;
+
+        clickSlider.minValue = clickMin;
+        clickSlider.maxValue = clickMax;
 
         rotationSlider.value = csmg.RotateSpeed;
         moveSlider.value = csmg.WasdSpeed;
