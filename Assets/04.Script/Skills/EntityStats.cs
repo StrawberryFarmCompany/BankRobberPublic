@@ -193,11 +193,10 @@ public class EntityStats
 
     private void Dead()
     {
-        GameManager.GetInstance.GatherCostAndScore();
         if(hpbar !=null)hpbar.Destroy();
-        //thisGameObject.SetActive(false);
         if (characterType != CharacterType.None)
         {
+            GameManager.GetInstance.GatherCostAndScore();
             NodePlayerManager.GetInstance.SetEscapeCondition(this, EscapeCondition.Arrest);
             UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
         }
@@ -279,7 +278,8 @@ public class EntityStats
         buffs.Clear();
         currNode?.RemoveCharacter(this);
         currNode = null;
-        isFullBag = false;
+        if (characterType != CharacterType.None)
+            isFullBag = false;
         GameManager.GetInstance.UnregisterEntity(this);
         //NodePlayerManager.GetInstance.UnregisterPlayer(thisGameObject.GetComponent<NodePlayerController>());
         //GameManager.GetInstance.BattleTurn.RemoveUnit();
