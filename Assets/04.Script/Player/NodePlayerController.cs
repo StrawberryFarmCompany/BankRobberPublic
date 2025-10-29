@@ -100,6 +100,7 @@ public class NodePlayerController : MonoBehaviour
 
         if (isMoving)
         {
+            animationController.MoveState();
             SequentialMove();
         }
     }
@@ -302,7 +303,6 @@ public class NodePlayerController : MonoBehaviour
 
             if (pathQueue.Count > 0)
             {
-                animationController.MoveState();
                 MoveRangeHighlighter.normalHighlighter.Enable(false);
                 //최종 이동 구현
                 isMoving = true;
