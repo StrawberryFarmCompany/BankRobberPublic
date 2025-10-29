@@ -194,7 +194,7 @@ public class EntityStats
     private void Dead()
     {
         GameManager.GetInstance.GatherCostAndScore();
-        hpbar.Destroy();
+        if(hpbar !=null)hpbar.Destroy();
         //thisGameObject.SetActive(false);
         if (characterType != CharacterType.None)
         {
