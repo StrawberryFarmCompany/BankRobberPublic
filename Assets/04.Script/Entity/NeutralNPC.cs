@@ -23,6 +23,7 @@ public class NeutralNPC : MonoBehaviour
 
         yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.CreateHpBar();
+        stats.NodeUpdates(transform.position, true);
         stats.secData.SetSecLevel(0);
 
     }
