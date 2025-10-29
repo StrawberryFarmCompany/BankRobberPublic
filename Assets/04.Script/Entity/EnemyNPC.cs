@@ -29,7 +29,7 @@ public class EnemyNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
 
         yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
-
+        stats.CreateHpBar();
         SecurityLevel(0);
     }
 
