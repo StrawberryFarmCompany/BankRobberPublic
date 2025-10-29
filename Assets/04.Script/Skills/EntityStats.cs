@@ -97,16 +97,19 @@ public class EntityStats
             this.characterType = baseStats.characterType;
             isFullBag = false;
         }
-        else
-        {
-            hpbar = new HPBar();
-            hpbar.Init(maxHp, CurHp);
-            hpbar.RegistHideOBJ(gameObject.AddComponent<HiderDisableObjects>());
-        }
 
         if (gameObject != null)
         {
             thisGameObject = gameObject;
+        }
+    }
+    public void CreateHpBar()
+    {
+        if (characterType == CharacterType.None)
+        {
+            hpbar = new HPBar();
+            hpbar.Init(maxHp, CurHp);
+            hpbar.RegistHideOBJ(thisGameObject.AddComponent<HiderDisableObjects>());
         }
     }
     public void RegistBuff(BuffData data)

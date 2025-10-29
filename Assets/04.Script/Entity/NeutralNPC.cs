@@ -22,6 +22,7 @@ public class NeutralNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
 
         yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
+        stats.CreateHpBar();
         stats.secData.SetSecLevel(0);
 
     }
