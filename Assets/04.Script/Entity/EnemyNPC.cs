@@ -28,8 +28,9 @@ public class EnemyNPC : MonoBehaviour
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
 
-        yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
+        if (ResourceManager.GetInstance.GetBuffData.Count <= 0) yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.CreateHpBar();
+        stats.NodeUpdates(transform.position,true);
         SecurityLevel(0);
     }
 
