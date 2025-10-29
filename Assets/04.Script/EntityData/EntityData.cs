@@ -13,10 +13,13 @@ public enum EntityTag
 
 public enum PlayerSkill
 {
+    None,
     SneakAttack,    //은신 공격
+    Silence,        //소음 제거
     Heal,       //치유
+    DoubleAttack,    //이중 타격
     Ready,          //준비
-
+    Evasion         //회피율 증가
 }
 
 public enum CharacterType
