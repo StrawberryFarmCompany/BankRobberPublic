@@ -4,25 +4,44 @@ public class MoveState : AnimationState
 {
     Animator animator;
     NodePlayerController controller;
+    Gun gun;
 
-    private readonly int isMove = Animator.StringToHash("isMove");
-    private readonly int isStrafe = Animator.StringToHash("isStrafe");
+    private readonly int hg_Move = Animator.StringToHash("HG_Move");
+    private readonly int hg_Strafe = Animator.StringToHash("HG_Strafe");
+    private readonly int ar_Move = Animator.StringToHash("AR_Move");
+    private readonly int ar_Strafe = Animator.StringToHash("AR_Strafe");
 
     public MoveState(Animator animator, NodePlayerController controller = null)
     {
         this.animator = animator;
         this.controller = controller;
+        this.gun = controller.gun;
     }
 
     public override void Enter()
     {
+        animator.SetBool(AnimationStateController.isIdle, false);
         if(controller != null && controller.isHide)
         {
-            animator.SetBool(isStrafe, true);
+            if (gun.type != GunType.HandGun) 
+            {
+                animator.Play(ar_Strafe);
+            }
+            else
+            {
+                animator.Play(hg_Strafe);
+            }
         }
         else
         {
-            animator.SetBool(isMove, true);
+            if (gun.type != GunType.HandGun)
+            {
+                animator.Play(ar_Move);
+            }
+            else
+            {
+                animator.Play(hg_Move);
+            }
         }
     }
 
@@ -33,7 +52,5 @@ public class MoveState : AnimationState
 
     public override void Exit()
     {
-        animator.SetBool(isMove, false);
-        animator.SetBool(isStrafe, false);
     }
 }

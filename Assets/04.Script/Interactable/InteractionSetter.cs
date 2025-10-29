@@ -35,7 +35,7 @@ public class InteractionSetter : MonoBehaviour
         interaction.tile = pos;
         switch (type)
         {
-            case InteractionType.AlamBTN:
+            case InteractionType.AlarmBTN:
                 break;
             case InteractionType.Window:
                 Window window = (Window)interaction;
