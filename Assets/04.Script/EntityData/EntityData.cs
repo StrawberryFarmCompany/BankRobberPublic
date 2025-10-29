@@ -4,10 +4,10 @@ using UnityEngine;
 
 public enum EntityTag
 {
-    bankManager,    //은행매니저
-    enemy,          //적 기물
-    citizen,        //시민
-    ally,           //플레이어 기물
+    BankManager,    //은행매니저
+    Enemy,          //적 기물
+    Citizen,        //시민
+    Ally,           //플레이어 기물
     CCTV            //씨씨티비
 }
 

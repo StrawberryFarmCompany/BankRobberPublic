@@ -71,7 +71,7 @@ public class NeutralNPC : MonoBehaviour
         foreach (var target in targets)
         {
             // 플레이어만 검출(적 무시)
-            if (target.entityTag != EntityTag.ally)
+            if (target.entityTag != EntityTag.Ally)
             {
                 continue;
             }
