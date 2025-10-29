@@ -2,6 +2,7 @@ using BuffDefine;
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -76,7 +77,7 @@ public class EnemyNPC : MonoBehaviour
         foreach (var target in targets)
         {
             // 플레이어만 검출(적 무시)
-            if (target.entityTag != EntityTag.ally)
+            if (target.entityTag != EntityTag.Ally)
             {
                 continue;
             }
@@ -155,59 +156,28 @@ public class EnemyNPC : MonoBehaviour
 
     private bool CheckRangeAttack(Vector3 targetPos)
     {
-        Vector3 start = transform.position + Vector3.up * 1.5f; // 적기준 몸통?에서 발싸
-        Vector3 target = targetPos + Vector3.up * 1.5f;         // 플레이어 몸통 높이 정도에서 맞기.
+        Vector3 start = transform.position + Vector3.up * 1.5f;
+        Vector3 target = targetPos + Vector3.up * 1.5f;
         Vector3 direction = (target - start).normalized;
         float distance = Vector3.Distance(start, target);
 
-        int layerMask = ~LayerMask.GetMask("Entity"); // Entity레이어만 제외하고 다
-
-        // Raycast 상에서 장애물 체크
-        if (Physics.Raycast(start, direction, out RaycastHit hit, distance, layerMask))
+        // 모든 레이어를 대상으로 쏘되 (LayerMask.None), Ray에 맞은 모든 걸 검사
+        if (Physics.Raycast(start, direction, out RaycastHit hit, distance))
         {
-            // 맞은 오브젝트 로그
-            Debug.Log($"[CheckRangeAttack] Raycast hit: {hit.collider.name}");
-
-            // 1️. 맞은 대상에서 EntityStats 가져오기
-            EntityStats hitStats = hit.collider.GetComponent<EntityStats>();
-
-            if (hitStats != null)
+            // 맞은 오브젝트에 NodePlayerController가 붙어 있다면 플레이어임
+            NodePlayerController player = hit.collider.GetComponent<NodePlayerController>();
+            if (player != null)
             {
-                // 2️. EntityType으로 분기
-                if (hitStats.entityTag == EntityTag.ally)
-                {
-                    Debug.DrawLine(start, direction * distance, Color.green, 10f);
-                    Debug.Log("플레이어에 맞음");
-                }
-                else if (hitStats.entityTag == EntityTag.enemy)
-                {
-                    Debug.DrawLine(start, direction * distance, Color.red, 10f);
-                    Debug.Log("적에 맞음");
-                }
-                else
-                {
-                    Debug.DrawLine(start, direction * distance, Color.yellow, 10f);
-                    Debug.Log("기타 오브젝트에 맞음");
-                }
-            }
-            else
-            {
-                Debug.DrawLine(start, direction * distance, Color.blue, 10f);
-                Debug.Log("EntityStats가 없는 기물에 맞음 (예: 벽, 장애물 등)");
+                Debug.DrawLine(start, target, Color.green, 10f);
+                Debug.Log($"플레이어 발견! ({hit.collider.name})");
+                return true;
             }
 
-            // 3️. 장애물 판정 (플레이어에 맞으면 통과, 벽이면 차단)
-            Node node = GameManager.GetInstance.GetNode(hit.point);
-            if (node != null && node.GetCenter == targetPos)
-            {
-                
-                return true; // 시야 확보됨
-            }
-            
-            return false; // 막힘
+            // 그 외는 시야를 가린 장애물
+            Debug.DrawLine(start, target, Color.red, 10f);
+            Debug.Log($"시야 차단: {hit.collider.name}");
         }
-
-        return true; // 아무것도 안 맞았으면 시야 확보됨
+        return false;
     }
 
     public void SecurityLevel(ushort level)
