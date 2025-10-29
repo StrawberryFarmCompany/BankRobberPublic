@@ -92,6 +92,7 @@ public class NodePlayerController : MonoBehaviour
         transform.position = playerStats.currNode.GetCenter;
         GameManager.GetInstance.RegisterEntity(playerStats);
         EquippedSkills.ApplyEquippedSkills(playerStats);
+        SetCharacterTurn();
     }
 
     void Update()
@@ -1061,6 +1062,13 @@ public class NodePlayerController : MonoBehaviour
     private void OnDestroy()
     {
         transform.DOKill(false);
+    }
+
+    public void SetCharacterTurn()
+    {
+        if (playerStats.characterType == CharacterType.Bishop) NodePlayerManager.GetInstance.SwitchToPlayer(0);
+        else if (playerStats.characterType == CharacterType.Rook) NodePlayerManager.GetInstance.SwitchToPlayer(1);
+        else if (playerStats.characterType == CharacterType.Knight) NodePlayerManager.GetInstance.SwitchToPlayer(2);
     }
 }
 public enum PlayerStatus {
