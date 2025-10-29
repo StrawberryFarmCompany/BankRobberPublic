@@ -15,7 +15,7 @@ public interface IInteractable
     {
         switch (type)
         {
-            case InteractionType.AlamBTN:
+            case InteractionType.AlarmBTN:
                 return new AlarmButton();
             case InteractionType.Window:
                 return new Window();
@@ -38,4 +38,4 @@ public interface IInteractable
 
     }
 }
-public enum InteractionType{AlamBTN,Door,GoldBar,MoneyBag,KeyCard,Window,VaultDoor,EscapeCar}
+public enum InteractionType{AlarmBTN,Door,GoldBar,MoneyBag,KeyCard,Window,VaultDoor,EscapeCar}
