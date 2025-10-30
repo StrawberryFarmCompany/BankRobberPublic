@@ -73,11 +73,29 @@ public class HPBar
         slotParent.position = pos;
         Debug.Log($"피통 위치{pos}");
     }
-    public void Destroy(bool OnSceneChange = false)
+    public void Destroy()
     {
-        GameObject.Destroy(hpCanvas);
+        BackTrackingDestroy(slotParent);
+        GameObject.Destroy(slotParent.gameObject);
         slotParent = null;
         hpSlots = null;
+    }
+
+    private void BackTrackingDestroy(Transform tr)
+    {
+        if (tr.childCount > 0)
+        {
+            for (int i = 0; i < tr.childCount; i++)
+            {
+                BackTrackingDestroy(tr.GetChild(i));
+            }
+        }
+        else
+        {
+            Image image = tr.gameObject.GetComponent<Image>();
+            image.sprite = null;//참조끊기
+            GameObject.Destroy(image);
+        }
     }
 }
 

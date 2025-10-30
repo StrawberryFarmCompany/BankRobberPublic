@@ -183,7 +183,7 @@ public class EntityStats
     public void Damaged(float damage)
     {
         CurHp -= damage;
-        //hpbar.SetCurrHP(CurHp);
+        hpbar.SetCurrHP(CurHp);
         if (CurHp <= 0)
         {
             CurHp = 0;
@@ -193,10 +193,24 @@ public class EntityStats
 
     private void Dead()
     {
-        if(hpbar !=null)hpbar.Destroy();
+        GameManager.GetInstance.GatherCostAndScore();
+        //thisGameObject.SetActive(false);
+        if (hpbar != null)
+        {
+            HiderBehavior[] hiderObjects = thisGameObject.GetComponents<HiderBehavior>();
+            FogOfWarHider hiders = thisGameObject.GetComponent<FogOfWarHider>();
+            for (int i = 0; i < hiderObjects.Length; i++)
+            {
+                FogOfWarWorld.Destroy(hiderObjects[i]);
+            }
+            FogOfWarWorld.Destroy(hiders);
+
+            thisGameObject.GetComponent<HiderDisableObjects>().Flush();
+            hpbar.Destroy();
+        }
+
         if (characterType != CharacterType.None)
         {
-            GameManager.GetInstance.GatherCostAndScore();
             NodePlayerManager.GetInstance.SetEscapeCondition(this, EscapeCondition.Arrest);
             UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
         }

@@ -13,12 +13,14 @@ public class CitizenNPC : NeutralNPC
     Vector3Int curTargetPos;
     public bool isMoving;
     bool canNextMove;
-
+    Animator animator;
     protected override IEnumerator Start()
     {
+        animator = GetComponent<Animator>();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         nfsm = new NeutralStateMachine(this, transform.GetComponentInChildren<Animator>(), NeutralStates.CitizenIdleState);
+        stats.OnDead += DeadAnimator;
     }
 
     protected override void FixedUpdate()
@@ -44,13 +46,7 @@ public class CitizenNPC : NeutralNPC
             CitizenWitness();
         }
 
-        else if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
-        {
-            Debug.Log("죽은상태");
-            ChangeToDead();
-        }
-
-        else if(stats.secData.GetSecLevel >= 2)
+        if(stats.secData.GetSecLevel >= 2)
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();
@@ -87,16 +83,21 @@ public class CitizenNPC : NeutralNPC
         nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenDeadState));
     }
 
-    //public void ChangeToFlee(Vector3 pos) 
-    //{
-    //    CitizenFleeState fleeState = (CitizenFleeState)nfsm.FindState(NeutralStates.CitizenFleeState);
-    //    if (fleeState.agent == null)
-    //    {
-    //        fleeState.agent = gameObject.GetComponent<NavMeshAgent>();
-    //    }
-    //    fleeState.pos.Enqueue(pos);
-    //    nfsm.ChangeState(nfsm.FindState (NeutralStates.CitizenFleeState));
-    //}
+    public void DeadAnimator()
+    {
+        animator.Play("Dead_Fwd");
+    }
+
+    public void DestroyObject()
+    {
+        StartCoroutine(LateDestroyObjectCoroutine());
+    }
+
+    public IEnumerator LateDestroyObjectCoroutine()
+    {
+        yield return new WaitForSeconds(5f);
+        Destroy(gameObject);
+    }
 
     public void Move(Vector3 pos)
     {

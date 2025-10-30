@@ -12,11 +12,11 @@ public class CitizenCowerState : NeutralState
     }
     public override void Enter()
     {
-        anim.Play("Ducking_Enter");
+        anim.Play("Ducking_Idle");
     }
 
     public override void Exit() 
     {
-        anim.Play("Idle");
+
     }
 }

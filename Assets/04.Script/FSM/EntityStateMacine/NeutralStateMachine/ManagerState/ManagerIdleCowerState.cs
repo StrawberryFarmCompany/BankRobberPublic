@@ -11,7 +11,7 @@ public class ManagerIdleCowerState : NeutralState
 
     public override void Enter()
     {
-        
+        anim.Play("Ducking_Idle");
     }
 
     public override void Execute()
