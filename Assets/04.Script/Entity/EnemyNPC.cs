@@ -2,6 +2,7 @@ using BuffDefine;
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -34,12 +35,6 @@ public class EnemyNPC : MonoBehaviour
         SecurityLevel(0);
     }
 
-    protected virtual void FixedUpdate()
-    {
-        if (stats == null) return;
-        stats.NodeUpdates(transform.position);
-    }
-
     protected virtual void CalculateBehaviour()
     {
         stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
@@ -49,11 +44,7 @@ public class EnemyNPC : MonoBehaviour
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
-        else
-        {
-            //TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-            //TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
-        }
+        stats.NodeUpdates(transform.position);
     }
     
     public List<EntityStats> DetectVisibleTargets()
@@ -76,7 +67,7 @@ public class EnemyNPC : MonoBehaviour
         foreach (var target in targets)
         {
             // 플레이어만 검출(적 무시)
-            if (target.entityTag != EntityTag.ally)
+            if (target.entityTag != EntityTag.Ally)
             {
                 continue;
             }
@@ -153,24 +144,30 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
-    private bool CheckRangeAttack(Vector3Int targetPos)
+    private bool CheckRangeAttack(Vector3 targetPos)
     {
-        Vector3 start = transform.position;
-        Vector3 target = targetPos;
-        // 1. NavMesh 상에서 장애물 체크
-        if (NavMesh.Raycast(start, target, out NavMeshHit hit, NavMesh.AllAreas))
+        Vector3 start = transform.position + Vector3.up * 1.5f;
+        Vector3 target = targetPos + Vector3.up * 1.5f;
+        Vector3 direction = (target - start).normalized;
+        float distance = Vector3.Distance(start, target);
+
+        // 모든 레이어를 대상으로 쏘되 (LayerMask.None), Ray에 맞은 모든 걸 검사
+        if (Physics.Raycast(start, direction, out RaycastHit hit, distance))
         {
-            Debug.DrawRay(start, (hit.position - start), Color.red, 10f);
-            Debug.Log("무언가로 막혀있음");
-            return false;
+            // 맞은 오브젝트에 NodePlayerController가 붙어 있다면 플레이어임
+            NodePlayerController player = hit.collider.GetComponent<NodePlayerController>();
+            if (player != null)
+            {
+                Debug.DrawLine(start, target, Color.green, 10f);
+                Debug.Log($"플레이어 발견! ({hit.collider.name})");
+                return true;
+            }
+
+            // 그 외는 시야를 가린 장애물
+            Debug.DrawLine(start, target, Color.red, 10f);
+            Debug.Log($"시야 차단: {hit.collider.name}");
         }
-        else
-        {
-            Debug.Log("NavMesh 상에서 막히지 않음");
-            // 막히지 않았다면 초록색 선
-            Debug.DrawRay(start, (target - start), Color.green, 10f);
-            return true;
-        }
+        return false;
     }
 
     public void SecurityLevel(ushort level)
