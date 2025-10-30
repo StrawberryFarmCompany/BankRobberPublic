@@ -12,7 +12,7 @@ public class CopEnemyDeadState : EnemyState
 
     public override void Enter()
     {
-
+        anim.Play("E_Dead_Fwd");
     }
 
 }
