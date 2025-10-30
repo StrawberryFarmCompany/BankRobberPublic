@@ -35,12 +35,6 @@ public class EnemyNPC : MonoBehaviour
         SecurityLevel(0);
     }
 
-    protected virtual void FixedUpdate()
-    {
-        if (stats == null) return;
-        stats.NodeUpdates(transform.position);
-    }
-
     protected virtual void CalculateBehaviour()
     {
         stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
