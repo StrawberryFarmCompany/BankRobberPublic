@@ -10,13 +10,14 @@ public class CopEnemyNPC : EnemyNPC
     Vector3Int curTargetPos;
     bool isMoving;
     bool canNextMove;
-
+    Animator animator;
     protected override IEnumerator Start()
     {
+        animator = GetComponent<Animator>();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>(), EnemyStates.PatrolEnemyIdleRotationState);
-
+        stats.OnDead += DeadAnimator;
     }
 
     private void Update()
@@ -75,6 +76,16 @@ public class CopEnemyNPC : EnemyNPC
     //{
     //    efsm.ChangeState(efsm.FindState(EnemyStates.CopEnemyDeadState));
     //}
+    public void DeadAnimator()
+    {
+        animator.Play("Dead_Fwd");
+    }
+
+    public void DestroyObject()
+    {
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, CalculateBehaviour);
+        Destroy(gameObject);
+    }
 
     public void Move(Vector3 pos)
     {
