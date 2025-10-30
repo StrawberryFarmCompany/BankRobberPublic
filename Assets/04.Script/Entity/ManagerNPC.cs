@@ -14,12 +14,6 @@ public class ManagerNPC : NeutralNPC
         stats.OnDamaged += TakeDamage;
     }
 
-    protected override void FixedUpdate()
-    {
-        if (entityData == null) return;
-        base.FixedUpdate();
-    }
-
     protected override void CalculateBehaviour()
     {
         // 피격시 사망
