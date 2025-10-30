@@ -9,13 +9,24 @@ public class InteractionSetter : MonoBehaviour
     [SerializeField] bool isWalkAble = false;
     private GameManager Manager {get{return GameManager.GetInstance; } }
 
-    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.GoldBar,(int)InteractionType.VaultDoor)]//금고문,문 카드키
+    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.GoldBar,(int)InteractionType.VaultDoor, (int)InteractionType.AlarmBTN)]//금고문,문 카드키
     public Transform target;
 
     [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.VaultDoor)]//금고문,문 카드키
     public int doorValue;
     [ConditionalHide("type", (int)InteractionType.Door)]//금고문,문
     public DoorLockType lockType;
+    [ConditionalHide("lockType", (int)DoorLockType.button)]//버튼식 문
+    public bool isRandomValue;
+    [ConditionalHide("lockType", (int)DoorLockType.button)]//버튼식 문
+    public GameObject block;
+    [ConditionalHide("isRandomValue", false)]//고정 값
+    public int buttonValue;
+    [ConditionalHide("isRandomValue", true)]//랜덤 카운트 최소
+    public int minValue;
+    [ConditionalHide("isRandomValue", true)]//랜덤 카운트 최대
+    public int maxValue;
+
     [ConditionalHide("type", (int)InteractionType.GoldBar)]//골드바, 현금
     public GameObject[] consumeItems;
     void Start()
@@ -36,6 +47,8 @@ public class InteractionSetter : MonoBehaviour
         switch (type)
         {
             case InteractionType.AlarmBTN:
+                AlarmButton alarmButton = (AlarmButton)interaction;
+                alarmButton.Init(pos, target, buttonValue);
                 break;
             case InteractionType.Window:
                 Window window = (Window)interaction;
@@ -44,7 +57,10 @@ public class InteractionSetter : MonoBehaviour
                 break;
             case InteractionType.Door:
                 Door door = (Door)interaction;
-                door.Init(pos,target, lockType, doorValue);
+                if (lockType == DoorLockType.button)
+                    door.Init(pos, target, lockType, block, isRandomValue, buttonValue, minValue, maxValue);
+                else
+                    door.Init(pos, target, lockType, doorValue);
                 break;
             case InteractionType.GoldBar:
                 GoldBar gold = (GoldBar)interaction;
