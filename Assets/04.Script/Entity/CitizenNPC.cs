@@ -23,11 +23,6 @@ public class CitizenNPC : NeutralNPC
         stats.OnDead += DeadAnimator;
     }
 
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-    }
-
     private void Update()
     {
         if (isMoving)
