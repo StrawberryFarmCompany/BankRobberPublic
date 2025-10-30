@@ -29,11 +29,6 @@ public class PatrolEnemyNPC : EnemyNPC
         // 상태머신 초기화 (기본 상태)
         efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyIdleRotationState);
     }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-    }
     
     private void Update()
     {

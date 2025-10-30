@@ -27,10 +27,6 @@ public class NeutralNPC : MonoBehaviour
         stats.secData.SetSecLevel(0);
     }
 
-    protected virtual void FixedUpdate()
-    {
-    }
-
     protected virtual void CalculateBehaviour()
     {
         stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
@@ -41,12 +37,6 @@ public class NeutralNPC : MonoBehaviour
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
         stats.NodeUpdates(transform.position);
-        /*        else
-                {
-                    TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-                    TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
-                    TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
-                }*/
     }
 
     public List<EntityStats> DetectVisibleTargets()

@@ -30,11 +30,6 @@ public class HoldEnemyNPC : EnemyNPC
             SequentialMove();
     }
 
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-    }
-
     protected override void CalculateBehaviour()
     {
         DetectNoise();
