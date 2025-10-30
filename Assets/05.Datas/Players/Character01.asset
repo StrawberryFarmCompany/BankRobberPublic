@@ -33,3 +33,4 @@ MonoBehaviour:
   maxRerollCount: 1
   curRerollCount: 1
   portrait: {fileID: 21300000, guid: 574d0455a6eefea4ba16da1d453d96e3, type: 3}
+  skillGroup: 1

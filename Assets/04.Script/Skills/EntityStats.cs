@@ -283,7 +283,8 @@ public class EntityStats
         buffs.Clear();
         currNode?.RemoveCharacter(this);
         currNode = null;
-        isFullBag = false;
+        if (characterType != CharacterType.None)
+            isFullBag = false;
         GameManager.GetInstance.UnregisterEntity(this);
         //NodePlayerManager.GetInstance.UnregisterPlayer(thisGameObject.GetComponent<NodePlayerController>());
         //GameManager.GetInstance.BattleTurn.RemoveUnit();
