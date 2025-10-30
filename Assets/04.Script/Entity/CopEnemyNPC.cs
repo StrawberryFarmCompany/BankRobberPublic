@@ -27,11 +27,6 @@ public class CopEnemyNPC : EnemyNPC
         }
     }
 
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-    }
-
     protected override void CalculateBehaviour()
     {
         DetectVisibleTargets();

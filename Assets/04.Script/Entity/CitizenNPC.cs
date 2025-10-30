@@ -23,11 +23,6 @@ public class CitizenNPC : NeutralNPC
         stats.OnDead += DeadAnimator;
     }
 
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-    }
-
     private void Update()
     {
         if (isMoving)
@@ -39,14 +34,14 @@ public class CitizenNPC : NeutralNPC
     protected override void CalculateBehaviour()
     {
         List<EntityStats> visibleTargets = DetectVisibleTargets();
-        
+
         if (visibleTargets.Count > 0 && isDetection == false)
         {
             isDetection = true;
             CitizenWitness();
         }
 
-        if(stats.secData.GetSecLevel >= 2)
+        if (stats.secData.GetSecLevel >= 2)
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();
@@ -60,11 +55,12 @@ public class CitizenNPC : NeutralNPC
             nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
         }
 
-        else 
+        else
         {
             Debug.Log("대기상태");
             ChangeToIdle();
         }
+
         base.CalculateBehaviour();
     }
 
