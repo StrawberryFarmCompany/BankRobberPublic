@@ -183,7 +183,10 @@ public class EntityStats
     public void Damaged(float damage)
     {
         CurHp -= damage;
-        hpbar.SetCurrHP(CurHp);
+        if (hpbar != null)
+        {
+            hpbar.SetCurrHP(CurHp);
+        }
         if (CurHp <= 0)
         {
             CurHp = 0;
