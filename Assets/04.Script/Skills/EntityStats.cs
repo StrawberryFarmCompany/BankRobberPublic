@@ -195,13 +195,22 @@ public class EntityStats
     {
         GameManager.GetInstance.GatherCostAndScore();
         //thisGameObject.SetActive(false);
+        if (hpbar != null)
+        {
+            HiderBehavior[] hiderObjects = thisGameObject.GetComponents<HiderBehavior>();
+            FogOfWarHider hiders = thisGameObject.GetComponent<FogOfWarHider>();
+            for (int i = 0; i < hiderObjects.Length; i++)
+            {
+                FogOfWarWorld.Destroy(hiderObjects[i]);
+            }
+            FogOfWarWorld.Destroy(hiders);
+
+            thisGameObject.GetComponent<HiderDisableObjects>().Flush();
+            hpbar.Destroy();
+        }
+
         if (characterType != CharacterType.None)
         {
-            if (hpbar != null)
-            {
-                thisGameObject.GetComponent<HiderDisableObjects>().Flush();
-                hpbar.Destroy();
-            }
             NodePlayerManager.GetInstance.SetEscapeCondition(this, EscapeCondition.Arrest);
             UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
         }
