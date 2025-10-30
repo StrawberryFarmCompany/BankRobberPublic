@@ -3,14 +3,15 @@ using System.Collections;
 public class ManagerNPC : NeutralNPC
 {
     public bool canSeeAlly;
-
+    Animator animator;
     protected override IEnumerator Start()
     {
+        animator = GetComponent<Animator>();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태 ManagerIdleState)
         nfsm = new NeutralStateMachine(this, transform.GetComponentInChildren<Animator>(), NeutralStates.ManagerIdleState);
-
+        stats.OnDead += DeadAnimator;
         stats.OnDamaged += TakeDamage;
     }
 
@@ -59,5 +60,16 @@ public class ManagerNPC : NeutralNPC
     public void OnPlayerDetected()
     {
         nfsm.ChangeState(nfsm.FindState(NeutralStates.ManagerIdleCowerState));
+    }
+
+    public void DeadAnimator()
+    {
+        animator.Play("Dead_Fwd");
+    }
+
+    public void DestroyObject()
+    {
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.neutral, CalculateBehaviour);
+        Destroy(gameObject);
     }
 }

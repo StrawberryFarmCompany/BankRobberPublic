@@ -86,12 +86,7 @@ public class CitizenNPC : NeutralNPC
 
     public void DestroyObject()
     {
-        StartCoroutine(LateDestroyObjectCoroutine());
-    }
-
-    public IEnumerator LateDestroyObjectCoroutine()
-    {
-        yield return new WaitForSeconds(5f);
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.neutral, CalculateBehaviour);
         Destroy(gameObject);
     }
 
