@@ -75,9 +75,15 @@ public class HPBar
     }
     public void Destroy(bool OnSceneChange = false)
     {
-        GameObject.Destroy(hpCanvas);
+        //GameObject.Destroy(slotParent);
+        slotParent.gameObject.SetActive(false);
         slotParent = null;
         hpSlots = null;
+    }
+
+    private void BackTrackingDestroy()
+    {
+        
     }
 }
 

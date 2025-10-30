@@ -183,7 +183,7 @@ public class EntityStats
     public void Damaged(float damage)
     {
         CurHp -= damage;
-        //hpbar.SetCurrHP(CurHp);
+        hpbar.SetCurrHP(CurHp);
         if (CurHp <= 0)
         {
             CurHp = 0;
@@ -194,10 +194,14 @@ public class EntityStats
     private void Dead()
     {
         GameManager.GetInstance.GatherCostAndScore();
-        if(hpbar !=null)hpbar.Destroy();
         //thisGameObject.SetActive(false);
         if (characterType != CharacterType.None)
         {
+            if (hpbar != null)
+            {
+                thisGameObject.GetComponent<HiderDisableObjects>().Flush();
+                hpbar.Destroy();
+            }
             NodePlayerManager.GetInstance.SetEscapeCondition(this, EscapeCondition.Arrest);
             UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
         }
