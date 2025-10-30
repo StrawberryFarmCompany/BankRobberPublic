@@ -138,15 +138,33 @@ public static class EquippedSkills
             string[] parts = activeKey.Split('.');
             if (parts.Length >= 3 && int.TryParse(parts[2], out int idNum))
             {
-                switch (idNum)
+                switch (target.skillGroup)
                 {
-                    case 1: target.playerSkill = PlayerSkill.SneakAttack; break;
-                    case 2: target.playerSkill = PlayerSkill.Heal; break;
-                    case 3: target.playerSkill = PlayerSkill.Ready; break;
-                    default: target.playerSkill = PlayerSkill.Ready; break;
+                    case SkillGroupType.Stealth:
+                        target.playerSkill = (idNum == 1)
+                            ? PlayerSkill.SneakAttack    // 암습
+                            : PlayerSkill.Silence;       // 소음 제거
+                        break;
+
+                    case SkillGroupType.Combat:
+                        target.playerSkill = (idNum == 1)
+                            ? PlayerSkill.Heal           // 체력 회복
+                            : PlayerSkill.DoubleAttack;  // 2중 타격
+                        break;
+
+                    case SkillGroupType.Support:
+                        target.playerSkill = (idNum == 1)
+                            ? PlayerSkill.Ready          // 행동력 회복
+                            : PlayerSkill.Evasion;       // 회피율 증가
+                        break;
                 }
-                Debug.Log($"[EquippedSkills] ({group}) 액티브 적용됨: {target.playerSkill}");
+                Debug.Log($"[EquippedSkills] ({group}) 액티브 적용: {target.playerSkill}");
             }
+        }
+        else
+        {
+            target.playerSkill = PlayerSkill.None;
+            Debug.Log($"[EquippedSkills] ({group}) 액티브 미장착");
         }
 
         //강화 상태
