@@ -16,23 +16,20 @@ public class HoldEnemyNPC : EnemyNPC
     Vector3Int curTargetPos;
     bool isMoving;
     bool canNextMove;
-
+    Animator animator;
     protected override IEnumerator Start()
     {
+        animator = GetComponent<Animator>();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         efsm = new EnemyStateMachine(this,transform.GetComponentInChildren<Animator>(), EnemyStates.HoldEnemyIdleState);
+        stats.OnDead += DeadAnimator;
     }
 
     private void Update()
     {
         if (isMoving)
             SequentialMove();
-    }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
     }
 
     protected override void CalculateBehaviour()
@@ -124,6 +121,17 @@ public class HoldEnemyNPC : EnemyNPC
         // 정면 복귀
         transform.rotation = originalRotation;
         efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleRotationState));
+    }
+
+    public void DeadAnimator()
+    {
+        animator.Play("Dead_Fwd");
+    }
+
+    public void DestroyObject()
+    {
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, CalculateBehaviour);
+        Destroy(gameObject);
     }
 
     public void Move(Vector3 pos)
