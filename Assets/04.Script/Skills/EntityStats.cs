@@ -276,12 +276,12 @@ public class EntityStats
         if (thisGameObject.TryGetComponent<FogOfWarHider>(out FogOfWarHider hider))
         {
             HiderBehavior[] hiderObjects = thisGameObject.GetComponents<HiderBehavior>();
+            hider.DeregisterHider();
+            FogOfWarWorld.Destroy(hider);
             for (int i = 0; i < hiderObjects.Length; i++)
             {
                 FogOfWarWorld.Destroy(hiderObjects[i]);
             }
-            FogOfWarWorld.Destroy(hider);
-
             if (hpbar != null)
             {
                 thisGameObject.GetComponent<HiderDisableObjects>().Flush();
