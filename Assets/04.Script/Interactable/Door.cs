@@ -72,7 +72,7 @@ public class Door : IInteractable
         this.tr = tr;
 
         this.block = block;
-        if (isrand) index = Random.Range(min, max);
+        if (isrand) index = Random.Range(min, max+1);
         else index = buttonValue;
 
         ////문 인스턴스 식별자(좌표 기반)
