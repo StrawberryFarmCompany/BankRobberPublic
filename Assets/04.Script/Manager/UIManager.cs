@@ -80,4 +80,9 @@ public class UIManager : MonoBehaviour
         documentUI.index = index;
         documentUI.gameObject.SetActive(true);
     }
+
+    public void SetNumpPadUI()
+    {
+
+    }
 }

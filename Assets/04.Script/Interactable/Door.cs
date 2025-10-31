@@ -159,4 +159,4 @@ public class Door : IInteractable
         //}
     }*/
 }
-public enum DoorLockType{none,lockPick,keyCard,button}
+public enum DoorLockType{none,lockPick,keyCard,button,password}
