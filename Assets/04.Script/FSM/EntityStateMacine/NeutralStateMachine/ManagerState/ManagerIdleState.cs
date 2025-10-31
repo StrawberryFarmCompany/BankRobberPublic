@@ -11,7 +11,7 @@ public class ManagerIdleState : NeutralState
 
     public override void Enter()
     {
-        Debug.Log("Manager 대기 상태");
+        anim.Play("HG_Idle_Pose");
     }
 
     public override void Execute()
@@ -21,6 +21,5 @@ public class ManagerIdleState : NeutralState
 
     public override void Exit()
     {
-        Debug.Log("Manager 대기 상태 종료");
     }
 }

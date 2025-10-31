@@ -21,18 +21,16 @@ public class PatrolEnemyNPC : EnemyNPC
     Vector3Int curTargetPos;
     bool isMoving;
     bool canNextMove;
+    Animator animator;
 
     protected override IEnumerator Start()
     {
+        animator = GetComponent<Animator>();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         // 상태머신 초기화 (기본 상태)
         efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyIdleRotationState);
-    }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
+        stats.OnDead += DeadAnimator;
     }
     
     private void Update()
@@ -127,6 +125,17 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
         base.CalculateBehaviour();
+    }
+
+    public void DeadAnimator()
+    {
+        animator.Play("Dead_Fwd");
+    }
+
+    public void DestroyObject()
+    {
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, CalculateBehaviour);
+        Destroy(gameObject);
     }
 
     public void OnDrawGizmos()

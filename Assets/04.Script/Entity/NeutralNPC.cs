@@ -25,13 +25,6 @@ public class NeutralNPC : MonoBehaviour
         stats.CreateHpBar();
         stats.NodeUpdates(transform.position, true);
         stats.secData.SetSecLevel(0);
-
-    }
-
-    protected virtual void FixedUpdate()
-    {
-        if (stats == null) return;
-        stats.NodeUpdates(transform.position);
     }
 
     protected virtual void CalculateBehaviour()
@@ -43,12 +36,7 @@ public class NeutralNPC : MonoBehaviour
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
-/*        else
-        {
-            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { }, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
-        }*/
+        stats.NodeUpdates(transform.position);
     }
 
     public List<EntityStats> DetectVisibleTargets()

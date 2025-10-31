@@ -17,6 +17,8 @@ public interface ILock
                 return new LockPick(value);
             case DoorLockType.keyCard:
                 return new KeyCardLock(value);
+            case DoorLockType.button:
+                return new ButtonLock(value);
             default:
                 return null;
         }
@@ -84,5 +86,21 @@ public class KeyCardLock : ILock
         {
             GameManager.GetInstance.isPlayerGetKeyCard.Add(false);
         }
+    }
+}
+
+public class ButtonLock : ILock
+{
+    int buttonIndex;
+    public bool released = true;
+    public bool IsLock(EntityStats stat)
+    {
+        return released;
+    }
+
+    public ButtonLock(int index)
+    {
+        buttonIndex = index;
+        //GameManager.GetInstance.RegisterButtonDoor();
     }
 }
