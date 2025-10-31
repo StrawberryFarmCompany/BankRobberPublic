@@ -205,7 +205,7 @@ public class EntityStats
             UIManager.GetInstance.gameEndUI.SetDeadCharacter(this);
         }
         OnDead?.Invoke();
-        //DestroyEntity();
+        DestroyEntity();
         //GameManager.GetInstance.사망으로 인해 발생할 게임내 상황을 정의
         if (NodePlayerManager.GetInstance.GetAllPlayers().Count <= 0)
         {
@@ -273,19 +273,22 @@ public class EntityStats
 
     public void DestroyEntity()
     {
-        HiderBehavior[] hiderObjects = thisGameObject.GetComponents<HiderBehavior>();
-        FogOfWarHider hiders = thisGameObject.GetComponent<FogOfWarHider>();
-        for (int i = 0; i < hiderObjects.Length; i++)
+        if (thisGameObject.TryGetComponent<FogOfWarHider>(out FogOfWarHider hider))
         {
-            FogOfWarWorld.Destroy(hiderObjects[i]);
+            HiderBehavior[] hiderObjects = thisGameObject.GetComponents<HiderBehavior>();
+            hider.DeregisterHider();
+            FogOfWarWorld.Destroy(hider);
+            for (int i = 0; i < hiderObjects.Length; i++)
+            {
+                FogOfWarWorld.Destroy(hiderObjects[i]);
+            }
+            if (hpbar != null)
+            {
+                thisGameObject.GetComponent<HiderDisableObjects>().Flush();
+                hpbar.Destroy();
+            }
         }
-        FogOfWarWorld.Destroy(hiders);
 
-        if (hpbar != null)
-        {
-            thisGameObject.GetComponent<HiderDisableObjects>().Flush();
-            hpbar.Destroy();
-        }
 
         OnDamaged = null;
         OnDead = null;
