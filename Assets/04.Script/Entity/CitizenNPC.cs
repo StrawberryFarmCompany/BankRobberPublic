@@ -13,17 +13,14 @@ public class CitizenNPC : NeutralNPC
     Vector3Int curTargetPos;
     public bool isMoving;
     bool canNextMove;
-
+    Animator animator;
     protected override IEnumerator Start()
     {
+        animator = GetComponent<Animator>();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         nfsm = new NeutralStateMachine(this, transform.GetComponentInChildren<Animator>(), NeutralStates.CitizenIdleState);
-    }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
+        stats.OnDead += DeadAnimator;
     }
 
     private void Update()
@@ -37,20 +34,14 @@ public class CitizenNPC : NeutralNPC
     protected override void CalculateBehaviour()
     {
         List<EntityStats> visibleTargets = DetectVisibleTargets();
-        
+
         if (visibleTargets.Count > 0 && isDetection == false)
         {
             isDetection = true;
             CitizenWitness();
         }
 
-        else if (stats.CurHp != stats.maxHp)//맞으면 바로 죽음
-        {
-            Debug.Log("죽은상태");
-            ChangeToDead();
-        }
-
-        else if(stats.secData.GetSecLevel >= 2)
+        if (stats.secData.GetSecLevel >= 2)
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();
@@ -64,11 +55,12 @@ public class CitizenNPC : NeutralNPC
             nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
         }
 
-        else 
+        else
         {
             Debug.Log("대기상태");
             ChangeToIdle();
         }
+
         base.CalculateBehaviour();
     }
 
@@ -87,16 +79,16 @@ public class CitizenNPC : NeutralNPC
         nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenDeadState));
     }
 
-    //public void ChangeToFlee(Vector3 pos) 
-    //{
-    //    CitizenFleeState fleeState = (CitizenFleeState)nfsm.FindState(NeutralStates.CitizenFleeState);
-    //    if (fleeState.agent == null)
-    //    {
-    //        fleeState.agent = gameObject.GetComponent<NavMeshAgent>();
-    //    }
-    //    fleeState.pos.Enqueue(pos);
-    //    nfsm.ChangeState(nfsm.FindState (NeutralStates.CitizenFleeState));
-    //}
+    public void DeadAnimator()
+    {
+        animator.Play("Dead_Fwd");
+    }
+
+    public void DestroyObject()
+    {
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.neutral, CalculateBehaviour);
+        Destroy(gameObject);
+    }
 
     public void Move(Vector3 pos)
     {

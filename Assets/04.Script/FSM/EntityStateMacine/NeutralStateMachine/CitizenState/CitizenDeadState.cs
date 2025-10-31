@@ -14,6 +14,6 @@ public class CitizenDeadState : NeutralState
     {
         //Destroy 쓰면 바로 삭제 되니 애니메이션 먼저 실행되게 해주기
         anim.Play("Dead_Fwd");
-        GameObject.Destroy(neutralNPC.gameObject);
+        //GameObject.Destroy(neutralNPC.gameObject);
     }
 }

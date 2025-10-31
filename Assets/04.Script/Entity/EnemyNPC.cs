@@ -35,12 +35,6 @@ public class EnemyNPC : MonoBehaviour
         SecurityLevel(0);
     }
 
-    protected virtual void FixedUpdate()
-    {
-        if (stats == null) return;
-        stats.NodeUpdates(transform.position);
-    }
-
     protected virtual void CalculateBehaviour()
     {
         stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
@@ -50,11 +44,7 @@ public class EnemyNPC : MonoBehaviour
             TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
         }
-        else
-        {
-            //TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 1f));
-            //TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.BattleTurn.ChangeState, 0f));
-        }
+        stats.NodeUpdates(transform.position);
     }
     
     public List<EntityStats> DetectVisibleTargets()
