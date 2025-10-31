@@ -1,4 +1,5 @@
 using BuffDefine;
+using DG.Tweening;
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
@@ -244,5 +245,11 @@ public class EnemyNPC : MonoBehaviour
     protected virtual void OnNoiseDetected(Vector3 noisePos)
     {
         // 기본은 아무 것도 안 함
+    }
+
+    private void OnDestroy()
+    {
+        transform.DOKill(false);
+        stats.DestroyEntity();
     }
 }

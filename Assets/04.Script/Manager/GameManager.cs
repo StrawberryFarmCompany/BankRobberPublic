@@ -483,6 +483,6 @@ class GameManager : SingleTon<GameManager>
 
     public void ReleaseButtonDoor()
     {
-        alarmDoor = null;
+        alarmDoor.Clear();
     }
 }
