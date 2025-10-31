@@ -13,6 +13,7 @@ public class HoldEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 noiseLocation;
     
     Animator animator;
+
     protected override IEnumerator Start()
     {
         animator = GetComponent<Animator>();

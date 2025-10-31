@@ -16,12 +16,6 @@ public class PatrolEnemyNPC : EnemyNPC
     [SerializeField] private Vector3 firstLocation;
     [SerializeField] private Vector3 noiseLocation;
 
-    private float eta;
-    public NavMeshAgent agent;
-    Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
-    Vector3Int curTargetPos;
-    bool isMoving;
-    bool canNextMove;
     Animator animator;
 
     protected override IEnumerator Start()
