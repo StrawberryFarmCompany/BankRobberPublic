@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Transform canvasRoot;
     private GameObject interactionCanvasInstance;
     private BuffPannel buffPannel;
+    public DocumentUI documentUI;
 
     public Transform CanvasRoot { get { return canvasRoot; } }
 
@@ -69,5 +70,14 @@ public class UIManager : MonoBehaviour
         {
             gameEndUI.CreateCharacterUI(player.playerStats);
         }
+    }
+
+    /// <summary>
+    /// 문서 인터랙션을 했을 때 나타나는 UI
+    /// </summary>
+    public void SetDocumentUI(int index)
+    {
+        documentUI.index = index;
+        documentUI.gameObject.SetActive(true);
     }
 }

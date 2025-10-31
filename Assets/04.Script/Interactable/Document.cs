@@ -18,21 +18,28 @@ public class Document : IInteractable
 
     public void OnInteraction(EntityStats stat)
     {
-
+        UIManager.GetInstance.SetDocumentUI(docsValue);
     }
     public void UnInteraction(EntityStats stat)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void RegistInteraction(Interaction interaction)
     {
-        throw new System.NotImplementedException();
+        List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
+        for (int i = 0; i < vecs.Count; i++)
+        {
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.Document.ToString());
+        }
     }
-
     public void ReleaseInteraction(Interaction interaction)
     {
-        throw new System.NotImplementedException();
+        List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
+        for (int i = 0; i < vecs.Count; i++)
+        {
+            GameManager.GetInstance.Nodes[vecs[i]].RemoveInteraction(OnInteraction, InteractionType.Document.ToString());
+        }
     }
 
 }
