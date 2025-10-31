@@ -19,6 +19,8 @@ public interface ILock
                 return new KeyCardLock(value);
             case DoorLockType.button:
                 return new ButtonLock(value);
+            case DoorLockType.password:
+                return new PasswordLock(value);
             default:
                 return null;
         }
@@ -102,5 +104,19 @@ public class ButtonLock : ILock
     {
         buttonIndex = index;
         //GameManager.GetInstance.RegisterButtonDoor();
+    }
+}
+
+public class PasswordLock : ILock
+{
+    public bool IsLock(EntityStats stat)
+    {
+        //잠금해제 비번이 맞는지 확인하고 bool반환
+        return true;
+    }
+
+    public PasswordLock(int value)
+    {
+
     }
 }
