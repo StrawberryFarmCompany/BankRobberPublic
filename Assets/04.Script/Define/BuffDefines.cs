@@ -55,7 +55,9 @@ namespace BuffDefine
         public BuffType statusType;
         public BuffColorType colorType;
     }
+    [Serializable]
     public enum BuffColorType { green, red, yellow, cyan, none }
+    [Serializable]
     public enum BuffType { moveBonus, rallyCopCall, rallySecCall, securityLevel, aiming, witness, spotted, healBan, heal }
 
     public class MoveBonus : IBuff
@@ -245,6 +247,7 @@ namespace BuffDefine
         {
             this.data = data;
             this.target = target;
+            this.duration = data.Duration;
         }
 
         public void RegistBuff()

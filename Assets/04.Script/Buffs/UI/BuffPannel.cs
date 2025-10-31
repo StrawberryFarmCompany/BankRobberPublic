@@ -22,7 +22,7 @@ public class BuffPannel : MonoBehaviour
     {
         switch (formatType)
         {
-            case FormatType:
+            case FormatType.duration:
                 return datas[dataIndex].Duration.ToString();
                 break;
             default:
@@ -112,7 +112,7 @@ public class BuffPannel : MonoBehaviour
         description.TurnOn(true);
         for (int i = 0; i < formats.Length; i++)
         {
-            descriptionResult.Replace(formats[i], GetBuffVariableText((FormatType)i, index));
+            descriptionResult = descriptionResult.Replace(formats[i], GetBuffVariableText((FormatType)i, index));
         }
         description.SetDescription(new string[] {datas[index].DisStatusNameKor,datas[index].Duration.ToString(),descriptionResult }) ;
     }
