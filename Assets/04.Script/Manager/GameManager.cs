@@ -50,6 +50,9 @@ class GameManager : SingleTon<GameManager>
 
     public DamageProjector damageProjector = new DamageProjector();
 
+    public List<Door> alarmDoor = new List<Door>();
+    //public List<int> buttonDoors = new List<int>();
+
     //public void RegisterActor(NodePlayerController actor)
     //{
     //    _actors[actor.characterNumber] = actor;
@@ -111,6 +114,7 @@ class GameManager : SingleTon<GameManager>
         battleTurn = new BattleTurnStateMachine();
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();
+        ReleaseButtonDoor();
         Debug.Log($"초기화된 돈 : {GatheredGold}");
     }
     public void OnEntityReset()
@@ -461,5 +465,24 @@ class GameManager : SingleTon<GameManager>
     {
         damageProjector.OnReset();
         Reset();
+    }
+
+    public void RegisterButtonDoor(Door door)
+    {
+        alarmDoor.Add(door);
+    }
+
+    public Door GetMatchButtonDoor(int index)
+    {
+        for (int i = 0; i < alarmDoor.Count; i++)
+        {
+            if (alarmDoor[i].index == index) return alarmDoor[i];
+        }
+        return null;
+    }
+
+    public void ReleaseButtonDoor()
+    {
+        alarmDoor.Clear();
     }
 }

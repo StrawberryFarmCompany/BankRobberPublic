@@ -11,6 +11,8 @@ public class Door : IInteractable
     public Vector3Int tile { get; set; }
     public Transform tr;
     public ILock lockModule;
+    public GameObject block;
+    public int index;
     private Vector3 defaultRotation;
     /// <summary>
     /// 
@@ -25,12 +27,18 @@ public class Door : IInteractable
 
     private string doorId;
 
-    public void Init(Vector3Int tile, Transform tr, DoorLockType type,int doorValue)
+    /// <summary>
+    /// 키카드, 락픽, 일반 문일 때 초기화
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <param name="tr"></param>
+    /// <param name="type"></param>
+    /// <param name="doorValue"></param>
+    public void Init(Vector3Int tile, Transform tr, DoorLockType type, int doorValue)
     {
         this.tile = tile;
         this.tr = tr;
         lockModule = ILock.Factory(type, doorValue);
-
         defaultRotation = tr.rotation.eulerAngles;
 
 
@@ -44,7 +52,39 @@ public class Door : IInteractable
         isOpen = false;
 
         RegistInteraction(OnInteraction);
+        
     }
+
+    /// <summary>
+    /// 버튼식 도어
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <param name="tr"></param>
+    /// <param name="type"></param>
+    /// <param name="block"></param>
+    /// <param name="isrand"></param>
+    /// <param name="buttonValue"></param>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    public void Init(Vector3Int tile, Transform tr, DoorLockType type, GameObject block, bool isrand, int buttonValue = 0, int min = 0, int max = 0)
+    {
+        this.tile = tile;
+        this.tr = tr;
+
+        this.block = block;
+        if (isrand) index = Random.Range(min, max+1);
+        else index = buttonValue;
+
+        ////문 인스턴스 식별자(좌표 기반)
+        //doorId = $"{tile.x},{tile.z}";
+
+        ////유니크 키(같은 타입 문 여러 개여도 각각 분리됨)
+        //keyOpen = $"{lockModule}:{InteractionType.Door}:{doorId}:Open";
+        //keyClose = $"{lockModule}:{InteractionType.Door}:{doorId}:Close";
+
+        GameManager.GetInstance.RegisterButtonDoor(this);
+    }
+
     public void OnInteraction(EntityStats stat)
     {
         if (lockModule.IsLock(stat) && !isOpen)
@@ -119,4 +159,4 @@ public class Door : IInteractable
         //}
     }*/
 }
-public enum DoorLockType{none,lockPick,keyCard}
+public enum DoorLockType{none,lockPick,keyCard,button}

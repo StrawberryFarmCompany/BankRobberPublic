@@ -461,4 +461,10 @@ public class EnemyNPC : MonoBehaviour
         // DOTween으로 부드럽게 회전
         transform.DORotate(Vector3.up * angle, duration).SetEase(Ease.OutQuad);
     }
+
+    private void OnDestroy()
+    {
+        transform.DOKill(false);
+        stats.DestroyEntity();
+    }
 }
