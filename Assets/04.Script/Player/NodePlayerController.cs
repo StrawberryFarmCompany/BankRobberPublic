@@ -180,71 +180,10 @@ public class NodePlayerController : MonoBehaviour
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
 
-            if (playerStats.playerSkill == PlayerSkill.Ready)
-            {
-                Debug.Log($"[{playerStats.characterName}] 현재 액티브 미장착");
-                return;
-            }
+            SkillEffectManager.UseSkill(this, mousePos);
 
-            Debug.Log($"[{playerStats.characterName}] 액티브 스킬 사용 시도: {playerStats.playerSkill}");
-           
-            //잠입 특화 액티브
-            if (playerStats.playerSkill == PlayerSkill.SneakAttack)
-            {
-                CheckSneakAttack(mousePos);
-            }
-            else if (playerStats.playerSkill == PlayerSkill.Silence)
-            {
-                if (!playerStats.ConsumeActionPoint(2))
-                {
-                    Debug.Log("행동력 부족");
-                    return;
-                }
-                //UseSilence();
-                UIManager.GetInstance.ShowActionPanel(true);
-                RefreshPipAllSafe();
-            }
-
-            //전투 특화 액티브
-            else if (playerStats.playerSkill == PlayerSkill.Heal)
-            {
-                if (!playerStats.ConsumeActionPoint(1)) return;
-                Heal();
-                UIManager.GetInstance.ShowActionPanel(true);
-                RefreshPipAllSafe();
-            }
-            else if (playerStats.playerSkill == PlayerSkill.DoubleAttack)
-            {
-                if (!playerStats.ConsumeActionPoint(2))
-                {
-                    Debug.Log("행동력 부족");
-                    return;
-                }
-                //UseDoubleAttack(mousePos);
-                UIManager.GetInstance.ShowActionPanel(true);
-                RefreshPipAllSafe();
-            }
-
-            //도움 특화 액티브
-            else if (playerStats.playerSkill == PlayerSkill.Ready)
-            {
-                if (!playerStats.ConsumeActionPoint(1)) return;
-                //UseReady();
-                UIManager.GetInstance.ShowActionPanel(true);
-                RefreshPipAllSafe();
-            }
-            else if (playerStats.playerSkill == PlayerSkill.Evasion)
-            {
-                if (!playerStats.ConsumeActionPoint(2))
-                {
-                    Debug.Log("행동력 부족");
-                    return;
-                }
-                //UseEvasion();
-                UIManager.GetInstance.ShowActionPanel(true);
-                RefreshPipAllSafe();
-            }
-
+            UIManager.GetInstance.ShowActionPanel(true);
+            RefreshPipAllSafe();
         }
         else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isPickPocketMode)
         {
