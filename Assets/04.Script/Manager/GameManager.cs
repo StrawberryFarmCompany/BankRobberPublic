@@ -481,6 +481,11 @@ class GameManager : SingleTon<GameManager>
         return null;
     }
 
+    public int GetButtonDoorNumber(int index)
+    {
+        return alarmDoor[index].index;
+    }
+
     public void ReleaseButtonDoor()
     {
         alarmDoor.Clear();

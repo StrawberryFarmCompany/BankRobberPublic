@@ -56,7 +56,7 @@ public class AlarmButton : IInteractable
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
-            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, InteractionType.AlarmBTN.ToString());
+            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(OnInteraction, $"{InteractionType.AlarmBTN.ToString()} {index}");
         }
     }
     public void ReleaseInteraction(Interaction interaction)
@@ -64,7 +64,7 @@ public class AlarmButton : IInteractable
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
-            GameManager.GetInstance.Nodes[vecs[i]].RemoveInteraction(OnInteraction, InteractionType.AlarmBTN.ToString());
+            GameManager.GetInstance.Nodes[vecs[i]].RemoveInteraction(OnInteraction, $"{InteractionType.AlarmBTN.ToString()} {index}");
         }
     }
 }
