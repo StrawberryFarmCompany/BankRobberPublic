@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using NodeDefines;
 using System.Resources;
+using System.Net.Http.Headers;
 
 public class UIManager : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class UIManager : MonoBehaviour
     private GameObject interactionCanvasInstance;
     private BuffPannel buffPannel;
     public DocumentUI documentUI;
+    public PasswordUI passwordUI;
 
     public Transform CanvasRoot { get { return canvasRoot; } }
 
@@ -75,14 +77,23 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// 문서 인터랙션을 했을 때 나타나는 UI
     /// </summary>
-    public void SetDocumentUI(int index)
+    public void SetDocumentUI(int index, DocumentType type, bool isFirstTwoDigit)
     {
         documentUI.index = index;
+        documentUI.type = type;
+        if(type == DocumentType.password)
+            documentUI.isFirstTwoDigit = isFirstTwoDigit;
         documentUI.gameObject.SetActive(true);
     }
 
-    public void SetNumpPadUI()
+    /// <summary>
+    /// 패스워드 문을 인터랙션 했을 때 나타나는 UI
+    /// </summary>
+    /// <param name="index"></param>
+    public void SetPasswordUI(int index)
     {
-
+        passwordUI.index = index;
+        passwordUI.Clear();
+        passwordUI.gameObject.SetActive(true);
     }
 }
