@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using BuffDefine;
+using Newtonsoft.Json;
+
 public class ResourceManager : SingleTon<ResourceManager>
 {
     public bool IsLoaded { get { return preloaded != null && buffDatas != null; } }
@@ -26,9 +28,11 @@ public class ResourceManager : SingleTon<ResourceManager>
     }
     protected void SetBuffData()
     {
+        //특정 enum을 검출하지 못해 newtonsoft json을 사용
         LoadAsync<TextAsset>("BuffStatus", (cb) =>
         {
-            DataWrapper<ParsingBuffData> data = JsonUtility.FromJson<DataWrapper<ParsingBuffData>>(cb.text);
+            //DataWrapper<ParsingBuffData> data = JsonUtility.FromJson<DataWrapper<ParsingBuffData>>(cb.text);
+            DataWrapper<ParsingBuffData> data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataWrapper<ParsingBuffData>>(cb.text);
             Dictionary<ushort, BuffData> tempData = new Dictionary<ushort, BuffData>();
             foreach (ParsingBuffData item in data.data)
             {

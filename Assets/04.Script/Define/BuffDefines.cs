@@ -55,7 +55,9 @@ namespace BuffDefine
         public BuffType statusType;
         public BuffColorType colorType;
     }
+    [Serializable]
     public enum BuffColorType { green, red, yellow, cyan, none }
+    [Serializable]
     public enum BuffType { moveBonus, rallyCopCall, rallySecCall, securityLevel, aiming, witness, spotted, healBan, heal }
 
     public class MoveBonus : IBuff
@@ -66,10 +68,13 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get {return duration; } }
+
         public MoveBonus(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
+            duration = data.Duration;
         }
 
         public void RegistBuff()
@@ -106,10 +111,13 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get { return duration; } }
+
         public RallyCopCall(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
+            duration = data.Duration;
         }
 
         public void RegistBuff()
@@ -143,10 +151,12 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get { return duration; } }
         public RallySecCall(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
+            duration = data.Duration;
         }
 
         public void RegistBuff()
@@ -176,6 +186,7 @@ namespace BuffDefine
         private BuffData data;
         public BuffData Data { get { return data; } }
         public EntityStats Target { get { return null; } }
+        public int Duration { get { return -1; } }
         public SecurityLevel(BuffData data, EntityStats target)
         {
             this.data = data;
@@ -204,6 +215,7 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get { return duration; } }
         public Aiming(BuffData data, EntityStats target)
         {
             this.data = data;
@@ -241,10 +253,12 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get {return duration; } }
         public Witness(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
+            this.duration = data.Duration;
         }
 
         public void RegistBuff()
@@ -277,10 +291,12 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get { return duration; } }
         public Spotted(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
+            duration = data.Duration;
         }
 
         public void RegistBuff()
@@ -313,10 +329,12 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get { return duration; } }
         public HealBan(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
+            duration = data.Duration;
         }
 
         public void RegistBuff()
@@ -349,10 +367,12 @@ namespace BuffDefine
         public EntityStats Target { get { return target; } }
 
         private int duration;
+        public int Duration { get { return duration; } }
         public Heal(BuffData data, EntityStats target)
         {
             this.data = data;
             this.target = target;
+            duration = data.Duration;
         }
 
         public void RegistBuff()
