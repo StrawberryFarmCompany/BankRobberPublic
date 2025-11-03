@@ -32,4 +32,5 @@ MonoBehaviour:
   aggroControl: 1
   maxRerollCount: 1
   curRerollCount: 1
-  portrait: {fileID: 21300000, guid: 749cb1056f44847408e8bf9c3b1c4170, type: 3}
+  portrait: {fileID: -368068481, guid: 749cb1056f44847408e8bf9c3b1c4170, type: 3}
+  skillGroup: 0

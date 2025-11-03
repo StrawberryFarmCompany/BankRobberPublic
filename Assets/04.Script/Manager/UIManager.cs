@@ -90,9 +90,10 @@ public class UIManager : MonoBehaviour
     /// 패스워드 문을 인터랙션 했을 때 나타나는 UI
     /// </summary>
     /// <param name="index"></param>
-    public void SetPasswordUI(int index)
+    public void SetPasswordUI(int index, Transform doorPos)
     {
         passwordUI.index = index;
+        passwordUI.doorPos = doorPos;
         passwordUI.Clear();
         passwordUI.gameObject.SetActive(true);
     }
