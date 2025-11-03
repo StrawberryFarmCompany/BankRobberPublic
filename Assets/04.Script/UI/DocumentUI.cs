@@ -26,10 +26,18 @@ public class DocumentUI : MonoBehaviour
                 documentText.text = $"금주의 금속탐지기 버튼 : {GameManager.GetInstance.GetButtonDoorNumber(index)}번";
                 break;
             case DocumentType.password:
-                if(isFirstTwoDigit)
-                    documentText.text = $"문의 비밀번호 앞 두 자리 : {GameManager.GetInstance.passwordDoorPair[index]/100}번";
+                int fullPassword = GameManager.GetInstance.passwordDoorPair[index];
+
+                if (isFirstTwoDigit)
+                {
+                    int firstTwo = fullPassword / 100;
+                    documentText.text = $"문의 비밀번호 앞 두 자리 : {firstTwo.ToString("D2")}번";
+                }
                 else
-                    documentText.text = $"문의 비밀번호 뒤 두 자리 : {GameManager.GetInstance.passwordDoorPair[index]%100}번";
+                {
+                    int lastTwo = fullPassword % 100;
+                    documentText.text = $"문의 비밀번호 뒤 두 자리 : {lastTwo.ToString("D2")}번";
+                }
                 break;
             default:
                 break;
