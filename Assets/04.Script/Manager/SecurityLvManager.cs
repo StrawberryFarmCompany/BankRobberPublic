@@ -1,3 +1,4 @@
+using BuffDefine;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,13 +34,13 @@ public class SecurityLvManager : MonoBehaviour
 
     private void OnEnable()
     {
-        SecurityData.OnBattlePhase -= SpawnCopEnemies;
-        SecurityData.OnBattlePhase += SpawnCopEnemies;
+        RallyCopCall.OnBattlePhase -= SpawnCopEnemies;
+        RallyCopCall.OnBattlePhase += SpawnCopEnemies;
     }
 
     private void OnDisable()
     {
-        SecurityData.OnBattlePhase -= SpawnCopEnemies;
+        RallyCopCall.OnBattlePhase -= SpawnCopEnemies;
     }
 
     private void SpawnCopEnemies()
