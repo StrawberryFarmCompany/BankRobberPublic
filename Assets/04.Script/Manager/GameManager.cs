@@ -467,6 +467,8 @@ class GameManager : SingleTon<GameManager>
         Reset();
     }
 
+    //-------------------------------------------------------------------버튼도어------------------------------------------나중에 도어매니저 고려
+
     public void RegisterButtonDoor(Door door)
     {
         alarmDoor.Add(door);
@@ -481,8 +483,24 @@ class GameManager : SingleTon<GameManager>
         return null;
     }
 
+    public int GetButtonDoorNumber(int index)
+    {
+        return alarmDoor[index].index;
+    }
+
     public void ReleaseButtonDoor()
     {
         alarmDoor.Clear();
+    }
+
+    //--------------------------------------------------------------------------------패스워드 도어-----------------------------
+
+    public Dictionary<int, int> passwordDoorPair = new Dictionary<int, int>();
+    public Dictionary<int, bool> isOpenPasswordDoor = new Dictionary<int, bool>();
+
+    public void RegisterPasswordDoor(int index, int password)
+    {
+        passwordDoorPair[index] = password;
+        isOpenPasswordDoor[index] = false;
     }
 }
