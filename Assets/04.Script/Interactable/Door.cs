@@ -112,7 +112,7 @@ public class Door : IInteractable
         }
         else if (!lockModule.IsLock(stat) && type == DoorLockType.password)
         {
-            UIManager.GetInstance.SetPasswordUI(index);
+            UIManager.GetInstance.SetPasswordUI(index, tr);
         }
 
     }
