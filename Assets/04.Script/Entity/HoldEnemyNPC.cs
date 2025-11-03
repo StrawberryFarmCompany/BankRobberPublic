@@ -75,7 +75,6 @@ public class HoldEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel >= 1)
         {
-            DetectVisibleTargets();
             if (nearPlayerLocation.currNode.GetCenter != null)
             {
                 // LookAt 대신
@@ -103,7 +102,6 @@ public class HoldEnemyNPC : EnemyNPC
                 {
                     Debug.LogError($"플레이어 로케이션이 지정되지 않았습니다 : {gameObject.name}");
                 }
-
             }
         }
 
