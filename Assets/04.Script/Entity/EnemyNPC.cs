@@ -105,17 +105,23 @@ public class EnemyNPC : MonoBehaviour
             if (CheckRangeAttack(target.currNode.GetCenter))
             {
                 visibleTargets.Add(target);
-                nearPlayerLocation = target;
-                Debug.Log(nearPlayerLocation);
             }
         }
-        
+
         if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 0)
         {
+            // 거리 기준으로 정렬 (가까운 순)
+            visibleTargets.Sort((a, b) =>
+            Vector3.Distance(transform.position, a.currNode.GetCenter).CompareTo(Vector3.Distance(transform.position, b.currNode.GetCenter)));
+
             SecurityLevel(1);
             SecurityCall();
             Witness();
             Debug.LogError($"발견 된 쁠레이어 : {visibleTargets.Count}");
+
+            // 첫 번째(가장 가까운) 대상
+            EntityStats chosenTarget = visibleTargets[0];
+            nearPlayerLocation = chosenTarget;
         }
         return visibleTargets;
     }
@@ -131,15 +137,12 @@ public class EnemyNPC : MonoBehaviour
             return;
         }
 
-        // 랜덤으로 한 명 선택
-        EntityStats chosenTarget = visibleTargets[UnityEngine.Random.Range(0, visibleTargets.Count)];
-
         // 행동 포인트 확인 및 공격
         if (stats.ConsumeActionPoint(1))
         {
             if (gun.curRounds > 0)
             {
-                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { gun.Shoot(chosenTarget.currNode.GetCenter, 1); }, 0f));
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { gun.Shoot(nearPlayerLocation.currNode.GetCenter, 1); }, 0f));
                 efsm.eta = 1f;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
             }
@@ -293,7 +296,7 @@ public class EnemyNPC : MonoBehaviour
         {
             if (stats.ConsumeMovement(1))
             {
-                pathQueue.Enqueue((Vector3Int)step);
+                pathQueue.Enqueue(step);
             }
             else
             {
