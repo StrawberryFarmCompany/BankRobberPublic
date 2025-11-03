@@ -3,6 +3,7 @@ namespace BuffDefine
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using Unity.VisualScripting.Antlr3.Runtime.Misc;
     using UnityEngine;
 
     public class BuffData
@@ -113,6 +114,7 @@ namespace BuffDefine
         private int duration;
         public int Duration { get { return duration; } }
 
+        public static Action OnBattlePhase;
         public RallyCopCall(BuffData data, EntityStats target)
         {
             this.data = data;
@@ -130,7 +132,6 @@ namespace BuffDefine
         {
             //GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
-            
             target.RemoveBuff(this);
         }
 
@@ -140,6 +141,11 @@ namespace BuffDefine
             if (duration <= 0)
             {
                 ReleaseBuff();
+                OnBattlePhase?.Invoke();
+                if(ResourceManager.GetInstance.GetBuffData.TryGetValue(data.Key, out BuffData newData))
+                {
+                    target.RegistBuff(newData);
+                }
             }
         }
     }
@@ -271,7 +277,12 @@ namespace BuffDefine
         {
             //GameManager.GetInstance.BattleTurn.BuffCount -= CountDuration;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= CountDuration;
-            target.RemoveBuff(this);
+            target.secData.SetSecLevel(2);
+            if (ResourceManager.GetInstance.GetBuffData.TryGetValue(6005, out BuffData rallyData))
+            {
+                target.RegistBuff(rallyData);
+            }
+                target.RemoveBuff(this);
         }
 
         public void CountDuration()
@@ -280,6 +291,7 @@ namespace BuffDefine
             if (duration <= 0)
             {
                 ReleaseBuff();
+
             }
         }
     }
