@@ -3723,6 +3723,7 @@ GameObject:
   - component: {fileID: 5920130265891386225}
   - component: {fileID: 1200929006428111110}
   - component: {fileID: 1880859700713028327}
+  - component: {fileID: 7141668710269651916}
   m_Layer: 8
   m_Name: CopEnemy
   m_TagString: Untagged
@@ -3827,7 +3828,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48c03949df39464ab82c4e8a0fe5c27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 0}
+  data: {fileID: 11400000, guid: 4187ed4c18a381247b7786bc3e27a415, type: 2}
   gunName: 
   gunDescription: 
   type: 0
@@ -3845,6 +3846,29 @@ MonoBehaviour:
   awayRangeAccuracy: 0
   ishit: 0
   makeNoise: 0
+--- !u!136 &7141668710269651916
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9015591331506194729}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.25
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1001 &2871723869278359411
 PrefabInstance:
   m_ObjectHideFlags: 0
