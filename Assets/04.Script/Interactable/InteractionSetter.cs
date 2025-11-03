@@ -11,7 +11,12 @@ public class InteractionSetter : MonoBehaviour
 
     [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.GoldBar,(int)InteractionType.VaultDoor, (int)InteractionType.AlarmBTN)]//금고문,문 카드키
     public Transform target;
-
+    [ConditionalHide("type", (int)InteractionType.Document)]//문서
+    public int docsValue;
+    [ConditionalHide("type", (int)InteractionType.Document)]//문서
+    public bool isFirstTwoDigit;
+    [ConditionalHide("type", (int)InteractionType.Document)]//문서
+    public DocumentType docsType;
     [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.VaultDoor)]//금고문,문 카드키
     public int doorValue;
     [ConditionalHide("type", (int)InteractionType.Door)]//금고문,문
@@ -98,6 +103,10 @@ public class InteractionSetter : MonoBehaviour
             case InteractionType.EscapeCar:
                 EscapeCar car = (EscapeCar)interaction;
                 car.Init(pos);
+                break;
+            case InteractionType.Document:
+                Document document = (Document)interaction;
+                document.Init(pos, docsValue, docsType, isFirstTwoDigit);
                 break;
             default:
                 break;

@@ -31,6 +31,8 @@ public interface IInteractable
                 return new VaultDoor();
             case InteractionType.EscapeCar:
                 return new EscapeCar();
+            case InteractionType.Document:
+                return new Document();
             default:
                 return null;
 
@@ -38,4 +40,4 @@ public interface IInteractable
 
     }
 }
-public enum InteractionType{AlarmBTN,Door,GoldBar,MoneyBag,KeyCard,Window,VaultDoor,EscapeCar}
+public enum InteractionType{AlarmBTN,Door,GoldBar,MoneyBag,KeyCard,Window,VaultDoor,EscapeCar,Document}
