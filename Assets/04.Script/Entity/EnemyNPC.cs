@@ -28,6 +28,8 @@ public class EnemyNPC : MonoBehaviour
     bool canNextMove;
     bool isMoving;
 
+    protected EntityStats lastTarget; // 이전 턴에 공격한 대상
+
     protected virtual IEnumerator Start()
     {
         if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
@@ -134,30 +136,49 @@ public class EnemyNPC : MonoBehaviour
         // 리스트에 아무도 없으면 리턴
         if (visibleTargets.Count == 0)
         {
+            nearPlayerLocation = null;
+            Debug.Log($"{name}: 공격할 플레이어 없음.");
             return;
         }
 
-        // 행동 포인트 확인 및 공격
-        if (stats.ConsumeActionPoint(1))
+        // 타깃이 null이거나 이미 사망했다면 새로 갱신
+        if (nearPlayerLocation == null)
         {
-            if (gun.curRounds > 0)
+            nearPlayerLocation = visibleTargets[0];
+            Debug.Log($"{name}: 타깃 재지정 : {nearPlayerLocation.characterName}");
+        }
+
+        // 행동 포인트 확인
+        if (!stats.ConsumeActionPoint(1))
+        {
+            Debug.Log($"{name}: 행동 포인트 부족으로 공격 불가");
+            return;
+        }
+
+        // 총알이 있으면 공격, 없으면 장전
+        if (gun.curRounds > 0)
+        {
+            if (nearPlayerLocation != null && nearPlayerLocation.currNode != null)
             {
-                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { gun.Shoot(nearPlayerLocation.currNode.GetCenter, 1); }, 0f));
+                Vector3Int targetPos = nearPlayerLocation.currNode.GetCenter;
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => {gun.Shoot(targetPos, 1);}, 0f));
+
                 efsm.eta = 1f;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
+                Debug.Log($"{name}: {nearPlayerLocation.characterName} 공격!");
             }
-
             else
             {
-                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { gun.Reload(); }, 0f));
-                efsm.eta = 1f;
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
-                Debug.Log($"장전 완료 남은 총알 {gun.curRounds}발");
+                Debug.LogWarning($"{name}: 공격 대상 정보가 손상됨. 타깃 초기화");
+                nearPlayerLocation = null;
             }
         }
         else
         {
-            Debug.Log("행동 포인트 부족");
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => gun.Reload(), 0f));
+            efsm.eta = 1f;
+            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
+            Debug.Log($"{name}: 장전 중 ({gun.curRounds} 발 남음)");
         }
     }
 
@@ -463,6 +484,25 @@ public class EnemyNPC : MonoBehaviour
 
         // DOTween으로 부드럽게 회전
         transform.DORotate(Vector3.up * angle, duration).SetEase(Ease.OutQuad);
+    }
+
+    protected NodePlayerController GetClosestAlivePlayer(List<NodePlayerController> players)
+    {
+        NodePlayerController closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var p in players)
+        {
+            if (p == null) continue; // 사망 등
+            float dist = Vector3.Distance(transform.position, p.playerStats.GetPosition());
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = p;
+            }
+        }
+
+        return closest;
     }
 
     private void OnDestroy()
