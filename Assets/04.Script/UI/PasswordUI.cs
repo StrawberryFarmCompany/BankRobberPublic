@@ -7,6 +7,7 @@ using TMPro;
 public class PasswordUI : MonoBehaviour
 {
     [HideInInspector] public int index;
+    [HideInInspector] public Transform doorPos;
 
     [Header("버튼 목록")]
     [Tooltip("(0~9 순서 지켜서 배열 삽입 필수)")]
@@ -28,6 +29,13 @@ public class PasswordUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI secondNumText;
     [SerializeField] TextMeshProUGUI thirdNumText;
     [SerializeField] TextMeshProUGUI forthNumText;
+
+    [Header("이펙트 목록")]
+    [SerializeField] GameObject deniedBGEffect;
+    [SerializeField] GameObject deniedNumEffect;
+    [SerializeField] GameObject acceptBGEffect;
+    [SerializeField] GameObject acceptNumEffect;
+
 
     private List<int> inputNumbers = new List<int>();
 
@@ -61,6 +69,10 @@ public class PasswordUI : MonoBehaviour
         secondNumText.text = "";
         thirdNumText.text = "";
         forthNumText.text = "";
+        deniedBGEffect.SetActive(false);
+        deniedNumEffect.SetActive(false);
+        acceptBGEffect.SetActive(false);
+        acceptNumEffect.SetActive(false);
         inputNumbers.Clear();
     }
 
@@ -97,12 +109,17 @@ public class PasswordUI : MonoBehaviour
             progressImage.sprite = noneSprite;
             acceptImage.sprite = acceptSprite;
             GameManager.GetInstance.isOpenPasswordDoor[index] = true;
+            acceptBGEffect.SetActive(true);
+            acceptNumEffect.SetActive(true);
         }
         else
         {
             // 실패 시 
             progressImage.sprite = noneSprite;
             deniedImage.sprite = deniedSprite;
+            deniedBGEffect.SetActive(true);
+            deniedNumEffect.SetActive(true);
+            NoiseManager.AddNoise(GameManager.GetInstance.GetVecInt(doorPos.position), NoiseType.Disarm);
         }
     }
 
