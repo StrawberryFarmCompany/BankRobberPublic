@@ -37,7 +37,9 @@ public class PatrolEnemyNPC : EnemyNPC
     protected override void CalculateBehaviour()
     {
         DetectNoise();
-        DetectVisibleTargets();
+
+        // 항상 시야 갱신 — secLevel이 0이어도 한 번은 감지해야 전투 전환 가능(없으면 턴 그냥 넘어감)
+        List<EntityStats> visibleTargets = DetectVisibleTargets();
 
         if (stats.secData.GetSecLevel == 0)
         {
@@ -47,7 +49,7 @@ public class PatrolEnemyNPC : EnemyNPC
                 efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
 
-                if (this.gameObject.transform.position == noiseLocation)
+                if (Vector3.Distance(transform.position, noiseLocation) < 0.1f)
                 {
                     isArrivedNoisePlace = true;
                 }
@@ -67,7 +69,7 @@ public class PatrolEnemyNPC : EnemyNPC
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 
                 //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
-                if (this.gameObject.transform.position == firstLocation)
+                if (Vector3.Distance(transform.position, firstLocation) < 0.1f)
                 {
                     LookAround();
                     departurePoint = false;     // 출발 지점 true, false로 계속 바꿔주기
@@ -81,7 +83,7 @@ public class PatrolEnemyNPC : EnemyNPC
                 efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
 
-                if (this.gameObject.transform.position == homeLocation)
+                if (Vector3.Distance(transform.position, homeLocation) < 0.1f)
                 {
                     LookAround();
                     departurePoint = true;      // 출발 지점 true, false로 계속 바꿔주기
@@ -90,39 +92,13 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        else if(stats.secData.GetSecLevel >= 1)
+        else if (stats.secData.GetSecLevel >= 1)
         {
-            DetectVisibleTargets();
-            if (nearPlayerLocation.currNode.GetCenter != null)
-            {
-                // LookAt 대신
-                RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
-
-                // 회전 끝난 후 공격
-                DOVirtual.DelayedCall(0.3f, () => TryAttack());
-            }
-            else
-            {
-                TryAttack();
-            }
-
-            // 공격이 실패했거나 행동력이 남았으면 추적 후 공격
-            if (stats.curActionPoint > 0)
-            {
-                if (nearPlayerLocation != null)
-                {
-                    TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
-                    efsm.eta = 3;
-                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
-                }
-
-                else
-                {
-                    Debug.LogError($"플레이어 로케이션이 지정되지 않았습니다 : {gameObject.name}");
-                }
-
-            }
+            CombatBehaviour();
         }
+
+        NoiseManager.ClearNoises();
+
         base.CalculateBehaviour();
     }
 

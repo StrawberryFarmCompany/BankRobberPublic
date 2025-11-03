@@ -63,6 +63,81 @@ public class EnemyNPC : MonoBehaviour
         stats.NodeUpdates(transform.position);
     }
     
+    protected virtual void CombatBehaviour()
+    {
+        // 시야 갱신
+        List<EntityStats> visibleTargets = DetectVisibleTargets();
+
+        // 현재 타겟이 없거나 죽었으면 새로 찾기
+        if (nearPlayerLocation == null || nearPlayerLocation.currNode == null || nearPlayerLocation.CurHp <= 0)
+        {
+            if (visibleTargets.Count > 0)
+            {
+                nearPlayerLocation = visibleTargets[0];
+                Debug.Log($"{name} : 새 타깃 지정 -> {nearPlayerLocation.characterName}");
+            }
+            else
+            {
+                //시야 안에 아무도 없으면, 전체 플레이어 중 가장 가까운 대상 탐색
+                var allPlayers = NodePlayerManager.GetInstance.GetAllPlayers();
+                if (allPlayers != null && allPlayers.Count > 0)
+                {
+                    var closest = GetClosestAlivePlayer(allPlayers);
+                    if (closest != null)
+                    {
+                        nearPlayerLocation = closest.playerStats;
+                        Debug.Log($"{name}: 시야 밖 플레이어 추적 시작 -> {nearPlayerLocation.characterName}");
+                    }
+                    else
+                    {
+                        Debug.Log($"{name}: 추적할 플레이어 없음 -> 겜 종료");
+                        return;
+                    }
+                }
+            }
+        }
+
+        // 이전 턴과 같은 타깃이면 이동 없이 공격만
+        if (lastTarget == nearPlayerLocation && nearPlayerLocation != null)
+        {
+            Debug.Log($"{name}: 동일 타겟 {nearPlayerLocation.characterName} 재공격");
+            RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
+
+            DOVirtual.DelayedCall(0.3f, () =>
+            {
+                TryAttack();
+
+                // 죽었으면 다음 타깃 찾기
+                if (nearPlayerLocation == null || nearPlayerLocation.CurHp <= 0)
+                {
+                    var next = FindNextTarget();
+                    if (next != null)
+                    {
+                        nearPlayerLocation = next;
+                        MoveAndAttackNextTarget();
+                    }
+                    else
+                    {
+                        Debug.Log($"{name}: 공격 가능한 대상 없음 → 턴 종료");
+                    }
+                }
+            });
+
+            lastTarget = nearPlayerLocation;
+            return;
+        }
+
+        // 새 타깃이면 이동 + 공격
+        if (stats.movement > 0 && nearPlayerLocation != null)
+        {
+            MoveAndAttackNextTarget();
+        }
+        else
+        {
+            Debug.LogError($"플레이어 로케이션이 지정되지 않았습니다 : {gameObject.name}");
+        }
+    }
+
     public List<EntityStats> DetectVisibleTargets()
     {
         List<EntityStats> visibleTargets = new List<EntityStats>();
@@ -180,6 +255,48 @@ public class EnemyNPC : MonoBehaviour
             efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
             Debug.Log($"{name}: 장전 중 ({gun.curRounds} 발 남음)");
         }
+    }
+
+    protected virtual EntityStats FindNextTarget()
+    {
+        var allPlayers = NodePlayerManager.GetInstance.GetAllPlayers();
+        var closest = GetClosestAlivePlayer(allPlayers);
+        return closest != null ? closest.playerStats : null;
+    }
+
+    protected virtual void MoveAndAttackNextTarget()
+    {
+        if (nearPlayerLocation == null) return;
+
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() =>
+        {
+            if (nearPlayerLocation == null) return; // 중간에 죽었을 가능성 대비
+            Move(nearPlayerLocation.GetPosition());
+        }, 0f));
+
+        efsm.eta = 3;
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
+
+        DOVirtual.DelayedCall(0.5f, () =>
+        {
+            if (nearPlayerLocation != null && nearPlayerLocation.currNode != null)
+            {
+                RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
+                DOVirtual.DelayedCall(0.3f, () =>
+                {
+                    TryAttack();
+
+                    if (nearPlayerLocation == null || nearPlayerLocation.CurHp <= 0)
+                    {
+                        nearPlayerLocation = FindNextTarget();
+                        if (nearPlayerLocation != null)
+                            MoveAndAttackNextTarget();
+                    }
+
+                    lastTarget = nearPlayerLocation;
+                });
+            }
+        });
     }
 
     private bool CheckRangeAttack(Vector3 targetPos)
