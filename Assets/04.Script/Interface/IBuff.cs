@@ -8,6 +8,7 @@ namespace BuffDefine
     {
         public BuffData Data { get; }
         public EntityStats Target { get; }
+        public int Duration { get; }
         
         public void RegistBuff();
         public void ReleaseBuff();

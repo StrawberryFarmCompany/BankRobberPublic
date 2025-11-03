@@ -22,14 +22,14 @@ public class NoneBattleTurnStateMachine
         currState.Exit();
 
         int typeLen = Enum.GetValues(typeof(TurnTypes)).Length;
-        currState = states[(((int)GetCurrState()+1) % (typeLen))];
-
-        if ((int)GetCurrState() + 1 > typeLen)
+        
+        if ((int)GetCurrState() + 1 >= typeLen)
         {
             round++;
             BuffCount?.Invoke();
         }
 
+        currState = states[(((int)GetCurrState() + 1) % (typeLen))];
         Debug.Log(GetCurrState());
         
         if(GetCurrState() == TurnTypes.ally) GameManager.GetInstance.StartPlayerTurn();
