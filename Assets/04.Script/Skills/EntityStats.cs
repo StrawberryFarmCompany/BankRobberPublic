@@ -263,6 +263,7 @@ public class EntityStats
             Debug.Log($"{pos}로 이동");
             if(hpbar != null)hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
         }
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
     }
 
     public Vector3Int GetPosition()
