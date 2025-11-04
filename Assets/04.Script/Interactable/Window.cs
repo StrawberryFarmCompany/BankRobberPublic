@@ -22,8 +22,8 @@ public class Window : IInteractable
         wayOne = forward;
         wayTwo = forward * -1;
         RegistInteraction(OnInteraction);
-        Debug.LogError(forward);
-        Debug.LogError(tile);
+        //Debug.LogError(forward);
+        //Debug.LogError(tile);
     }
 
     public void OnInteraction(EntityStats stat)
