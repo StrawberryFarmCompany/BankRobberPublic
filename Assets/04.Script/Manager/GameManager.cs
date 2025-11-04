@@ -261,6 +261,7 @@ class GameManager : SingleTon<GameManager>
             {
                 player.playerStats.ResetForNewTurn();
             }
+            //FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
             NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
         else
@@ -282,12 +283,12 @@ class GameManager : SingleTon<GameManager>
     }
 
 
-    public void CheckAllCharacterEndTurn()
+    public bool CheckAllCharacterEndTurn()
     {
         List<NodePlayerController> players = NodePlayerManager.GetInstance.GetAllPlayers();
         for (int i = 0; i < players.Count; i++)
         {
-            if (!players[i].isEndReady) return;
+            if (!players[i].isEndReady) return false;
         }
 
         Debug.Log($"다 끝나고 플레이어 턴 엔드");
@@ -295,13 +296,15 @@ class GameManager : SingleTon<GameManager>
         {
             players[i].isEndReady = false;
         }
-
+        
         EndPlayerTurn();
+        return true;
 
     }
 
     public void EndPlayerTurn()
     {
+        FloorCullingManager.GetInstance.EnableAllCollisionsAndRenderers();
         if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState();
         else
