@@ -71,7 +71,7 @@ public class TurnMissionStatus : MonoBehaviour
     void UpdateStealthLabel()
     {
         if (stealthRoundLabel)
-            stealthRoundLabel.SetText($"{stealthPrefix}{stealthRound}");
+            stealthRoundLabel.SetText($"{stealthPrefix}{stealthRound/2+1}");
     }
 
     void SetButtonInteractable(bool myTurn)
