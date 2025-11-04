@@ -159,8 +159,6 @@ public class EnemyNPC : MonoBehaviour
             }
 
             Move(targetPosition);
-            efsm.eta = 3;
-            efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
 
             DOVirtual.DelayedCall(0.6f, () =>
             {
@@ -194,6 +192,8 @@ public class EnemyNPC : MonoBehaviour
                 });
             });
         }, 0f));
+        efsm.eta = 3;
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
     }
 
     public List<EntityStats> DetectVisibleTargets()
