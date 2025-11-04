@@ -22,8 +22,8 @@ public class Window : IInteractable
         wayOne = forward;
         wayTwo = forward * -1;
         RegistInteraction(OnInteraction);
-        Debug.LogError(forward);
-        Debug.LogError(tile);
+        //Debug.LogError(forward);
+        //Debug.LogError(tile);
     }
 
     public void OnInteraction(EntityStats stat)
@@ -52,7 +52,7 @@ public class Window : IInteractable
     }
     public void RegistInteraction(Interaction interaction)
     {
-
+        //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = tile + wayOne;//디버그용코드
         GameManager.GetInstance.Nodes[tile + wayOne].AddInteraction(OnInteraction, InteractionType.Window.ToString());
         GameManager.GetInstance.Nodes[tile + wayTwo].AddInteraction(OnInteraction, InteractionType.Window.ToString());
     }
