@@ -37,10 +37,18 @@ public class InteractionSetter : MonoBehaviour
     void Start()
     {
         interaction = IInteractable.Factory(type);
-        Vector3Int pos = Manager.GetVecInt(transform.localPosition);
+        Vector3Int pos;
         if (type == InteractionType.Door)
         {
-            pos = Manager.GetVecInt(transform.localPosition + (transform.forward/2f)+ (transform.right / -2f));
+            pos = Manager.GetVecInt(transform.position + /*(transform.forward/2f)+ */(transform.right / -2f));
+        }
+        else if(type == InteractionType.Window)
+        {
+            pos = Manager.GetVecInt(transform.position + /*(transform.forward/2f)+ */(transform.forward / 2f));
+        }
+        else
+        {
+            pos = Manager.GetVecInt(transform.position); 
         }
 
         if (!Manager.Nodes.ContainsKey(pos)) Manager.RegistNode(pos, isWalkAble);
