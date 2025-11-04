@@ -105,6 +105,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.pip.HideAndSneakText();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
     }
 
     /// <summary>
@@ -126,6 +127,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.pip.HideAndSneakText();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
     }
 
     public void OnFirst(InputAction.CallbackContext context)
