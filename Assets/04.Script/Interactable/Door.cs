@@ -133,8 +133,10 @@ public class Door : IInteractable
     {
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         string key = (interaction == OnInteraction) ? keyOpen : keyClose;
+
         for (int i = 0; i < vecs.Count; i++)
         {
+            //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = vecs[i];//디버그코드
             GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(interaction, key/*OnInteraction, lockModule.ToString() + InteractionType.Door.ToString()*/);
         }
     }
