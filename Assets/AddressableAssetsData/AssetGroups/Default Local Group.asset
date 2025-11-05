@@ -34,6 +34,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 514cee022802aa345953473aeaeb86db
+    m_Address: GunFIreVFX
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5666c8f1344c51049ae8b0e602f12d0c
     m_Address: BuffDescription
     m_ReadOnly: 0
@@ -42,6 +48,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6958c052cf022ac4fb1ebbba684cf7be
     m_Address: UIAtlas
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83db5124300aeb1459ea8642bda177f3
+    m_Address: BulletTrail
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
