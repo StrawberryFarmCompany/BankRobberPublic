@@ -12,7 +12,7 @@ public enum EscapeCondition
     Heisting,   // 습격중
     Arrest,      // 잡힘
     Escape,     // 탈출
-    SuccessHeist //돈 가방 가지고 탈출
+    SuccessHeist, //돈 가방 가지고 탈출
 }
 
 public enum GameResult
