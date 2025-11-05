@@ -30,7 +30,7 @@ public class Gun : MonoBehaviour
 
     public int ishit = 0;
     public bool makeNoise = false;
-
+    public Transform muzzlePoint;
     private void Awake()
     {
         if (data != null)
@@ -90,7 +90,11 @@ public class Gun : MonoBehaviour
 
         Debug.Log($"{entityStats.characterName}에게 격발 데미지를 가했음");
         float totalDamage = 0f;
-        for(int i = 0; i < bulletPerOneShot; i++)
+        if (muzzlePoint != null)
+        {
+            SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles);
+        }
+        for (int i = 0; i < bulletPerOneShot; i++)
         {
             if(CheckBulletHit(targetPos, hitBonus))
             {
