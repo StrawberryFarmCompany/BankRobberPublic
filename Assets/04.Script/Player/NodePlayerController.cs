@@ -180,7 +180,7 @@ public class NodePlayerController : MonoBehaviour
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
 
-            SkillEffectManager.UseSkill(this, mousePos);
+            SkillEffectManager.GetInstance.UseSkill(this, mousePos);
 
             UIManager.GetInstance.ShowActionPanel(true);
             RefreshPipAllSafe();
