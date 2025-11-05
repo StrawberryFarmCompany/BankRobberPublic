@@ -53,7 +53,7 @@ public class SkillEffectManager : MonoBehaviour
             //체력 회복
             case PlayerSkill.Heal:
                 if (!player.playerStats.ConsumeActionPoint(1)) return;
-                player.playerStats.HealHealthPoint(2);
+                player.playerStats.HealHealthPoint(1);
                 player.animationController.HealState();
                 SetCooldown(skill, 3);
                 break;
