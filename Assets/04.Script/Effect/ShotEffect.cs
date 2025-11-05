@@ -10,8 +10,8 @@ public class ShotEffect
     // Start is called before the first frame update
     public ShotEffect()
     {
-        muzzlePool = new ParticlePool("muzzleVFX");
-        trailPool = new TransformPool("bulletTrail");
+        muzzlePool = new ParticlePool("GunFIreVFX");
+        trailPool = new TransformPool("BulletTrail");
     }
 
 }

@@ -4,11 +4,19 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-public class SkillEffectManager : MonoBehaviour
+public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 {
-    private static Dictionary<PlayerSkill, int> cooldowns = new();
-
-    public static void ReduceCooldowns()
+    private Dictionary<PlayerSkill, int> cooldowns = new();
+    private ShotEffect shotEffect;
+    public ShotEffect ShotEffect 
+    { 
+        get 
+        {
+            if (shotEffect == null) shotEffect = new ShotEffect();
+            return shotEffect;
+        }
+    }
+    public void ReduceCooldowns()
     {
         List<PlayerSkill> keys = new List<PlayerSkill>(cooldowns.Keys);
         foreach (PlayerSkill key in keys)
@@ -18,22 +26,22 @@ public class SkillEffectManager : MonoBehaviour
         }
     }
 
-    public static bool CanUse(PlayerSkill skill)
+    public bool CanUse(PlayerSkill skill)
     {
         return !cooldowns.ContainsKey(skill) || cooldowns[skill] <= 0;
     }
 
-    public static void SetCooldown(PlayerSkill skill, int turns)
+    public void SetCooldown(PlayerSkill skill, int turns)
     {
         cooldowns[skill] = turns;
     }
 
-    public static int GetRemainingCooldown(PlayerSkill skill)
+    public int GetRemainingCooldown(PlayerSkill skill)
     {
         return cooldowns.ContainsKey(skill) ? cooldowns[skill] : 0;
     }
 
-    public static void UseSkill(NodePlayerController player, Vector3 mousePos)
+    public void UseSkill(NodePlayerController player, Vector3 mousePos)
     {
         PlayerSkill skill = player.playerStats.playerSkill;
         if (skill == PlayerSkill.None)

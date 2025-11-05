@@ -246,7 +246,7 @@ public class NodePlayerManager : MonoBehaviour
     public void NotifyPlayerEndTurn(NodePlayerController player)
     {
         player.isEndReady = true;
-        SkillEffectManager.ReduceCooldowns();
+        SkillEffectManager.GetInstance.ReduceCooldowns();
         if (!GameManager.GetInstance.CheckAllCharacterEndTurn())
             SwitchToNextPlayer();
     }
