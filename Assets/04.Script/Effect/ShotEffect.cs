@@ -36,7 +36,11 @@ public abstract class EffectPool<T> where T : Component
     public abstract void PlayEffect(Vector3 start,Vector3 target);
     public abstract void Reset();
     protected abstract T Instantiate();
+    protected abstract System.Collections.IEnumerator Retrieve(T collect,float time);
 }
+
+
+
 public class TransformPool : EffectPool<Transform>
 {
     public TransformPool(string name) : base(name)
@@ -71,9 +75,9 @@ public class TransformPool : EffectPool<Transform>
         Transform tr = Dequeue();
         tr.transform.position = start;
         float dist = Vector3.Distance(start, target);
+
+        tr.DOMove(target, dist / 300f).OnComplete(()=>Enqueue(tr));
         
-        tr.DOMove(target,dist/300f );
-        Enqueue(tr);
     }
     public override void Reset()
     {
@@ -86,9 +90,20 @@ public class TransformPool : EffectPool<Transform>
         obj.transform.parent = folder;
         return GameObject.Instantiate(prefab).transform;
     }
+
+    protected override System.Collections.IEnumerator Retrieve(Transform tr,float time)
+    {
+        yield return new WaitForSeconds(time);
+        Enqueue(tr);
+        yield break;
+    }
 }
+
+
+
 public class ParticlePool : EffectPool<ParticleSystem>
 {
+    readonly WaitForSeconds timer = new WaitForSeconds(2f);
     public ParticlePool(string name) : base(name)
     {
         prefab = (GameObject)ResourceManager.GetInstance.GetPreLoad[name];
@@ -126,7 +141,7 @@ public class ParticlePool : EffectPool<ParticleSystem>
         ParticleSystem particle = Dequeue();
         particle.transform.position = start;
         particle.transform.eulerAngles = eulerAngle;
-        Enqueue(particle);
+        TaskManager.GetInstance.StartCoroutine(Retrieve(particle,0f));
     }
     public override void Reset()
     {
@@ -138,5 +153,11 @@ public class ParticlePool : EffectPool<ParticleSystem>
         obj.SetActive(true);
         obj.transform.parent = folder;
         return obj.GetComponent<ParticleSystem>();
+    }
+    protected override System.Collections.IEnumerator Retrieve(ParticleSystem particle,float a)
+    {
+        yield return timer;
+        Enqueue(particle);
+        yield break;
     }
 }
