@@ -156,7 +156,7 @@ public class AnimationStateController : MonoBehaviour
     {
         if (playerController != null)
         {
-            playerController.playerStats.HealHealthPoint(5); // 예시로 20만큼 회복
+            playerController.playerStats.HealHealthPoint(1); // 예시로 20만큼 회복
         }
     }
 
