@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour
     private BuffPannel buffPannel;
     public DocumentUI documentUI;
     public PasswordUI passwordUI;
+    public GuideUI guideUI;
 
     public Transform CanvasRoot { get { return canvasRoot; } }
 

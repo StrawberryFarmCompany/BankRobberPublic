@@ -22,7 +22,7 @@ public class Door : IInteractable
     /// <param name="type">도어락 타입</param>
     /// <param name="doorValue">키카드 == 카드 인덱스,락핏 == 문을 따는 최소 밸류</param>
 
-    private bool isOpen;
+    public bool isOpen;
     private string keyOpen;
     private string keyClose;
 
