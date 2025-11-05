@@ -44,22 +44,32 @@ public class PauseManager : MonoBehaviour
 
     public void OnPause(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (!context.started)
+            return;
+
+        if (quitConfirmUI && quitConfirmUI.activeSelf)
         {
-            if (quitConfirmUI && quitConfirmUI.activeSelf)
-            {
-                CloseQuitConfirm(); 
-                return;
-            }
-            if (optionUI && optionUI.activeSelf)
-            {
-                CloseOption();
-                return;
-            }
-            if (CharacterManager.Instance.player.curUIPanel != null) return;
-            if (isPaused) ResumeGame();
-            else PauseGame();
+            CloseQuitConfirm();
+            return;
         }
+
+        if (optionUI && optionUI.activeSelf)
+        {
+            CloseOption();
+            return;
+        }
+
+        if (CharacterManager.Instance != null)
+        {
+            if (CharacterManager.Instance.player != null)
+            {
+                if (CharacterManager.Instance.player.curUIPanel != null)
+                    return;
+            }
+        }
+
+        if (isPaused) ResumeGame();
+        else PauseGame();
     }
 
     private void PauseGame()
