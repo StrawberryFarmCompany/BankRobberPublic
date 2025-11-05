@@ -261,6 +261,7 @@ class GameManager : SingleTon<GameManager>
             {
                 player.playerStats.ResetForNewTurn();
             }
+            //FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
             NodePlayerManager.GetInstance.SwitchToPlayer(0);
         }
         else
@@ -282,12 +283,12 @@ class GameManager : SingleTon<GameManager>
     }
 
 
-    public void CheckAllCharacterEndTurn()
+    public bool CheckAllCharacterEndTurn()
     {
         List<NodePlayerController> players = NodePlayerManager.GetInstance.GetAllPlayers();
         for (int i = 0; i < players.Count; i++)
         {
-            if (!players[i].isEndReady) return;
+            if (!players[i].isEndReady) return false;
         }
 
         Debug.Log($"다 끝나고 플레이어 턴 엔드");
@@ -295,13 +296,15 @@ class GameManager : SingleTon<GameManager>
         {
             players[i].isEndReady = false;
         }
-
+        
         EndPlayerTurn();
+        return true;
 
     }
 
     public void EndPlayerTurn()
     {
+        FloorCullingManager.GetInstance.EnableAllCollisionsAndRenderers();
         if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState();
         else
@@ -467,6 +470,8 @@ class GameManager : SingleTon<GameManager>
         Reset();
     }
 
+    //-------------------------------------------------------------------버튼도어------------------------------------------나중에 도어매니저 고려
+
     public void RegisterButtonDoor(Door door)
     {
         alarmDoor.Add(door);
@@ -481,8 +486,24 @@ class GameManager : SingleTon<GameManager>
         return null;
     }
 
+    public int GetButtonDoorNumber(int index)
+    {
+        return alarmDoor[index].index;
+    }
+
     public void ReleaseButtonDoor()
     {
-        alarmDoor = null;
+        alarmDoor.Clear();
+    }
+
+    //--------------------------------------------------------------------------------패스워드 도어-----------------------------
+
+    public Dictionary<int, int> passwordDoorPair = new Dictionary<int, int>();
+    public Dictionary<int, bool> isOpenPasswordDoor = new Dictionary<int, bool>();
+
+    public void RegisterPasswordDoor(int index, int password)
+    {
+        passwordDoorPair[index] = password;
+        isOpenPasswordDoor[index] = false;
     }
 }

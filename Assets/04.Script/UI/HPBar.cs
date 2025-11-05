@@ -75,10 +75,13 @@ public class HPBar
     }
     public void Destroy()
     {
+        if (slotParent == null)
+        {
+            hpSlots = null;
+            return;
+        }
         BackTrackingDestroy(slotParent);
         GameObject.Destroy(slotParent.gameObject);
-        slotParent = null;
-        hpSlots = null;
     }
 
     private void BackTrackingDestroy(Transform tr)

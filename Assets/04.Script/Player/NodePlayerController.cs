@@ -1049,6 +1049,7 @@ public class NodePlayerController : MonoBehaviour
     private void OnDestroy()
     {
         transform.DOKill(false);
+        playerStats.DestroyEntity();
     }
 
     public void SetCharacterTurn()
