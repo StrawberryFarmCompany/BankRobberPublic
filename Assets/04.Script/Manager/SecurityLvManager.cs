@@ -13,7 +13,7 @@ public class SecurityLvManager : MonoBehaviour
     [SerializeField] private Transform[] spawnPoints;
 
     [Header("소환할 적 수")]
-    [SerializeField] private int spawnCount = 3;
+    [SerializeField] private int spawnCount = 6;
 
     private List<GameObject> spawnedEnemies = new List<GameObject>();
 

@@ -14,12 +14,17 @@ public class PatrolEnemyNPC : EnemyNPC
 
     [SerializeField] private Vector3 homeLocation;
     [SerializeField] private Vector3 firstLocation;
+
+    [SerializeField] private List<Vector3> locationList = new List<Vector3>();
+    [SerializeField] private int curLocation;
+
     [SerializeField] private Vector3 noiseLocation;
 
     Animator animator;
 
     protected override IEnumerator Start()
     {
+        if (locationList != null) curLocation = 1;
         animator = GetComponent<Animator>();
         StartCoroutine(base.Start());
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
@@ -69,33 +74,18 @@ public class PatrolEnemyNPC : EnemyNPC
                 isArrivedNoisePlace = false;
             }
 
-            else if (departurePoint == true && destinationPoint == false)
+            else if (GameManager.GetInstance.GetVecInt(locationList[curLocation]) != GameManager.GetInstance.GetVecInt(gameObject.transform.position))
             {
-                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(firstLocation); },0f));
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(locationList[curLocation]); }, 0f));
                 efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
-                
-                //이 부분 코루틴 같은걸로 시간 줘야 아래 이프문이 돌아갈 것 같음
-                if (Vector3.Distance(transform.position, firstLocation) < 0.1f)
-                {
-                    LookAround();
-                    departurePoint = false;     // 출발 지점 true, false로 계속 바꿔주기
-                    destinationPoint = true;    // 도착 지점 true, false로 계속 바꿔주기
-                }
             }
 
-            else if (departurePoint == false && destinationPoint == true)
+            else if (Vector3.Distance(transform.position, locationList[curLocation]) < 0.1f)
             {
-                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(firstLocation); }, 0f));
-                efsm.eta = 3;
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
-
-                if (Vector3.Distance(transform.position, homeLocation) < 0.1f)
-                {
-                    LookAround();
-                    departurePoint = true;      // 출발 지점 true, false로 계속 바꿔주기
-                    destinationPoint = false;   // 도착 지점 true, false로 계속 바꿔주기
-                }
+                LookAround();
+                curLocation++;
+                curLocation = curLocation % locationList.Count;
             }
         }
 
