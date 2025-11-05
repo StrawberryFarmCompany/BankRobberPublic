@@ -36,7 +36,8 @@ public class EnemyNPC : MonoBehaviour
         if (ResourceManager.GetInstance.GetBuffData.Count <= 0) yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.CreateHpBar();
         stats.NodeUpdates(transform.position,true);
-        SecurityLevel(0);
+
+        stats.secData = new SecurityData(stats);
     }
 
     protected virtual void Update()
@@ -242,7 +243,7 @@ public class EnemyNPC : MonoBehaviour
             }
         }
 
-        if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 0)
+        if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 1)
         {
             // 거리 기준으로 정렬 (가까운 순)
             visibleTargets.Sort((a, b) =>
