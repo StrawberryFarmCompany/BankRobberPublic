@@ -134,11 +134,14 @@ public class PatrolEnemyNPC : EnemyNPC
         Destroy(gameObject);
     }
 
+#if UNITY_EDITOR
     public void OnDrawGizmos()
     {
         Gizmos.DrawCube(locationList[curLocation], Vector3.one);
         Gizmos.color = Color.yellow;
     }
+#endif
+
     //순찰
     //public void Patrol(Vector3 pos)  //나중에 리펙토링 해보기
     //{

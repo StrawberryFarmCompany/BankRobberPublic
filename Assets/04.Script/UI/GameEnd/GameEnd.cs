@@ -138,7 +138,7 @@ public class GameEnd : MonoBehaviour
 
     private void LoadLobby()
     {
-        GameManager.GetInstance.DoReset();
+        GameManager.GetInstance.Reset();
         LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
     }
 

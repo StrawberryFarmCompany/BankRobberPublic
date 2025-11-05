@@ -102,9 +102,11 @@ class GameManager : SingleTon<GameManager>
         GatheredCost = 0;
     }
 
-    protected override void Reset()
+    public override void Reset()
     {
         base.Reset();
+
+        damageProjector?.OnReset();
         GatheredGold = 0;
         GatheredCost = 0;
         SecurityData.Reset();
@@ -464,11 +466,6 @@ class GameManager : SingleTon<GameManager>
         Money.GetInstance.Add(totalBenefit);
     }
 
-    public void DoReset()
-    {
-        damageProjector.OnReset();
-        Reset();
-    }
 
     //-------------------------------------------------------------------버튼도어------------------------------------------나중에 도어매니저 고려
 
