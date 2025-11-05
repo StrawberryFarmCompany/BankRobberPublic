@@ -218,7 +218,7 @@ public class CitizenNPC : NeutralNPC
                 // 2) 이동 가능한지 체크
                 if (node == null) continue;
                 if (!node.isWalkable) continue;
-                //if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
+                if (GameManager.GetInstance.GetEntityAt(next) != null) continue;
 
                 // 3) 방문한 적 없는 경우만 추가
                 if (!cameFrom.ContainsKey(next))
