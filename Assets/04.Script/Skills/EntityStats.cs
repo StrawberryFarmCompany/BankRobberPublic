@@ -47,6 +47,7 @@ public class EntityStats
     public Node currNode;
 
     public PlayerSkill playerSkill; //플레이어 스킬
+    public bool hasPermanentAttackBuff = false;
 
     public SecurityData secData;
     private PassiveSkill equippedPassive;
