@@ -906,7 +906,7 @@ public class NodePlayerController : MonoBehaviour
             Node node = GameManager.GetInstance.GetNode(isEntityTarget ? hit.transform.position : hit.point);
             if(node != null)return node.GetCenter;
         }
-        Debug.Log("유효하지 않은 좌표입니다!");
+        //Debug.Log("유효하지 않은 좌표입니다!");
         return new Vector3Int(-999, -999, -999); //유효하지 않은 좌표 반환
     }
 
