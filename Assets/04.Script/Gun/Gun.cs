@@ -76,7 +76,8 @@ public class Gun : MonoBehaviour
 
         if (muzzlePoint == null)
         {
-            SetGunMuzzlePoint();
+            SetGunMuzzlePoint(transform, "ShootPos");
+            if (muzzlePoint == null) SetGunMuzzlePoint(transform, "Hand_R");
         }
 
         if(!ConsumeRounds(1/*useRoundsPerShot*/))
@@ -206,12 +207,25 @@ public class Gun : MonoBehaviour
     {
         return curRounds > 0;
     }
-    private void SetGunMuzzlePoint()
+    private void SetGunMuzzlePoint(Transform tr,string name)
     {
-        muzzlePoint = transform.Find("ShootPos");
         if (muzzlePoint == null)
         {
-            muzzlePoint = transform.Find("Root\\Spine_01\\Spine_02\\Spine_03\\Clavicle_R\\Shoulder_R\\Hand_R");
+            muzzlePoint = transform.Find(name);
+            if (muzzlePoint != null) return;
+            for (int i = 0; i < tr.childCount; i++)
+            {
+                Transform curTr = tr.GetChild(i).Find(name);
+                if (curTr == null)
+                {
+                    SetGunMuzzlePoint(tr.GetChild(i), name);
+                }
+                else
+                {
+                    muzzlePoint = curTr;
+                }
+            }
+
         }
     }
 }
