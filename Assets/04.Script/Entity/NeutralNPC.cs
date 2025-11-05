@@ -86,10 +86,6 @@ public class NeutralNPC : MonoBehaviour
             }
         }
 
-        if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 1)
-        {
-            SecurityLevel(1);
-        }
         return visibleTargets;
     }
 
