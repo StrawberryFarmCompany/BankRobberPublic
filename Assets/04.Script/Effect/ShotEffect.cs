@@ -3,27 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class ShotEffect : MonoBehaviour
+public class ShotEffect
 {
-    public ParticleSystem particle;
-    public Transform tr;
     public ParticlePool muzzlePool;
     public TransformPool trailPool;
     // Start is called before the first frame update
-    void Start()
+    public ShotEffect()
     {
         muzzlePool = new ParticlePool("muzzleVFX");
         trailPool = new TransformPool("bulletTrail");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
-        }
-    }
 }
 
 public abstract class EffectPool<T> where T : Component
@@ -37,6 +27,7 @@ public abstract class EffectPool<T> where T : Component
     }
     protected abstract void Enqueue(T target);
     protected abstract T Dequeue();
+    protected abstract void PlayEffect(Vector3 start,Vector3 target);
 }
 public class TransformPool : EffectPool<Transform>
 {
@@ -69,6 +60,16 @@ public class TransformPool : EffectPool<Transform>
         target.gameObject.SetActive(false);
         queue.Enqueue(target);
     }
+
+    protected override void PlayEffect(Vector3 start, Vector3 target)
+    {
+        Transform tr = Dequeue();
+        tr.transform.position = start;
+        float dist = Vector3.Distance(start, target);
+        
+        tr.DOMove(target,dist/300f );
+        Enqueue(tr);
+    }
 }
 public class ParticlePool : EffectPool<ParticleSystem>
 {
@@ -100,5 +101,18 @@ public class ParticlePool : EffectPool<ParticleSystem>
     {
         target.gameObject.SetActive(false);
         queue.Enqueue(target);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="start">이펙트 위치</param>
+    /// <param name="eulerAngle">이펙트 각도</param>
+    /// <param name="time">미사용 매개변수</param>
+    protected override void PlayEffect(Vector3 start, Vector3 eulerAngle)
+    {
+        ParticleSystem particle = Dequeue();
+        particle.transform.position = start;
+        particle.transform.eulerAngles = eulerAngle;
+        Enqueue(particle);
     }
 }
