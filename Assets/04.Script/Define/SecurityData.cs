@@ -44,7 +44,7 @@ public class SecurityData
         this.secLevel = level++;
         ResourceManager.GetInstance.GetBuffData.TryGetValue(key, out BuffData data);
 
-        if (level == 3)
+        if (this.secLevel == 3)
         {
             sharedSec = IBuff.Factory(data, stat, BuffType.securityLevel);
             OnBattlePhase?.Invoke();
