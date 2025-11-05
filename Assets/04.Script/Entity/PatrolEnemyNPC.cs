@@ -12,9 +12,6 @@ public class PatrolEnemyNPC : EnemyNPC
     public bool isNoise = false;             // 소음 감지
     public bool isArrivedNoisePlace = false; // 소음 발생 지역 도착
 
-    [SerializeField] private Vector3 homeLocation;
-    [SerializeField] private Vector3 firstLocation;
-
     [SerializeField] private List<Vector3> locationList = new List<Vector3>();
     [SerializeField] private int curLocation;
 
@@ -139,10 +136,8 @@ public class PatrolEnemyNPC : EnemyNPC
 
     public void OnDrawGizmos()
     {
-        Gizmos.DrawCube(homeLocation, Vector3.one);
+        Gizmos.DrawCube(locationList[curLocation], Vector3.one);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(firstLocation, Vector3.one);
-        Gizmos.color = Color.red;
     }
     //순찰
     //public void Patrol(Vector3 pos)  //나중에 리펙토링 해보기
