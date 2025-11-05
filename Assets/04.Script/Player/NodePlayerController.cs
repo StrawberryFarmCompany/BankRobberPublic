@@ -491,7 +491,7 @@ public class NodePlayerController : MonoBehaviour
         NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Unstealth);
     }
 
-    private void CheckSneakAttack(Vector3 mouseScreenPos)
+    public void CheckSneakAttack(Vector3 mouseScreenPos)
     {
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
 

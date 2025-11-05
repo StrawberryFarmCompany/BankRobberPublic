@@ -61,7 +61,9 @@ public class SkillEffectManager : MonoBehaviour
             //암습
             case PlayerSkill.SneakAttack:
                 if (!player.playerStats.ConsumeActionPoint(1)) return;
-                player.SneakAttack(player.bestNearNodePos);
+
+                player.CheckSneakAttack(mousePos);
+
                 SetCooldown(skill, 1);
                 break;
 
