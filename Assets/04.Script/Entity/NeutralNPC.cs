@@ -24,7 +24,7 @@ public class NeutralNPC : MonoBehaviour
         yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.CreateHpBar();
         stats.NodeUpdates(transform.position, true);
-        stats.secData.SetSecLevel(0);
+        stats.secData = new SecurityData(stats);
     }
 
     protected virtual void CalculateBehaviour()
@@ -86,7 +86,7 @@ public class NeutralNPC : MonoBehaviour
             }
         }
 
-        if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 0)
+        if (visibleTargets.Count > 0 && stats.secData.GetSecLevel == 1)
         {
             SecurityLevel(1);
         }
