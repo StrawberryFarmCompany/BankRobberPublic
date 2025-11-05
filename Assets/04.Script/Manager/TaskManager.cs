@@ -16,6 +16,17 @@ public class TaskManager : MonoSingleTon<TaskManager>
     {
         task.Enqueue(add);
     }
+    /// <summary>
+    /// task를 강제로 
+    /// </summary>
+    /// <param name="target">실행시켜 줄 값</param>
+    /// <param name="order">해당 배열에 있는 값을 뒤로 밀어내고 target을 추가</param>
+    public void InsertTurnBehaviour(TurnTask target,int order)
+    {
+        List<TurnTask> taskList = task.ToList();
+        taskList.Insert(order, target);
+        task = new Queue<TurnTask>(taskList);
+    }
     public void RemoveTurnBehaviour(TurnTask remove)
     {
         TurnTask[] tasks = task.ToArray().Where(x => x.Action.Method.Name != remove.Action.Method.Name).ToArray();
@@ -39,6 +50,7 @@ public class TaskManager : MonoSingleTon<TaskManager>
             Debug.Log($"실행된 액션 명 {currTask.Action?.Method.Name}");
             currTask.Action?.Invoke();
             yield return new WaitForSeconds(currTask.time);
+            currTask.Action = null;
         }
     }
 }

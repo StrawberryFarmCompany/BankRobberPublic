@@ -4,7 +4,7 @@ Shader "Custom/UIHorizontalFeatherColor"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _Color ("Tint Color", Color) = (1,1,1,1)
-        _Feather ("Feather Width", Range(0.0, 0.5)) = 0.1
+        _Feather ("Feather Width", Range(0.0, 0.9)) = 0.1
     }
 
     SubShader

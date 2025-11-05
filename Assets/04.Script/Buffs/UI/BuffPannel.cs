@@ -10,7 +10,7 @@ public class BuffPannel : MonoBehaviour
 {
     private EntityStats stat;
     [SerializeField] TextMeshProUGUI characterName;
-    private List<BuffDefine.BuffData> datas = new List<BuffDefine.BuffData>();      //버프 데이터 담는 리스트
+    private List<BuffDefine.IBuff> datas = new List<BuffDefine.IBuff>();      //버프 데이터 담는 리스트
     [SerializeField] private List<BuffIcon> icons = new List <BuffIcon>();                           //아이콘 객체를 담는 리스트
     [SerializeField] private BuffDescription description;                                            //버프 설명 UI
     public BuffDescription Description { get { return description; } }                                            //버프 설명 UI
@@ -22,9 +22,8 @@ public class BuffPannel : MonoBehaviour
     {
         switch (formatType)
         {
-            case FormatType:
+            case FormatType.duration:
                 return datas[dataIndex].Duration.ToString();
-                break;
             default:
                 break;
         }
@@ -49,11 +48,11 @@ public class BuffPannel : MonoBehaviour
         stat = node.Standing[0];
         characterName.text = stat.characterName;
         ReleaseBuffList();
-        datas.Add(stat.secData.GetSecBuff.Data);
+        if(stat.secData.GetSecBuff != null) datas.Add(stat.secData.GetSecBuff);
 
         for (int i = 0; i < icons.Count; i++) icons[i].gameObject.SetActive(false);
 
-        for (int i = 0; i < stat.Buffs.Count; i++){datas.Add(stat.Buffs[i].Data);}      //등록만
+        for (int i = 0; i < stat.Buffs.Count; i++){datas.Add(stat.Buffs[i]);}      //등록만
 
         for (int i = 0; i < datas.Count; i++)
         {
@@ -65,7 +64,7 @@ public class BuffPannel : MonoBehaviour
             {
                 icons[i].gameObject.SetActive(true);
                 icons[i].Init(i);
-                Sprite sprite = ((UnityEngine.U2D.SpriteAtlas)ResourceManager.GetInstance.GetPreLoad["UIAtlas"]).GetSprite(datas[i].Key.ToString());
+                Sprite sprite = ((UnityEngine.U2D.SpriteAtlas)ResourceManager.GetInstance.GetPreLoad["UIAtlas"]).GetSprite(datas[i].Data.Key.ToString());
                 icons[i].SetImage(sprite);
             }
         }
@@ -86,7 +85,7 @@ public class BuffPannel : MonoBehaviour
         }
 
         result.Init(index);
-        Sprite sprite = ((UnityEngine.U2D.SpriteAtlas)ResourceManager.GetInstance.GetPreLoad["UIAtlas"]).GetSprite(datas[index].Key.ToString());
+        Sprite sprite = ((UnityEngine.U2D.SpriteAtlas)ResourceManager.GetInstance.GetPreLoad["UIAtlas"]).GetSprite(datas[index].Data.Key.ToString());
         icons[index].SetImage(sprite);
     }
     public void LoadDescription()
@@ -108,13 +107,13 @@ public class BuffPannel : MonoBehaviour
     }
     public void SetDescription(int index)
     {
-        string descriptionResult = datas[index].DescKor;
+        string descriptionResult = datas[index].Data.DescKor;
         description.TurnOn(true);
         for (int i = 0; i < formats.Length; i++)
         {
-            descriptionResult.Replace(formats[i], GetBuffVariableText((FormatType)i, index));
+            descriptionResult = descriptionResult.Replace(formats[i], GetBuffVariableText((FormatType)i, index));
         }
-        description.SetDescription(new string[] {datas[index].DisStatusNameKor,datas[index].Duration.ToString(),descriptionResult }) ;
+        description.SetDescription(new string[] {datas[index].Data.DisStatusNameKor,datas[index].Duration.ToString(),descriptionResult }) ;
     }
 }
 public class BuffDescription

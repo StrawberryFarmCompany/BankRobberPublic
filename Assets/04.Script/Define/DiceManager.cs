@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Linq;
 using System;
 using UnityEngine.Tilemaps;
-using UnityEditor.Build.Pipeline;
 public class DiceManager : MonoSingleTon<DiceManager>
 {
     sbyte diceMaxValue = 6;
@@ -35,18 +34,7 @@ public class DiceManager : MonoSingleTon<DiceManager>
     public int DirrectRoll(int factor,sbyte max,int diceCount)
     {
         sbyte[] diceValues = Roll(diceCount, max);
-        int result = 0;
-        if (diceValues.All(x => diceValues[0] == x))
-        {
-            result = 7777;
-        }
-        else
-        {
-            for (int i = 0; i < diceValues.Length; i++)
-            {
-                result += diceValues[i];
-            }
-        }
+        int result = DirrectRollDoubleJackPot(factor, max, diceCount);
         return result;
     }
 
@@ -62,18 +50,7 @@ public class DiceManager : MonoSingleTon<DiceManager>
         isCoroutineRun = true;
         float timer = 0;
         sbyte[] diceValues = Roll(diceCount, max);
-        int result = 0;
-        if (diceValues.All(x => diceValues[0] == x))
-        {
-            result = 7777;
-        }
-        else
-        {
-            for (int i = 0; i < diceValues.Length; i++)
-            {
-                result += diceValues[i];
-            }
-        }
+        int result = DirrectRollDoubleJackPot(factor, max, diceCount);
         while (timer < 5)
         {
             timer += Time.deltaTime;
@@ -82,8 +59,9 @@ public class DiceManager : MonoSingleTon<DiceManager>
         }
         action.Invoke(result);
         isCoroutineRun = false;
+
     }
-    public int DirrectRollDoubleJackPot(int factor,sbyte max,int diceCount)
+    private int DirrectRollDoubleJackPot(int factor,sbyte max,int diceCount)
     {
         sbyte[] diceValues = Roll(diceCount, max);
         int result = 0;

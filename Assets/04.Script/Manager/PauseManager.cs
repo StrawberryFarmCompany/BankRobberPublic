@@ -82,8 +82,11 @@ public class PauseManager : MonoBehaviour
         optionUI.SetActive(false);
         quitConfirmUI.SetActive(false);
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if(LoadSceneManager.GetInstance.curSceneType == SceneType.LobbyScene || LoadSceneManager.GetInstance.curSceneType == SceneType.MainTitleScene)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
 
         isPaused = false;
     }

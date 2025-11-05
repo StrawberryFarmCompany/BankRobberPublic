@@ -105,6 +105,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.pip.HideAndSneakText();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
     }
 
     /// <summary>
@@ -126,6 +127,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.pip.HideAndSneakText();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
     }
 
     public void OnFirst(InputAction.CallbackContext context)
@@ -244,9 +246,8 @@ public class NodePlayerManager : MonoBehaviour
     public void NotifyPlayerEndTurn(NodePlayerController player)
     {
         player.isEndReady = true;
-        SkillEffectManager.ReduceCooldowns();
-        GameManager.GetInstance.CheckAllCharacterEndTurn();
-        SwitchToNextPlayer();
+        if(!GameManager.GetInstance.CheckAllCharacterEndTurn())
+            SwitchToNextPlayer();
     }
 
     public void EscapeConditionReset()
