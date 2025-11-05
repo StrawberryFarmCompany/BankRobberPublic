@@ -88,7 +88,6 @@ public class EntityStats
         portrait = baseStats.portrait;
         skillGroup = baseStats.skillGroup;
         buffs = new List<IBuff>();
-        secData = new SecurityData(this);
 
 
 

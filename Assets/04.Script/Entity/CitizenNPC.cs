@@ -41,7 +41,7 @@ public class CitizenNPC : NeutralNPC
             CitizenWitness();
         }
 
-        if (stats.secData.GetSecLevel >= 2)
+        if (stats.secData.GetSecLevel >= 3)
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();
