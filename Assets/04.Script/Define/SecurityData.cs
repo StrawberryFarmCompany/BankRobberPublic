@@ -5,17 +5,14 @@ using System;
 using BuffDefine;
 public class SecurityData
 {
-    private ushort secLevel;
-    public ushort GetSecLevel { get { return secLevel; } }
+    public ushort GetSecLevel { get { return GetSecBuff == null ? (ushort)0: (ushort)GetSecBuff.Data.StatusValue; } }
 
     private static IBuff sharedSec;
     IBuff currSec;
-    public IBuff GetSecBuff { get { return isBattlePhase ? sharedSec : currSec; } }
+    public IBuff GetSecBuff { get { return sharedSec != null ? sharedSec : currSec; } }
 
     private EntityStats stat;
     public static Action OnBattlePhase;
-
-    public bool isBattlePhase { get { return sharedSec != null; } }
     
     public static void Reset()
     {
@@ -29,8 +26,8 @@ public class SecurityData
     /// <param name="defaultLevel">1~3 사이의 값을 넣어야합니다.</param>
     public SecurityData(EntityStats stat,ushort defaultLevel = 0)
     {
-        SetSecLevel(defaultLevel); 
         this.stat = stat;
+        SetSecLevel(defaultLevel);
     }
 
     /// <summary>
@@ -39,12 +36,11 @@ public class SecurityData
     /// <param name="level">0~2 사이의 값을 넣어야합니다.</param>
     public void SetSecLevel(ushort level)
     {
-        if (level >= 3 || level+1 == secLevel) return;
+        if (level >= 3 || level+1 == this.GetSecLevel) return;
         ushort key = (ushort)(6000 + level);
-        this.secLevel = level++;
         ResourceManager.GetInstance.GetBuffData.TryGetValue(key, out BuffData data);
 
-        if (this.secLevel == 3)
+        if (level == 2)
         {
             sharedSec = IBuff.Factory(data, stat, BuffType.securityLevel);
             OnBattlePhase?.Invoke();
