@@ -52,7 +52,7 @@ public class TransformPool : EffectPool<Transform>
     protected override Transform Dequeue()
     {
         queue.TryDequeue(out Transform tr);
-        if (DOTween.IsTweening(tr))
+        if (tr == null||DOTween.IsTweening(tr))
         {
             queue.Enqueue(tr);
             return Instantiate();
@@ -113,7 +113,7 @@ public class ParticlePool : EffectPool<ParticleSystem>
     protected override ParticleSystem Dequeue()
     {
         queue.TryDequeue(out ParticleSystem particle);
-        if (particle.isPlaying)
+        if (particle == null||particle.isPlaying)
         {
             queue.Enqueue(particle);
             return Instantiate();

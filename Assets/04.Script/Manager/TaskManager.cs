@@ -8,6 +8,7 @@ public class TaskManager : MonoSingleTon<TaskManager>
 {
     Coroutine coroutine;
     public Queue<TurnTask> task = new Queue<TurnTask>();
+    private bool skipDelay;
     protected override void Init() 
     {
         StartTask();
@@ -23,12 +24,14 @@ public class TaskManager : MonoSingleTon<TaskManager>
     /// <param name="order">해당 배열에 있는 값을 뒤로 밀어내고 target을 추가</param>
     public void InsertTurnBehaviour(TurnTask target,int order)
     {
+        skipDelay = order == 0 && task.Count > 0;
         List<TurnTask> taskList = task.ToList();
         taskList.Insert(order, target);
         task = new Queue<TurnTask>(taskList);
     }
     public void InsertTurnBehaviour(List<TurnTask> target,int order)
     {
+        skipDelay = (order == 0) && task.Count > 0;
         List<TurnTask> taskList = task.ToList();
         taskList.InsertRange(order, target);
         task = new Queue<TurnTask>(taskList);
@@ -54,15 +57,22 @@ public class TaskManager : MonoSingleTon<TaskManager>
             if (task.Count <= 0) yield return new WaitUntil(()=> task.Count > 0);
             TurnTask currTask = task.Dequeue();
             Debug.Log($"실행된 액션 명 {currTask.Action?.Method.Name}");
-            try
+            currTask.Action?.Invoke();
+
+            float currTime = 0f;
+            if(currTask.time > 0f)
             {
-                currTask.Action?.Invoke();
+                while (currTask.time > currTime)
+                {
+                    if (skipDelay)
+                    {
+                        skipDelay = false;
+                        break;
+                    }
+                    currTime += Time.deltaTime;
+                    yield return null;
+                }
             }
-            catch (Exception ex)
-            {
-                Debug.Log(ex);
-            }
-            yield return new WaitForSeconds(currTask.time);
             currTask.Action = null;
         }
     }
