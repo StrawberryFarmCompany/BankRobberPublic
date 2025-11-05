@@ -65,7 +65,7 @@ public class EnemyNPC : MonoBehaviour
         // 현재 타깃이 없거나 죽었다면 새로 찾기
         if (nearPlayerLocation == null || nearPlayerLocation.currNode == null || nearPlayerLocation.CurHp <= 0)
         {
-            nearPlayerLocation = FindNextAlivePlayer(visibleTargets);
+            nearPlayerLocation = FindNextTarget();
 
             if (nearPlayerLocation == null)
             {
@@ -86,7 +86,7 @@ public class EnemyNPC : MonoBehaviour
                 // 공격 후 죽었으면 다음 타겟으로 전환
                 if (nearPlayerLocation == null || nearPlayerLocation.CurHp <= 0)
                 {
-                    nearPlayerLocation = FindNextAlivePlayer(visibleTargets);
+                    nearPlayerLocation = FindNextTarget();
 
                     if (nearPlayerLocation != null && stats.movement > 0)
                     {
@@ -205,7 +205,6 @@ public class EnemyNPC : MonoBehaviour
 
         // 사정거리 안에 있는 모든 엔티티 가져오기
         List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.detectingDistance);//(int)stats.detectingDistance
-
         // 리스트 상태 출력 (디버그용)
         if (targets == null || targets.Count == 0)
         {
@@ -248,10 +247,6 @@ public class EnemyNPC : MonoBehaviour
             // 거리 기준으로 정렬 (가까운 순)
             visibleTargets.Sort((a, b) =>
             Vector3.Distance(transform.position, a.currNode.GetCenter).CompareTo(Vector3.Distance(transform.position, b.currNode.GetCenter)));
-
-            SecurityLevel(1);
-            SecurityCall();
-            Witness();
             Debug.LogError($"발견 된 쁠레이어 : {visibleTargets.Count}");
 
             // 첫 번째(가장 가까운) 대상
