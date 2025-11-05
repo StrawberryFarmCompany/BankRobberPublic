@@ -41,6 +41,13 @@ public class PatrolEnemyNPC : EnemyNPC
         // 항상 시야 갱신 — secLevel이 0이어도 한 번은 감지해야 전투 전환 가능(없으면 턴 그냥 넘어감)
         List<EntityStats> visibleTargets = DetectVisibleTargets();
 
+        if (visibleTargets.Count >= 1 && stats.secData.GetSecLevel == 0)
+        {
+            SecurityLevel(1);
+            SecurityCall();
+            Witness();
+        }
+
         if (stats.secData.GetSecLevel == 0)
         {
             if (isNoise == true && isArrivedNoisePlace == false)
@@ -92,7 +99,34 @@ public class PatrolEnemyNPC : EnemyNPC
             }
         }
 
-        else if (stats.secData.GetSecLevel >= 1)
+        else if (stats.secData.GetSecLevel == 1)
+        {
+            DetectVisibleTargets();
+            if (nearPlayerLocation.currNode.GetCenter != null)
+            {
+                RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
+            }
+            TryAttack();
+
+            // 공격이 실패했거나 행동력이 남았으면 추적 후 공격
+            if (stats.curActionPoint > 0)
+            {
+                if (nearPlayerLocation != null)
+                {
+                    TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
+                    efsm.eta = 3;
+                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+                }
+
+                else
+                {
+                    Debug.LogError($"플레이어 로케이션이 지정되지 않았습니다 : {gameObject.name}");
+                }
+
+            }
+        }
+
+        else if (stats.secData.GetSecLevel == 2)
         {
             CombatBehaviour();
         }
