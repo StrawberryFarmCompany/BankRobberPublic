@@ -4444,7 +4444,19 @@ MonoBehaviour:
     m_ActionId: 2f2ce2e8-6657-4bd7-98df-0364a6b56472
     m_ActionName: NodePlayer/NodeSelect[/Mouse/position]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1508381220}
+        m_TargetAssemblyTypeName: PauseManager, Assembly-CSharp
+        m_MethodName: OnPause
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 04a01ef2-2815-4969-aa4c-c76030013530
     m_ActionName: NodePlayerManager/CloseUI[/Keyboard/backquote]
   m_NeverAutoSwitchControlSchemes: 0
@@ -5501,6 +5513,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1508381220 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3711329593896584344, guid: bb0aa1d483618ef42a420dd44d700a54,
+    type: 3}
+  m_PrefabInstance: {fileID: 620560439}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85185a0396036dd4aad83d71a04f9de7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1545216264
 GameObject:
   m_ObjectHideFlags: 0
