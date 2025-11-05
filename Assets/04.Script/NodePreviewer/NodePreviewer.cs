@@ -126,21 +126,21 @@ public class NodePreviewer
         return activatedBounds.Contains(pos);
     }
     public void GoalPreviewOnOff(bool enable)
-    {
+    {/*
         if (!enable)
         {
-            goalPreviewer.position = new Vector3(9999999f, 9999999f, 999999f);
-        }
+            goalPreviewer.position = new Vector3(-1000f, 0f, -1000f);
+        }*/
         goalPreviewer.gameObject.SetActive(enable);
         pathLine.gameObject.SetActive(enable);
     }
     public void TargetPreviewOnOff(bool enable)
     {
         targetPreviewer.gameObject.SetActive(enable);
-        if (!enable)
+        /*if (!enable)
         {
             targetPreviewer.position = new Vector3(9999999f, 9999999f, 999999f);
-        }
+        }*/
     }
     public void SetPosTargetPreview(Vector3Int pos)
     {
@@ -176,8 +176,8 @@ public class NodePreviewer
         boundPreviewerGOBJ.transform.localScale = Vector3.one;
 
         boundMeshFilter = boundPreviewerGOBJ.AddComponent<MeshFilter>();
-
-        ResourceManager.GetInstance.LoadAsync<Material>("NodePreviewerMat", (mat) => { boundPreviewerGOBJ.AddComponent<MeshRenderer>().material = mat; });
+        MeshRenderer mr = boundPreviewerGOBJ.AddComponent<MeshRenderer>();
+        ResourceManager.GetInstance.LoadAsync<Material>("NodePreviewerMat", (mat) => { mr.material = mat;mr.enabled = true; });
         
         vertDict = new Dictionary<Vector3, int>();
         triangleQueue = new Queue<int>();
@@ -191,7 +191,7 @@ public class NodePreviewer
         goalPreviewer.transform.position = Vector3.zero;
         goalPreviewer.transform.eulerAngles = Vector3.zero;
         goalPreviewer.transform.localScale = Vector3.one;
-        ResourceManager.GetInstance.LoadAsync<Material>("NodePreviewerGoalMat", (mat) => { goalPreviewer.gameObject.AddComponent<MeshRenderer>().material = mat; });
+
         Mesh goalPreviewerMesh = new Mesh();
         activatedBounds = new HashSet<Vector3Int>();
 
@@ -206,6 +206,10 @@ public class NodePreviewer
 
         goalPreviewerMesh.uv = goalPreviewUV.ToArray();
         goalPreviewer.gameObject.AddComponent<MeshFilter>().mesh = goalPreviewerMesh;
+
+        MeshRenderer mr = goalPreviewer.gameObject.AddComponent<MeshRenderer>();
+        ResourceManager.GetInstance.LoadAsync<Material>("NodePreviewerGoalMat", (mat) => { mr.material = mat; mr.enabled = true; });
+
         GameObject.DontDestroyOnLoad(goalPreviewer.gameObject);
     }
     private void CreatePathPreviewer()
