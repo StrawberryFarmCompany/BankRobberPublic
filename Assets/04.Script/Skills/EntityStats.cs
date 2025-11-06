@@ -288,7 +288,8 @@ public class EntityStats
             }
             if (hpbar != null)
             {
-                thisGameObject.GetComponent<HiderDisableObjects>().Flush();
+                HiderDisableObjects hiderObj= thisGameObject.GetComponent<HiderDisableObjects>();
+                if(hiderObj!=null)hiderObj.Flush();
                 hpbar.Destroy();
             }
         }
