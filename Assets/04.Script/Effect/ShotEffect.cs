@@ -14,12 +14,6 @@ public class ShotEffect
         muzzlePool = new ParticlePool("GunFIreVFX");
         trailPool = new TransformPool("BulletTrail");
     }
-    public void Reset()
-    {
-        muzzlePool.Reset(); 
-        trailPool.Reset(); 
-    }
-
 }
 
 public abstract class EffectPool<T> where T : Component
@@ -59,7 +53,6 @@ public class TransformPool : EffectPool<Transform>
         }
         else
         {
-            tr.gameObject.SetActive(true);
             return tr;
         }
     }
@@ -74,9 +67,11 @@ public class TransformPool : EffectPool<Transform>
     {
         Transform tr = Dequeue();
         tr.transform.position = start;
+
+        tr.gameObject.SetActive(true);
         float dist = Vector3.Distance(start, target);
 
-        tr.DOMove(target, dist / 300f).OnComplete(()=>Enqueue(tr));
+        tr.DOMove(target, dist / 50f).OnComplete(()=>TaskManager.GetInstance.StartCoroutine(Retrieve(tr, (dist / 300f) + 2f)));
         
     }
     public override void Reset()
@@ -88,7 +83,7 @@ public class TransformPool : EffectPool<Transform>
         GameObject obj = GameObject.Instantiate(prefab);
         obj.SetActive(true);
         obj.transform.parent = folder;
-        return GameObject.Instantiate(prefab).transform;
+        return obj.transform;
     }
 
     protected override System.Collections.IEnumerator Retrieve(Transform tr,float time)
