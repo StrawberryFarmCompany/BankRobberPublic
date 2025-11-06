@@ -4760,7 +4760,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 0}
   fovAngle: 110
-  canSeeAlly: 0
+  isDetection: 0
 --- !u!4 &318893671
 Transform:
   m_ObjectHideFlags: 0
@@ -25972,8 +25972,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 0
+  m_fontSizeBase: 0
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -33614,6 +33614,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: da198627-1215-43b1-a3a0-854fe52e6882
     m_ActionName: Player/Quest[/Keyboard/q]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 04a01ef2-2815-4969-aa4c-c76030013530
+    m_ActionName: NodePlayerManager/CloseUI[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

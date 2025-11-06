@@ -59,7 +59,7 @@ namespace BuffDefine
     [Serializable]
     public enum BuffColorType { green, red, yellow, cyan, none }
     [Serializable]
-    public enum BuffType { moveBonus, rallyCopCall, rallySecCall, securityLevel, aiming, witness, spotted, healBan, heal }
+    public enum BuffType { moveBonus, rallyCopCall, rallySecCall, securityLevel, aiming, witness, spotted, healBan, heal, none }
 
     public class MoveBonus : IBuff
     {
