@@ -10,9 +10,16 @@ public class TaskManager : MonoSingleTon<TaskManager>
     public Queue<TurnTask> task = new Queue<TurnTask>();
     public Queue<TurnTask> actionTask = new Queue<TurnTask>();
     private bool skipDelay;
+    public bool isSceneChanged = false;
     protected override void Init() 
     {
         StartTask();
+    }
+    public override void OnSceneChange()
+    {
+        task.Clear();
+        actionTask.Clear();
+        isSceneChanged = true;
     }
     public void AddTurnBehaviour(TurnTask add)
     {
@@ -61,23 +68,27 @@ public class TaskManager : MonoSingleTon<TaskManager>
                 currTask = task.Dequeue();
             }
             Debug.Log($"실행된 액션 명 {currTask.Action?.Method.Name}");
-            currTask.Action?.Invoke();
-
-            float currTime = 0f;
-            if(currTask.time > 0f)
+            if (!isSceneChanged)
             {
-                while (currTask.time > currTime)
+                currTask.Action?.Invoke();
+
+                float currTime = 0f;
+                if (currTask.time > 0f)
                 {
-                    if (skipDelay)
+                    while (currTask.time > currTime)
                     {
-                        skipDelay = false;
-                        break;
+                        if (skipDelay)
+                        {
+                            skipDelay = false;
+                            break;
+                        }
+                        currTime += Time.deltaTime;
+                        yield return null;
                     }
-                    currTime += Time.deltaTime;
-                    yield return null;
                 }
+                currTask.Action = null;
             }
-            currTask.Action = null;
+            
         }
     }
 }
