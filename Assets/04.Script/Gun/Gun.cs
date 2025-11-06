@@ -122,13 +122,15 @@ public class Gun : MonoBehaviour
                 Debug.Log($"{i + 1}번째 격발 결과\n불발");
             }
         }
+
         tasks.Add(new TurnTask(() => entityStats.Damaged(totalDamage), 0f));
 
         if (entityStats.currNode != null)
         {
-            tasks.Add(new TurnTask(() => GameManager.GetInstance.damageProjector.DeQueue(totalDamage, entityStats.currNode.GetCenter + (Vector3.up * 2)), 0f));
+            Vector3 damageProjectorPos = entityStats.currNode.GetCenter + (Vector3.up * 2);
+            tasks.Add(new TurnTask(() => GameManager.GetInstance.damageProjector.DeQueue(totalDamage, damageProjectorPos), 0.2f));
         }
-        TaskManager.GetInstance.InsertTurnBehaviour(tasks, 0);
+        TaskManager.GetInstance.AddActionBehaviour(tasks, 0);
         if (ishit >= 1)
         {
             makeNoise = true;
