@@ -140,7 +140,7 @@ public class PatrolEnemyNPC : EnemyNPC
         if (locationList == null)
             return;
 
-        Color[] colors = { Color.yellow, Color.red, Color.black, Color.blue, Color.green, Color.grey };
+        Color[] colors = { Color.yellow, Color.red, Color.black, Color.blue, Color.green, Color.grey, Color.cyan, Color.magenta };
 
         for (int i = 0; i < locationList.Count && i < colors.Length; i++)
         {

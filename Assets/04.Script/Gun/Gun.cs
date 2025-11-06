@@ -99,7 +99,7 @@ public class Gun : MonoBehaviour
         List<TurnTask> tasks = new List<TurnTask>();
         if (muzzlePoint != null)
         {
-            tasks.Add(new TurnTask(null, 0.3f));
+            tasks.Add(new TurnTask(null, 0.6f));
             tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
         }
         for (int i = 0; i < bulletPerOneShot; i++)
@@ -110,7 +110,8 @@ public class Gun : MonoBehaviour
                 float currDamage = result * damagePerOneBulletMultiplier;
                 if (muzzlePoint != null)
                 {
-                    tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
+                    //muzzle이 아닌 trail로 대체 필요
+                    //tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
                 }
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
                 ishit++;

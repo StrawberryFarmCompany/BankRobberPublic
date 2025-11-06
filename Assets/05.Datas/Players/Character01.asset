@@ -17,18 +17,18 @@ MonoBehaviour:
   Tag: 3
   maxActionPoint: 2
   curActionPoint: 2
-  movementSpeed: 5
-  movementPoint: 5
-  maxHp: 20
-  curHp: 20
-  evasionRate: 3
-  accuracyModifier: 3
+  movementSpeed: 3
+  movementPoint: 3
+  maxHp: 5
+  curHp: 5
+  evasionRate: 8
+  accuracyModifier: 0
   attackRange: 50
   detectingDistance: 0
   isCombat: 0
   characterType: 1
   playerSkill: 2
-  sabotage: 1
+  sabotage: 2
   aggroControl: 1
   maxRerollCount: 1
   curRerollCount: 1

@@ -1,6 +1,7 @@
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class FreePOV : MonoBehaviour
 {
@@ -43,6 +44,7 @@ public class FreePOV : MonoBehaviour
     {
         if (fcam == null) fcam = GetComponent<CinemachineFreeLook>();
 
+
         //감도 초기 적용
         ApplySensitivity();
 
@@ -52,6 +54,9 @@ public class FreePOV : MonoBehaviour
 
         // 초기 카메라 방향 설정
         ApplyRotation();
+
+        // 초기 yaw 기준을 살짝 틀기
+        yaw -= 150f;
     }
 
     private void OnEnable()
@@ -97,6 +102,12 @@ public class FreePOV : MonoBehaviour
         
 
         ApplyRotation();
+    }
+
+    private IEnumerator InitializeCameraRotation()
+    {
+        yield return null; // 한 프레임 대기 (Cinemachine 초기화 완료 시점)
+        fcam.m_XAxis.Value += 50f; // 원하는 만큼 회전
     }
 
     private void WasdMovement(Vector2 direction)
@@ -150,22 +161,22 @@ public class FreePOV : MonoBehaviour
 
     private void ApplyRotation()
     {
-        // 입력값으로 yawDelta 계산
+        // yawDirection 입력값에 따라 delta 계산
         float yawDelta = rotateSpeed * yawDirection * Time.deltaTime * currSpeedMultiplier;
 
-        // FreeLook 카메라의 수평축(XAxis) 값 회전
-        fcam.m_XAxis.Value += yawDelta;
+        // 누적 yaw 적용
+        yaw += yawDelta;
+
+        // FreeLook의 수평축은 yaw에 따라 갱신
+        fcam.m_XAxis.Value = yaw; //
 
         if (followTarget != null)
         {
-            // followTarget의 Y축 회전과 동기화
-            followTarget.Rotate(Vector3.up, yawDelta, Space.World);
-
-            // 카메라 자체 위치를 따라가도록 align
-            Vector3 euler = followTarget.rotation.eulerAngles;
-            transform.rotation = Quaternion.Euler(0f, euler.y, 0f);
+            followTarget.rotation = Quaternion.Euler(0f, yaw, 0f);
+            transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         }
     }
+
 
     // 회전 입력
     public void OnLeftRotate(InputAction.CallbackContext context)
