@@ -187,14 +187,14 @@ public class EntityStats
         {
             hpbar.SetCurrHP(CurHp);
         }
+        if (UIManager.GetInstance.pip != null)
+        {
+            UIManager.GetInstance.pip.RefreshHealth();
+        }
         if (CurHp <= 0)
         {
             CurHp = 0;
             Dead();
-        }
-        if(UIManager.GetInstance.pip != null)
-        {
-            UIManager.GetInstance.pip.RefreshHealth();
         }
     }
 
