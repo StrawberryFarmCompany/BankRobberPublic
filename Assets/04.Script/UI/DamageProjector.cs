@@ -60,6 +60,7 @@ public class DamageProjector
 
         GameObject obj = GameObject.Instantiate((GameObject)(ResourceManager.GetInstance.GetPreLoad["DamageText"]), Vector3.up * 9999, Quaternion.identity,dtParent);
         TextMeshPro tmp = obj.GetComponent<TextMeshPro>();
+        obj.AddComponent<BillBoard>();
         textQueue.Enqueue(tmp);
         obj.SetActive(false);
     }

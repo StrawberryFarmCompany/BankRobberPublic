@@ -23,7 +23,7 @@ MonoBehaviour:
   firstRange: 3
   firstRangeAccuracy: 0
   secondRange: 7
-  secondRangeAccuracy: -5
+  secondRangeAccuracy: -1
   thirdRange: 10
   thirdRangeAccuracy: -7
   awayRangeAccuracy: -15

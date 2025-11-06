@@ -8,10 +8,18 @@ public class TaskManager : MonoSingleTon<TaskManager>
 {
     Coroutine coroutine;
     public Queue<TurnTask> task = new Queue<TurnTask>();
+    public Queue<TurnTask> actionTask = new Queue<TurnTask>();
     private bool skipDelay;
+    public bool isSceneChanged = false;
     protected override void Init() 
     {
         StartTask();
+    }
+    public override void OnSceneChange()
+    {
+        task.Clear();
+        actionTask.Clear();
+        isSceneChanged = true;
     }
     public void AddTurnBehaviour(TurnTask add)
     {
@@ -22,19 +30,13 @@ public class TaskManager : MonoSingleTon<TaskManager>
     /// </summary>
     /// <param name="target">실행시켜 줄 값</param>
     /// <param name="order">해당 배열에 있는 값을 뒤로 밀어내고 target을 추가</param>
-    public void InsertTurnBehaviour(TurnTask target,int order)
-    {
-        skipDelay = order == 0 && task.Count > 0;
-        List<TurnTask> taskList = task.ToList();
-        taskList.Insert(order, target);
-        task = new Queue<TurnTask>(taskList);
-    }
-    public void InsertTurnBehaviour(List<TurnTask> target,int order)
+    public void AddActionBehaviour(List<TurnTask> target,int order)
     {
         skipDelay = (order == 0) && task.Count > 0;
-        List<TurnTask> taskList = task.ToList();
-        taskList.InsertRange(order, target);
-        task = new Queue<TurnTask>(taskList);
+        for (int i = 0; i < target.Count; i++)
+        {
+            actionTask.Enqueue(target[i]);
+        }
     }
     public void RemoveTurnBehaviour(TurnTask remove)
     {
@@ -54,26 +56,39 @@ public class TaskManager : MonoSingleTon<TaskManager>
         Debug.Log("테스크 루프 실행");
         while (true)
         {
-            if (task.Count <= 0) yield return new WaitUntil(()=> task.Count > 0);
-            TurnTask currTask = task.Dequeue();
-            Debug.Log($"실행된 액션 명 {currTask.Action?.Method.Name}");
-            currTask.Action?.Invoke();
-
-            float currTime = 0f;
-            if(currTask.time > 0f)
+            if (task.Count <= 0&& actionTask.Count <= 0) yield return new WaitUntil(()=> task.Count > 0 || actionTask.Count > 0);
+            TurnTask currTask;
+            if (actionTask.Count > 0)
             {
-                while (currTask.time > currTime)
-                {
-                    if (skipDelay)
-                    {
-                        skipDelay = false;
-                        break;
-                    }
-                    currTime += Time.deltaTime;
-                    yield return null;
-                }
+                currTask = actionTask.Dequeue();
+                skipDelay = false;
             }
-            currTask.Action = null;
+            else
+            {
+                currTask = task.Dequeue();
+            }
+            Debug.Log($"실행된 액션 명 {currTask.Action?.Method.Name}");
+            if (!isSceneChanged)
+            {
+                currTask.Action?.Invoke();
+
+                float currTime = 0f;
+                if (currTask.time > 0f)
+                {
+                    while (currTask.time > currTime)
+                    {
+                        if (skipDelay)
+                        {
+                            skipDelay = false;
+                            break;
+                        }
+                        currTime += Time.deltaTime;
+                        yield return null;
+                    }
+                }
+                currTask.Action = null;
+            }
+            
         }
     }
 }
