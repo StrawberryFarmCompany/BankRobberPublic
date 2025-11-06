@@ -191,6 +191,10 @@ public class EntityStats
             CurHp = 0;
             Dead();
         }
+        if(UIManager.GetInstance.pip != null)
+        {
+            UIManager.GetInstance.pip.RefreshHealth();
+        }
     }
 
     private void Dead()
