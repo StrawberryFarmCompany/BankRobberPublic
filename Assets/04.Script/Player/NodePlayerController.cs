@@ -491,7 +491,7 @@ public class NodePlayerController : MonoBehaviour
         NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Unstealth);
     }
 
-    public void CheckSneakAttack(Vector3 mouseScreenPos)
+    public void CheckSneakAttack(Vector3 mouseScreenPos, bool consumeAction = true)
     {
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
 
@@ -519,7 +519,7 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
         UIManager.GetInstance.ShowActionPanel(true);
-        if (playerStats.ConsumeActionPoint(1))
+        if (!consumeAction || playerStats.ConsumeActionPoint(1))
         {
             targetNodePos = targetNodeCenter;
             bestNearNodePos = bestNode;

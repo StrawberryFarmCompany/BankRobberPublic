@@ -219,6 +219,10 @@ public class EntityStats
         if (CurHp > maxHp)
         {
             CurHp = maxHp;
+        }
+
+        if (hpbar != null)
+        {
             hpbar.SetCurrHP(CurHp);
         }
     }
