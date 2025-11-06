@@ -60,7 +60,7 @@ public class MonoSingleTon <T>  : MonoBehaviour where T : MonoSingleTon<T>,new()
     /// <summary>
     /// 씬 전환시 초기화될것들
     /// </summary>
-    protected virtual void Reset()
+    public virtual void OnSceneChange()
     {
 
     }

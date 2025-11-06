@@ -16,6 +16,10 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
             return shotEffect;
         }
     }
+    public override void OnSceneChange()
+    {
+        shotEffect = null;
+    }
     public void ReduceCooldowns()
     {
         List<PlayerSkill> keys = new List<PlayerSkill>(cooldowns.Keys);
