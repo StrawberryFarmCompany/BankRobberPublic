@@ -27,3 +27,7 @@ MonoBehaviour:
   thirdRange: 20
   thirdRangeAccuracy: -5
   awayRangeAccuracy: -13
+  price: 0
+  weaponSprite: {fileID: 0}
+  gunPrefab: {fileID: 1120754092437823813, guid: 60681019fcf069a4b83aea527b8574da,
+    type: 3}

@@ -3037,6 +3037,7 @@ MonoBehaviour:
   awayRangeAccuracy: 0
   ishit: 0
   makeNoise: 0
+  muzzlePoint: {fileID: 0}
 --- !u!136 &2691678488543563958
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3072,7 +3073,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8c92e8943a9914ba89720ba5fcf806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ViewRadius: 5
+  ViewRadius: 13
   SoftenDistance: 3
   ViewAngle: 360
   UnobscuredRadius: 1

@@ -35,6 +35,7 @@ public class AlarmButton : IInteractable
             {
                 //문 열림
                 isOpen = true;
+                door.isOpen = true;
                 door.block.transform.DOScale(0, 0.5f);
                 GameManager.GetInstance.Nodes[door.tile].isWalkable = true;
                 NodePlayerManager.GetInstance.GetCurrentPlayer().TurnOnHighlighter();

@@ -35,7 +35,7 @@ public class HoldEnemyNPC : EnemyNPC
         // 항상 시야 갱신 — secLevel이 0이어도 한 번은 감지해야 전투 전환 가능(없으면 턴 그냥 넘어감)
         List<EntityStats> visibleTargets = DetectVisibleTargets();
 
-        if (visibleTargets != null && stats.secData.GetSecLevel == 1)
+        if (visibleTargets.Count >= 1 && stats.secData.GetSecLevel == 1)
         {
             SecurityLevel(1);
             SecurityCall();

@@ -10,6 +10,7 @@ public class Document : IInteractable
     private int docsValue;
     private DocumentType type;
     private bool isFirstTwoDigit;
+    public bool isSaw;
 
     public void Init(Vector3Int tile, /*GameObject target, */ int docsValue, DocumentType type, bool isFirstTwoDigit)
     {
@@ -17,11 +18,26 @@ public class Document : IInteractable
         this.docsValue = docsValue;
         this.type = type;
         this.isFirstTwoDigit = isFirstTwoDigit;
+        isSaw = false;
+        if (type == DocumentType.button)
+        {
+            GameManager.GetInstance.buttonDocuments.Add(docsValue, this);
+        }
+        else if (type == DocumentType.password)
+        {
+            if (!GameManager.GetInstance.passwordDocuments.ContainsKey(docsValue))
+            {
+                GameManager.GetInstance.passwordDocuments[docsValue] = new List<Document>();
+            }
+
+            GameManager.GetInstance.passwordDocuments[docsValue].Add(this);
+        }
         RegistInteraction(OnInteraction);
     }
 
     public void OnInteraction(EntityStats stat)
     {
+        isSaw = true;
         UIManager.GetInstance.SetDocumentUI(docsValue, type, isFirstTwoDigit);
     }
     public void UnInteraction(EntityStats stat)
