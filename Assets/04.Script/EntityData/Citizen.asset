@@ -21,12 +21,16 @@ MonoBehaviour:
   movementPoint: 6
   maxHp: 1
   curHp: 1
-  evasionRate: 4
+  evasionRate: 2
   accuracyModifier: 0
   attackRange: 0
   detectingDistance: 5
   isCombat: 0
+  characterType: 0
+  playerSkill: 0
   sabotage: 0
   aggroControl: 0
   maxRerollCount: 0
   curRerollCount: 0
+  portrait: {fileID: 0}
+  skillGroup: 0

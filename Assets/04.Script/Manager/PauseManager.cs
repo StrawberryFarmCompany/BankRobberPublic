@@ -12,13 +12,22 @@ public class PauseManager : MonoBehaviour
     [Header("정지UI")]
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject optionUI;
+    [SerializeField] private GameObject controlUI;
 
     [SerializeField] private Button resumeButton;   //계속하기
     [SerializeField] private Button optionButton;   //설정
+    [SerializeField] private Button controlButton;  //조작법
     [SerializeField] private Button quitButton;     //나가기
 
     [Header("옵션 UI")]
     [SerializeField] private Button backButton;     //옵션ui에서 뒤로가기
+
+    [Header("조작법 UI")]
+    [SerializeField] private Button controlBackButton; //돌아가기 버튼
+    [SerializeField] private Button firstBtn;          //1인칭 버튼
+    [SerializeField] private Button thirdBtn;          //3인칭 버튼
+    [SerializeField] private GameObject firstPanel;    //1인칭 조작법 패널
+    [SerializeField] private GameObject thirdPanel;    //3인칭 조작법 패널
 
     [Header("나가기 확인 UI")]
     [SerializeField] private GameObject quitConfirmUI;
@@ -32,14 +41,21 @@ public class PauseManager : MonoBehaviour
     {
         if (pausePanel) pausePanel.SetActive(false);
         if (optionUI) optionUI.SetActive(false);
+        if (controlUI) controlUI.SetActive(false);
         if (quitConfirmUI) quitConfirmUI.SetActive(false);
 
         if (resumeButton != null) resumeButton.onClick.AddListener(ResumeGame);
         if (optionButton != null) optionButton.onClick.AddListener(OpenOption);
+        if (controlButton) controlButton.onClick.AddListener(OpenControls);
         if (quitButton != null) quitButton.onClick.AddListener(OpenQuitConfirm);
         if (backButton != null) backButton.onClick.AddListener(CloseOption);
         if (quitYesButton) quitYesButton.onClick.AddListener(QuitGame);
         if (quitNoButton) quitNoButton.onClick.AddListener(CloseQuitConfirm);
+        if (controlBackButton) controlBackButton.onClick.AddListener(CloseControls);
+        if (firstBtn) firstBtn.onClick.AddListener(ShowFirstControls);
+        if (thirdBtn) thirdBtn.onClick.AddListener(ShowThirdControls);
+
+        ShowFirstControls();
     }
 
     public void OnPause(InputAction.CallbackContext context)
@@ -56,6 +72,12 @@ public class PauseManager : MonoBehaviour
         if (optionUI && optionUI.activeSelf)
         {
             CloseOption();
+            return;
+        }
+
+        if (controlUI && controlUI.activeSelf)
+        {
+            CloseControls();
             return;
         }
 
@@ -77,7 +99,7 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 0f;
         pausePanel.SetActive(true);
         optionUI.SetActive(false);
-
+        controlUI.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -111,6 +133,31 @@ public class PauseManager : MonoBehaviour
     {
         if (pausePanel) pausePanel.SetActive(true);
         if (optionUI) optionUI.SetActive(false);
+    }
+
+    private void OpenControls()
+    {
+        pausePanel.SetActive(false);
+        controlUI.SetActive(true);
+        ShowFirstControls();
+    }
+
+    private void CloseControls()
+    {
+        controlUI.SetActive(false);
+        pausePanel.SetActive(true);
+    }
+
+    private void ShowFirstControls()
+    {
+        if (firstPanel) firstPanel.SetActive(true);
+        if (thirdPanel) thirdPanel.SetActive(false);
+    }
+
+    private void ShowThirdControls()
+    {
+        if (firstPanel) firstPanel.SetActive(false);
+        if (thirdPanel) thirdPanel.SetActive(true);
     }
 
     private void OpenQuitConfirm()
