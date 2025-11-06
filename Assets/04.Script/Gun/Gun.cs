@@ -111,7 +111,16 @@ public class Gun : MonoBehaviour
                 if (muzzlePoint != null)
                 {
                     //muzzle이 아닌 trail로 대체 필요
-                    //tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
+                    if (result == 0)
+                    {
+                        Vector3 pos = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
+                        tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
+                    }
+                    else
+                    {
+                        Vector3 pos = new Vector3(Random.Range(-0.3f, 0.3f), 1, Random.Range(-0.3f, 0.3f));
+                        tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, entityStats.currNode.GetCenter+pos), 0f));
+                    }
                 }
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
                 ishit++;
@@ -120,6 +129,8 @@ public class Gun : MonoBehaviour
             else
             {
                 Debug.Log($"{i + 1}번째 격발 결과\n불발");
+                Vector3 pos = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
+                tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
             }
         }
 
@@ -145,7 +156,7 @@ public class Gun : MonoBehaviour
 
     public bool CheckBulletHit(Vector3Int targetPos, int hitBonus)
     {
-        int hitAdjustment;
+        int hitAdjustment;//현재 내 스텟에서의 명중률
         if (CheckRange(targetPos, firstRange))
         {
             hitAdjustment = firstRangeAccuracy;
