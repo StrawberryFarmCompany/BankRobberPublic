@@ -172,7 +172,7 @@
                 {
                     "name": "",
                     "id": "5ee3503f-0a99-4124-95e5-2bed4f259734",
-                    "path": "<Keyboard>/backquote",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -821,7 +821,7 @@
                 {
                     "name": "",
                     "id": "43efb330-6de1-4f1e-8561-7c70c39b525e",
-                    "path": "<Keyboard>/backquote",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

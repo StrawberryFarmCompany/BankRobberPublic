@@ -15,20 +15,20 @@ MonoBehaviour:
   displayName: "\uB098\uC774\uD2B8"
   description: "\uB3C4\uC6C0 \uD2B9\uD654 \uCE90\uB9AD\uD130"
   Tag: 3
-  maxActionPoint: 3
-  curActionPoint: 3
+  maxActionPoint: 2
+  curActionPoint: 2
   movementSpeed: 3
   movementPoint: 3
   maxHp: 5
   curHp: 5
-  evasionRate: 3
-  accuracyModifier: 3
+  evasionRate: 8
+  accuracyModifier: 0
   attackRange: 50
   detectingDistance: 0
   isCombat: 0
   characterType: 3
   playerSkill: 2
-  sabotage: 1
+  sabotage: 2
   aggroControl: 1
   maxRerollCount: 1
   curRerollCount: 1
