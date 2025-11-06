@@ -7,8 +7,9 @@ using UnityEngine;
 public class TaskManager : MonoSingleTon<TaskManager>
 {
     Coroutine coroutine;
-    public Queue<TurnTask> task = new Queue<TurnTask>();
-    public Queue<TurnTask> actionTask = new Queue<TurnTask>();
+    private Queue<TurnTask> task = new Queue<TurnTask>();
+    private Queue<TurnTask> actionTask = new Queue<TurnTask>();
+    private List<Coroutine> coroutines = new List<Coroutine>();
     private bool skipDelay;
     public bool isSceneChanged = false;
     protected override void Init() 
@@ -19,6 +20,12 @@ public class TaskManager : MonoSingleTon<TaskManager>
     {
         task.Clear();
         actionTask.Clear();
+        for (int i = 0; i < coroutines.Count; i++)
+        {
+            if (coroutines[i] == null) continue;
+            StopCoroutine(coroutines[i]);
+        }
+        coroutines.Clear();
         isSceneChanged = true;
     }
     public void AddTurnBehaviour(TurnTask add)
@@ -48,8 +55,14 @@ public class TaskManager : MonoSingleTon<TaskManager>
         if (coroutine != null) return;
         else
         {
-            coroutine = StartCoroutine(LoopTask());
+            coroutine = base.StartCoroutine(LoopTask());
         }
+    }
+    public new Coroutine StartCoroutine(IEnumerator enumerator)
+    {
+        Coroutine coroutine = base.StartCoroutine(enumerator);
+        coroutines.Add(coroutine);
+        return coroutine;
     }
     public IEnumerator LoopTask()
     {
