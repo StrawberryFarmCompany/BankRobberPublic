@@ -131,7 +131,44 @@ public static class EquippedSkills
             }
         }
 
-        //액티브 적용
+        //업그레이드 우선 적용
+        string upgradeKey = data.equipped.FirstOrDefault(k => k.StartsWith($"{group}.Upgrade."));
+        if (!string.IsNullOrEmpty(upgradeKey))
+        {
+            string[] parts = upgradeKey.Split('.');
+            if (parts.Length >= 3 && int.TryParse(parts[2], out int idNum))
+            {
+                int activeIndex = ((idNum - 1) / 2) + 1;
+                int upgradeType = ((idNum - 1) % 2) + 1;
+
+                switch (target.skillGroup)
+                {
+                    case SkillGroupType.Combat:
+                        if (activeIndex == 1)
+                            target.playerSkill = (upgradeType == 1) ? PlayerSkill.Heal_A : PlayerSkill.Heal_B;
+                        else if (activeIndex == 2)
+                            target.playerSkill = (upgradeType == 1) ? PlayerSkill.DoubleAttack_A : PlayerSkill.DoubleAttack_B;
+                        break;
+
+                    case SkillGroupType.Stealth:
+                        if (activeIndex == 1)
+                            target.playerSkill = (upgradeType == 1) ? PlayerSkill.SneakAttack_A : PlayerSkill.SneakAttack_B;
+                        else if (activeIndex == 2)
+                            target.playerSkill = (upgradeType == 1) ? PlayerSkill.Silence_A : PlayerSkill.Silence_B;
+                        break;
+
+                    case SkillGroupType.Support:
+                        if (activeIndex == 1)
+                            target.playerSkill = (upgradeType == 1) ? PlayerSkill.Ready_A : PlayerSkill.Ready_B;
+                        else if (activeIndex == 2)
+                            target.playerSkill = (upgradeType == 1) ? PlayerSkill.Evasion_A : PlayerSkill.Evasion_B;
+                        break;
+                }
+                return;
+            }
+        }
+
+        //업그레이드가 없을 경우, 액티브 적용
         string activeKey = data.equipped.FirstOrDefault(k => k.StartsWith($"{group}.Active."));
         if (!string.IsNullOrEmpty(activeKey))
         {
@@ -142,37 +179,27 @@ public static class EquippedSkills
                 {
                     case SkillGroupType.Stealth:
                         target.playerSkill = (idNum == 1)
-                            ? PlayerSkill.SneakAttack    // 암습
-                            : PlayerSkill.Silence;       // 소음 제거
+                            ? PlayerSkill.SneakAttack
+                            : PlayerSkill.Silence;
                         break;
 
                     case SkillGroupType.Combat:
                         target.playerSkill = (idNum == 1)
-                            ? PlayerSkill.Heal           // 체력 회복
-                            : PlayerSkill.DoubleAttack;  // 2중 타격
+                            ? PlayerSkill.Heal
+                            : PlayerSkill.DoubleAttack;
                         break;
 
                     case SkillGroupType.Support:
                         target.playerSkill = (idNum == 1)
-                            ? PlayerSkill.Ready          // 행동력 회복
-                            : PlayerSkill.Evasion;       // 회피율 증가
+                            ? PlayerSkill.Ready
+                            : PlayerSkill.Evasion;
                         break;
                 }
-                Debug.Log($"[EquippedSkills] ({group}) 액티브 적용: {target.playerSkill}");
             }
         }
         else
         {
             target.playerSkill = PlayerSkill.None;
-            Debug.Log($"[EquippedSkills] ({group}) 액티브 미장착");
-        }
-
-        //강화 상태
-        string upgradeKey = data.equipped.FirstOrDefault(k => k.StartsWith($"{group}.Upgrade."));
-        if (!string.IsNullOrEmpty(upgradeKey))
-        {
-            var state = GetSkillState(group);
-            Debug.Log($"[EquippedSkills] ({group}) 강화 상태: {state}");
         }
     }
 

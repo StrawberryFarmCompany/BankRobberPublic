@@ -86,7 +86,6 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
             //암습
             case PlayerSkill.SneakAttack:
-                if (!player.playerStats.ConsumeActionPoint(1)) return;
 
                 player.CheckSneakAttack(mousePos);
 
@@ -95,7 +94,6 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
             //암습 강화A (성공 시 이동력 회복)
             case PlayerSkill.SneakAttack_A:
-                if (!player.playerStats.ConsumeActionPoint(1)) return;
                 player.CheckSneakAttack(mousePos);
                 player.playerStats.HealMovement(5);
                 SetCooldown(skill, 1);
@@ -103,16 +101,12 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
             //암습 강화B (성공 확률 증가)
             case PlayerSkill.SneakAttack_B:
-                if (!player.playerStats.ConsumeActionPoint(1)) return;
 
                 Debug.Log("[암습 강화B] 암습 2회 판정 시작");
 
-                //첫 번째 시도
-                player.CheckSneakAttack(mousePos);
+                player.CheckSneakAttack(mousePos, true);
 
-                //두 번째 시도 (0.3초 지연)
-                player.StartCoroutine(DelayedSneakAttack(player, mousePos, 0.3f));
-
+                player.StartCoroutine(DelayedSneakAttack(player, mousePos, 0.3f, false));
                 SetCooldown(skill, 1);
                 break;
 
@@ -337,9 +331,9 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
         }
     }
 
-    private IEnumerator DelayedSneakAttack(NodePlayerController player, Vector3 mousePos, float delay)
+    private IEnumerator DelayedSneakAttack(NodePlayerController player, Vector3 mousePos, float delay, bool consumeAction = true)
     {
         yield return new WaitForSeconds(delay);
-        player.CheckSneakAttack(mousePos);
+        player.CheckSneakAttack(mousePos, consumeAction);
     }
 }
