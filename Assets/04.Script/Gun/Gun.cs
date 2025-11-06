@@ -30,7 +30,7 @@ public class Gun : MonoBehaviour
 
     public int ishit = 0;
     public bool makeNoise = false;
-
+    public Transform muzzlePoint;
     private void Awake()
     {
         if (data != null)
@@ -74,6 +74,12 @@ public class Gun : MonoBehaviour
         ishit = 0;
         makeNoise = false;
 
+        if (muzzlePoint == null)
+        {
+            SetGunMuzzlePoint(transform, "ShootPos");
+            if (muzzlePoint == null) SetGunMuzzlePoint(transform, "Hand_R");
+        }
+
         if(!ConsumeRounds(1/*useRoundsPerShot*/))
         {
             Debug.Log("잔탄수 부족, 불발");
@@ -90,13 +96,22 @@ public class Gun : MonoBehaviour
 
         Debug.Log($"{entityStats.characterName}에게 격발 데미지를 가했음");
         float totalDamage = 0f;
-        for(int i = 0; i < bulletPerOneShot; i++)
+        List<TurnTask> tasks = new List<TurnTask>();
+        if (muzzlePoint != null)
+        {
+            tasks.Add(new TurnTask(null, 0.3f));
+            tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
+        }
+        for (int i = 0; i < bulletPerOneShot; i++)
         {
             if(CheckBulletHit(targetPos, hitBonus))
             {
                 int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
                 float currDamage = result * damagePerOneBulletMultiplier;
-                entityStats.Damaged(currDamage);
+                if (muzzlePoint != null)
+                {
+                    tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
+                }
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
                 ishit++;
                 totalDamage += currDamage;
@@ -106,12 +121,13 @@ public class Gun : MonoBehaviour
                 Debug.Log($"{i + 1}번째 격발 결과\n불발");
             }
         }
+        tasks.Add(new TurnTask(() => entityStats.Damaged(totalDamage), 0f));
 
         if (entityStats.currNode != null)
         {
-            GameManager.GetInstance.damageProjector.DeQueue(totalDamage, entityStats.currNode.GetCenter + (Vector3.up * 2));
+            tasks.Add(new TurnTask(() => GameManager.GetInstance.damageProjector.DeQueue(totalDamage, entityStats.currNode.GetCenter + (Vector3.up * 2)), 0f));
         }
-
+        TaskManager.GetInstance.InsertTurnBehaviour(tasks, 0);
         if (ishit >= 1)
         {
             makeNoise = true;
@@ -191,5 +207,25 @@ public class Gun : MonoBehaviour
     {
         return curRounds > 0;
     }
+    private void SetGunMuzzlePoint(Transform tr,string name)
+    {
+        if (muzzlePoint == null)
+        {
+            muzzlePoint = transform.Find(name);
+            if (muzzlePoint != null) return;
+            for (int i = 0; i < tr.childCount; i++)
+            {
+                Transform curTr = tr.GetChild(i).Find(name);
+                if (curTr == null)
+                {
+                    SetGunMuzzlePoint(tr.GetChild(i), name);
+                }
+                else
+                {
+                    muzzlePoint = curTr;
+                }
+            }
 
+        }
+    }
 }

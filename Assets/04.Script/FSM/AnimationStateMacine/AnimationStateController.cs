@@ -49,7 +49,7 @@ public class AnimationStateController : MonoBehaviour
     private void Start()
     {
         Init();
-
+        gun.muzzlePoint = currentGun.transform.Find("ShootPos");
         // 처음 상태는 Idle
         stateMachine.ForceSet(idleState);
     }

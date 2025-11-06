@@ -102,9 +102,11 @@ class GameManager : SingleTon<GameManager>
         GatheredCost = 0;
     }
 
-    protected override void Reset()
+    public override void Reset()
     {
         base.Reset();
+
+        damageProjector?.OnReset();
         GatheredGold = 0;
         GatheredCost = 0;
         SecurityData.Reset();
@@ -115,6 +117,8 @@ class GameManager : SingleTon<GameManager>
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();
         ReleaseButtonDoor();
+        ReleasePasswordDoor();
+        ReleaseDocuments();
         Debug.Log($"초기화된 돈 : {GatheredGold}");
     }
     public void OnEntityReset()
@@ -464,11 +468,6 @@ class GameManager : SingleTon<GameManager>
         Money.GetInstance.Add(totalBenefit);
     }
 
-    public void DoReset()
-    {
-        damageProjector.OnReset();
-        Reset();
-    }
 
     //-------------------------------------------------------------------버튼도어------------------------------------------나중에 도어매니저 고려
 
@@ -506,4 +505,21 @@ class GameManager : SingleTon<GameManager>
         passwordDoorPair[index] = password;
         isOpenPasswordDoor[index] = false;
     }
+
+    public void ReleasePasswordDoor()
+    {
+        passwordDoorPair.Clear();
+        isOpenPasswordDoor.Clear();
+    }
+
+    //--------------------------------------------------------------------------------------문서 관련 --------------------------
+    public Dictionary<int, Document> buttonDocuments = new Dictionary<int, Document>();
+    public Dictionary<int, List<Document>> passwordDocuments = new Dictionary<int, List<Document>>();
+
+    public void ReleaseDocuments()
+    {
+        buttonDocuments.Clear();
+        passwordDocuments.Clear();
+    }
+
 }

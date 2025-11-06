@@ -7,11 +7,17 @@ public class ShotEffect
 {
     public ParticlePool muzzlePool;
     public TransformPool trailPool;
+
     // Start is called before the first frame update
     public ShotEffect()
     {
         muzzlePool = new ParticlePool("GunFIreVFX");
         trailPool = new TransformPool("BulletTrail");
+    }
+    public void Reset()
+    {
+        muzzlePool.Reset(); 
+        trailPool.Reset(); 
     }
 
 }
@@ -27,26 +33,29 @@ public abstract class EffectPool<T> where T : Component
     }
     protected abstract void Enqueue(T target);
     protected abstract T Dequeue();
-    protected abstract void PlayEffect(Vector3 start,Vector3 target);
+    public abstract void PlayEffect(Vector3 start,Vector3 target);
+    public abstract void Reset();
+    protected abstract T Instantiate();
+    protected abstract System.Collections.IEnumerator Retrieve(T collect,float time);
 }
+
+
+
 public class TransformPool : EffectPool<Transform>
 {
     public TransformPool(string name) : base(name)
     {
         prefab = (GameObject)ResourceManager.GetInstance.GetPreLoad[name];
         folder = new GameObject(name).transform;
+        Enqueue(Instantiate());
     }
     protected override Transform Dequeue()
     {
-        Transform tr = queue.Dequeue();
+        queue.TryDequeue(out Transform tr);
         if (DOTween.IsTweening(tr))
         {
             queue.Enqueue(tr);
-
-            GameObject obj = GameObject.Instantiate(prefab);
-            obj.SetActive(true);
-            obj.transform.parent = folder;
-            return GameObject.Instantiate(prefab).transform;
+            return Instantiate();
         }
         else
         {
@@ -61,34 +70,53 @@ public class TransformPool : EffectPool<Transform>
         queue.Enqueue(target);
     }
 
-    protected override void PlayEffect(Vector3 start, Vector3 target)
+    public override void PlayEffect(Vector3 start, Vector3 target)
     {
         Transform tr = Dequeue();
         tr.transform.position = start;
         float dist = Vector3.Distance(start, target);
+
+        tr.DOMove(target, dist / 300f).OnComplete(()=>Enqueue(tr));
         
-        tr.DOMove(target,dist/300f );
+    }
+    public override void Reset()
+    {
+        queue.Clear();
+    }
+    protected override Transform Instantiate()
+    {
+        GameObject obj = GameObject.Instantiate(prefab);
+        obj.SetActive(true);
+        obj.transform.parent = folder;
+        return GameObject.Instantiate(prefab).transform;
+    }
+
+    protected override System.Collections.IEnumerator Retrieve(Transform tr,float time)
+    {
+        yield return new WaitForSeconds(time);
         Enqueue(tr);
+        yield break;
     }
 }
+
+
+
 public class ParticlePool : EffectPool<ParticleSystem>
 {
+    readonly WaitForSeconds timer = new WaitForSeconds(2f);
     public ParticlePool(string name) : base(name)
     {
         prefab = (GameObject)ResourceManager.GetInstance.GetPreLoad[name];
         folder = new GameObject(name).transform;
+        Enqueue(Instantiate());
     }
     protected override ParticleSystem Dequeue()
     {
-        ParticleSystem particle = queue.Dequeue();
+        queue.TryDequeue(out ParticleSystem particle);
         if (particle.isPlaying)
         {
             queue.Enqueue(particle);
-
-            GameObject obj = GameObject.Instantiate(prefab);
-            obj.SetActive(true);
-            obj.transform.parent = folder;
-            return obj.GetComponent<ParticleSystem>();
+            return Instantiate();
         }
         else
         {
@@ -108,11 +136,28 @@ public class ParticlePool : EffectPool<ParticleSystem>
     /// <param name="start">이펙트 위치</param>
     /// <param name="eulerAngle">이펙트 각도</param>
     /// <param name="time">미사용 매개변수</param>
-    protected override void PlayEffect(Vector3 start, Vector3 eulerAngle)
+    public override void PlayEffect(Vector3 start, Vector3 eulerAngle)
     {
         ParticleSystem particle = Dequeue();
         particle.transform.position = start;
         particle.transform.eulerAngles = eulerAngle;
+        TaskManager.GetInstance.StartCoroutine(Retrieve(particle,0f));
+    }
+    public override void Reset()
+    {
+        queue.Clear();
+    }
+    protected override ParticleSystem Instantiate()
+    {
+        GameObject obj = GameObject.Instantiate(prefab);
+        obj.SetActive(true);
+        obj.transform.parent = folder;
+        return obj.GetComponent<ParticleSystem>();
+    }
+    protected override System.Collections.IEnumerator Retrieve(ParticleSystem particle,float a)
+    {
+        yield return timer;
         Enqueue(particle);
+        yield break;
     }
 }

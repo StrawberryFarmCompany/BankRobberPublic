@@ -75,6 +75,7 @@ public class Door : IInteractable
     {
         this.tile = tile;
         this.tr = tr;
+        this.type = type;
 
         this.block = block;
         if (isrand) index = Random.Range(min, max+1);
@@ -137,7 +138,7 @@ public class Door : IInteractable
         for (int i = 0; i < vecs.Count; i++)
         {
             //GameObject.CreatePrimitive(PrimitiveType.Cube).transform.position = vecs[i];//디버그코드
-            GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(interaction, key/*OnInteraction, lockModule.ToString() + InteractionType.Door.ToString()*/);
+                GameManager.GetInstance.Nodes[vecs[i]].AddInteraction(interaction, key/*OnInteraction, lockModule.ToString() + InteractionType.Door.ToString()*/);
         }
     }
     public void ReleaseInteraction(Interaction interaction)

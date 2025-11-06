@@ -27,6 +27,12 @@ public class TaskManager : MonoSingleTon<TaskManager>
         taskList.Insert(order, target);
         task = new Queue<TurnTask>(taskList);
     }
+    public void InsertTurnBehaviour(List<TurnTask> target,int order)
+    {
+        List<TurnTask> taskList = task.ToList();
+        taskList.InsertRange(order, target);
+        task = new Queue<TurnTask>(taskList);
+    }
     public void RemoveTurnBehaviour(TurnTask remove)
     {
         TurnTask[] tasks = task.ToArray().Where(x => x.Action.Method.Name != remove.Action.Method.Name).ToArray();
@@ -48,7 +54,14 @@ public class TaskManager : MonoSingleTon<TaskManager>
             if (task.Count <= 0) yield return new WaitUntil(()=> task.Count > 0);
             TurnTask currTask = task.Dequeue();
             Debug.Log($"실행된 액션 명 {currTask.Action?.Method.Name}");
-            currTask.Action?.Invoke();
+            try
+            {
+                currTask.Action?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
+            }
             yield return new WaitForSeconds(currTask.time);
             currTask.Action = null;
         }
