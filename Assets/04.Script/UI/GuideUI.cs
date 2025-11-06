@@ -51,7 +51,11 @@ public class GuideUI : MonoBehaviour
     private void Update()
     {
         //테스트용 나중에 지우셈
-        UpdateGuide();
+        if (NodePlayerManager.GetInstance.GetAllPlayers().Count != 0)
+        {
+            UpdateGuide();
+        }
+        
     }
 
     public void UpdateGuide()
