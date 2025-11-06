@@ -201,6 +201,7 @@ public class EntityStats
     private void Dead()
     {
         GameManager.GetInstance.GatherCostAndScore();
+        RemoveHiderObj();
         //thisGameObject.SetActive(false);
 
         if (characterType != CharacterType.None)
@@ -279,8 +280,7 @@ public class EntityStats
         if (currNode == null) return Vector3Int.zero;
         return currNode.GetCenter;
     }
-
-    public void DestroyEntity()
+    private void RemoveHiderObj()
     {
         if (thisGameObject.TryGetComponent<FogOfWarHider>(out FogOfWarHider hider))
         {
@@ -293,12 +293,13 @@ public class EntityStats
             }
             if (hpbar != null)
             {
-                HiderDisableObjects hiderObj= thisGameObject.GetComponent<HiderDisableObjects>();
-                if(hiderObj!=null)hiderObj.Flush();
+                HiderDisableObjects hiderObj = thisGameObject.GetComponent<HiderDisableObjects>();
                 hpbar.Destroy();
             }
         }
-
+    }
+    public void DestroyEntity()
+    {
 
         OnDamaged = null;
         OnDead = null;

@@ -139,7 +139,12 @@ public class GameEnd : MonoBehaviour
     private void LoadLobby()
     {
         GameManager.GetInstance.Reset();
-        LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
+        SkillEffectManager.GetInstance.OnSceneChange();
+        TaskManager.GetInstance.OnSceneChange();
+
+        LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);//이거 Async로 바꾸는게 맞지 않나
+
+        TaskManager.GetInstance.isSceneChanged = false;
     }
 
     private void SetBenefitResult()
