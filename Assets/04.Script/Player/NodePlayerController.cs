@@ -491,7 +491,7 @@ public class NodePlayerController : MonoBehaviour
         NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Unstealth);
     }
 
-    public void CheckSneakAttack(Vector3 mouseScreenPos)
+    public void CheckSneakAttack(Vector3 mouseScreenPos, bool consumeAction = true)
     {
         Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
 
@@ -519,7 +519,7 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
         UIManager.GetInstance.ShowActionPanel(true);
-        if (playerStats.ConsumeActionPoint(1))
+        if (!consumeAction || playerStats.ConsumeActionPoint(1))
         {
             targetNodePos = targetNodeCenter;
             bestNearNodePos = bestNode;
@@ -677,7 +677,7 @@ public class NodePlayerController : MonoBehaviour
         }
         return true;
     }
-    private void CheckRangeAttack(Vector3 mouseScreenPos)
+    public void CheckRangeAttack(Vector3 mouseScreenPos)
     {
         Vector3Int targetPos = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
         if (!CheckObstacleOnShotPath(targetPos))
@@ -1057,6 +1057,18 @@ public class NodePlayerController : MonoBehaviour
         if (playerStats.characterType == CharacterType.Bishop) NodePlayerManager.GetInstance.SwitchToPlayer(0);
         else if (playerStats.characterType == CharacterType.Rook) NodePlayerManager.GetInstance.SwitchToPlayer(1);
         else if (playerStats.characterType == CharacterType.Knight) NodePlayerManager.GetInstance.SwitchToPlayer(2);
+    }
+
+    public void CheckRangeAttackPos(Vector3Int targetPos)
+    {
+        if (!CheckObstacleOnShotPath(targetPos)) return;
+        if (!CheckRangeAndEntity(targetPos, (int)playerStats.attackRange)) return;
+        if (!gun.CheckAmmo()) return;
+        if (!playerStats.ConsumeActionPoint(1)) return;
+
+        gun.Shoot(targetPos, hitBonus);
+        animationController.HipRangedAttackState(targetPos);
+        NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger, gun.makeNoise);
     }
 }
 public enum PlayerStatus {
