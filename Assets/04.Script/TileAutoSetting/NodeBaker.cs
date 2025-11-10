@@ -12,6 +12,7 @@ public class NodeBaker : MonoBehaviour
     HashSet<Vector3Int> vectors = new HashSet<Vector3Int>();
     private void Awake()
     {
+        if (surface.navMeshData == null) surface.BuildNavMesh();
         if (vectors.Count == 0) OnBake();
         RegistNodes();
     }
