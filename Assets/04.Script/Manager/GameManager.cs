@@ -20,9 +20,6 @@ class GameManager : SingleTon<GameManager>
     private NoneBattleTurnStateMachine noneBattleTurn;
     public NoneBattleTurnStateMachine NoneBattleTurn { get { return noneBattleTurn; } }
 
-    private BattleTurnStateMachine battleTurn;
-    public BattleTurnStateMachine BattleTurn { get { return battleTurn; } }
-
     public GamePhase CurrentPhase { get; private set; } = GamePhase.NoneBattle;
 
     private bool playerTurn;
@@ -97,7 +94,6 @@ class GameManager : SingleTon<GameManager>
         nodes = new Dictionary<Vector3Int, Node>();
         noneBattleTurn = new NoneBattleTurnStateMachine();
         //noneBattleTurn.AddStartPointer(TurnTypes.ally, StartPlayerTurn);
-        battleTurn = new BattleTurnStateMachine();
         GatheredGold = 0;
         GatheredCost = 0;
     }
@@ -113,7 +109,6 @@ class GameManager : SingleTon<GameManager>
         OnNodeReset();            //나중에 nodeInteractions 가 Null 뜨는 거 잡기
         noneBattleTurn.OnSceneChange();
         OnEntityReset();
-        battleTurn = new BattleTurnStateMachine();
         isPlayerGetKeyCard = null;
         isPlayerGetKeyCard = new List<bool>();
         ReleaseButtonDoor();
@@ -255,32 +250,6 @@ class GameManager : SingleTon<GameManager>
     public void OnThird(InputAction.CallbackContext context) { ... }
     */
 
-    public void StartPlayerTurn()
-    {
-        if (IsNoneBattlePhase())
-        {
-            noneBattleTurn.ForceSet((int)TurnTypes.ally);
-
-            // NodePlayerManager에서 모든 플레이어 초기화
-            foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
-            {
-                player.playerStats.ResetForNewTurn();
-            }
-            //FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
-            NodePlayerManager.GetInstance.SwitchToPlayer(0);
-        }
-        else
-        {
-            battleTurn.ChangeState();
-            endTurnCount = 0;
-
-            foreach (var player in NodePlayerManager.GetInstance.GetAllPlayers())
-            {
-                player.playerStats.ResetForNewTurn();
-            }
-            NodePlayerManager.GetInstance.SwitchToPlayer(0);
-        }
-    }
 
     public bool IsNoneBattlePhase()
     {
@@ -310,10 +279,11 @@ class GameManager : SingleTon<GameManager>
     public void EndPlayerTurn()
     {
         FloorCullingManager.GetInstance.EnableAllCollisionsAndRenderers();
-        if (IsNoneBattlePhase())
+        noneBattleTurn.ChangeState();
+        /*if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState();
         else
-            battleTurn.ChangeState();
+            battleTurn.ChangeState();*/
     }
 
 
