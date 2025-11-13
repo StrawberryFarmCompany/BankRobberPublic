@@ -34,6 +34,8 @@ public class NodePlayerController : MonoBehaviour
 
     public bool isEndReady;
 
+    public bool IsSkillAttack = false;
+
     //[Header("현재 플레이어의 액션 상태")]
     public PlayerStatus currPlayerStatus;
 
@@ -76,6 +78,8 @@ public class NodePlayerController : MonoBehaviour
 
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
+
+        EquippedSkills.ApplyEquippedSkills(playerStats);
     }
 
     void Start()
@@ -91,7 +95,6 @@ public class NodePlayerController : MonoBehaviour
         playerStats.GetTileInteraction(transform.position);
         transform.position = playerStats.currNode.GetCenter;
         GameManager.GetInstance.RegisterEntity(playerStats);
-        EquippedSkills.ApplyEquippedSkills(playerStats);
         SetCharacterTurn();
     }
 
@@ -1064,7 +1067,10 @@ public class NodePlayerController : MonoBehaviour
         if (!CheckObstacleOnShotPath(targetPos)) return;
         if (!CheckRangeAndEntity(targetPos, (int)playerStats.attackRange)) return;
         if (!gun.CheckAmmo()) return;
-        if (!playerStats.ConsumeActionPoint(1)) return;
+        if (!IsSkillAttack)
+        {
+            if (!playerStats.ConsumeActionPoint(1)) return;
+        }
 
         gun.Shoot(targetPos, hitBonus);
         animationController.HipRangedAttackState(targetPos);

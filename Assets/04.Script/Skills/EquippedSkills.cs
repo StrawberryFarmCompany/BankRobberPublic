@@ -245,6 +245,8 @@ public static class EquippedSkills
     }
 }
 
+
+
 public enum SkillState
 {
     Locked,    // 액티브 미장착

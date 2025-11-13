@@ -30,7 +30,16 @@ public class PassiveSkill
         target.actionPoint += increaseActionPoint;
         target.movementSpeed += increaseMovementSpeed;
         target.movement += increaseMovement;
-        target.maxHp += increaseMaxHp;
+
+        if (increaseMaxHp != 0)
+        {
+            target.maxHp += increaseMaxHp;
+            target.CurHp += increaseMaxHp;
+
+            if (target.CurHp > target.maxHp)
+                target.CurHp = target.maxHp;
+        }
+
         target.evasionRate += increaseEvasionRate;
         target.accuracyModifier += increaseAccuracyModifier;
         target.sabotage += increaseSabotage;
