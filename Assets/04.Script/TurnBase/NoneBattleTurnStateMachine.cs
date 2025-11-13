@@ -35,7 +35,10 @@ public class NoneBattleTurnStateMachine
         if(GetCurrState() == TurnTypes.ally) GameManager.GetInstance.StartPlayerTurn();
         
         currState.Enter();
-        
+
+        // 딜레이된 턴 이벤트 실행
+        CheckDelayedTurnActions();
+
         if (currState.StartPointer == null || currState.StartPointer.Method == null|| currState.StartPointer.GetInvocationList().Length  <= 0)
         {
             Debug.Log($"논 배틀턴 등록된 이벤트 없음, 타입 {GetCurrState()}");
@@ -175,6 +178,78 @@ public class NoneBattleTurnStateMachine
         return (TurnTypes) num;
     }
 
+    // 딜레이된 턴 액션 저장용
+    private class DelayedTurnAction
+    {
+        public int executeRound;
+        public TurnBehaviour action;
+        public int actionId;
+    }
+
+    private List<DelayedTurnAction> delayedActions = new List<DelayedTurnAction>();
+
+
+    /// <summary>
+    ///  n턴 뒤에 특정 함수를 실행하는 함수
+    /// </summary>
+    public void InvokeAfterTurns(int delay, TurnBehaviour action)
+    {
+        delayedActions.Add(new DelayedTurnAction
+        {
+            executeRound = currRound + delay*2,
+            action = action
+        });
+    }
+
+    private void CheckDelayedTurnActions()
+    {
+        // 복사본을 따로 만들어서 순회 (원본은 안전하게 유지)
+        var copy = new List<DelayedTurnAction>(delayedActions);
+        var toRemove = new List<DelayedTurnAction>();
+
+        foreach (var action in copy)
+        {
+            if (action.executeRound == currRound)
+            {
+                action.action?.Invoke();
+                toRemove.Add(action);
+            }
+        }
+
+        // 순회가 끝난 후 원본 리스트에서 제거
+        foreach (var r in toRemove)
+        {
+            delayedActions.Remove(r);
+        }
+    }
+
+    private int nextId = 0;
+
+    public int InvokeAfterTurnsCancellable(int delay, TurnBehaviour action)
+    {
+        int id = nextId++;
+
+        delayedActions.Add(new DelayedTurnAction
+        {
+            executeRound = currRound + delay*2,
+            action = action,
+            actionId = id
+        });
+
+        return id;
+    }
+
+    public void CancelInvoke(int id)
+    {
+        for (int i = delayedActions.Count - 1; i >= 0; i--)
+        {
+            if (delayedActions[i].actionId == id)
+            {
+                delayedActions.RemoveAt(i);
+                return;
+            }
+        }
+    }
 }
 public enum TurnTypes{ally,enemy,neutral}
 public delegate void TurnBehaviour();

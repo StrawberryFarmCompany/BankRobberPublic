@@ -97,7 +97,6 @@ public class NodePlayerController : MonoBehaviour
 
     void Update()
     {
-
         if (isMoving)
         {
             animationController.MoveState();

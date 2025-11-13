@@ -146,6 +146,7 @@ class GameManager : SingleTon<GameManager>
         {
             item.ResetEvent();
             item.ResetInteraction();
+            item.ResetExitEvent();
         }
         nodes.Clear();
     }

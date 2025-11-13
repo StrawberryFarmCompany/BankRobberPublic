@@ -200,6 +200,17 @@ public class EntityStats
 
     private void Dead()
     {
+        if(LoadSceneManager.GetInstance.curSceneType == SceneType.FirstTutorialScene) // 튜토리얼에서는 사망 무시
+        {
+            if(thisGameObject.GetComponent<NodePlayerController>() != null)
+            {
+                ResetForNewTurn();
+                CurHp = maxHp;
+                thisGameObject.transform.position = new Vector3(70, 0, 29);
+                return;
+            }
+        }
+
         GameManager.GetInstance.GatherCostAndScore();
         RemoveHiderObj();
         //thisGameObject.SetActive(false);

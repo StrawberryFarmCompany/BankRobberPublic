@@ -5,7 +5,8 @@ public enum SceneType
 {
     MainTitleScene,
     LobbyScene,
-    TutorialScene,
+    FirstTutorialScene,
+    SecondTutorialScene,
     Stage01Scene,
     Stage02Scene,
     Stage03Scene,
@@ -14,7 +15,7 @@ public enum SceneType
 
 public class LoadSceneManager : SingleTon<LoadSceneManager>
 {
-    public SceneType curSceneType;
+    public SceneType curSceneType = SceneType.FirstTutorialScene;
 
     // 각 스테이지 진입 조건 점수
     public int stage02RequireScore = 90000;
@@ -42,13 +43,38 @@ public class LoadSceneManager : SingleTon<LoadSceneManager>
         }
     }
 
+    public void UpdateCurSceneTypeFromActiveScene()
+    {
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        SceneType sceneType = SceneNameToSceneType(activeSceneName);
+        curSceneType = sceneType;
+    }
+    private SceneType SceneNameToSceneType(string sceneName)
+    {
+        switch (sceneName)
+        {
+            case "MainTitleScene": return SceneType.MainTitleScene;
+            case "LobbyScene": return SceneType.LobbyScene;
+            case "TutorialScene": return SceneType.FirstTutorialScene;
+            case "ProtoTypeScene": return SceneType.SecondTutorialScene;
+            case "Stage01Scene": return SceneType.Stage01Scene;
+            case "Stage02Scene": return SceneType.Stage02Scene;
+            case "Stage03Scene": return SceneType.Stage03Scene;
+            case "Stage04Scene": return SceneType.Stage04Scene;
+        }
+
+        Debug.LogWarning($"씬 이름 {sceneName} 과 매칭되는 SceneType이 없습니다.");
+        return SceneType.MainTitleScene;
+    }
+
     private string SceneTypeToString(SceneType sceneType)
     {
         switch (sceneType)
         {
             case SceneType.MainTitleScene: return "MainTitleScene";
             case SceneType.LobbyScene: return "LobbyScene";
-            case SceneType.TutorialScene: return "ProtoTypeScene";
+            case SceneType.FirstTutorialScene: return "TutorialScene";
+            case SceneType.SecondTutorialScene: return "ProtoTypeScene";
             case SceneType.Stage01Scene: return "Stage01Scene";
             case SceneType.Stage02Scene: return "Stage02Scene";
             case SceneType.Stage03Scene: return "Stage03Scene";
