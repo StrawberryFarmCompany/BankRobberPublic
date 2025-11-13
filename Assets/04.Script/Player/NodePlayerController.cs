@@ -172,7 +172,7 @@ public class NodePlayerController : MonoBehaviour
             return;
         }
 
-        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode && !isMoving)
+        if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode && !isMoving && !NodePlayerManager.GetInstance.isMoving)
         {
             Vector3 mousePos = Mouse.current.position.ReadValue();
             Move(mousePos);
@@ -325,6 +325,7 @@ public class NodePlayerController : MonoBehaviour
                 MoveRangeHighlighter.normalHighlighter.Enable(false);
                 //최종 이동 구현
                 isMoving = true;
+                NodePlayerManager.GetInstance.isMoving = true;
                 canNextMove = true;
             }
         }
@@ -437,6 +438,7 @@ public class NodePlayerController : MonoBehaviour
         if (pathQueue.Count == 0 && eta <= 0f)
         {
             isMoving = false;
+            NodePlayerManager.GetInstance.isMoving = false;
             eta = 0f;
 
             if (NodePlayerManager.GetInstance.GetCurrentPlayer() == this)

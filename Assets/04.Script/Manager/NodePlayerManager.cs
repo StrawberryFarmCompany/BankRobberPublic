@@ -36,6 +36,7 @@ public class NodePlayerManager : MonoBehaviour
     public EscapeCondition isEscapeKnight;
 
     private bool isGameEnd;
+    public bool isMoving;
 
     private void Awake()
     {
@@ -58,14 +59,6 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.gameEndUI.TurnOffPanel();
         UIManager.GetInstance.pip.HideAndSneakText();
 
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Debug.Log(GetCurrentPlayer()?.name);
-        }
     }
 
     public void PlayerTurnReset()
