@@ -24,17 +24,20 @@ public class Gun : MonoBehaviour
     public int firstRangeAccuracy;
     public int secondRange;
     public int secondRangeAccuracy;
-    public int thirdrange;
-    public int thirdrangeAccuracy;
+    public int thirdRange;
+    public int thirdRangeAccuracy;
     public int awayRangeAccuracy;
 
-    public int ishit = 0;
+    public int isHit = 0;
     public bool makeNoise = false;
     public Transform muzzlePoint;
     private void Awake()
     {
         if (data != null)
+        {
+            WeaponManager.GetInstance.LoadWeapon();
             SetGun(data);
+        }
     }
 
     public void SetGun(GunData gunData)
@@ -54,8 +57,8 @@ public class Gun : MonoBehaviour
         firstRangeAccuracy = gunData.firstRangeAccuracy;
         secondRange = gunData.secondRange;
         secondRangeAccuracy = gunData.secondRangeAccuracy;
-        thirdrange = gunData.thirdRange;
-        thirdrangeAccuracy = gunData.thirdRangeAccuracy;
+        thirdRange = gunData.thirdRange;
+        thirdRangeAccuracy = gunData.thirdRangeAccuracy;
         awayRangeAccuracy = gunData.awayRangeAccuracy;
     }
 
@@ -71,7 +74,7 @@ public class Gun : MonoBehaviour
     /// <param name="hitBonus"></param>
     public void Shoot(Vector3Int targetPos, int hitBonus)
     {
-        ishit = 0;
+        isHit = 0;
         makeNoise = false;
 
         if (muzzlePoint == null)
@@ -123,7 +126,7 @@ public class Gun : MonoBehaviour
                     }
                 }
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
-                ishit++;
+                isHit++;
                 totalDamage += currDamage;
             }
             else
@@ -142,7 +145,7 @@ public class Gun : MonoBehaviour
             tasks.Add(new TurnTask(() => GameManager.GetInstance.damageProjector.DeQueue(totalDamage, damageProjectorPos), 0.2f));
         }
         TaskManager.GetInstance.AddActionBehaviour(tasks, 0);
-        if (ishit >= 1)
+        if (isHit >= 1)
         {
             makeNoise = true;
         }
@@ -165,9 +168,9 @@ public class Gun : MonoBehaviour
         {
             hitAdjustment = secondRangeAccuracy;
         }
-        else if (CheckRange(targetPos, thirdrange))
+        else if (CheckRange(targetPos, thirdRange))
         {
-            hitAdjustment = thirdrangeAccuracy;
+            hitAdjustment = thirdRangeAccuracy;
         }
         else
         {

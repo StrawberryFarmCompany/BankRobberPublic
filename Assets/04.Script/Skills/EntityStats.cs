@@ -9,6 +9,8 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class EntityStats
 {
+    public bool isGodMode = false; //====================================================================== 반드시 지울 것
+
     public EntityTag entityTag;
     public string characterName;
     public int actionPoint;
@@ -157,6 +159,7 @@ public class EntityStats
 
     public bool ConsumeActionPoint(int amount)
     {
+        if(isGodMode) return true; //====================================================================== 반드시 지울 것
         if (curActionPoint >= amount)
         {
             curActionPoint -= amount;
@@ -167,6 +170,7 @@ public class EntityStats
 
     public bool ConsumeMovement(int amount)
     {
+        if (isGodMode) return true; //====================================================================== 반드시 지울 것
         if (movement >= amount)
         {
             movement -= amount;
@@ -177,11 +181,12 @@ public class EntityStats
 
     public void ActiveRun()
     {
-        if (ConsumeActionPoint(1)) movement += movementSpeed; // 달리기 활성화 시 이동력 증가
+        movement += movementSpeed; // 달리기 활성화 시 이동력 증가
     }
 
     public void Damaged(float damage)
     {
+        if (isGodMode) return; //====================================================================== 반드시 지울 것
         CurHp -= damage;
         if (hpbar != null)
         {
@@ -200,6 +205,17 @@ public class EntityStats
 
     private void Dead()
     {
+        if(LoadSceneManager.GetInstance.curSceneType == SceneType.FirstTutorialScene) // 튜토리얼에서는 사망 무시
+        {
+            if(thisGameObject.GetComponent<NodePlayerController>() != null)
+            {
+                ResetForNewTurn();
+                CurHp = maxHp;
+                thisGameObject.transform.position = new Vector3(70, 0, 29);
+                return;
+            }
+        }
+
         GameManager.GetInstance.GatherCostAndScore();
         RemoveHiderObj();
         //thisGameObject.SetActive(false);
