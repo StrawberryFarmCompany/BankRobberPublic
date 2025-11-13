@@ -102,6 +102,24 @@ public class NodePlayerController : MonoBehaviour
             animationController.MoveState();
             SequentialMove();
         }
+
+        //==================================================================================반드시 지울 것
+        if(Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            
+            if (playerStats.isGodMode)
+            {
+                Debug.Log("무적모드 해제");
+                playerStats.isGodMode = false;
+
+            }
+            else
+            {
+                Debug.Log("무적모드 시작");
+                playerStats.isGodMode = true;
+            }
+
+        }
     }
 
     void RefreshPipAllSafe()
