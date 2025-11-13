@@ -22,6 +22,7 @@ public class KeyCard : IInteractable
         target.SetActive(false);
         GameManager.GetInstance.isPlayerGetKeyCard[keyValue] = true;
         ReleaseInteraction(OnInteraction);
+        GameManager.GetInstance.Nodes[tile].isWalkable = true;
     }
     public void UnInteraction(EntityStats stat)
     {

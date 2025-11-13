@@ -119,7 +119,8 @@ public class NodePlayerManager : MonoBehaviour
         players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
         currentPlayerIndex = index;
         players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
-        players[currentPlayerIndex].TurnOnHighlighter();
+        if(players[currentPlayerIndex].highlighter != null && players[currentPlayerIndex].playerStats.currNode != null)
+            players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         GetCurrentPlayer().isEndReady = false;

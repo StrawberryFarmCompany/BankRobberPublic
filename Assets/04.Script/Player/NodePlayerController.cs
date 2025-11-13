@@ -24,7 +24,7 @@ public class NodePlayerController : MonoBehaviour
 
     [SerializeField] Camera mainCamera;
 
-    [SerializeField] private MoveRangeHighlighter highlighter;
+    public MoveRangeHighlighter highlighter;
     public Gun gun;
 
     [HideInInspector]
@@ -71,10 +71,10 @@ public class NodePlayerController : MonoBehaviour
         playerStats.ForceMove += WindowForceMove;
         isHide = true;
         isEndReady = false;
-        highlighter.Init();
         playerStats.OnDead += UnsubscribePlayer;
         playerStats.OnReset += UnsubscribePlayer;
-
+        animationController.Init();
+        highlighter.Init();
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
 
@@ -87,8 +87,6 @@ public class NodePlayerController : MonoBehaviour
         StartMode(PlayerStatus.isMoveMode);
         playerInput.DeactivateInput();
         playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
-
-        animationController.Init();
 
         playerStats.NodeUpdates(transform.position, true);
         playerStats.GetTileInteraction(transform.position);
@@ -263,7 +261,7 @@ public class NodePlayerController : MonoBehaviour
             RefreshPipAllSafe();
         }
 
-        if(context.canceled && IsMyTurn() && (currPlayerStatus == PlayerStatus.isRunMode ||
+        if(context.canceled && (currPlayerStatus == PlayerStatus.isRunMode ||
             currPlayerStatus == PlayerStatus.isAimingMode ||
             currPlayerStatus == PlayerStatus.isHideMode ||
             currPlayerStatus == PlayerStatus.isReloadMode ||
