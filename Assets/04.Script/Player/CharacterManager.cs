@@ -39,5 +39,7 @@ public class CharacterManager : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+
+        WeaponManager.GetInstance.LoadWeapon();
     }
 }

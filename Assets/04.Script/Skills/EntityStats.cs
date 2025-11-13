@@ -181,7 +181,7 @@ public class EntityStats
 
     public void ActiveRun()
     {
-        if (ConsumeActionPoint(1)) movement += movementSpeed; // 달리기 활성화 시 이동력 증가
+        movement += movementSpeed; // 달리기 활성화 시 이동력 증가
     }
 
     public void Damaged(float damage)

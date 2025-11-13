@@ -61,6 +61,8 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
             return;
         }
 
+        player.isActing = true;
+
         switch (skill)
         {
             //체력 회복

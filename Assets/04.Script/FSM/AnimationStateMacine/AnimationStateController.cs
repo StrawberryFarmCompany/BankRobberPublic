@@ -179,6 +179,21 @@ public class AnimationStateController : MonoBehaviour
                animator.SetBool(isAiming, false);
     }
 
+    public void OnEndActing()
+    {
+        if(playerController != null)
+        {
+            playerController.isActing = false;
+        }
+    }
+    public void OnStartActing()
+    {
+        if(playerController != null)
+        {
+            playerController.isActing = true;
+        }
+    }
+
     public void MoveBestNode()
     {
         if (playerController != null)
