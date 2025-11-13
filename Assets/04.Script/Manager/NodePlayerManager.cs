@@ -303,7 +303,7 @@ public class NodePlayerManager : MonoBehaviour
         {
             return GameResult.Perfect;
         }
-        else if (result > 0) 
+        else if (result >= 1) 
         {
             return GameResult.Succeeded;
         }
@@ -320,10 +320,12 @@ public class NodePlayerManager : MonoBehaviour
             case (EscapeCondition.SuccessHeist):
                 return 2;
             case(EscapeCondition.Escape):
-                return 1;
-            case (EscapeCondition.Arrest):
                 return 0;
+            case (EscapeCondition.Arrest):
+                return -1;
             case (EscapeCondition.None):
+                return 0;
+            case (EscapeCondition.Heisting):
                 return 0;
             default:
                 return 0;

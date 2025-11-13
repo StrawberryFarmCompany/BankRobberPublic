@@ -197,9 +197,8 @@ public class PauseManager : MonoBehaviour
         //인게임에서 로비
         else
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
+            //모든 플레이어 패배
+            GameManager.GetInstance.GameEnd();
         }
     }
 }
