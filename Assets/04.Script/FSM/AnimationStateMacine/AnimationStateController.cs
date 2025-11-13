@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class AnimationStateController : MonoBehaviour
 {
+    bool isReady = false;
+
     private static readonly int isRifle = Animator.StringToHash("isRifle");
     private static readonly int equip = Animator.StringToHash("Equip");
     private static readonly int unEquipForSneak = Animator.StringToHash("UnEquipForSneak");
@@ -46,20 +48,14 @@ public class AnimationStateController : MonoBehaviour
     private ReadyState readyState;
 
 
-    private void Start()
-    {
-        Init();
-        gun.muzzlePoint = currentGun.transform.Find("ShootPos");
-        // 처음 상태는 Idle
-        stateMachine.ForceSet(idleState);
-    }
 
     void Update()
     {
+        if (!isReady) return;
         stateMachine.Update();
     }
 
-    void Init()
+    public void Init()
     {
         animator.applyRootMotion = false;
         playerController = GetComponentInParent<NodePlayerController>();
@@ -131,6 +127,11 @@ public class AnimationStateController : MonoBehaviour
         if(playerController != null)
             playerController.playerStats.OnDead += DeadState;
 
+        gun.muzzlePoint = currentGun.transform.Find("ShootPos");
+        // 처음 상태는 Idle
+        stateMachine.ForceSet(idleState);
+
+        isReady = true;
     }
 
     public void OnEquip()

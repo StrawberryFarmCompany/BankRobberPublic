@@ -77,6 +77,9 @@ public class NodePlayerController : MonoBehaviour
 
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
+
+        //FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
+        
     }
 
     void Start()
@@ -85,8 +88,7 @@ public class NodePlayerController : MonoBehaviour
         playerInput.DeactivateInput();
         playerVec = GameManager.GetInstance.GetNode(transform.position).GetCenter;
 
-        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(true); });
-        GameManager.GetInstance.NoneBattleTurn.AddEndPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(false); });
+        animationController.Init();
 
         playerStats.NodeUpdates(transform.position, true);
         playerStats.GetTileInteraction(transform.position);
@@ -94,6 +96,12 @@ public class NodePlayerController : MonoBehaviour
         GameManager.GetInstance.RegisterEntity(playerStats);
         EquippedSkills.ApplyEquippedSkills(playerStats);
         SetCharacterTurn();
+
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.ally, playerStats.ResetForNewTurn);
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.ally, SetCamera);
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.ally, SetCamera);
+        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(true); });
+        GameManager.GetInstance.NoneBattleTurn.AddEndPointer(TurnTypes.ally, () => { MoveRangeHighlighter.normalHighlighter.Enable(false); });
     }
 
     void Update()
@@ -803,19 +811,6 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
-    public void ResetPlayer() 
-    {
-        List<NodePlayerController> temp = NodePlayerManager.GetInstance.GetAllPlayers();
-        int i = 0;
-
-        for (; i < temp.Count; i++)
-        {
-            if (temp[i] == this) break;
-        }
-
-        playerStats.ResetForNewTurn();
-        NodePlayerManager.GetInstance.SwitchToPlayer(i);
-    }
     public void TurnOnHighlighter()
     {
         animationController.IdleState();
@@ -1079,6 +1074,8 @@ public class NodePlayerController : MonoBehaviour
     private void OnDestroy()
     {
         transform.DOKill(false);
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.ally, playerStats.ResetForNewTurn);
+        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.ally, SetCamera);
         playerStats.DestroyEntity();
     }
 
@@ -1099,6 +1096,11 @@ public class NodePlayerController : MonoBehaviour
         gun.Shoot(targetPos, hitBonus);
         animationController.HipRangedAttackState(targetPos);
         NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Trigger, gun.makeNoise);
+    }
+    //원활한 이벤트 포인터 처리를 위한 함수
+    private static void SetCamera()
+    {
+        NodePlayerManager.GetInstance.SwitchToPlayer(0);
     }
 }
 public enum PlayerStatus {

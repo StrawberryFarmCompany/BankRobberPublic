@@ -23,7 +23,7 @@ public class NoneBattleTurnStateMachine
 
         int typeLen = Enum.GetValues(typeof(TurnTypes)).Length;
         
-        if ((int)GetCurrState() + 1 >= typeLen)
+        if ((int)GetCurrState()+1 >= typeLen)
         {
             round++;
             BuffCount?.Invoke();
@@ -31,8 +31,6 @@ public class NoneBattleTurnStateMachine
 
         currState = states[(((int)GetCurrState() + 1) % (typeLen))];
         Debug.Log(GetCurrState());
-        
-        if(GetCurrState() == TurnTypes.ally) GameManager.GetInstance.StartPlayerTurn();
         
         currState.Enter();
 
@@ -45,15 +43,11 @@ public class NoneBattleTurnStateMachine
             ChangeState();
         }
     }
-
-    public void ForceSet(int index)
+    public void StageInit(int index)
     {
-        round++;
-        currState.Exit();
         currState = states[index];
         currState.Enter();
     }
-
     /// <summary>
     /// 스크립트를 Reset함는 함수
     /// </summary>
