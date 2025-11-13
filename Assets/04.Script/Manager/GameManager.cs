@@ -109,8 +109,8 @@ class GameManager : SingleTon<GameManager>
         OnNodeReset();            //나중에 nodeInteractions 가 Null 뜨는 거 잡기
         noneBattleTurn.OnSceneChange();
         OnEntityReset();
-        isPlayerGetKeyCard = null;
-        isPlayerGetKeyCard = new List<bool>();
+        if (isPlayerGetKeyCard != null) isPlayerGetKeyCard.Clear();
+        else isPlayerGetKeyCard = new List<bool>();
         ReleaseButtonDoor();
         ReleasePasswordDoor();
         ReleaseDocuments();
