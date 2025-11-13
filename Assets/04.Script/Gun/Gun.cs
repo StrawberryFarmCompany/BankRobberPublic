@@ -74,6 +74,12 @@ public class Gun : MonoBehaviour
         ishit = 0;
         makeNoise = false;
 
+        if (muzzlePoint == null)
+        {
+            SetGunMuzzlePoint(transform, "ShootPos");
+            if (muzzlePoint == null) SetGunMuzzlePoint(transform, "Hand_R");
+        }
+
         if(!ConsumeRounds(1/*useRoundsPerShot*/))
         {
             Debug.Log("잔탄수 부족, 불발");
@@ -90,9 +96,11 @@ public class Gun : MonoBehaviour
 
         Debug.Log($"{entityStats.characterName}에게 격발 데미지를 가했음");
         float totalDamage = 0f;
+        List<TurnTask> tasks = new List<TurnTask>();
         if (muzzlePoint != null)
         {
-            SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles);
+            tasks.Add(new TurnTask(null, 0.6f));
+            tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.muzzlePool.PlayEffect(muzzlePoint.position, muzzlePoint.eulerAngles), 0f));
         }
         for (int i = 0; i < bulletPerOneShot; i++)
         {
@@ -100,7 +108,20 @@ public class Gun : MonoBehaviour
             {
                 int result = DiceManager.GetInstance.DirrectRoll(0, 6, 2);
                 float currDamage = result * damagePerOneBulletMultiplier;
-                entityStats.Damaged(currDamage);
+                if (muzzlePoint != null)
+                {
+                    //muzzle이 아닌 trail로 대체 필요
+                    if (result == 0)
+                    {
+                        Vector3 pos = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
+                        tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, entityStats.currNode.GetCenter + pos), 0f));
+                    }
+                    else
+                    {
+                        Vector3 pos = new Vector3(Random.Range(-0.3f, 0.3f), 1, Random.Range(-0.3f, 0.3f));
+                        tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, entityStats.currNode.GetCenter+pos), 0f));
+                    }
+                }
                 Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
                 ishit++;
                 totalDamage += currDamage;
@@ -108,14 +129,19 @@ public class Gun : MonoBehaviour
             else
             {
                 Debug.Log($"{i + 1}번째 격발 결과\n불발");
+                Vector3 pos = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
+                tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, entityStats.currNode.GetCenter + pos), 0f));
             }
         }
 
+        tasks.Add(new TurnTask(() => entityStats.Damaged(totalDamage), 0f));
+
         if (entityStats.currNode != null)
         {
-            GameManager.GetInstance.damageProjector.DeQueue(totalDamage, entityStats.currNode.GetCenter + (Vector3.up * 2));
+            Vector3 damageProjectorPos = entityStats.currNode.GetCenter + (Vector3.up * 2);
+            tasks.Add(new TurnTask(() => GameManager.GetInstance.damageProjector.DeQueue(totalDamage, damageProjectorPos), 0.2f));
         }
-
+        TaskManager.GetInstance.AddActionBehaviour(tasks, 0);
         if (ishit >= 1)
         {
             makeNoise = true;
@@ -130,7 +156,7 @@ public class Gun : MonoBehaviour
 
     public bool CheckBulletHit(Vector3Int targetPos, int hitBonus)
     {
-        int hitAdjustment;
+        int hitAdjustment;//현재 내 스텟에서의 명중률
         if (CheckRange(targetPos, firstRange))
         {
             hitAdjustment = firstRangeAccuracy;
@@ -195,5 +221,25 @@ public class Gun : MonoBehaviour
     {
         return curRounds > 0;
     }
+    private void SetGunMuzzlePoint(Transform tr,string name)
+    {
+        if (muzzlePoint == null)
+        {
+            muzzlePoint = transform.Find(name);
+            if (muzzlePoint != null) return;
+            for (int i = 0; i < tr.childCount; i++)
+            {
+                Transform curTr = tr.GetChild(i).Find(name);
+                if (curTr == null)
+                {
+                    SetGunMuzzlePoint(tr.GetChild(i), name);
+                }
+                else
+                {
+                    muzzlePoint = curTr;
+                }
+            }
 
+        }
+    }
 }

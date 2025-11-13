@@ -47,6 +47,7 @@ public class EntityStats
     public Node currNode;
 
     public PlayerSkill playerSkill; //플레이어 스킬
+    public bool hasPermanentAttackBuff = false;
 
     public SecurityData secData;
     private PassiveSkill equippedPassive;
@@ -186,6 +187,10 @@ public class EntityStats
         {
             hpbar.SetCurrHP(CurHp);
         }
+        if (UIManager.GetInstance.pip != null)
+        {
+            UIManager.GetInstance.pip.RefreshHealth();
+        }
         if (CurHp <= 0)
         {
             CurHp = 0;
@@ -196,6 +201,7 @@ public class EntityStats
     private void Dead()
     {
         GameManager.GetInstance.GatherCostAndScore();
+        RemoveHiderObj();
         //thisGameObject.SetActive(false);
 
         if (characterType != CharacterType.None)
@@ -218,6 +224,10 @@ public class EntityStats
         if (CurHp > maxHp)
         {
             CurHp = maxHp;
+        }
+
+        if (hpbar != null)
+        {
             hpbar.SetCurrHP(CurHp);
         }
     }
@@ -270,8 +280,7 @@ public class EntityStats
         if (currNode == null) return Vector3Int.zero;
         return currNode.GetCenter;
     }
-
-    public void DestroyEntity()
+    private void RemoveHiderObj()
     {
         if (thisGameObject.TryGetComponent<FogOfWarHider>(out FogOfWarHider hider))
         {
@@ -284,11 +293,13 @@ public class EntityStats
             }
             if (hpbar != null)
             {
-                thisGameObject.GetComponent<HiderDisableObjects>().Flush();
+                HiderDisableObjects hiderObj = thisGameObject.GetComponent<HiderDisableObjects>();
                 hpbar.Destroy();
             }
         }
-
+    }
+    public void DestroyEntity()
+    {
 
         OnDamaged = null;
         OnDead = null;

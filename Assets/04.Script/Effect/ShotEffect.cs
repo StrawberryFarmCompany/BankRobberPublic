@@ -14,12 +14,6 @@ public class ShotEffect
         muzzlePool = new ParticlePool("GunFIreVFX");
         trailPool = new TransformPool("BulletTrail");
     }
-    public void Reset()
-    {
-        muzzlePool.Reset(); 
-        trailPool.Reset(); 
-    }
-
 }
 
 public abstract class EffectPool<T> where T : Component
@@ -36,7 +30,11 @@ public abstract class EffectPool<T> where T : Component
     public abstract void PlayEffect(Vector3 start,Vector3 target);
     public abstract void Reset();
     protected abstract T Instantiate();
+    protected abstract System.Collections.IEnumerator Retrieve(T collect,float time);
 }
+
+
+
 public class TransformPool : EffectPool<Transform>
 {
     public TransformPool(string name) : base(name)
@@ -48,14 +46,13 @@ public class TransformPool : EffectPool<Transform>
     protected override Transform Dequeue()
     {
         queue.TryDequeue(out Transform tr);
-        if (DOTween.IsTweening(tr))
+        if (tr == null||DOTween.IsTweening(tr))
         {
             queue.Enqueue(tr);
             return Instantiate();
         }
         else
         {
-            tr.gameObject.SetActive(true);
             return tr;
         }
     }
@@ -70,10 +67,12 @@ public class TransformPool : EffectPool<Transform>
     {
         Transform tr = Dequeue();
         tr.transform.position = start;
+
+        tr.gameObject.SetActive(true);
         float dist = Vector3.Distance(start, target);
+
+        tr.DOMove(target, dist / 50f).OnComplete(()=>TaskManager.GetInstance.StartCoroutine(Retrieve(tr, (dist / 300f) + 2f)));
         
-        tr.DOMove(target,dist/300f );
-        Enqueue(tr);
     }
     public override void Reset()
     {
@@ -84,11 +83,22 @@ public class TransformPool : EffectPool<Transform>
         GameObject obj = GameObject.Instantiate(prefab);
         obj.SetActive(true);
         obj.transform.parent = folder;
-        return GameObject.Instantiate(prefab).transform;
+        return obj.transform;
+    }
+
+    protected override System.Collections.IEnumerator Retrieve(Transform tr,float time)
+    {
+        yield return new WaitForSeconds(time);
+        Enqueue(tr);
+        yield break;
     }
 }
+
+
+
 public class ParticlePool : EffectPool<ParticleSystem>
 {
+    readonly WaitForSeconds timer = new WaitForSeconds(2f);
     public ParticlePool(string name) : base(name)
     {
         prefab = (GameObject)ResourceManager.GetInstance.GetPreLoad[name];
@@ -98,7 +108,7 @@ public class ParticlePool : EffectPool<ParticleSystem>
     protected override ParticleSystem Dequeue()
     {
         queue.TryDequeue(out ParticleSystem particle);
-        if (particle.isPlaying)
+        if (particle == null||particle.isPlaying)
         {
             queue.Enqueue(particle);
             return Instantiate();
@@ -126,7 +136,7 @@ public class ParticlePool : EffectPool<ParticleSystem>
         ParticleSystem particle = Dequeue();
         particle.transform.position = start;
         particle.transform.eulerAngles = eulerAngle;
-        Enqueue(particle);
+        TaskManager.GetInstance.StartCoroutine(Retrieve(particle,0f));
     }
     public override void Reset()
     {
@@ -138,5 +148,11 @@ public class ParticlePool : EffectPool<ParticleSystem>
         obj.SetActive(true);
         obj.transform.parent = folder;
         return obj.GetComponent<ParticleSystem>();
+    }
+    protected override System.Collections.IEnumerator Retrieve(ParticleSystem particle,float a)
+    {
+        yield return timer;
+        Enqueue(particle);
+        yield break;
     }
 }

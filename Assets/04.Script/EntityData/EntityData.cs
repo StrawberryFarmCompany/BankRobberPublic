@@ -14,12 +14,30 @@ public enum EntityTag
 public enum PlayerSkill
 {
     None,
+
     SneakAttack,    //은신 공격
+    SneakAttack_A,  //성공 시 이동력 회복
+    SneakAttack_B,  //성공 확률 증가
+
     Silence,        //소음 제거
+    Silence_A,      //턴 증가
+    Silence_B,      //모든 아군 소음 제거
+
     Heal,       //치유
-    DoubleAttack,    //이중 타격
-    Ready,          //준비
-    Evasion         //회피율 증가
+    Heal_A,     //체력 회복 강화
+    Heal_B,     //모든 아군 체력 회복
+
+    DoubleAttack,       //이중 타격
+    DoubleAttack_A,     //3 타격
+    DoubleAttack_B,     //무기 공격력 보정치 추가
+
+    Ready,          //행동력 회복
+    Ready_A,        //회복 강화
+    Ready_B,        //모든 아군 행동력 회복
+
+    Evasion,        //회피율 증가
+    Evasion_A,      //회피율 추가 증가
+    Evasion_B       //모은 아군 회피율 증가
 }
 
 public enum CharacterType
