@@ -24,7 +24,7 @@ public class NodePlayerController : MonoBehaviour
 
     [SerializeField] Camera mainCamera;
 
-    public MoveRangeHighlighter highlighter;
+    [SerializeField] private MoveRangeHighlighter highlighter;
     public Gun gun;
 
     [HideInInspector]
@@ -73,12 +73,12 @@ public class NodePlayerController : MonoBehaviour
         isEndReady = false;
         playerStats.OnDead += UnsubscribePlayer;
         playerStats.OnReset += UnsubscribePlayer;
-        animationController.Init();
         highlighter.Init();
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
 
         //FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
+        animationController.Init();
         
     }
 
@@ -814,6 +814,7 @@ public class NodePlayerController : MonoBehaviour
     public void TurnOnHighlighter()
     {
         animationController.IdleState();
+        if (playerStats.currNode == null) return;
         highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
     }
 
