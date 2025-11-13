@@ -55,7 +55,6 @@ public class PatrolEnemyNPC : EnemyNPC
             if (isNoise == true && isArrivedNoisePlace == false)
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(noiseLocation); }, 0f));
-                efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
 
                 if (Vector3.Distance(transform.position, noiseLocation) < 0.1f)
@@ -74,7 +73,6 @@ public class PatrolEnemyNPC : EnemyNPC
             else if (GameManager.GetInstance.GetVecInt(locationList[curLocation]) != GameManager.GetInstance.GetVecInt(gameObject.transform.position))
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(locationList[curLocation]); }, 0f));
-                efsm.eta = 3;
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
             }
 
@@ -101,7 +99,6 @@ public class PatrolEnemyNPC : EnemyNPC
                 if (nearPlayerLocation != null)
                 {
                     TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
-                    efsm.eta = 3;
                     efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 }
 

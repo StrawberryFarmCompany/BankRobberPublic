@@ -467,9 +467,15 @@ public class EnemyNPC : MonoBehaviour
 
         if (pathQueue.Count > 0)
         {
+            float timePerTile = 0.5f;
+            efsm.eta = pathQueue.Count * timePerTile;
             //최종 이동 구현
             isMoving = true;
             canNextMove = true;
+        }
+        else
+        {
+            efsm.eta = 0;
         }
     }
 
