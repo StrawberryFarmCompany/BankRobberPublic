@@ -15,15 +15,15 @@ MonoBehaviour:
   Elements:
   - missionType: 0
     description: "\uAE08\uACE0\uB97C \uCC3E\uC73C\uC138\uC694"
-    targetPosition: {x: 60.5, y: 0, z: 3}
-    reachRange: 6
+    targetPosition: {x: 33, y: 0, z: -1.5}
+    reachRange: 3
     keyCardIndex: 0
     doorIndex: 0
     documentType: 0
     documentIndex: 0
   - missionType: 0
     description: "\uBCF4\uC548\uC2E4\uC744 \uCC3E\uC73C\uC138\uC694"
-    targetPosition: {x: 57.5, y: 6, z: 0.5}
+    targetPosition: {x: 25.5, y: 6, z: -23}
     reachRange: 5
     keyCardIndex: 0
     doorIndex: 0
