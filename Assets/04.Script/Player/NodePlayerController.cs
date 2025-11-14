@@ -1080,6 +1080,12 @@ public class NodePlayerController : MonoBehaviour
         transform.DOKill(false);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.ally, playerStats.ResetForNewTurn);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.ally, SetCamera);
+
+        
+
+        MoveRangeHighlighter.normalHighlighter.ThrowEnable(false);
+        MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(false);
+        MoveRangeHighlighter.normalHighlighter.TargetPreviewOnOff(false);
         playerStats.DestroyEntity();
     }
 

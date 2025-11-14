@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class CitizenNPC : NeutralNPC
 {
     public bool isDetection = false;
+    public bool isCowered = false;
     [SerializeField] private Vector3 exitArea;
 
     public NavMeshAgent agent;
@@ -41,24 +42,19 @@ public class CitizenNPC : NeutralNPC
             CitizenWitness();
         }
 
-        if (stats.secData.GetSecLevel >= 3)
+        if (stats.secData.GetSecLevel >= 3 && isCowered == false)
         {
             Debug.Log("개쫄은상태");
             ChangeToCowerState();
+            isCowered = true;
         }
 
-        else if (isDetection == true)//플레이어 발각시
+        else if (isDetection == true && isCowered == false)//플레이어 발각시
         {
             Debug.Log("존나 튀는 상태");
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(exitArea); }, 0f));
             nfsm.eta = 3;
             nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
-        }
-
-        else
-        {
-            Debug.Log("대기상태");
-            ChangeToIdle();
         }
 
         base.CalculateBehaviour();

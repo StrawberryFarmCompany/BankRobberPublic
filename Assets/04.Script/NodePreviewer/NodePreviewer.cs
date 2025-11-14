@@ -137,10 +137,10 @@ public class NodePreviewer
     public void TargetPreviewOnOff(bool enable)
     {
         targetPreviewer.gameObject.SetActive(enable);
-        /*if (!enable)
+        if (!enable)
         {
-            targetPreviewer.position = new Vector3(9999999f, 9999999f, 999999f);
-        }*/
+            targetPreviewer.position = new Vector3(1000f, 1000f, 1000f);
+        }
     }
     public void SetPosTargetPreview(Vector3Int pos)
     {
@@ -168,7 +168,7 @@ public class NodePreviewer
     private void CreateBoundPreviewer()
     {
         boundPreviewerGOBJ = new GameObject("NodeBoundPreviewer");
-
+        boundPreviewerGOBJ.layer = 1<<11;
         GameObject.DontDestroyOnLoad(boundPreviewerGOBJ);
 
         boundPreviewerGOBJ.transform.position = Vector3.zero;
@@ -187,6 +187,7 @@ public class NodePreviewer
     private void CreateGoalPreviewer()
     {
         goalPreviewer = new GameObject("GoalPreviewer").transform;
+        boundPreviewerGOBJ.layer = 1 << 11;
         GameObject.DontDestroyOnLoad(goalPreviewer);
         goalPreviewer.transform.position = Vector3.zero;
         goalPreviewer.transform.eulerAngles = Vector3.zero;
@@ -215,6 +216,7 @@ public class NodePreviewer
     private void CreatePathPreviewer()
     {
         pathLine = new GameObject("PathLineRenderer").AddComponent<LineRenderer>();
+        boundPreviewerGOBJ.layer = 1 << 11;
         GameObject.DontDestroyOnLoad(pathLine.gameObject);
         pathLine.startWidth = 0.4f;
         pathLine.endWidth = 0.4f;
@@ -225,6 +227,7 @@ public class NodePreviewer
     private void CreateThrowPathPreviewer()
     {
         throwPathLine = new GameObject("ThrowPathLineRenderer").AddComponent<LineRenderer>();
+        boundPreviewerGOBJ.layer = 1 << 11;
         GameObject.DontDestroyOnLoad(throwPathLine.gameObject);
         throwPathLine.startWidth = 0.4f;
         throwPathLine.endWidth = 0.4f;
@@ -235,6 +238,7 @@ public class NodePreviewer
     private void CreateTargetPreviewer()
     {
         targetPreviewer = new GameObject("TargetSelectionPreviewr").transform;
+        boundPreviewerGOBJ.layer = 1 << 11;
         GameObject.DontDestroyOnLoad(targetPreviewer.gameObject);
         ResourceManager.GetInstance.LoadAsync<Material>("TargetPreviewerMat", (mat) => { targetPreviewer.gameObject.AddComponent<MeshRenderer>().material = mat; });
 
