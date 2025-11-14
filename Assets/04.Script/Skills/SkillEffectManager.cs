@@ -47,8 +47,6 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
     public void UseSkill(NodePlayerController player, Vector3 mousePos)
     {
-        EquippedSkills.DebugEquippedSkills(player.playerStats);
-
         PlayerSkill skill = player.playerStats.playerSkill;
         Debug.Log($"[SkillEffectManager] 사용하려는 스킬 Enum: {skill}");
 
