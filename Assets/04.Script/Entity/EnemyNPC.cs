@@ -48,6 +48,8 @@ public class EnemyNPC : MonoBehaviour
 
     protected virtual void CalculateBehaviour()
     {
+        isMoving = false;
+
         stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
 
         if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)   
@@ -439,6 +441,7 @@ public class EnemyNPC : MonoBehaviour
 
         if (GameManager.GetInstance.GetNode(targetPos) == null)
         {
+            isMoving = false;
             return;
         }
 
@@ -465,18 +468,18 @@ public class EnemyNPC : MonoBehaviour
             }
         }
 
-        if (pathQueue.Count > 0)
+        if (pathQueue.Count == 0)
         {
-            float timePerTile = 0.5f;
-            efsm.eta = pathQueue.Count * timePerTile;
-            //최종 이동 구현
-            isMoving = true;
-            canNextMove = true;
-        }
-        else
-        {
+            isMoving = false;
             efsm.eta = 0;
+            return;
         }
+
+        float timePerTile = 0.4f;
+        efsm.eta = pathQueue.Count * timePerTile;
+
+        isMoving = true;
+        canNextMove = true;
     }
 
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
@@ -558,6 +561,13 @@ public class EnemyNPC : MonoBehaviour
     {
         // 아직 목표가 없으면 다음 큐 꺼내기
         if (!isMoving) return;
+
+        // 경로가 없으면 즉시 종료
+        if (pathQueue.Count == 0)
+        {
+            isMoving = false;
+            return;
+        }
 
         // 도착 판정 (== 대신 거리로 체크)
         if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
