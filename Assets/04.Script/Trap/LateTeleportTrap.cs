@@ -79,7 +79,8 @@ public class LateTeleportTrap : MonoBehaviour
         {
             stat.thisGameObject.transform.position = targetPos;
             stat.NodeUpdates(targetPos);
-            //stat.
+            if(stat.characterType != CharacterType.None)
+                stat.thisGameObject.GetComponent<NodePlayerController>().TurnOnHighlighter();
         }
     }
 }

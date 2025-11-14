@@ -2797,7 +2797,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5620040035900730555}
         m_TargetAssemblyTypeName: NodePlayerController, Assembly-CSharp
-        m_MethodName: OnHideAndSneakAttack
+        m_MethodName: OnHide
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2993,7 +2993,9 @@ MonoBehaviour:
   gun: {fileID: 0}
   isHide: 0
   isAiming: 0
+  isActing: 0
   isEndReady: 0
+  IsSkillAttack: 0
   currPlayerStatus: 0
   hitBonus: 0
   eta: 0
@@ -3032,10 +3034,10 @@ MonoBehaviour:
   firstRangeAccuracy: 0
   secondRange: 0
   secondRangeAccuracy: 0
-  thirdrange: 0
-  thirdrangeAccuracy: 0
+  thirdRange: 0
+  thirdRangeAccuracy: 0
   awayRangeAccuracy: 0
-  ishit: 0
+  isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
 --- !u!136 &2691678488543563958

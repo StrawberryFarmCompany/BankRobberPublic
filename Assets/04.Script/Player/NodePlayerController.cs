@@ -72,7 +72,8 @@ public class NodePlayerController : MonoBehaviour
         if (playerInput == null) playerInput = GetComponent<PlayerInput>();
         playerStats.ForceMove += WindowForceMove;
         isHide = true;
-        isEndReady = false;
+        if(LoadSceneManager.GetInstance.curSceneType == SceneType.FirstTutorialScene)
+            isHide = false;
         playerStats.OnDead += UnsubscribePlayer;
         playerStats.OnReset += UnsubscribePlayer;
         highlighter.Init();

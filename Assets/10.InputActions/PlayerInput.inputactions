@@ -518,7 +518,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "HideAndSneakAttack",
+                    "name": "Hide",
                     "type": "Button",
                     "id": "e3715812-a865-493f-b50c-bedd0df30bab",
                     "expectedControlType": "",
@@ -629,7 +629,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "HideAndSneakAttack",
+                    "action": "Hide",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
