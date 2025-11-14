@@ -61,6 +61,7 @@ namespace NodeDefines
         public void RemoveCharacter(EntityStats stat)
         {
             standing.Remove(stat);
+            ExitEvent?.Invoke(stat);  // 떠날 때 이벤트 실행
             if (standing.Count == 0) standing.Clear();//더블링 해소
         }
 
@@ -94,6 +95,24 @@ namespace NodeDefines
                 add(standing[i]);
             }
         }
+
+        public void ResetExitEvent()
+        {
+            ExitEvent = null;
+        }
+
+        private Interaction ExitEvent;
+
+        public void AddExitEvent(Interaction add)
+        {
+            ExitEvent += add;
+        }
+
+        public void RemoveExitEvent(Interaction remove)
+        {
+            ExitEvent -= remove;
+        }
+
 
         public void ResetEvent()
         {

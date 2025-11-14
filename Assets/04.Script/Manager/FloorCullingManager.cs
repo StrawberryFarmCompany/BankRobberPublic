@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -15,6 +16,9 @@ public class FloorCullingManager : MonoBehaviour
 
     [Header("층 범위 리스트")]
     public List<FloorRange> floors = new List<FloorRange>();
+
+    [Header("쿨링에 제외할 레이어")]
+    public LayerMask excludeLayerMask;
 
     private float lastUpdateTime = 0f;
 
@@ -71,8 +75,13 @@ public class FloorCullingManager : MonoBehaviour
     /// </summary>
     public void RefreshRenderersAndColliders()
     {
-        allRenderers = FindObjectsOfType<Renderer>(true);       //파인드문인게 매우 걸림
-        allColliders = FindObjectsOfType<Collider>(true);
+        allRenderers = FindObjectsOfType<Renderer>(true)
+            .Where(r => (excludeLayerMask.value & (1 << r.gameObject.layer)) == 0)
+            .ToArray();
+
+        allColliders = FindObjectsOfType<Collider>(true)
+            .Where(c => (excludeLayerMask.value & (1 << c.gameObject.layer)) == 0)
+            .ToArray();
     }
 
     /// <summary>

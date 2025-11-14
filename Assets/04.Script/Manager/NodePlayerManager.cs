@@ -36,6 +36,7 @@ public class NodePlayerManager : MonoBehaviour
     public EscapeCondition isEscapeKnight;
 
     private bool isGameEnd;
+    public bool isMoving;
 
     private void Awake()
     {
@@ -58,14 +59,6 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.gameEndUI.TurnOffPanel();
         UIManager.GetInstance.pip.HideAndSneakText();
 
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Debug.Log(GetCurrentPlayer()?.name);
-        }
     }
 
     public void PlayerTurnReset()
@@ -119,7 +112,8 @@ public class NodePlayerManager : MonoBehaviour
         players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
         currentPlayerIndex = index;
         players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
-        players[currentPlayerIndex].TurnOnHighlighter();
+        if(players[currentPlayerIndex].highlighter != null && players[currentPlayerIndex].playerStats.currNode != null)
+            players[currentPlayerIndex].TurnOnHighlighter();
         CameraManager.GetInstance.SwitchToPlayerCamera(GetCurrentPlayer().gameObject);
         players[currentPlayerIndex].playerInput.ActivateInput();
         GetCurrentPlayer().isEndReady = false;
@@ -309,7 +303,7 @@ public class NodePlayerManager : MonoBehaviour
         {
             return GameResult.Perfect;
         }
-        else if (result > 0) 
+        else if (result >= 1) 
         {
             return GameResult.Succeeded;
         }
@@ -326,10 +320,12 @@ public class NodePlayerManager : MonoBehaviour
             case (EscapeCondition.SuccessHeist):
                 return 2;
             case(EscapeCondition.Escape):
-                return 1;
-            case (EscapeCondition.Arrest):
                 return 0;
+            case (EscapeCondition.Arrest):
+                return -1;
             case (EscapeCondition.None):
+                return 0;
+            case (EscapeCondition.Heisting):
                 return 0;
             default:
                 return 0;

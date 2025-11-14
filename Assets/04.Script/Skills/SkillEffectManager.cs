@@ -47,8 +47,9 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
     public void UseSkill(NodePlayerController player, Vector3 mousePos)
     {
-        Debug.Log($"[SkillEffectManager] 현재 스킬: {player.playerStats.playerSkill}");
         PlayerSkill skill = player.playerStats.playerSkill;
+        Debug.Log($"[SkillEffectManager] 사용하려는 스킬 Enum: {skill}");
+
         if (skill == PlayerSkill.None)
         {
             Debug.Log("스킬 미장착");
@@ -60,6 +61,8 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
             Debug.Log($"[{skill}] 쿨타임 남은 턴: {cooldowns[skill]}");
             return;
         }
+
+        player.isActing = true;
 
         switch (skill)
         {
@@ -200,6 +203,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 }
 
                 StartCoroutine(TripleAttackRoutine(player, mousePos));
+
                 SetCooldown(skill, 3);
                 break;
 
@@ -218,6 +222,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 if (!player.CheckRangeAndEntity(targetNode, (int)player.playerStats.attackRange)) return;
 
                 StartCoroutine(DoubleAttackRoutine(player, mousePos));
+
                 SetCooldown(skill, 3);
                 break;
 
@@ -312,18 +317,30 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
     private IEnumerator DoubleAttackRoutine(NodePlayerController player, Vector3 mousePos)
     {
-        player.CheckRangeAttack(mousePos);
+        player.IsSkillAttack = true;
 
+        Vector3Int targetNode = player.GetNodeVector3ByRay(mousePos, (1 << 8), true);
+        if (targetNode == new Vector3Int(-999, -999, -999))
+        {
+            player.IsSkillAttack = false;
+            yield break;
+        }
+
+        player.CheckRangeAttackPos(targetNode);
         yield return new WaitForSeconds(0.5f);
 
-        player.CheckRangeAttack(mousePos);
+        player.CheckRangeAttackPos(targetNode);
+        player.IsSkillAttack = false;
     }
 
     private IEnumerator TripleAttackRoutine(NodePlayerController player, Vector3 mousePos)
     {
+        player.IsSkillAttack = true;
+
         Vector3Int targetNode = player.GetNodeVector3ByRay(mousePos, (1 << 8), true);
         if (targetNode == new Vector3Int(-999, -999, -999))
         {
+            player.IsSkillAttack = false;
             yield break;
         }
 
@@ -333,6 +350,8 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
             player.CheckRangeAttackPos(targetNode);
             yield return new WaitForSeconds(0.5f);
         }
+
+        player.IsSkillAttack = false;
     }
 
     private IEnumerator DelayedSneakAttack(NodePlayerController player, Vector3 mousePos, float delay, bool consumeAction = true)
