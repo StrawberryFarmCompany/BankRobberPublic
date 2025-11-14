@@ -63,62 +63,62 @@ public class EnemyNPC : MonoBehaviour
         // 1️. 현재 시야 갱신
         List<EntityStats> visibleTargets = DetectVisibleTargets();
 
-        // 현재 타깃이 없거나 죽었다면 새로 찾기
-        if (nearPlayerLocation == null || nearPlayerLocation.currNode == null || nearPlayerLocation.CurHp <= 0)
+        // 2. 현재 타겟 갱신
+        nearPlayerLocation = FindNextAlivePlayer(visibleTargets);
+
+        if (nearPlayerLocation == null)
         {
-            nearPlayerLocation = FindNextTarget();
-
-            if (nearPlayerLocation == null)
-            {
-                Debug.Log($"{name}: 유효한 타깃 없음 -> 턴 종료");
-                return;
-            }
-        }
-
-        // 2️. 이전 턴의 타깃과 동일하면 이동 없이 재공격
-        if (lastTarget == nearPlayerLocation)
-        {
-            RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
-
-            DOVirtual.DelayedCall(0.3f, () =>
-            {
-                TryAttack();
-
-                // 공격 후 죽었으면 다음 타겟으로 전환
-                if (nearPlayerLocation == null || nearPlayerLocation.CurHp <= 0)
-                {
-                    nearPlayerLocation = FindNextTarget();
-
-                    if (nearPlayerLocation != null && stats.movement > 0)
-                    {
-                        Debug.Log($"{name}: 새로운 타깃 발견 -> {nearPlayerLocation.characterName} 향해 이동");
-                        MoveAndEndTurn(nearPlayerLocation.GetPosition());
-                    }
-                    else
-                    {
-                        Debug.Log($"{name}: 추가 타깃 없음 -> 턴 종료");
-                        return;
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            });
+            Debug.Log($"{name}: 공격할 플레이어 없음 -> 턴 종료");
             return;
         }
 
-        // 3️. 새로운 타깃이면 이동 + 공격 시도
+        // 3. 이전 턴의 타깃과 동일하면 이동 없이 재공격
+        if (lastTarget == nearPlayerLocation)
+        {
+            AttackSameTargetFlow();
+            return;
+        }
+
+        // 4. 타겟이 살아 있지만 경로가 막혀있다면 문 열기 우선 조사
+        if (!HasPathToPlayer(nearPlayerLocation))
+        {
+            Door blockingDoor = FindDoorBlockingPath(nearPlayerLocation);
+
+            if (blockingDoor != null)
+            {
+                Debug.Log($"{name}: 플레이어 경로를 막는 문 발견 -> 문 열러감");
+
+                Move(blockingDoor.tr.position);
+
+                DOVirtual.DelayedCall(0.5f, () =>
+                {
+                    blockingDoor.OnInteraction(stats); // 문 열기
+                });
+
+                return;
+            }
+
+            Debug.Log($"{name}: 경로 막힘 + 문 없음 -> 대기 상태 전환");
+            return;
+        }
+
+        // 5. 새로운 타깃이면 이동 + 공격 시도
         if (stats.movement > 0 && nearPlayerLocation != null)
         {
-            MoveAndEndTurn(nearPlayerLocation.GetPosition());
+            MoveAndAttackFlow();
+            return;
         }
-        else
+
+        // 6) 이동력 없으면 공격만
+        RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
+        DOVirtual.DelayedCall(0.3f, () =>
         {
-            Debug.LogWarning($"{name}: 이동력 부족으로 이동 불가 -> 턴 종료");
-        }
+            TryAttack();
+            lastTarget = nearPlayerLocation;
+        });
     }
 
+    // 시야 안 플레이어를 우선
     protected EntityStats FindNextAlivePlayer(List<EntityStats> visibleTargets)
     {
         // 1. 현재 시야 내에서 찾기
@@ -311,16 +311,6 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
-    protected virtual EntityStats FindNextTarget()
-    {
-        var allPlayers = NodePlayerManager.GetInstance.GetAllPlayers();
-        if (allPlayers == null || allPlayers.Count == 0)
-            return null;
-
-        var closest = GetClosestAlivePlayer(allPlayers);
-        return closest != null ? closest.playerStats : null;
-    }
-
     private bool CheckRangeAttack(Vector3 targetPos)
     {
         Vector3 start = transform.position + Vector3.up * 1.5f;
@@ -345,6 +335,63 @@ public class EnemyNPC : MonoBehaviour
             Debug.Log($"시야 차단: {hit.collider.name}");
         }
         return false;
+    }
+
+    private void AttackSameTargetFlow()
+    {
+        RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
+
+        DOVirtual.DelayedCall(0.3f, () =>
+        {
+            TryAttack();
+
+            // 공격 후 타깃이 죽었으면 즉시 재탐색
+            var visible = DetectVisibleTargets();
+            nearPlayerLocation = FindNextAlivePlayer(visible);
+
+            if (nearPlayerLocation != null && stats.movement > 0)
+            {
+                MoveAndAttackFlow();
+            }
+            else
+            {
+                Debug.Log($"{name}: 공격 후 더 이상 타깃 없음 -> 턴 종료");
+            }
+        });
+    }
+
+    private void MoveAndAttackFlow()
+    {
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() =>
+        {
+            if (nearPlayerLocation == null)
+                return;
+
+            Move(nearPlayerLocation.GetPosition());
+
+            // 이동 후 공격
+            DOVirtual.DelayedCall(0.6f, () =>
+            {
+                if (nearPlayerLocation == null) return;
+
+                RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
+
+                DOVirtual.DelayedCall(0.3f, () =>
+                {
+                    TryAttack();
+
+                    // 공격 후 타깃 갱신
+                    var visible = DetectVisibleTargets();
+                    nearPlayerLocation = FindNextAlivePlayer(visible);
+
+                    lastTarget = nearPlayerLocation;
+                });
+            });
+
+        }, 0f));
+
+        efsm.eta = 3;
+        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
     }
 
     public void SecurityLevel(ushort level)
@@ -642,6 +689,64 @@ public class EnemyNPC : MonoBehaviour
         }
 
         return closest;
+    }
+
+    private bool HasPathToPlayer(EntityStats target)
+    {
+        if (target == null || target.currNode == null) return false;
+
+        Vector3Int start = stats.currNode.GetCenter;
+        Vector3Int end = target.currNode.GetCenter;
+
+        var path = GenerateChebyshevPath(start, end);
+        return path != null && path.Count > 0;
+    }
+
+    private Door FindDoorBlockingPath(EntityStats target)
+    {
+        Vector3Int start = stats.currNode.GetCenter;
+        Vector3Int end = target.currNode.GetCenter;
+
+        Queue<Vector3Int> open = new Queue<Vector3Int>();
+        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+
+        open.Enqueue(start);
+        visited.Add(start);
+
+        while (open.Count > 0)
+        {
+            Vector3Int current = open.Dequeue();
+
+            foreach (var dir in GameManager.GetInstance.nearNode)
+            {
+                Vector3Int next = current + dir;
+                if (visited.Contains(next)) continue;
+
+                visited.Add(next);
+                Node node = GameManager.GetInstance.GetNode(next);
+
+                if (node == null) continue;
+
+                // 이동 불가 → 문인지 검사
+                if (!node.isWalkable)
+                {
+                    if (node.Interactions != null)
+                    {
+                        foreach (var kvp in node.Interactions)
+                        {
+                            if (kvp.Value.Target is Door door && !door.isOpen)
+                                return door;   // 경로를 막는 바로 그 문
+                        }
+                    }
+                    continue;
+                }
+
+                // 이동 가능 → BFS 계속
+                open.Enqueue(next);
+            }
+        }
+
+        return null;
     }
 
     private void OnDestroy()

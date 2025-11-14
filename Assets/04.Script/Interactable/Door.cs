@@ -103,7 +103,8 @@ public class Door : IInteractable
 
             isOpen = true;
 
-            NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
+            if(stat.characterType != CharacterType.None)
+                NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
             GameManager.GetInstance.Nodes[tile].isWalkable = true;
 
             ReleaseInteraction(OnInteraction);
@@ -113,7 +114,10 @@ public class Door : IInteractable
         }
         else if (!lockModule.IsLock(stat) && type == DoorLockType.password)
         {
-            UIManager.GetInstance.SetPasswordUI(index, tr);
+            if (stat.characterType != CharacterType.None)
+                UIManager.GetInstance.SetPasswordUI(index, tr);
+            else
+                Debug.Log("너는 권리가 없어요 이누마");
         }
 
     }
