@@ -107,6 +107,15 @@ public class TurnActionInput : MonoBehaviour
         }
     }
 
+    public void OnReloadPressed()
+    {
+        if (playerController.IsMyTurn() && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
+        {
+            UIManager.GetInstance.ShowActionPanel(false);
+            playerController.StartMode(PlayerStatus.isReloadMode);
+        }
+    }
+
     public void OnPerkActionPressed()
     {
         if (playerController.IsMyTurn() && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
