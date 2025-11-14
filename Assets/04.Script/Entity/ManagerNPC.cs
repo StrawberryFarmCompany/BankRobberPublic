@@ -4,6 +4,7 @@ using UnityEngine;
 public class ManagerNPC : NeutralNPC
 {
     public bool isDetection = false;
+    public bool isCowered = false;
     Animator animator;
     protected override IEnumerator Start()
     {
@@ -26,9 +27,10 @@ public class ManagerNPC : NeutralNPC
             BankManagerWitness();
         }
 
-        if (isDetection == true || stats.secData.GetSecLevel == 3)
+        if (isDetection == true || stats.secData.GetSecLevel == 3 && isCowered == false)
         {
             nfsm.ChangeState(nfsm.FindState(NeutralStates.ManagerIdleCowerState));
+            isCowered = true;
         }
 
         base.CalculateBehaviour();
