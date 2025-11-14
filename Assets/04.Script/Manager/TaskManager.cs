@@ -44,6 +44,11 @@ public class TaskManager : MonoSingleTon<TaskManager>
         {
             actionTask.Enqueue(target[i]);
         }
+    }    
+    public void AddActionBehaviour(TurnTask target)
+    {
+        skipDelay = task.Count > 0 && actionTask.Count == 0;
+        actionTask.Enqueue(target);
     }
     public void RemoveTurnBehaviour(TurnTask remove)
     {
