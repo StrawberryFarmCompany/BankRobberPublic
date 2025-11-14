@@ -6853,7 +6853,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87d2dcf966a7ca747805b339600c618d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: "\uD589\uB3D9\uB825 1\uC744 \uC18C\uBAA8\uD574 "
+  description: "\uD589\uB3D9\uB825 1\uC744 \uC18C\uBAA8\uD574 \uAE30\uC2B5 \uACF5\uACA9\uC744
+    \uD569\uB2C8\uB2E4."
 --- !u!1 &2437725042059465269
 GameObject:
   m_ObjectHideFlags: 0
