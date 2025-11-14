@@ -14,7 +14,7 @@ public class NeutralStateMachine : IStateMachineBase<NeutralState>
     public void ChangeState(NeutralState next)
     {
         currentState = next;
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration = 1 * eta));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration = eta));
         TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Exit, 0f));
     }
 
