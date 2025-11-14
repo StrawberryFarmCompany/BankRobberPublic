@@ -733,7 +733,7 @@ public class EnemyNPC : MonoBehaviour
 
                 if (node == null) continue;
 
-                // 이동 불가 → 문인지 검사
+                // 이동 불가 -> 문인지 검사
                 if (!node.isWalkable)
                 {
                     if (node.Interactions != null)
@@ -747,7 +747,7 @@ public class EnemyNPC : MonoBehaviour
                     continue;
                 }
 
-                // 이동 가능 → BFS 계속
+                // 이동 가능 -> BFS 계속
                 open.Enqueue(next);
             }
         }
