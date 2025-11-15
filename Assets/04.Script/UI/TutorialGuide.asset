@@ -14,9 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Elements:
   - missionType: 0
-    description: "\uD0A4\uCE74\uB4DC \uC704\uCE58\uAE4C\uC9C0 \uC6C0\uC9C1\uC5EC\uB77C."
-    targetPosition: {x: 67, y: 0, z: 25}
-    reachRange: 1
+    description: "WASD\uC640 QE\uB85C \uCE74\uBA54\uB77C\uB97C \uC6C0\uC9C1\uC774\uACE0,
+      \uD0C0\uC77C\uC744 \uB20C\uB7EC \uC774\uB3D9\uD558\uB77C"
+    targetPosition: {x: 70, y: 0, z: 39}
+    reachRange: 4
+    keyCardIndex: 0
+    doorIndex: 0
+    documentType: 1
+    documentIndex: 0
+  - missionType: 0
+    description: "\uD0A4\uCE74\uB4DC \uC704\uCE58\uAE4C\uC9C0 \uC6C0\uC9C1\uC5EC\uB77C.
+      \uC774\uB3D9\uB825\uC744 \uC18C\uBAA8\uD588\uB2E4\uBA74 \uD134\uC885\uB8CC\uB97C
+      \uB20C\uB7EC\uB77C."
+    targetPosition: {x: 67, y: 0, z: 35}
+    reachRange: 2
     keyCardIndex: 0
     doorIndex: 0
     documentType: 0
@@ -31,15 +42,15 @@ MonoBehaviour:
     documentIndex: 0
   - missionType: 0
     description: "\uBB38 \uC55E\uC73C\uB85C \uAC00\uB77C."
-    targetPosition: {x: 70, y: 0, z: 25}
-    reachRange: 0.4
+    targetPosition: {x: 70, y: 0, z: 34.5}
+    reachRange: 1
     keyCardIndex: 0
     doorIndex: 0
     documentType: 0
     documentIndex: 0
   - missionType: 0
     description: "\uBB38\uC744 \uC5F4\uACE0 \uB098\uAC00\uB77C."
-    targetPosition: {x: 70, y: 0, z: 24}
+    targetPosition: {x: 70, y: 0, z: 34.5}
     reachRange: 0.4
     keyCardIndex: 0
     doorIndex: 0
@@ -48,20 +59,57 @@ MonoBehaviour:
   - missionType: 0
     description: "'\uB2EC\uB9AC\uAE30(Z)'\uC744 \uC0AC\uC6A9\uD558\uC5EC \uBA40\uB9AC
       \uC774\uB3D9\uD558\uB77C."
-    targetPosition: {x: 70, y: 0, z: 18}
+    targetPosition: {x: 70, y: 0, z: 28}
     reachRange: 0.4
     keyCardIndex: 0
     doorIndex: 0
     documentType: 0
     documentIndex: 0
   - missionType: 0
+    description: "\uBC1C\uC18C\uB9AC\uB97C \uC904\uC774\uAE30 \uC704\uD574 \uC740\uC2E0(C)\uD6C4,
+      \uBE68\uAC04\uC0C9 \uD0C0\uC77C\uC5D0 \uCF54\uC778\uC744 \uB358\uC838(X) \uC5B4\uADF8\uB85C\uB97C
+      \uB04C\uC5B4\uB77C."
+    targetPosition: {x: 70, y: 0, z: 24}
+    reachRange: 0.4
+    keyCardIndex: 0
+    doorIndex: 0
+    documentType: 1
+    documentIndex: 0
+  - missionType: 0
+    description: "\uD30C\uB780\uC0C9 \uD0C0\uC77C\uC5D0\uC11C 2\uD134\uAC04 \uBC84\uD168\uB77C."
+    targetPosition: {x: 70, y: 0, z: 21}
+    reachRange: 2
+    keyCardIndex: 0
+    doorIndex: 0
+    documentType: 1
+    documentIndex: 0
+  - missionType: 0
+    description: "\uC870\uC900(G) \uD558\uACE0 \uC9C4\uC785\uD558\uB77C. (\uBA85\uC911\uB960
+      \uC0C1\uC2B9)"
+    targetPosition: {x: 70, y: 0, z: 18}
+    reachRange: 0.4
+    keyCardIndex: 0
+    doorIndex: 0
+    documentType: 1
+    documentIndex: 0
+  - missionType: 0
     description: "'\uACA9\uBC1C(V)'\uB97C \uC0AC\uC6A9\uD558\uC5EC \uC801\uC744 \uC81C\uAC70\uD558\uACE0
-      \uB098\uC544\uAC00\uB77C."
+      \uB098\uC544\uAC00\uB77C. \uD0C4\uC774 \uC5C6\uB2E4\uBA74 \uC7AC\uC7A5\uC804(R)\uC744
+      \uD558\uB77C."
     targetPosition: {x: 70, y: 0, z: 14}
     reachRange: 0.4
     keyCardIndex: 3
     doorIndex: 0
     documentType: 0
+    documentIndex: 0
+  - missionType: 0
+    description: "\uB2E4\uC74C\uC73C\uB85C \uAC00\uB77C. \uC561\uD2F0\uBE0C \uD2B9\uC131(T)\uC73C\uB85C
+      \uCCB4\uB825\uC744 \uCC44\uC6B8 \uC218 \uC788\uB2E4."
+    targetPosition: {x: 70, y: 0, z: 12}
+    reachRange: 0.4
+    keyCardIndex: 0
+    doorIndex: 0
+    documentType: 1
     documentIndex: 0
   - missionType: 0
     description: "\uC801\uB4E4\uC758 \uC2DC\uC57C\uB97C \uD53C\uD574\uC11C \uBB38\uC5D0

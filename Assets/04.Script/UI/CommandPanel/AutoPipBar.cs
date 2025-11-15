@@ -12,7 +12,6 @@ public class AutoPipBar : MonoBehaviour
     [SerializeField] TextMeshProUGUI movementText;
     [SerializeField] TextMeshProUGUI healthText;
     [SerializeField] TextMeshProUGUI ammoText;
-    [SerializeField] TextMeshProUGUI hideAndSneakAttackText;
     [SerializeField] Image portraitImage; // 캐릭터 초상화 이미지
 
     [SerializeField] private Image[] pipMovementImages; // 파이프 이미지 배열
@@ -98,17 +97,5 @@ public class AutoPipBar : MonoBehaviour
     public void RefreshHealth()
     {
         healthText.text = $"{NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.CurHp} / {NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.maxHp}";   
-    }
-
-    public void HideAndSneakText()
-    {
-        if (NodePlayerManager.GetInstance.GetCurrentPlayer().isHide)
-        {
-            hideAndSneakAttackText.text = "기습 공격";
-        }
-        else
-        {   
-            hideAndSneakAttackText.text = "숨기";
-        }
     }
 }

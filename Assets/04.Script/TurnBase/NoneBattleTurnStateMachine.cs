@@ -190,7 +190,7 @@ public class NoneBattleTurnStateMachine
     {
         delayedActions.Add(new DelayedTurnAction
         {
-            executeRound = currRound + delay*2,
+            executeRound = currRound + delay,
             action = action
         });
     }
@@ -225,7 +225,7 @@ public class NoneBattleTurnStateMachine
 
         delayedActions.Add(new DelayedTurnAction
         {
-            executeRound = currRound + delay*2,
+            executeRound = currRound + delay,
             action = action,
             actionId = id
         });

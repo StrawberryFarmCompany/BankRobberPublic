@@ -33,6 +33,8 @@ public class TeleportTrap : ITrap
         {
             stat.thisGameObject.transform.position = targetPos;
             stat.NodeUpdates(targetPos);
+            if (stat.characterType != CharacterType.None)
+                stat.thisGameObject.GetComponent<NodePlayerController>().TurnOnHighlighter();
 
         }
     }
