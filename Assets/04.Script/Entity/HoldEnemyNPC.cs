@@ -108,8 +108,6 @@ public class HoldEnemyNPC : EnemyNPC
             CombatBehaviour();
         }
 
-        NoiseManager.ClearNoises(); // 게임메니저든 어디든 턴 종료시 한 번만 호출하게 해줘야함. (이동 필요!)
-
         base.CalculateBehaviour();
     }
 
