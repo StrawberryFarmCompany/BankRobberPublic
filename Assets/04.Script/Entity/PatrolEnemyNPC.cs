@@ -115,8 +115,6 @@ public class PatrolEnemyNPC : EnemyNPC
             CombatBehaviour();
         }
 
-        NoiseManager.ClearNoises();
-
         base.CalculateBehaviour();
     }
 

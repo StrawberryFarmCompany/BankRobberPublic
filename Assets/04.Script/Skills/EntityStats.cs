@@ -26,11 +26,7 @@ public class EntityStats
             return curHp; 
         } 
         set 
-        { 
-            if(curHp > value)
-            {
-                OnDamaged?.Invoke();
-            }
+        {  
             curHp = value; 
         } 
     }
@@ -188,6 +184,9 @@ public class EntityStats
     {
         if (isGodMode) return; //====================================================================== 반드시 지울 것
         CurHp -= damage;
+
+        OnDamaged?.Invoke();
+
         if (hpbar != null)
         {
             hpbar.SetCurrHP(CurHp);

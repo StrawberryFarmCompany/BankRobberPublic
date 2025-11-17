@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     public DocumentUI documentUI;
     public PasswordUI passwordUI;
     public GuideUI guideUI;
+    public ActionTooltip actionTooltip;
 
     public Transform CanvasRoot { get { return canvasRoot; } }
 

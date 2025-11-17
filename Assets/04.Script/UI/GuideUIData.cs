@@ -37,6 +37,7 @@ public class GuideListElement
     public int documentIndex;
     
 
+
     public bool IsMissionComplete()
     {
         switch (missionType)

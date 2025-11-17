@@ -88,20 +88,21 @@ public class EnemyNPC : MonoBehaviour
 
             if (blockingDoor != null)
             {
-                Debug.Log($"{name}: 플레이어 경로를 막는 문 발견 -> 문 열러감");
+                Debug.Log($"{name}: 플레이어 경로를 막는 문 발견 -> 문 앞까지 이동");
 
-                Move(blockingDoor.tr.position);
+                // 문 노드 위치
+                Vector3Int doorTile = GameManager.GetInstance.GetVecInt(blockingDoor.tr.position);
 
-                DOVirtual.DelayedCall(0.5f, () =>
-                {
-                    blockingDoor.OnInteraction(stats); // 문 열기
-                });
+                // 문 주변에서 가장 가까운 이동 가능한 노드 찾기
+                Vector3Int doorFront = FindNearestWalkableNodeAround(doorTile);
 
+                // 그곳까지 이동
+                Move((Vector3)doorFront);
+
+                // 이동이 끝난 후에만 문 열기
+                StartCoroutine(TryOpenDoorWhenArrived(blockingDoor, doorFront));
                 return;
             }
-
-            Debug.Log($"{name}: 경로 막힘 + 문 없음 -> 대기 상태 전환");
-            return;
         }
 
         // 5. 새로운 타깃이면 이동 + 공격 시도
@@ -763,6 +764,21 @@ public class EnemyNPC : MonoBehaviour
         }
 
         return null;
+    }
+
+    private IEnumerator TryOpenDoorWhenArrived(Door door, Vector3Int doorFront)
+    {
+        // npc가 doorFront에 도착할 때까지 대기
+        while (Vector3.Distance(transform.position, doorFront) > 0.2f)
+            yield return null;
+
+        // 문이 아직 닫혀있으면 연다
+        if (!door.isOpen)
+        {
+            RotateToward(door.tr.position, 0.2f);
+            yield return new WaitForSeconds(0.2f);
+            door.OnInteraction(stats);
+        }
     }
 
     private void OnDestroy()

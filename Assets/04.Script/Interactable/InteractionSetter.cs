@@ -98,7 +98,7 @@ public class InteractionSetter : MonoBehaviour
                     GameManager.GetInstance.Nodes[currPos].isWalkable = i == 2 || i == 3 ? true : false;
                     if (i == 2 || i == 3)
                     {
-                        GameManager.GetInstance.Nodes[currPos].isWalkable = true;
+                        GameManager.GetInstance.Nodes[currPos].isWalkable = isWalkAble;
                         doorPoints[i - 2] = currPos;
                     }
                     else
