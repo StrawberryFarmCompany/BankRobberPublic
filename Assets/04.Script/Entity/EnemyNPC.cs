@@ -94,6 +94,7 @@ public class EnemyNPC : MonoBehaviour
 
                 // 그곳까지 이동
                 Move((Vector3)doorFront);
+                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
 
                 // 이동이 끝난 후에만 문 열기
                 StartCoroutine(TryOpenDoorWhenArrived(blockingDoor, doorFront));
@@ -159,6 +160,7 @@ public class EnemyNPC : MonoBehaviour
             }
 
             Move(targetPosition);
+            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
 
             DOVirtual.DelayedCall(0.6f, () =>
             {
@@ -367,6 +369,7 @@ public class EnemyNPC : MonoBehaviour
                 return;
 
             Move(nearPlayerLocation.GetPosition());
+            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
 
             // 이동 후 공격
             DOVirtual.DelayedCall(0.6f, () =>
