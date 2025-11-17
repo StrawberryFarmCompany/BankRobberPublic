@@ -96,6 +96,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8a409965d9c2d640ad49045de57cf5d
+    m_Address: DoHyeon-Regular SDF
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b1ea3b1297f0bad47ae074d7277b2f7a, type: 2}
   m_SchemaSet:

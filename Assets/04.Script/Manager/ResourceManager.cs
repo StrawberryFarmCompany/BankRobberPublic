@@ -124,13 +124,28 @@ public class ResourceManager : SingleTon<ResourceManager>
                 curr++;
                 if (result == null)
                 {
-                    Debug.Log("Ÿ���� �ùٸ��� ����");
+                    Debug.LogError("{key}프리로드 실패");
                 }
                 else
                 {
                     Debug.Log($"{key}프리로드 성공");
-
-                    preloaded.Add(key, result);
+                    if (preloaded.ContainsKey(key))
+                    {
+                        TMPro.TMP_FontAsset aa = (TMPro.TMP_FontAsset)result;
+                        if(aa == null)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            preloaded.Remove(key);
+                            preloaded.Add(key, result);
+                        }
+                    }
+                    else
+                    {
+                        preloaded.Add(key, result);
+                    }
                 }
             }, false);
         }

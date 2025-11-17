@@ -93,7 +93,8 @@ public class Door : IInteractable
 
     public void OnInteraction(EntityStats stat)
     {
-        if (lockModule.IsLock(stat) && !isOpen)
+        bool lockResult = lockModule.IsLock(stat);
+        if (lockResult && !isOpen)
         {
             //이동 가능 불가 여부 추후 추가 필요
             Vector3 targetRot;
@@ -112,13 +113,46 @@ public class Door : IInteractable
 
             NodePlayerManager.GetInstance.GetCurrentPlayer().TurnOnHighlighter();
         }
-        else if (!lockModule.IsLock(stat) && type == DoorLockType.password)
+        else
         {
-            if (stat.characterType != CharacterType.None)
-                UIManager.GetInstance.SetPasswordUI(index, tr);
-            else
-                Debug.Log("너는 권리가 없어요 이누마");
+            if (isOpen) return;
+
+            if (!lockResult && type == DoorLockType.password)
+            {
+                if (stat.characterType != CharacterType.None)
+                    UIManager.GetInstance.SetPasswordUI(index, tr);
+                else
+                    Debug.Log("너는 권리가 없어요 이누마");
+            }
+
+            if (!lockResult)//false이기만 할 때
+            {
+
+                tr.transform.DORotate(defaultRotation + (Vector3.up * 5), 0.1f).OnComplete(()=> 
+                {
+                    tr.transform.DORotate(defaultRotation + (Vector3.up * -5), 0.1f).OnComplete(() =>
+                    {
+                        tr.transform.DORotate(defaultRotation + (Vector3.up * 5), 0.1f).OnComplete(() =>
+                        {
+                            tr.transform.DORotate(defaultRotation + (Vector3.up * -5), 0.1f).OnComplete(() =>
+                            {
+                                tr.transform.DORotate(defaultRotation + (Vector3.up * 5), 0.1f).OnComplete(() =>
+                                {
+                                    tr.transform.DORotate(defaultRotation + (Vector3.up * -5), 0.1f).OnComplete(() =>
+                                    {
+                                        tr.transform.DORotate(defaultRotation, 0.1f);
+                                        UIManager.GetInstance.SetErrorMessege(lockModule.GetErrorMessege());
+                                    });
+                                });
+
+                            });
+                        });
+                    });
+                });
+                
+            }
         }
+
 
     }
     public void UnInteraction(EntityStats stat)
