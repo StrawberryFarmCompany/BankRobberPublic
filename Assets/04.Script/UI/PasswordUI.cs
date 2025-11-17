@@ -102,6 +102,11 @@ public class PasswordUI : MonoBehaviour
 
     public void Enter()     //게임매니저에서 도어인덱스에 해당하는 패스워드를 비교해보기
     {
+        if (inputNumbers.Count != 4) 
+        {
+            Debug.LogError("예외처리 없음, 영종님 작업해주세염 EX : UI 출력 등");
+            return;
+        }
         int answer = inputNumbers[0]*1000 + inputNumbers[1]*100 + inputNumbers[2]*10 + inputNumbers[3];
         if (answer == GameManager.GetInstance.passwordDoorPair[index])  //비밀번호 정답
         {
