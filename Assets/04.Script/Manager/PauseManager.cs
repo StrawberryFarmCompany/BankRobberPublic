@@ -91,7 +91,18 @@ public class PauseManager : MonoBehaviour
         }
 
         if (isPaused) ResumeGame();
-        else PauseGame();
+        else
+        {
+            if(NodePlayerManager.GetInstance.GetCurrentPlayer().currPlayerStatus != PlayerStatus.isMoveMode)
+            {
+                UIManager.GetInstance.ShowActionPanel(true);
+                NodePlayerManager.GetInstance.GetCurrentPlayer().StartMode(PlayerStatus.isMoveMode);
+            }
+            else
+            {
+                PauseGame();
+            }
+        }
     }
 
     private void PauseGame()
