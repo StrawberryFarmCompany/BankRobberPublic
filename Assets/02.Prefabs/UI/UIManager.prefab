@@ -2869,7 +2869,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -19203,7 +19203,6 @@ MonoBehaviour:
   movementText: {fileID: 7301640048425836453}
   healthText: {fileID: 8827807285739161005}
   ammoText: {fileID: 7062555406107819372}
-  hideAndSneakAttackText: {fileID: 1824638172321024639}
   portraitImage: {fileID: 7935022659389567167}
   pipMovementImages:
   - {fileID: 8480460525274081616}
@@ -21074,7 +21073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
