@@ -36,11 +36,12 @@ public class LockPick : ILock
     bool released;
     public bool IsLock(EntityStats stat)
     {
-        if (released)
+        if (!released)
         {
-            //TODO : 현재 선택된 캐릭터의 락핏 스텟
-            
-            DiceManager.GetInstance.DelayedRoll(stat.sabotage,6,3, (result) =>
+            //TODO : 추후 연출 추가 시 delayedRoll로 처리
+
+            released = unlockMin > DiceManager.GetInstance.DirrectRoll(stat.sabotage, 6, 3);
+/*            DiceManager.GetInstance.DelayedRoll(stat.sabotage,6,3, (result) =>
             {
                 released = unlockMin > result;
                 if (!released)
@@ -55,7 +56,7 @@ public class LockPick : ILock
                     NoiseManager.AddNoise(stat.currNode.GetCenter, NoiseType.Disarm);
                 }
 
-            });
+            });*/
         }
         return released;
     }
@@ -66,7 +67,7 @@ public class LockPick : ILock
     public LockPick(int unlockMin)
     {
         this.unlockMin = unlockMin;
-        released = true;
+        released = false;
     }
 }
 public class KeyCardLock : ILock

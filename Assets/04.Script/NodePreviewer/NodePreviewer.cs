@@ -187,7 +187,7 @@ public class NodePreviewer
     private void CreateGoalPreviewer()
     {
         goalPreviewer = new GameObject("GoalPreviewer").transform;
-        boundPreviewerGOBJ.layer = 11;
+        goalPreviewer.gameObject.layer = 11;
         GameObject.DontDestroyOnLoad(goalPreviewer);
         goalPreviewer.transform.position = Vector3.zero;
         goalPreviewer.transform.eulerAngles = Vector3.zero;
@@ -216,7 +216,7 @@ public class NodePreviewer
     private void CreatePathPreviewer()
     {
         pathLine = new GameObject("PathLineRenderer").AddComponent<LineRenderer>();
-        boundPreviewerGOBJ.layer = 11;
+        pathLine.gameObject.layer = 11;
         GameObject.DontDestroyOnLoad(pathLine.gameObject);
         pathLine.startWidth = 0.4f;
         pathLine.endWidth = 0.4f;
@@ -227,7 +227,7 @@ public class NodePreviewer
     private void CreateThrowPathPreviewer()
     {
         throwPathLine = new GameObject("ThrowPathLineRenderer").AddComponent<LineRenderer>();
-        boundPreviewerGOBJ.layer = 11;
+        throwPathLine.gameObject.layer = 11;
         GameObject.DontDestroyOnLoad(throwPathLine.gameObject);
         throwPathLine.startWidth = 0.4f;
         throwPathLine.endWidth = 0.4f;
@@ -238,7 +238,7 @@ public class NodePreviewer
     private void CreateTargetPreviewer()
     {
         targetPreviewer = new GameObject("TargetSelectionPreviewr").transform;
-        boundPreviewerGOBJ.layer = 11;
+        targetPreviewer.gameObject.layer = 11;
         GameObject.DontDestroyOnLoad(targetPreviewer.gameObject);
         ResourceManager.GetInstance.LoadAsync<Material>("TargetPreviewerMat", (mat) => { targetPreviewer.gameObject.AddComponent<MeshRenderer>().material = mat; });
 
