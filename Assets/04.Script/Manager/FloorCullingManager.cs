@@ -17,8 +17,8 @@ public class FloorCullingManager : MonoBehaviour
     [Header("층 범위 리스트")]
     public List<FloorRange> floors = new List<FloorRange>();
 
-    [Header("쿨링에 제외할 레이어")]
-    public LayerMask excludeLayerMask;
+
+    private LayerMask excludeLayerMask = (1<<11)+ (1<<8);
 
     private float lastUpdateTime = 0f;
 
