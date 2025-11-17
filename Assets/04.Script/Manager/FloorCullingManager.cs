@@ -1,5 +1,7 @@
+using FOW;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [System.Serializable]
@@ -17,6 +19,7 @@ public class FloorCullingManager : MonoBehaviour
     [Header("층 범위 리스트")]
     public List<FloorRange> floors = new List<FloorRange>();
 
+    private Dictionary<EntityStats, FogOfWarRevealer3D> playerRevealers = new Dictionary<EntityStats, FogOfWarRevealer3D>();
 
     private LayerMask excludeLayerMask = (1<<11)+ (1<<8);
 
@@ -82,6 +85,12 @@ public class FloorCullingManager : MonoBehaviour
         allColliders = FindObjectsOfType<Collider>(true)
             .Where(c => (excludeLayerMask.value & (1 << c.gameObject.layer)) == 0)
             .ToArray();
+
+        NodePlayerManager.GetInstance.GetAllPlayers().ForEach(p =>
+        {
+            var playerRevealer = p.GetComponents<FogOfWarRevealer3D>();
+            //playerRevealers.Add(p, playerRevealer.FirstOrDefault(r => r.revealMode == FogOfWarRevealer3D.RevealMode.Player));
+        });
     }
 
     /// <summary>

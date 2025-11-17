@@ -142,6 +142,8 @@ public class NodePlayerManager : MonoBehaviour
     {
         if (context.started)
         {
+            if (GameManager.GetInstance.NoneBattleTurn.GetCurrState() != TurnTypes.ally)
+                return;
             UIManager.GetInstance.ShowActionPanel(true);
             NotifyPlayerEndTurn(GetCurrentPlayer());
         }
