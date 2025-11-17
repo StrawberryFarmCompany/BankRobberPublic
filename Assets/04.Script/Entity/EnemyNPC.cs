@@ -50,11 +50,9 @@ public class EnemyNPC : MonoBehaviour
     {
         stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
 
-        if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)   
-        {
-            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
-        }
+        TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
+
         stats.NodeUpdates(transform.position);
     }
 
