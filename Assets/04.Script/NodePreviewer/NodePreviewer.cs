@@ -168,7 +168,7 @@ public class NodePreviewer
     private void CreateBoundPreviewer()
     {
         boundPreviewerGOBJ = new GameObject("NodeBoundPreviewer");
-        boundPreviewerGOBJ.layer = 1<<11;
+        boundPreviewerGOBJ.layer = 11;
         GameObject.DontDestroyOnLoad(boundPreviewerGOBJ);
 
         boundPreviewerGOBJ.transform.position = Vector3.zero;
