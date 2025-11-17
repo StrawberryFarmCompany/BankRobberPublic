@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1354651202650215951}
   - component: {fileID: 7236427789731573996}
   - component: {fileID: 9082764040193028581}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_Shotgun_Slide_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 905488737250935771}
   - component: {fileID: 6431154373377818808}
   - component: {fileID: 4283141810419949862}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_Shotgun_Trigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5138530414090728872}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 4300233269239843663}
   - component: {fileID: 4213038433820284038}
   - component: {fileID: 1759444295112666354}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: M1897
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,7 @@ GameObject:
   - component: {fileID: 5922058029357867824}
   - component: {fileID: 7666942191718341707}
   - component: {fileID: 8311088716333805534}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_Shotgun_Pump_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

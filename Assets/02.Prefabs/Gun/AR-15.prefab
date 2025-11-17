@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9183111818739549732}
   - component: {fileID: 8128056522894439215}
   - component: {fileID: 1828193334658281871}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleSwat_Slide_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 1947623349631616184}
   - component: {fileID: 5940882111605021808}
   - component: {fileID: 5467061608578843414}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleSwat_Stock_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 852155255429326873}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 4394319747632257629}
   - component: {fileID: 5128237494437411526}
   - component: {fileID: 4704849577089898885}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AR-15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -297,7 +297,7 @@ GameObject:
   - component: {fileID: 4641885093871008607}
   - component: {fileID: 4748982730605296634}
   - component: {fileID: 4940235088915918894}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleSwat_ChargeHandle_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -380,7 +380,7 @@ GameObject:
   - component: {fileID: 1876300759683970934}
   - component: {fileID: 998975179871681778}
   - component: {fileID: 5358834559811489817}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleSwat_Mag_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -463,7 +463,7 @@ GameObject:
   - component: {fileID: 3049807444031290841}
   - component: {fileID: 5213633590703230050}
   - component: {fileID: 51038430689434516}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleSwat_Trigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 416355957186474742}
   - component: {fileID: 7782559187247418299}
   - component: {fileID: 7719982995498556465}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_PistolSwat_Slide_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 3912451077344677290}
   - component: {fileID: 7039527429455964329}
   - component: {fileID: 250024154520885884}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_PistolSwat_Trigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5209714857117898357}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 1543196368938269403}
   - component: {fileID: 7678046632142197710}
   - component: {fileID: 2041438236785802801}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_PistolSwat_Mag_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -291,7 +291,7 @@ GameObject:
   - component: {fileID: 4465854639936862198}
   - component: {fileID: 400287391688933441}
   - component: {fileID: 9195776635807819491}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: G18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
