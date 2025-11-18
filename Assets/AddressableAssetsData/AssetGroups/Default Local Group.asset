@@ -17,6 +17,12 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 578ea37035c53d2448957564a823b529
   m_SerializeEntries:
+  - m_GUID: 0217b3867655d5b4eafdd5851f9e520f
+    m_Address: WarningTextOutLine
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0ceb87c4fe6c9ce498d51669e9ce7fe8
     m_Address: HPParent
     m_ReadOnly: 0

@@ -329,7 +329,7 @@ public class NodePlayerController : MonoBehaviour
                 MoveRangeHighlighter.normalHighlighter.Enable(false);
                 //최종 이동 구현
                 isMoving = true;
-                NodePlayerManager.GetInstance.isMoving = true;
+                NodePlayerManager.GetInstance.isMoving = true; //동시 진행 방지
                 canNextMove = true;
             }
         }
@@ -413,10 +413,22 @@ public class NodePlayerController : MonoBehaviour
         if (canNextMove && pathQueue.Count > 0)
         {
             canNextMove = false;
-
-            if (pathQueue.Count <= 1)
+            Vector3Int targetPos = pathQueue.Dequeue();
+            Node node = GameManager.GetInstance.GetNode(targetPos);
+            if(node != null && node.Standing.Count > 0)
             {
-                eta = DoMoveAndRotate(Ease.Unset, pathQueue.Dequeue(), 0.2f, 0.3f, () => {
+                playerStats.HealMovement(pathQueue.Count + 1);
+                pathQueue.Clear();
+                playerStats.NodeUpdates(transform.position);
+                playerStats.GetTileInteraction(transform.position);
+
+                highlighter.ShowMoveRange(playerStats.currNode.GetCenter, playerStats.movement);
+                StartMode(PlayerStatus.isMoveMode);
+                return;
+            }
+            else if (pathQueue.Count <= 1)
+            {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
                     playerStats.NodeUpdates(transform.position);
                     playerStats.GetTileInteraction(transform.position);
 
@@ -426,7 +438,7 @@ public class NodePlayerController : MonoBehaviour
             }
             else
             {
-                eta = DoMoveAndRotate(Ease.Unset, pathQueue.Dequeue(), 0.2f, 0.3f, () => {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
                     playerStats.NodeUpdates(transform.position);
                     playerStats.GetTileInteraction(transform.position);
                 });

@@ -1,14 +1,13 @@
-using DG.Tweening;
-using NodeDefines;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Resources;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using NodeDefines;
+using System.Resources;
+using System.Net.Http.Headers;
+using System.Collections;
+using DG.Tweening;
 
 public class UIManager : MonoBehaviour
 {
@@ -26,9 +25,9 @@ public class UIManager : MonoBehaviour
     public PasswordUI passwordUI;
     public GuideUI guideUI;
     public ActionTooltip actionTooltip;
-    [SerializeField] public ActionTooltipTrigger specialSkillTooltip;
-    private TextMeshProUGUI warningMessege;
     public Transform CanvasRoot { get { return canvasRoot; } }
+
+    private Defines.WarningMessage warningMessege;
 
     public bool SelectionLocked { get; private set; }
 
@@ -61,9 +60,9 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad.Count > 0);
-        CreateErrorMessege();
-        RefreshSpecialSkillTooltip();
+        if(ResourceManager.GetInstance.GetPreLoad.Count <= 0 && ResourceManager.GetInstance.GetPreLoad == null)
+            yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad.Count > 0 && ResourceManager.GetInstance.GetPreLoad != null);
+        warningMessege = new Defines.WarningMessage(actionPanel.transform);
     }
 
     public void ShowActionPanel(bool show)
@@ -109,63 +108,9 @@ public class UIManager : MonoBehaviour
         passwordUI.Clear();
         passwordUI.gameObject.SetActive(true);
     }
-    public void SetErrorMessege(string messege)
+
+    public void SetErrorMessege(string str)
     {
-        warningMessege.DOComplete(false);
-        warningMessege.alpha = 1f;
-        warningMessege.color = Color.red;
-        warningMessege.text = messege;
-        warningMessege.DOColor(Color.clear, 5f);
-    }
-
-    private void CreateErrorMessege()
-    {
-        warningMessege = new GameObject("ErrorMessege").AddComponent<TextMeshProUGUI>();
-        warningMessege.rectTransform.parent = actionPanel.transform.parent.parent.parent.parent;
-        warningMessege.alignment = TextAlignmentOptions.Center;
-        warningMessege.rectTransform.anchorMin = Vector2.one * 0.5f;
-        warningMessege.rectTransform.anchorMax = Vector2.one * 0.5f;
-        warningMessege.rectTransform.anchoredPosition = Vector2.up * 250f;
-        warningMessege.rectTransform.sizeDelta = new Vector2(800f, 200f);
-        warningMessege.raycastTarget = false;
-        warningMessege.font = (TMP_FontAsset)ResourceManager.GetInstance.GetPreLoad["DoHyeon-Regular SDF"];
-    }
-
-    private void FindSpecialSkillTooltip()
-    {
-        if (specialSkillTooltip != null) return;
-
-        var btn = GameObject.Find("SpecialActionButton");
-        if (btn != null)
-            specialSkillTooltip = btn.GetComponent<ActionTooltipTrigger>();
-    }
-
-    public void RefreshSpecialSkillTooltip()
-    {
-        FindSpecialSkillTooltip();
-
-        var player = NodePlayerManager.GetInstance?.GetCurrentPlayer();
-        if (player == null || specialSkillTooltip == null)
-        {
-            Debug.Log("❌ Tooltip 업데이트 실패: player 또는 trigger 없음");
-            return;
-        }
-
-        Skill so = SkillSOMapper.Get(player.playerStats.playerSkill);
-        Debug.Log($"Skill: {player.playerStats.playerSkill}, SO: {so}, effect: {(so != null ? so.effect : "NULL")}");
-
-        if (so == null) return;
-
-        specialSkillTooltip.description = so.effect;
-    }
-
-    private void OnEnable()
-    {
-        EquippedSkills.OnChanged += RefreshSpecialSkillTooltip;
-    }
-
-    private void OnDisable()
-    {
-        EquippedSkills.OnChanged -= RefreshSpecialSkillTooltip;
+        warningMessege.SetErrorMessege(str);
     }
 }
