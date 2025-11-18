@@ -61,8 +61,8 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        if(ResourceManager.GetInstance.GetPreLoad.Count <= 0 && ResourceManager.GetInstance.GetPreLoad == null)
-            yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad.Count > 0 && ResourceManager.GetInstance.GetPreLoad != null);
+        if(ResourceManager.GetInstance.GetPreLoad == null || ResourceManager.GetInstance.GetPreLoad.Count <= 0)
+            yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad != null && ResourceManager.GetInstance.GetPreLoad.Count > 0);
         warningMessege = new Defines.WarningMessage(actionPanel.transform);
         RefreshSpecialSkillTooltip();
     }
