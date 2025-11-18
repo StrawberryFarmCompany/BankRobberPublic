@@ -97,6 +97,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
         FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
+        UIManager.GetInstance.RefreshSpecialSkillTooltip();
     }
 
     /// <summary>
@@ -119,6 +120,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
         FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
+        UIManager.GetInstance.RefreshSpecialSkillTooltip();
     }
 
     public void OnFirst(InputAction.CallbackContext context)

@@ -358,3 +358,56 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
         player.CheckSneakAttack(mousePos, consumeAction);
     }
 }
+
+public static class SkillSOMapper
+{
+    private static Dictionary<PlayerSkill, Skill> map = new();
+    private static bool initialized = false;
+
+    public static void Init()
+    {
+        if (initialized) return;
+        initialized = true;
+
+        //Combat
+        map[PlayerSkill.Heal] = Load("Skills/Combat/Active/CombatActive1");
+        map[PlayerSkill.Heal_A] = Load("Skills/Combat/Upgrade/Upgrade1/CombatUpgrade1 1");
+        map[PlayerSkill.Heal_B] = Load("Skills/Combat/Upgrade/Upgrade1/CombatUpgrade1 2");
+
+        map[PlayerSkill.DoubleAttack] = Load("Skills/Combat/Active/CombatActive2");
+        map[PlayerSkill.DoubleAttack_A] = Load("Skills/Combat/Upgrade/Upgrade2/CombatUpgrade2 1");
+        map[PlayerSkill.DoubleAttack_B] = Load("Skills/Combat/Upgrade/Upgrade2/CombatUpgrade2 2");
+
+        //Stealth
+        map[PlayerSkill.SneakAttack] = Load("Skills/Stealth/Active/StealthActive1");
+        map[PlayerSkill.SneakAttack_A] = Load("Skills/Stealth/Upgrade/Upgrade1/StealthUpgrade1 1");
+        map[PlayerSkill.SneakAttack_B] = Load("Skills/Stealth/Upgrade/Upgrade1/StealthUpgrade1 2");
+
+        map[PlayerSkill.Silence] = Load("Skills/Stealth/Active/StealthActive2");
+        map[PlayerSkill.Silence_A] = Load("Skills/Stealth/Upgrade/Upgrade2/StealthUpgrade2 1");
+        map[PlayerSkill.Silence_B] = Load("Skills/Stealth/Upgrade/Upgrade2/StealthUpgrade2 2");
+
+        //Support
+        map[PlayerSkill.Ready] = Load("Skills/Support/Active/SupportActive1");
+        map[PlayerSkill.Ready_A] = Load("Skills/Support/Upgrade/Upgrade1/SupportUpgrade1 1");
+        map[PlayerSkill.Ready_B] = Load("Skills/Support/Upgrade/Upgrade1/SupportUpgrade1 2");
+
+        map[PlayerSkill.Evasion] = Load("Skills/Support/Active/SupportActive2");
+        map[PlayerSkill.Evasion_A] = Load("Skills/Support/Upgrade/Upgrade2/SupportUpgrade2 1");
+        map[PlayerSkill.Evasion_B] = Load("Skills/Support/Upgrade/Upgrade2/SupportUpgrade2 2");
+    }
+
+    private static Skill Load(string path)
+    {
+        Skill so = Resources.Load<Skill>(path);
+        if (so == null)
+            Debug.LogError($"[SkillSOMapper] 경로 오류: {path}");
+        return so;
+    }
+
+    public static Skill Get(PlayerSkill ps)
+    {
+        if (!initialized) Init();
+        return map.TryGetValue(ps, out Skill so) ? so : null;
+    }
+}

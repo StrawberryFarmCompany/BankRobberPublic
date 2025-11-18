@@ -13,6 +13,9 @@ public class ActionTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointe
     void Awake()
     {
         rect = GetComponent<RectTransform>();
+
+        if (gameObject.name == "SpecialActionButton")
+            UIManager.GetInstance.specialSkillTooltip = this;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
