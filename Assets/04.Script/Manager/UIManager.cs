@@ -25,8 +25,9 @@ public class UIManager : MonoBehaviour
     public PasswordUI passwordUI;
     public GuideUI guideUI;
     public ActionTooltip actionTooltip;
-    private TextMeshProUGUI warningMessege;
     public Transform CanvasRoot { get { return canvasRoot; } }
+
+    private Defines.WarningMessage warningMessege;
 
     public bool SelectionLocked { get; private set; }
 
@@ -59,8 +60,9 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad.Count > 0);
-        CreateErrorMessege();
+        if(ResourceManager.GetInstance.GetPreLoad.Count <= 0 && ResourceManager.GetInstance.GetPreLoad == null)
+            yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad.Count > 0 && ResourceManager.GetInstance.GetPreLoad != null);
+        warningMessege = new Defines.WarningMessage(actionPanel.transform);
     }
 
     public void ShowActionPanel(bool show)
@@ -106,25 +108,9 @@ public class UIManager : MonoBehaviour
         passwordUI.Clear();
         passwordUI.gameObject.SetActive(true);
     }
-    public void SetErrorMessege(string messege)
-    {
-        warningMessege.DOComplete(false);
-        warningMessege.alpha = 1f;
-        warningMessege.color = Color.red;
-        warningMessege.text = messege;
-        warningMessege.DOColor(Color.clear, 5f);
-    }
 
-    private void CreateErrorMessege()
+    public void SetErrorMessege(string str)
     {
-        warningMessege = new GameObject("ErrorMessege").AddComponent<TextMeshProUGUI>();
-        warningMessege.rectTransform.parent = actionPanel.transform.parent.parent.parent.parent;
-        warningMessege.alignment = TextAlignmentOptions.Center;
-        warningMessege.rectTransform.anchorMin = Vector2.one * 0.5f;
-        warningMessege.rectTransform.anchorMax = Vector2.one * 0.5f;
-        warningMessege.rectTransform.anchoredPosition = Vector2.up * 250f;
-        warningMessege.rectTransform.sizeDelta = new Vector2(800f, 200f);
-        warningMessege.raycastTarget = false;
-        warningMessege.font = (TMP_FontAsset)ResourceManager.GetInstance.GetPreLoad["DoHyeon-Regular SDF"];
+        warningMessege.SetErrorMessege(str);
     }
 }

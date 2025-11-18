@@ -127,7 +127,7 @@ public class Door : IInteractable
 
             if (!lockResult)//false이기만 할 때
             {
-
+                UIManager.GetInstance.SetErrorMessege(lockModule.GetErrorMessege());
                 tr.transform.DORotate(defaultRotation + (Vector3.up * 5), 0.1f).OnComplete(()=> 
                 {
                     tr.transform.DORotate(defaultRotation + (Vector3.up * -5), 0.1f).OnComplete(() =>
@@ -141,7 +141,6 @@ public class Door : IInteractable
                                     tr.transform.DORotate(defaultRotation + (Vector3.up * -5), 0.1f).OnComplete(() =>
                                     {
                                         tr.transform.DORotate(defaultRotation, 0.1f);
-                                        UIManager.GetInstance.SetErrorMessege(lockModule.GetErrorMessege());
                                     });
                                 });
 
