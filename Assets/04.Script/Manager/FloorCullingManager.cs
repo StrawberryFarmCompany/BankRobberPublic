@@ -36,6 +36,7 @@ public class FloorCullingManager : MonoBehaviour
     private void Start()
     {
         RefreshRenderersAndColliders();
+        RegisterPlayerRevealer();
         UpdateCullingByCurrentPlayer();
     }
 
@@ -85,12 +86,7 @@ public class FloorCullingManager : MonoBehaviour
         allColliders = FindObjectsOfType<Collider>(true)
             .Where(c => (excludeLayerMask.value & (1 << c.gameObject.layer)) == 0)
             .ToArray();
-
-        NodePlayerManager.GetInstance.GetAllPlayers().ForEach(p =>
-        {
-            var playerRevealer = p.GetComponents<FogOfWarRevealer3D>();
-            //playerRevealers.Add(p, playerRevealer.FirstOrDefault(r => r.revealMode == FogOfWarRevealer3D.RevealMode.Player));
-        });
+        
     }
 
     /// <summary>
@@ -136,6 +132,18 @@ public class FloorCullingManager : MonoBehaviour
             bool active = (cy >= floor.minY && cy < floor.maxY);
             c.enabled = active;
         }
+
+        // 플레이어 시야 처리
+        foreach (var pr in playerRevealers.Values)
+        {
+            if (pr == null) continue;
+            float py = pr.transform.position.y;
+            bool revealActive = (py >= floor.minY && py < floor.maxY);
+            if (revealActive)
+                pr.ViewRadius = 13;
+            else
+                pr.ViewRadius = 0;
+        }
     }
 
     /// <summary>
@@ -157,5 +165,15 @@ public class FloorCullingManager : MonoBehaviour
             if (c == null) continue;
             c.enabled = true;
         }
+    }
+
+    public void RegisterPlayerRevealer()
+    {
+        NodePlayerManager.GetInstance.GetAllPlayers().ForEach(p =>
+        {
+            var playerRevealer = p.GetComponent<FogOfWarRevealer3D>();
+            if (playerRevealer != null && !playerRevealers.ContainsKey(p.playerStats))
+                playerRevealers.Add(p.playerStats, playerRevealer);
+        });
     }
 }

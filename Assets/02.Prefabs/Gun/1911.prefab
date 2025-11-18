@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1088938615838611229}
   - component: {fileID: 229783405438927900}
   - component: {fileID: 6556817106228307670}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_PistolBandit_Trigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8063798635627014397}
   - component: {fileID: 6844710432619549458}
   - component: {fileID: 830510235548194085}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_PistolBandit_Slide_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 9139093660848333616}
   - component: {fileID: 1527679957248011129}
   - component: {fileID: 7270093474348948208}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 1911
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7001079312875778997}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,7 @@ GameObject:
   - component: {fileID: 3456579766391533716}
   - component: {fileID: 1181376436280067176}
   - component: {fileID: 6957074856186685293}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_PistolBandit_Mag_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

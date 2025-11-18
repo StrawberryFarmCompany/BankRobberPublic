@@ -110,7 +110,7 @@ public class WeaponShopUI : MonoBehaviour
         GunData gunData = gunDatas[curIndex];
         DeBindingButton(type);
 
-        if(!WeaponManager.GetInstance.IsPurcahedWeapon(type, gunData))
+        if(!WeaponManager.GetInstance.IsPurcahedWeapon(type, gunData.gunName))
         {
             switch (type)
             {
@@ -208,12 +208,12 @@ public class WeaponShopUI : MonoBehaviour
     {
         if (Money.GetInstance.TrySpend(gunDatas[curIndex].price))
         {
-            WeaponManager.GetInstance.SetPurchase(type, gunDatas[curIndex]);
+            WeaponManager.GetInstance.SetPurchase(type, gunDatas[curIndex].gunName);
         }
     }
 
     public void Equip(CharacterType type)
     {
-        WeaponManager.GetInstance.EquipWeapon(type, gunDatas[curIndex]);
+        WeaponManager.GetInstance.EquipWeapon(type, gunDatas[curIndex].gunName);
     }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5935325895899834420}
   - component: {fileID: 5079999410699499995}
   - component: {fileID: 3138039382606109628}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleBandit_Mag_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8400541526774071882}
   - component: {fileID: 4400665018885261901}
   - component: {fileID: 801972388790564255}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleBandit_Trigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 191855475167991555}
   - component: {fileID: 8251793316527813320}
   - component: {fileID: 7002694316205908041}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AK
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8434933846854541316}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,7 @@ GameObject:
   - component: {fileID: 5084042133914920884}
   - component: {fileID: 7094061984854523705}
   - component: {fileID: 4200080360253164975}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_RifleBandit_Slide_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
