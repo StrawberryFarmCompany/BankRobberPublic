@@ -2,13 +2,21 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using JetBrains.Annotations;
+
+//[Serializable]
+//public class WeaponTypeAndKey
+//{
+//    public GunType gunType;
+//    public int gunKey;
+//}
 
 [Serializable]
 public class WeaponEquipData
 {
     public CharacterType characterType;
-    public GunData equipGunData;
-    public List<GunData> purchasedData = new List<GunData>();
+    public string equipGunData;
+    public List<string> purchasedData = new List<string>();
 }
 
 [Serializable]
@@ -20,6 +28,7 @@ public class WeaponEquipSaveData
 public class WeaponManager : SingleTon<WeaponManager>
 {
     private Dictionary<CharacterType, WeaponEquipData> WeaponDataDict = new Dictionary<CharacterType, WeaponEquipData>();
+
     private string savePath;
     public GunData basicGun = Resources.Load<GunData>("Guns/" + "1911");
 
@@ -29,17 +38,17 @@ public class WeaponManager : SingleTon<WeaponManager>
         LoadWeapon();
     }
 
-    public void EquipWeapon(CharacterType characterType, GunData gun)
+    public void EquipWeapon(CharacterType characterType, string gun)
     {
         if (!WeaponDataDict.ContainsKey(characterType))
         {
             WeaponDataDict[characterType] = new WeaponEquipData
             {
                 characterType = characterType,
-                equipGunData = basicGun,
-                purchasedData = new List<GunData>()
+                equipGunData = "1911",
+                purchasedData = new List<string>()
             };
-            WeaponDataDict[characterType].purchasedData.Add(basicGun);
+            WeaponDataDict[characterType].purchasedData.Add("1911");
         }
 
         WeaponDataDict[characterType].equipGunData = gun;
@@ -48,25 +57,25 @@ public class WeaponManager : SingleTon<WeaponManager>
 
     public GunData GetEquipData(CharacterType characterType)
     {
-        return WeaponDataDict.TryGetValue(characterType, out var data) ? data.equipGunData : null;
+        return Resources.Load<GunData>("Guns/" + (WeaponDataDict.TryGetValue(characterType, out var data) ? data.equipGunData : null));
     }
 
-    public bool IsPurcahedWeapon(CharacterType characterType, GunData gun)
+    public bool IsPurcahedWeapon(CharacterType characterType, string gun)
     {
         return WeaponDataDict.TryGetValue(characterType, out var data) && data.purchasedData.Contains(gun);
     }
 
-    public void SetPurchase(CharacterType characterType, GunData gun)
+    public void SetPurchase(CharacterType characterType, string gun)
     {
         if (!WeaponDataDict.ContainsKey(characterType))
         {
             WeaponDataDict[characterType] = new WeaponEquipData
             {
                 characterType = characterType,
-                equipGunData = basicGun,
-                purchasedData = new List<GunData>()
+                equipGunData = "1911",
+                purchasedData = new List<string>()
             };
-            WeaponDataDict[characterType].purchasedData.Add(basicGun);
+            WeaponDataDict[characterType].purchasedData.Add("1911");
         }
         WeaponDataDict[characterType].purchasedData.Add(gun);
         SaveWeapon();
@@ -97,10 +106,10 @@ public class WeaponManager : SingleTon<WeaponManager>
                 WeaponDataDict[type] = new WeaponEquipData
                 {
                     characterType = type,
-                    equipGunData = basicGun,
-                    purchasedData = new List<GunData>()
+                    equipGunData = "1911",
+                    purchasedData = new List<string>()
                 };
-                WeaponDataDict[type].purchasedData.Add(basicGun);
+                WeaponDataDict[type].purchasedData.Add("1911");
             }
             SaveWeapon();
             return;
