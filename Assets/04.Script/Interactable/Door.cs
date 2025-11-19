@@ -94,7 +94,7 @@ public class Door : IInteractable
     public void OnInteraction(EntityStats stat)
     {
         bool lockResult = lockModule.IsLock(stat);
-        if (lockResult && !isOpen)
+        if ((lockResult && !isOpen) || stat.characterType == CharacterType.None)
         {
             //이동 가능 불가 여부 추후 추가 필요
             Vector3 targetRot;
@@ -156,6 +156,7 @@ public class Door : IInteractable
     }
     public void UnInteraction(EntityStats stat)
     {
+        if (stat.characterType == CharacterType.None) return;
         NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
         if (!isOpen) return;
         //이동 가능 불가 여부 추후 추가 필요
