@@ -72,7 +72,7 @@ public class HoldEnemyNPC : EnemyNPC
             }
             else if (isNoise == false && isNoisePlace == true)//소음감지가 true 소음 발생지 도착시 외부에서 isNoisePlace를 트루로 만들어 주기
             {
-                ChangeToIdleRotation();
+                StartIdleRotation();
                 isNoisePlace = false;//한 턴 끝나고 isNoisPlace false만들기
             }
         }
@@ -109,20 +109,6 @@ public class HoldEnemyNPC : EnemyNPC
         }
 
         base.CalculateBehaviour();
-    }
-
-    public void ChangeToIdleRotation()
-    {
-        float firstLookAngle = Random.Range(-180,180); // 첫 번째 각도 확인
-        float secondLookAngle = Random.Range(-180,180); // 두 번째 각도 확인
-        Quaternion originalRotation = transform.rotation;
-
-        transform.rotation = Quaternion.Euler(0, firstLookAngle , 0);
-        transform.rotation = Quaternion.Euler(0, secondLookAngle , 0);
-
-        // 정면 복귀
-        transform.rotation = originalRotation;
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyIdleRotationState));
     }
 
     public void DeadAnimator()
