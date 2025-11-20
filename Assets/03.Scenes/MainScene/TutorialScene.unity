@@ -79461,9 +79461,6 @@ MonoBehaviour:
   - name: 1F
     minY: -10
     maxY: 10
-  excludeLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!4 &1581137644
 Transform:
   m_ObjectHideFlags: 0
@@ -135122,6 +135119,11 @@ PrefabInstance:
     - target: {fileID: 437760, guid: 3b07c06d4f626c34896163d5fab059a3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8361543063763239572, guid: 3b07c06d4f626c34896163d5fab059a3,
+        type: 3}
+      propertyPath: lockType
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8361543063763239572, guid: 3b07c06d4f626c34896163d5fab059a3,
         type: 3}

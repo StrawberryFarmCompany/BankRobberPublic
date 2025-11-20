@@ -113,7 +113,7 @@ public class UIManager : MonoBehaviour
         passwordUI.gameObject.SetActive(true);
     }
 
-    public void SetErrorMessege(string str)
+    public void SetWarningMessege(string str)
     {
         warningMessege.SetErrorMessege(str);
     }

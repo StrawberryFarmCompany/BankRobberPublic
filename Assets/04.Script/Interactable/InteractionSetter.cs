@@ -19,7 +19,7 @@ public class InteractionSetter : MonoBehaviour
     public DocumentType docsType;
     [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.KeyCard, (int)InteractionType.VaultDoor)]//금고문,문 카드키
     public int doorValue;
-    [ConditionalHide("type", (int)InteractionType.Door)]//금고문,문
+    [ConditionalHide("type", (int)InteractionType.Door, (int)InteractionType.VaultDoor)]//금고문,문
     public DoorLockType lockType;
     [ConditionalHide("lockType", (int)DoorLockType.button)]//버튼식 문
     public bool isRandomValue;
@@ -88,6 +88,7 @@ public class InteractionSetter : MonoBehaviour
             case InteractionType.VaultDoor:
                 VaultDoor vaultDoor = (VaultDoor)interaction;
                 Vector3Int[] doorPoints = new Vector3Int[2];
+                lockType = lockType == DoorLockType.none ? DoorLockType.drill : lockType;
                 for (int i = 1; i <= 4; i++)
                 {
                     Vector3Int currPos = pos + (GameManager.GetInstance.GetVecInt(-transform.right * i));
@@ -106,7 +107,7 @@ public class InteractionSetter : MonoBehaviour
                         GameManager.GetInstance.Nodes[currPos].isWalkable = false;
                     }
                 }
-                vaultDoor.Init(doorPoints,target,doorValue);
+                vaultDoor.Init(doorPoints,target,doorValue,lockType);
                 break;
             case InteractionType.EscapeCar:
                 EscapeCar car = (EscapeCar)interaction;

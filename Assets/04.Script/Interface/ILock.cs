@@ -6,9 +6,10 @@ using static UnityEngine.Rendering.DebugUI;
 
 public interface ILock
 {
-    public bool IsLock(EntityStats stat);
+    public bool IsLock();
+    public bool TryUnLock(EntityStats stat);
     public string GetErrorMessege();
-    public static ILock Factory(DoorLockType types,int value)
+    public static ILock Factory(DoorLockType types, int value, string name,Vector3Int center,byte boundary)
     {
         switch (types)
         {
@@ -22,6 +23,10 @@ public interface ILock
                 return new ButtonLock(value);
             case DoorLockType.password:
                 return new PasswordLock(value);
+            case DoorLockType.drill:
+                return new DrillLock(value, name);
+            case DoorLockType.bomb:
+                return new BombLock(value, name,center,boundary);
             default:
                 return null;
         }
@@ -29,7 +34,13 @@ public interface ILock
 }
 public class NoneLock : ILock
 {
-    public bool IsLock(EntityStats stat) => true;
+
+
+    public bool IsLock()
+    {
+        return true;
+    }
+    public bool TryUnLock(EntityStats stat) => true;
 
     public string GetErrorMessege()
     {
@@ -40,7 +51,11 @@ public class LockPick : ILock
 {
     int unlockMin;
     bool released;
-    public bool IsLock(EntityStats stat)
+    public bool IsLock()
+    {
+        return released;
+    }
+    public bool TryUnLock(EntityStats stat)
     {
         if (!released)
         {
@@ -85,7 +100,12 @@ public class KeyCardLock : ILock
 {
     int cardKeyIndex;
     public bool released = false;
-    public bool IsLock(EntityStats stat)
+
+    public bool IsLock()
+    {
+        return released;
+    }
+    public bool TryUnLock(EntityStats stat)
     {
         if (released == true) return released;
         released = GameManager.GetInstance.isPlayerGetKeyCard[cardKeyIndex];
@@ -112,7 +132,11 @@ public class ButtonLock : ILock
 {
     int buttonIndex;
     public bool released = true;
-    public bool IsLock(EntityStats stat)
+    public bool IsLock()
+    {
+        return released;
+    }
+    public bool TryUnLock(EntityStats stat)
     {
         return released;
     }
@@ -133,7 +157,11 @@ public class PasswordLock : ILock
     int index;
     [Range(0, 9999)]int password;
     public bool released = false;
-    public bool IsLock(EntityStats stat)
+    public bool IsLock()
+    {
+        return released;
+    }
+    public bool TryUnLock(EntityStats stat)
     {
         if (released == true) return released;
         released = GameManager.GetInstance.isOpenPasswordDoor[index];
@@ -151,4 +179,115 @@ public class PasswordLock : ILock
         password = Random.Range(0, 10000);
         GameManager.GetInstance.RegisterPasswordDoor(index, password);
     }
+}
+public class DrillLock : ILock
+{
+    private bool released = false;
+    private bool isActivated = false;
+    private string targetName;
+    private byte leftTurn = 255;
+    public bool IsLock()
+    {
+        return released;
+    }
+    public bool TryUnLock(EntityStats stat)
+    {
+        if(stat != null)OnInstallDrill();
+        return released;
+    }
+
+    public void OnInstallDrill()
+    {
+        if (isActivated && !released)
+        {
+            UIManager.GetInstance.SetWarningMessege(GetErrorMessege());
+            return;
+        }
+        else if(!isActivated && !released)
+        {
+            isActivated = true;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += OnTurnCounting;
+            UIManager.GetInstance.SetWarningMessege($"드릴이 설치 되엇습니다. 잠금 해제까지 : {leftTurn}턴");
+
+        }
+    }
+    public void OnTurnCounting()
+    {
+        --leftTurn;
+        if (leftTurn == 0)
+        {
+            released = true;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= OnTurnCounting;
+        }
+        UIManager.GetInstance.SetWarningMessege(GetErrorMessege());
+    }
+    public string GetErrorMessege()
+    {
+        return released? $"{targetName} 잠금이 해제되엇습니다.":$"{targetName} 잠금 해제까지 : {leftTurn}턴";
+    }
+    public DrillLock(int leftTurn,string targetName)
+    {
+        this.leftTurn = (byte)leftTurn;
+        this.targetName = targetName;
+    }
+}
+public class BombLock : ILock
+{
+    private bool released = false;
+    private bool isActivated = false;
+    private string targetName;
+    private Vector3Int center;
+    private byte boundary;
+    private byte leftTurn = 255;
+    public bool IsLock()
+    {
+        return released;
+    }
+    public bool TryUnLock(EntityStats stat)
+    {
+        if(stat != null)InstallBomb();
+        return released;
+    }
+
+    public void InstallBomb()
+    {
+        if (isActivated && !released)
+        {
+            UIManager.GetInstance.SetWarningMessege(GetErrorMessege());
+            return;
+        }
+        else if(!isActivated && !released)
+        {
+            isActivated = true;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += OnTurnCounting;
+            UIManager.GetInstance.SetWarningMessege($"폭탄이 설치 되엇습니다. 폭발까지 : {leftTurn}턴");
+
+        }
+    }
+    public void OnTurnCounting()
+    {
+        --leftTurn;
+        if (leftTurn == 0)
+        {
+            released = true;
+
+            GameManager.GetInstance.NoneBattleTurn.BuffCount -= OnTurnCounting;
+        }
+        UIManager.GetInstance.SetWarningMessege(GetErrorMessege());
+    }
+    public string GetErrorMessege()
+    {
+        return released? $"{targetName}이 폭발했습니다.":$"{targetName} 폭발까지 : {leftTurn}턴";
+    }
+    public BombLock(int leftTurn,string targetName,Vector3Int pos,byte boundary)
+    {
+        this.leftTurn = (byte)leftTurn;
+        this.targetName = targetName;
+    }
+    //마름모 모양이면 14 아니면 10
+    /*
+    private List<NodeDefines.Node> GetEffectNodes(Vector3Int localPos, Vector3Int)
+    {
+        
+    }*/
 }

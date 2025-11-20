@@ -12,7 +12,7 @@ public class VaultDoor : IInteractable
     public Vector3Int tile { get; set; }
     public Vector3Int tileTwo { get; set; }
     public Transform tr;
-    public KeyCardLock lockModule;
+    public ILock lockModule;
     private Vector3 defaultRotation;
     /// <summary>
     /// 
@@ -22,17 +22,16 @@ public class VaultDoor : IInteractable
     /// <param name="doorValue">키카드 == 카드 인덱스,락핏 == 문을 따는 최소 밸류</param>
 
     private bool isOpen;
-    private bool isDrillInstalled = false;
+    private bool unlockInstalled = false;
     private bool isBattle { get { return GameManager.GetInstance.CurrentPhase == GamePhase.Battle; } }
-    private byte drillCount = 4;
     private string registedName;
 
-    public void Init(Vector3Int[] tile, Transform tr,int doorValue)
+    public void Init(Vector3Int[] tile, Transform tr,int doorValue,DoorLockType lockType)
     {
         this.tile = tile[0];
         this.tileTwo = tile[1];
         this.tr = tr;
-        lockModule = new KeyCardLock(doorValue);
+        lockModule = ILock.Factory(lockType, doorValue, "금고",tile[0],0);
         defaultRotation = tr.rotation.eulerAngles;
 
         isOpen = false;
@@ -42,67 +41,58 @@ public class VaultDoor : IInteractable
     }
     private void OnPhaseChanged()
     {
-        if (lockModule.released)
+        if (lockModule.IsLock() || unlockInstalled)
         {
             return;
         }
         else
         {
             ReleaseInteraction(OnInteraction);
-            RegistInteraction(OnInstallDrill);
+            lockModule = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,2);//폭탄방식으로 모듈 변경
         }
     }
     public void OnInteraction(EntityStats stat)
     {
-        NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
-        if (lockModule.IsLock(stat) && !isOpen)
+        if(stat.characterType != CharacterType.None) NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
+        else//NPC일때
         {
-            //이동 가능 불가 여부 추후 추가 필요
             DoorOpen();
-
             ReleaseInteraction(OnInteraction);
             RegistInteraction(UnInteraction);
         }
+        bool lockCheck = lockModule.TryUnLock(stat);
+        if (lockCheck && !isOpen)
+        {
+            //이동 가능 불가 여부 추후 추가 필요
+            if(unlockInstalled) GameManager.GetInstance.NoneBattleTurn.BuffCount -= DoorOpen;
+            DoorOpen();
+        }
+        else if (!unlockInstalled && !lockCheck)
+        {
+            unlockInstalled = true;
+            GameManager.GetInstance.NoneBattleTurn.BuffCount += DoorOpen;
+        }
+
     }
 
     public void UnInteraction(EntityStats stat)
     {
         NodePlayerManager.GetInstance.GetCurrentPlayer().animationController.InteractionState(tr.transform.position);
-        if (!isOpen) return;
         DoorClose();
-
-        ReleaseInteraction(UnInteraction);
-        RegistInteraction(OnInteraction);
-    }
-    public void OnInstallDrill(EntityStats stat)
-    {
-        if (isDrillInstalled)
-        {
-            Debug.Log("이미 드릴이 설치되었습니다.");
-            return;
-        }
-        isDrillInstalled = true;
-        //GameManager.GetInstance.BattleTurn.BuffCount += OnDrillCounting;
-        ReleaseInteraction(OnInstallDrill);
-    }
-    public void OnDrillCounting()
-    {
-        --drillCount;
-        Debug.Log($"금고가 열릴때까지 남은 턴 : {drillCount}");
-        if (drillCount == 0)
-        {
-            lockModule.released = true;
-            //GameManager.GetInstance.BattleTurn.BuffCount -= OnDrillCounting;
-            OnInteraction(null);
-        }
     }
     public void DoorOpen()
     {
-        Vector3 targetRot = defaultRotation + (Vector3.up * 90);
-        tr.DORotate(targetRot, 0.7f);
-        GameManager.GetInstance.Nodes[tile].isWalkable = true;
-        GameManager.GetInstance.Nodes[tileTwo].isWalkable = true;
-        isOpen = true;
+        if (lockModule.IsLock())
+        {
+            unlockInstalled = false;
+            Vector3 targetRot = defaultRotation + (Vector3.up * 90);
+            tr.DORotate(targetRot, 0.7f);
+            GameManager.GetInstance.Nodes[tile].isWalkable = true;
+            GameManager.GetInstance.Nodes[tileTwo].isWalkable = true;
+            isOpen = true;
+            ReleaseInteraction(OnInteraction);
+            RegistInteraction(UnInteraction);
+        }
     }
     public void DoorClose()
     {
@@ -110,13 +100,15 @@ public class VaultDoor : IInteractable
         GameManager.GetInstance.Nodes[tile].isWalkable = false;
         GameManager.GetInstance.Nodes[tileTwo].isWalkable = false;
         isOpen = false;
+        ReleaseInteraction(UnInteraction);
+        RegistInteraction(OnInteraction);
     }
     public void RegistInteraction(Interaction interaction)
     {
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         if (isBattle)
         {
-            if (lockModule.released)
+            if (lockModule.IsLock())
             {
                 registedName = isOpen? "Close Door" : "Open Door";
             }
@@ -128,7 +120,7 @@ public class VaultDoor : IInteractable
         }
         else
         {
-            if (lockModule.released)
+            if (lockModule.IsLock())
             {
                 registedName = isOpen ? "Close Door" : "Open Door";
             }
@@ -145,7 +137,6 @@ public class VaultDoor : IInteractable
     }
     public void ReleaseInteraction(Interaction interaction)
     {
-        
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         for (int i = 0; i < vecs.Count; i++)
         {
