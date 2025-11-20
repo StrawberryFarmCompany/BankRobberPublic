@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class ActionTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [TextArea]
-    public string description;   // 버튼마다 직접 입력
+    public string description;
 
     private RectTransform rect;
 

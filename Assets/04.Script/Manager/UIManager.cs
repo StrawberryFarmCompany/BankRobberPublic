@@ -71,6 +71,8 @@ public class UIManager : MonoBehaviour
     {
         actionPanel.SetActive(show);
         cancelPanel.SetActive(!show);
+        if (actionTooltip != null)
+            actionTooltip.Hide();
     }
 
     public void SetSelectionLocked(bool locked) => SelectionLocked = locked;

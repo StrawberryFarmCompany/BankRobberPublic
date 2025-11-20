@@ -10,14 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48f4361ba35170f48a7b11315e8fd9bc, type: 3}
-  m_Name: SupprotActive1
+  m_Name: SupportUpgrade2 1
   m_EditorClassIdentifier: 
   group: 2
-  kind: 0
-  title: "\uD589\uB3D9\uB825 \uD68C\uBCF5"
-  effect: "\uC0AC\uC6A9\uD55C \uC5D4\uD2F0\uD2F0\uC758 \uD589\uB3D9\uB825\uC744 3\uD68C\uBCF5(\uCD08\uACFC\uB41C
-    \uD68C\uBCF5\uB7C9\uC740 \uC0AC\uB77C\uC9D0)"
-  coolTime: "3\uD134"
-  cost: "\uD589\uB3D9\uB825 1\uCE78"
+  kind: 2
+  title: "\uD68C\uD53C\uC728 \uAC15\uD654"
+  effect: "\uD68C\uD53C\uC728 +2 \uC5D0\uC11C +4 \uB85C \uC99D\uAC00"
   price: 0
-  idNum: 1
+  idNum: 3
