@@ -65,7 +65,7 @@ public class PatrolEnemyNPC : EnemyNPC
             
             else if (isNoise == true && isArrivedNoisePlace == true)
             {
-                IdleRotation();
+                StartIdleRotation();
                 isNoise = false;
                 isArrivedNoisePlace = false;
             }
@@ -160,41 +160,18 @@ public class PatrolEnemyNPC : EnemyNPC
     //}
 
     // 두리번
-    public void LookAround()
+    private void LookAround()
     {
         float lookAngle = Random.Range(-180, 180); // 좌우 확인 각도
         Quaternion originalRotation = transform.rotation;
 
         // 왼쪽 보기
-        transform.rotation = Quaternion.Euler(0, lookAngle, 0);
+        this.gameObject.transform.rotation = Quaternion.Euler(0, lookAngle, 0);
+        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyLookAroundState));
 
         // 정면 복귀
         //transform.rotation = originalRotation;
         //Debug.Log("정면 복귀");
-    }
-
-    public void StartIdleRotation()
-    {
-        StartCoroutine(IdleRotation());
-    }
-
-    private IEnumerator IdleRotation()
-    {
-        float firstLookAngle = Random.Range(-180, 180); // 첫 번째 각도 확인
-        float secondLookAngle = Random.Range(-180, 180); // 두 번째 각도 확인
-        Quaternion originalRotation = transform.rotation;
-        
-        this.gameObject.transform.rotation = Quaternion.Euler(0, firstLookAngle, 0);
-        Debug.Log(firstLookAngle);
-        yield return new WaitForSeconds(1.2f);
-        
-        this.gameObject.transform.rotation = Quaternion.Euler(0, secondLookAngle, 0);
-        Debug.Log(secondLookAngle);
-        yield return new WaitForSeconds(1.2f);
-
-        // 정면 복귀
-        transform.rotation = originalRotation;
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
     }
 
     //public void Investigate(Vector3 pos)//나중에 리팩터링 해보기
