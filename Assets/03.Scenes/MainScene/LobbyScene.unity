@@ -5633,6 +5633,7 @@ MonoBehaviour:
   entityData: {fileID: 0}
   fovAngle: 110
   isDetection: 0
+  isCowered: 0
 --- !u!4 &318893671
 Transform:
   m_ObjectHideFlags: 0

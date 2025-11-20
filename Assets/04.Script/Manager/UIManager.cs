@@ -6,6 +6,8 @@ using TMPro;
 using NodeDefines;
 using System.Resources;
 using System.Net.Http.Headers;
+using System.Collections;
+using DG.Tweening;
 
 public class UIManager : MonoBehaviour
 {
@@ -23,8 +25,10 @@ public class UIManager : MonoBehaviour
     public PasswordUI passwordUI;
     public GuideUI guideUI;
     public ActionTooltip actionTooltip;
-
+    [SerializeField] public ActionTooltipTrigger specialSkillTooltip;
     public Transform CanvasRoot { get { return canvasRoot; } }
+
+    private Defines.WarningMessage warningMessege;
 
     public bool SelectionLocked { get; private set; }
 
@@ -55,6 +59,13 @@ public class UIManager : MonoBehaviour
         GetInstance = this;
     }
 
+    private IEnumerator Start()
+    {
+        if(ResourceManager.GetInstance.GetPreLoad == null || ResourceManager.GetInstance.GetPreLoad.Count <= 0)
+            yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad != null && ResourceManager.GetInstance.GetPreLoad.Count > 0);
+        warningMessege = new Defines.WarningMessage(actionPanel.transform);
+        RefreshSpecialSkillTooltip();
+    }
 
     public void ShowActionPanel(bool show)
     {
@@ -98,5 +109,47 @@ public class UIManager : MonoBehaviour
         passwordUI.doorPos = doorPos;
         passwordUI.Clear();
         passwordUI.gameObject.SetActive(true);
+    }
+
+    public void SetErrorMessege(string str)
+    {
+        warningMessege.SetErrorMessege(str);
+    }
+
+    private void FindSpecialSkillTooltip()
+    {
+        if (specialSkillTooltip != null) return;
+
+        var btn = GameObject.Find("SpecialActionButton");
+        if (btn != null)
+            specialSkillTooltip = btn.GetComponent<ActionTooltipTrigger>();
+    }
+
+    public void RefreshSpecialSkillTooltip()
+    {
+        FindSpecialSkillTooltip();
+
+        var player = NodePlayerManager.GetInstance?.GetCurrentPlayer();
+        if (player == null || specialSkillTooltip == null)
+        {
+            return;
+        }
+
+        Skill so = SkillSOMapper.Get(player.playerStats.playerSkill);
+        Debug.Log($"Skill: {player.playerStats.playerSkill}, SO: {so}, effect: {(so != null ? so.effect : "NULL")}");
+
+        if (so == null) return;
+
+        specialSkillTooltip.description = so.effect;
+    }
+
+    private void OnEnable()
+    {
+        EquippedSkills.OnChanged += RefreshSpecialSkillTooltip;
+    }
+
+    private void OnDisable()
+    {
+        EquippedSkills.OnChanged -= RefreshSpecialSkillTooltip;
     }
 }

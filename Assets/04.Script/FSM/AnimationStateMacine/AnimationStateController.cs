@@ -140,11 +140,11 @@ public class AnimationStateController : MonoBehaviour
     }
     public void OnEquipGun()
     {
-        currentGun.SetActive(true);
+        currentGun?.SetActive(true);
     }
     public void OnUnEquipGun()
     {
-        currentGun.SetActive(false);
+        currentGun?.SetActive(false);
     }
 
     public void OnThrow()

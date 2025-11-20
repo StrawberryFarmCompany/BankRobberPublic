@@ -1,8 +1,9 @@
 using FOW;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct FloorRange
@@ -21,12 +22,13 @@ public class FloorCullingManager : MonoBehaviour
 
     private Dictionary<EntityStats, FogOfWarRevealer3D> playerRevealers = new Dictionary<EntityStats, FogOfWarRevealer3D>();
 
-    private LayerMask excludeLayerMask = (1<<11)+ (1<<8);
+    private LayerMask excludeLayerMask = (1<<11) + (1<<8);
 
     private float lastUpdateTime = 0f;
 
     private Renderer[] allRenderers;
     private Collider[] allColliders;
+    private Image[] allImages = new Image[] { };
 
     private void Awake()
     {
@@ -36,6 +38,7 @@ public class FloorCullingManager : MonoBehaviour
     private void Start()
     {
         RefreshRenderersAndColliders();
+        RegisterPlayerRevealer();
         UpdateCullingByCurrentPlayer();
     }
 
@@ -85,12 +88,7 @@ public class FloorCullingManager : MonoBehaviour
         allColliders = FindObjectsOfType<Collider>(true)
             .Where(c => (excludeLayerMask.value & (1 << c.gameObject.layer)) == 0)
             .ToArray();
-
-        NodePlayerManager.GetInstance.GetAllPlayers().ForEach(p =>
-        {
-            var playerRevealer = p.GetComponents<FogOfWarRevealer3D>();
-            //playerRevealers.Add(p, playerRevealer.FirstOrDefault(r => r.revealMode == FogOfWarRevealer3D.RevealMode.Player));
-        });
+        
     }
 
     /// <summary>
@@ -136,6 +134,39 @@ public class FloorCullingManager : MonoBehaviour
             bool active = (cy >= floor.minY && cy < floor.maxY);
             c.enabled = active;
         }
+
+        // 플레이어 시야 처리
+        foreach (var pr in playerRevealers.Values)
+        {
+            if (pr == null) continue;
+            float py = pr.transform.position.y;
+            bool revealActive = (py >= floor.minY && py < floor.maxY);
+            if (revealActive)
+                pr.ViewRadius = 13;
+            else
+                pr.ViewRadius = 0;
+        }
+
+        //이미지 처리
+        if(allImages != null)
+        {
+            foreach (var img in allImages)
+            {
+                if (img == null) continue;
+                float iy = img.transform.position.y - 2;
+                bool visible = (iy >= floor.minY && iy < floor.maxY);
+                if (visible)
+                {
+                    Color color = new Color(img.color.r, img.color.g, img.color.b, 1);
+                    img.color = color;
+                }
+                else
+                {
+                    Color color = new Color(img.color.r, img.color.g, img.color.b, 0);
+                    img.color = color;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -157,5 +188,78 @@ public class FloorCullingManager : MonoBehaviour
             if (c == null) continue;
             c.enabled = true;
         }
+
+        // 플레이어 시야 처리
+        foreach (var pr in playerRevealers.Values)
+        {
+            if (pr == null) continue;
+            pr.ViewRadius = 13;
+        }
+
+        //이미지 처리
+        foreach (var img in allImages)
+        {
+            if (img == null) continue;
+            Color color = new Color(img.color.r, img.color.g, img.color.b, 1);
+            img.color = color;
+        }
     }
+
+    public void RegisterPlayerRevealer()
+    {
+        NodePlayerManager.GetInstance.GetAllPlayers().ForEach(p =>
+        {
+            var playerRevealer = p.GetComponent<FogOfWarRevealer3D>();
+            if (playerRevealer != null && !playerRevealers.ContainsKey(p.playerStats))
+                playerRevealers.Add(p.playerStats, playerRevealer);
+        });
+    }
+
+    public void RegisterRenderersAndColliders(Renderer[] renderer, Collider[] collider, Image[] images)
+    {
+        if (allRenderers == null || allColliders == null || allImages == null)
+        {
+            RefreshRenderersAndColliders();
+        }
+
+        if(renderer.Length != 0)
+        {
+            List<Renderer> rendererList = allRenderers.ToList();
+            foreach (var r in renderer)
+            {
+                if (!rendererList.Contains(r))
+                {
+                    rendererList.Add(r);
+                }
+            }
+            allRenderers = rendererList.ToArray();
+        }
+
+        if (collider.Length != 0)
+        {
+            List<Collider> colliderList = allColliders.ToList();
+            foreach (var c in collider)
+            {
+                if (!colliderList.Contains(c))
+                {
+                    colliderList.Add(c);
+                }
+            }
+            allColliders = colliderList.ToArray();
+        }
+
+        if (images.Length != 0)
+        {
+            List<Image> imageList = allImages.ToList();
+            foreach (var img in images)
+            {
+                if (!imageList.Contains(img))
+                {
+                    imageList.Add(img);
+                }
+            }
+            allImages = imageList.ToArray();
+        }
+    }
+
 }

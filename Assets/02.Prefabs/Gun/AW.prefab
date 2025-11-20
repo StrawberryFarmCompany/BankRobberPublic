@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1430897030786759157}
   - component: {fileID: 449341685391151147}
   - component: {fileID: 1989793127286559705}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_SniperSwat_Mag_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 5577044452305200363}
   - component: {fileID: 5906173901172880316}
   - component: {fileID: 1238849797030672418}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_SniperSwat_Bolt_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 6896829681656088974}
   - component: {fileID: 8948078459346841804}
   - component: {fileID: 5430052702870928373}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -285,7 +285,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1099083712181235814}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,7 +318,7 @@ GameObject:
   - component: {fileID: 5606591974821031113}
   - component: {fileID: 1876717462459102656}
   - component: {fileID: 306118103940599201}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_SniperSwat_Trigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

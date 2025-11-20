@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 33538872237286686}
   - component: {fileID: 172269268742326340}
   - component: {fileID: 67373974125526867}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_SMG_Trigger_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7217263291409051196}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShootPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 3398374341231865279}
   - component: {fileID: 8218932247645877629}
   - component: {fileID: 4159381496033711475}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_SMG_Mag_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 3883948571089552103}
   - component: {fileID: 7076738743143641871}
   - component: {fileID: 630529401413256739}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Wep_SMG_Slide_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -292,7 +292,7 @@ GameObject:
   - component: {fileID: 6686660746411980235}
   - component: {fileID: 3317433214690658275}
   - component: {fileID: 2676666996558845553}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MP5K
   m_TagString: Untagged
   m_Icon: {fileID: 0}

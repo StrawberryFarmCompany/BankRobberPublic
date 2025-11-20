@@ -21553,6 +21553,7 @@ MonoBehaviour:
   passwordUI: {fileID: 0}
   guideUI: {fileID: 0}
   actionTooltip: {fileID: 8343697948933734830}
+  specialSkillTooltip: {fileID: 7775830884789119238}
   leftInteractionPanel: {fileID: 0}
   gameEndUI: {fileID: 4915801574846287520}
 --- !u!114 &3711329593896584344
