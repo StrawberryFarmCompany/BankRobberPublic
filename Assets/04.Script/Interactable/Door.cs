@@ -93,8 +93,12 @@ public class Door : IInteractable
 
     public void OnInteraction(EntityStats stat)
     {
-        bool lockResult = lockModule.IsLock(stat);
-        if ((lockResult && !isOpen) || stat.characterType == CharacterType.None)
+        bool lockResult = stat.characterType == CharacterType.None;
+        if (stat.characterType != CharacterType.None)
+        {
+            lockResult = lockModule.IsLock(stat);
+        }
+        if (lockResult && !isOpen)
         {
             //이동 가능 불가 여부 추후 추가 필요
             Vector3 targetRot;
