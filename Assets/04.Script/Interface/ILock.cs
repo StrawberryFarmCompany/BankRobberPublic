@@ -237,7 +237,7 @@ public class BombLock : ILock
     private bool isActivated = false;
     private string targetName;
     private Vector3Int center;
-    private byte boundary;
+    private ushort boundary;
     private byte leftTurn = 255;
     public bool IsLock()
     {
@@ -279,15 +279,49 @@ public class BombLock : ILock
     {
         return released? $"{targetName}이 폭발했습니다.":$"{targetName} 폭발까지 : {leftTurn}턴";
     }
-    public BombLock(int leftTurn,string targetName,Vector3Int pos,byte boundary)
+    public BombLock(int leftTurn,string targetName,Vector3Int pos,ushort boundary)
     {
         this.leftTurn = (byte)leftTurn;
         this.targetName = targetName;
+        this.boundary = (ushort)(boundary*10);
     }
     //마름모 모양이면 14 아니면 10
-    /*
-    private List<NodeDefines.Node> GetEffectNodes(Vector3Int localPos, Vector3Int)
+
+    private void GetEffectNodes(Vector3Int localPos,ref Dictionary<Vector3Int,int> costMap)
     {
-        
-    }*/
+        if (costMap == null)
+        {
+            costMap.Add(localPos,0);
+        }
+        if (costMap[localPos] >= boundary * 10) return;
+        Vector3Int[] nearNode = new Vector3Int[26] { 
+        /*동일층*/Vector3Int.forward, Vector3Int.right, Vector3Int.back, Vector3Int.left, new Vector3Int(-1, 0, -1), new Vector3Int(1, 0, 1), new Vector3Int(-1, 0, 1), new Vector3Int(1, 0, -1),
+        /*-1층*/new Vector3Int(0,-1,1), new Vector3Int(1,-1,0), new Vector3Int(0,-1,-1), new Vector3Int(-1,-1,0), new Vector3Int(-1, -1, -1), new Vector3Int(1, -1, 1), new Vector3Int(-1, -1, 1), new Vector3Int(1, -1, -1),
+        new Vector3Int(0,1,1), new Vector3Int(1,1,0), new Vector3Int(0,1,-1), new Vector3Int(-1,1,0), new Vector3Int(-1, 1, -1), new Vector3Int(1, 1, 1), new Vector3Int(-1, 1, 1), new Vector3Int(1, 1, -1),
+        new Vector3Int(0, 1, 0),new Vector3Int(0, 1, 0)
+        };
+        for (int i = 0; i < nearNode.Length; i++)
+        {
+            Vector3Int nextPos = nearNode[i] + localPos + center;
+            int cost = nearNode[i].x + nearNode[i].y + nearNode[i].z;
+            if (cost == 1) cost = 10;
+            else if (cost == 2) cost = 14;
+            else if (cost == 3) cost = 17;
+
+            if (cost + costMap[localPos] > boundary) continue;
+            if (costMap.ContainsKey(localPos + nearNode[i]))
+            {
+                if (cost + costMap[localPos] < costMap[localPos + nearNode[i]])
+                {
+                    costMap[localPos + nearNode[i]] = cost + costMap[localPos];
+                }
+            }
+            else
+            {
+                costMap.Add(nextPos, costMap[localPos]+cost);
+            }
+            GetEffectNodes(nextPos, ref costMap);
+        }
+
+    }
 }

@@ -1091,6 +1091,7 @@ public class NodePlayerController : MonoBehaviour
     private void OnDestroy()
     {
         transform.DOKill(false);
+        if (GameManager.GetInstance == null) return;
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.ally, playerStats.ResetForNewTurn);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.ally, SetCamera);
 
