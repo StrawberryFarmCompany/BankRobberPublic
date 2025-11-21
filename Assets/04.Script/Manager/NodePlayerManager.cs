@@ -30,6 +30,8 @@ public class NodePlayerManager : MonoBehaviour
     [SerializeField] private List<NodePlayerController> players = new List<NodePlayerController>();
     public int currentPlayerIndex = 0;
 
+    public static event System.Action OnPlayerChanged;
+
     private int heistMemberCount;
     public EscapeCondition isEscapeBishop;
     public EscapeCondition isEscapeRook;
@@ -98,6 +100,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.ShowActionPanel(true);
         FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
         UIManager.GetInstance.RefreshSpecialSkillTooltip();
+        OnPlayerChanged?.Invoke();
     }
 
     /// <summary>
@@ -121,6 +124,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.ShowActionPanel(true);
         FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
         UIManager.GetInstance.RefreshSpecialSkillTooltip();
+        OnPlayerChanged?.Invoke();
     }
 
     public void OnFirst(InputAction.CallbackContext context)
@@ -241,7 +245,6 @@ public class NodePlayerManager : MonoBehaviour
     public void NotifyPlayerEndTurn(NodePlayerController player)
     {
         player.isEndReady = true;
-        SkillEffectManager.GetInstance.ReduceCooldowns();
         if (!GameManager.GetInstance.CheckAllCharacterEndTurn())
             SwitchToNextPlayer();
     }
