@@ -3,23 +3,40 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoundaryTest : MonoBehaviour
+public class ExplosionObject
 {
     // Start is called before the first frame update
-    int boundary = 100;
-    Vector3Int center = Vector3Int.zero;
-    Queue<Vector3Int> poses;
-    void Start()
+    ushort boundary;
+    float damage;
+    Vector3Int center;
+    Dictionary<Vector3Int, float> damageMap;
+    public ExplosionObject(ushort boundary, float damage, Vector3Int center)
     {
+        this.boundary = (ushort)(boundary * 10);
+        this.damage = damage;
+        this.center = center;
+        damageMap = GetBound();
+    }
 
-        poses = new Queue<Vector3Int>();
-        foreach (var item in GetBound())
+    public void Explosion()
+    {
+        foreach (var item in damageMap)
         {
-            
+            NodeDefines.Node node = GameManager.GetInstance.GetNode(item.Key + center);
+            if(node != null)
+            {
+                if(node.Standing != null)
+                {
+                    for (int i = 0; i < node.Standing.Count; i++)
+                    {
+                        node.Standing[i].Damaged(damage * item.Value);
+                    }
+                }
+            }
         }
     }
     // bfs로 구현
-    private Dictionary<Vector3Int, int> GetBound()
+    private Dictionary<Vector3Int, float> GetBound()
     {
         Dictionary<Vector3Int, int> costMap = new Dictionary<Vector3Int, int>();
         costMap.Add(Vector3Int.zero, boundary);
@@ -62,9 +79,17 @@ public class BoundaryTest : MonoBehaviour
                         costMap.Add(nextPos, nextCost);
                     }
                     if(nextCost > 0) posQueue.Enqueue(nextPos);
+                    else costMap[nextPos] = 1;
                 }
             }
         }
-        return costMap;
+        float denom = boundary-1;
+        Dictionary<Vector3Int, float> result = new Dictionary<Vector3Int, float>();
+
+        foreach (var item in costMap)
+        {
+            result.Add(item.Key, item.Value / denom);
+        }
+        return result;
     }
 }

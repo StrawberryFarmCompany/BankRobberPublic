@@ -193,6 +193,12 @@ public class EntityStats
 
         OnDamaged?.Invoke();
 
+        if (currNode != null)
+        {
+            Vector3 damageProjectorPos = currNode.GetCenter + (Vector3.up * 2);
+            GameManager.GetInstance.damageProjector.DeQueue(damage, damageProjectorPos);
+        }
+
         if (hpbar != null)
         {
             hpbar.SetCurrHP(CurHp);

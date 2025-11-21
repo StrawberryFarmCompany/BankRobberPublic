@@ -182,11 +182,6 @@ public class Gun : MonoBehaviour
 
         tasks.Add(new TurnTask(() => entityStats.Damaged(totalDamage), 0f));
 
-        if (entityStats.currNode != null)
-        {
-            Vector3 damageProjectorPos = entityStats.currNode.GetCenter + (Vector3.up * 2);
-            tasks.Add(new TurnTask(() => GameManager.GetInstance.damageProjector.DeQueue(totalDamage, damageProjectorPos), 0.2f));
-        }
         TaskManager.GetInstance.AddActionBehaviour(tasks, 0);
         if (isHit >= 1)
         {
