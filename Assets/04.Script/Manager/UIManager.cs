@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
     public GuideUI guideUI;
     public ActionTooltip actionTooltip;
     [SerializeField] public ActionTooltipTrigger specialSkillTooltip;
+    public CharacterStatusUI characterStatusUI;
     public Transform CanvasRoot { get { return canvasRoot; } }
 
     private Defines.WarningMessage warningMessege;

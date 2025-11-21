@@ -31,7 +31,7 @@ public class VaultDoor : IInteractable
         this.tile = tile[0];
         this.tileTwo = tile[1];
         this.tr = tr;
-        lockModule = ILock.Factory(lockType, doorValue, "금고",tile[0],0);
+        lockModule = ILock.Factory(lockType, doorValue, "금고",tile[0],0,0f);
         defaultRotation = tr.rotation.eulerAngles;
 
         isOpen = false;
@@ -47,8 +47,7 @@ public class VaultDoor : IInteractable
         }
         else
         {
-            ReleaseInteraction(OnInteraction);
-            lockModule = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,2);//폭탄방식으로 모듈 변경
+            lockModule = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,4,5f);//폭탄방식으로 모듈 변경
         }
     }
     public void OnInteraction(EntityStats stat)
