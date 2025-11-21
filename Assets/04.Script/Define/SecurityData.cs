@@ -43,7 +43,7 @@ public class SecurityData
         if (level == 2)
         {
             sharedSec = IBuff.Factory(data, stat, BuffType.securityLevel);
-            GameManager.GetInstance.SetGamePhase(GamePhase.Battle);
+            //GameManager.GetInstance.SetGamePhase(GamePhase.Battle);
             OnBattlePhase?.Invoke();
         }
         else
