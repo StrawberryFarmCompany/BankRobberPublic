@@ -30,6 +30,7 @@ public class EnemyNPC : MonoBehaviour
         stats = new EntityStats(entityData,gameObject);
         stats.NodeUpdates(transform.position);
         gun = GetComponent<Gun>();
+        gun.SetGun(gun.data);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
 
