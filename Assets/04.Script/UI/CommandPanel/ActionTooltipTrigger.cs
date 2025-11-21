@@ -8,6 +8,10 @@ public class ActionTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointe
     [TextArea]
     public string description;
 
+    public string baseDescription;
+    public int cooldownRemain;
+    public bool useCooldownTooltip = false;
+
     private RectTransform rect;
 
     void Awake()
@@ -20,7 +24,14 @@ public class ActionTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        UIManager.GetInstance.actionTooltip.Show(description, rect);
+        if (useCooldownTooltip)
+        {
+            UIManager.GetInstance.actionTooltip.ShowCooldown(cooldownRemain, rect);
+        }
+        else
+        {
+            UIManager.GetInstance.actionTooltip.Show(baseDescription, rect);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)

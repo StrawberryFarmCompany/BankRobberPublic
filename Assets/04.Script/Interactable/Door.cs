@@ -43,7 +43,7 @@ public class Door : IInteractable
 
         if(type == DoorLockType.password) index = doorValue;
 
-        lockModule = ILock.Factory(type, doorValue,"문",tile,0);
+        lockModule = ILock.Factory(type, doorValue,"문",tile,0,0f);
         defaultRotation = tr.rotation.eulerAngles;
 
 
