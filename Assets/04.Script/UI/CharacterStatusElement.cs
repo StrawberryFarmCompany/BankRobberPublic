@@ -14,6 +14,7 @@ public class CharacterStatusElement : MonoBehaviour
     {
         this.player = player;
         portrait.sprite = player.playerStats.portrait;
+        UpdateUI();
     }
 
     public void UpdateUI()
