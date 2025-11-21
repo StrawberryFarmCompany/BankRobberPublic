@@ -3830,6 +3830,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 4187ed4c18a381247b7786bc3e27a415, type: 2}
+  rifle: {fileID: 5154483734239374005, guid: 4614fda0c9223ad44be1881cde34aa46, type: 3}
+  sniperRifle: {fileID: 8211836092224656672, guid: 5c6bb62db82b21245bd7b19760202eb1,
+    type: 3}
+  shotGun: {fileID: 3710723296215505721, guid: 88af619b24577114c8f4842169c3e6cc, type: 3}
+  subMachineGun: {fileID: 7454090022656833440, guid: 0a36b2ae557645844b125ca639572fe1,
+    type: 3}
+  handGun: {fileID: 8739093877580884689, guid: 8e9e132d143d22749bce5fd7a90146fa, type: 3}
+  gunHoldPosition: {fileID: 3455016929869798748}
   gunName: 
   gunDescription: 
   type: 0
@@ -3848,6 +3856,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!136 &7141668710269651916
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3890,6 +3899,7 @@ MonoBehaviour:
   - {fileID: 2871723869280715693}
   colliders:
   - {fileID: 7141668710269651916}
+  images: []
 --- !u!1001 &2871723869278359411
 PrefabInstance:
   m_ObjectHideFlags: 0
