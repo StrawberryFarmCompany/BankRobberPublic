@@ -3,6 +3,7 @@ using DG.Tweening;
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -719,6 +720,7 @@ public class EnemyNPC : MonoBehaviour
 
         Queue<Vector3Int> open = new Queue<Vector3Int>();
         HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+        List<(Door door, int distToTarget)> blockingDoors = new();
 
         open.Enqueue(start);
         visited.Add(start);
@@ -745,7 +747,10 @@ public class EnemyNPC : MonoBehaviour
                         foreach (var kvp in node.Interactions)
                         {
                             if (kvp.Value.Target is Door door && !door.isOpen)
-                                return door;   // 경로를 막는 바로 그 문
+                            {
+                                int dist = Mathf.Abs(end.x - next.x) + Mathf.Abs(end.y - next.y);
+                                blockingDoors.Add((door, dist));
+                            }
                         }
                     }
                     continue;
@@ -755,6 +760,9 @@ public class EnemyNPC : MonoBehaviour
                 open.Enqueue(next);
             }
         }
+
+        if (blockingDoors.Count > 0)
+            return blockingDoors.OrderBy(x => x.distToTarget).First().door;
 
         return null;
     }
