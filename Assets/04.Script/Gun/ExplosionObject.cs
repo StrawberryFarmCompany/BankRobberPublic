@@ -6,10 +6,10 @@ using UnityEngine;
 public class ExplosionObject
 {
     // Start is called before the first frame update
-    ushort boundary;
-    float damage;
-    Vector3Int center;
-    Dictionary<Vector3Int, float> damageMap;
+    protected ushort boundary;
+    protected float damage;
+    protected Vector3Int center;
+    protected Dictionary<Vector3Int, float> damageMap;
     public ExplosionObject(ushort boundary, float damage, Vector3Int center)
     {
         this.boundary = (ushort)(boundary * 10);
@@ -20,6 +20,7 @@ public class ExplosionObject
 
     public void Explosion()
     {
+        DestroyBomb();
         foreach (var item in damageMap)
         {
             NodeDefines.Node node = GameManager.GetInstance.GetNode(item.Key + center);
@@ -34,6 +35,10 @@ public class ExplosionObject
                 }
             }
         }
+    }
+    protected virtual void DestroyBomb()
+    {
+
     }
     // bfs로 구현
     private Dictionary<Vector3Int, float> GetBound()
@@ -91,5 +96,33 @@ public class ExplosionObject
             result.Add(item.Key, item.Value / denom);
         }
         return result;
+    }
+}
+public class AttachBoomb : ExplosionObject
+{
+    Transform installParent;
+    GameObject installedOBJ;
+    MeshRenderer renderer;
+    public AttachBoomb(ushort boundary, float damage, Vector3Int center,Transform installParent) : base(boundary,damage,center)
+    {
+        this.boundary = boundary;
+        this.damage = damage;
+        this.center = center;
+        this.installParent = installParent;
+    }
+
+    public void InstallBomb()
+    {
+        if (installedOBJ != null) return;
+        installedOBJ = GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["AttachBomb"]);
+        installedOBJ.transform.parent = installParent;
+        installedOBJ.transform.localEulerAngles = Vector3.zero;
+        installedOBJ.transform.localPosition = Vector3.zero;
+        renderer = installedOBJ.GetComponent<MeshRenderer>();
+    }
+    protected override void DestroyBomb()
+    {
+        renderer.enabled = false;
+        installedOBJ.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
     }
 }

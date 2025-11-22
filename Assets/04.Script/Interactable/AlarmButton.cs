@@ -18,7 +18,7 @@ public class AlarmButton : IInteractable
         this.tile = tile;
         this.tr = tr;
         this.index = index;
-        lockModule = ILock.Factory(DoorLockType.button, index,"알람",tile,0,0f);
+        lockModule = ILock.Factory(DoorLockType.button, index, "알람", tile, 0, 0f, null);
 
         isOpen = false;
         RegistInteraction(OnInteraction);

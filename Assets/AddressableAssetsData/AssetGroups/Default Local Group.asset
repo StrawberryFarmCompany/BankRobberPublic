@@ -29,6 +29,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 117ba65968bb97244b5ee2e78ec5c635
+    m_Address: AttachBomb
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 19d4586faad2d474b9e6639dc4b52868
     m_Address: BuffStatus
     m_ReadOnly: 0
@@ -87,6 +93,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c05591d701364984dbe289a109f08be2
     m_Address: BuffIcon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c1f0c19a28d733b4db7544426a1456c6
+    m_Address: AttachDrill
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

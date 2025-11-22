@@ -9,7 +9,7 @@ public interface ILock
     public bool IsLock();
     public bool TryUnLock(EntityStats stat);
     public string GetErrorMessege();
-    public static ILock Factory(DoorLockType types, int value, string name,Vector3Int center,byte boundary,float damage)
+    public static ILock Factory(DoorLockType types, int value, string name,Vector3Int center,byte boundary,float damage,Transform installObjParent)
     {
         switch (types)
         {
@@ -24,9 +24,9 @@ public interface ILock
             case DoorLockType.password:
                 return new PasswordLock(value);
             case DoorLockType.drill:
-                return new DrillLock(value, name);
+                return new DrillLock(value, name, installObjParent);
             case DoorLockType.bomb:
-                return new BombLock(value, name,center,boundary,damage);
+                return new BombLock(value, name,center,boundary,damage,installObjParent);
             default:
                 return null;
         }
@@ -186,6 +186,8 @@ public class DrillLock : ILock
     private bool isActivated = false;
     private string targetName;
     private byte leftTurn = 255;
+    Transform installParent;
+    GameObject installedOBJ;
     public bool IsLock()
     {
         return released;
@@ -196,7 +198,7 @@ public class DrillLock : ILock
         return released;
     }
 
-    public void OnInstallDrill()
+    private void OnInstallDrill()
     {
         if (isActivated && !released)
         {
@@ -208,7 +210,10 @@ public class DrillLock : ILock
             isActivated = true;
             GameManager.GetInstance.NoneBattleTurn.BuffCount += OnTurnCounting;
             UIManager.GetInstance.SetWarningMessege($"드릴이 설치 되엇습니다. 잠금 해제까지 : {leftTurn}턴");
-
+            installedOBJ = GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["AttachDrill"]);
+            installedOBJ.transform.parent = installParent;
+            installedOBJ.transform.localEulerAngles = Vector3.zero;
+            installedOBJ.transform.localPosition = Vector3.zero;
         }
     }
     public void OnTurnCounting()
@@ -218,6 +223,7 @@ public class DrillLock : ILock
         {
             released = true;
             GameManager.GetInstance.NoneBattleTurn.BuffCount -= OnTurnCounting;
+            GameObject.Destroy(installedOBJ);
         }
         UIManager.GetInstance.SetWarningMessege(GetErrorMessege());
     }
@@ -225,19 +231,22 @@ public class DrillLock : ILock
     {
         return released? $"{targetName} 잠금이 해제되엇습니다.":$"{targetName} 잠금 해제까지 : {leftTurn}턴";
     }
-    public DrillLock(int leftTurn,string targetName)
+    public DrillLock(int leftTurn,string targetName,Transform installObjParent)
     {
         this.leftTurn = (byte)leftTurn;
         this.targetName = targetName;
+        this.installParent = installObjParent;
     }
 }
 public class BombLock : ILock
 {
-    ExplosionObject explosion;
+    AttachBoomb explosion;
     private bool released = false;
     private bool isActivated = false;
     private string targetName;
     private byte leftTurn = 255;
+
+
     public bool IsLock()
     {
         return released;
@@ -248,7 +257,7 @@ public class BombLock : ILock
         return released;
     }
 
-    public void InstallBomb()
+    private void InstallBomb()
     {
         if (isActivated && !released)
         {
@@ -259,8 +268,8 @@ public class BombLock : ILock
         {
             isActivated = true;
             GameManager.GetInstance.NoneBattleTurn.BuffCount += OnTurnCounting;
+            explosion.InstallBomb();
             UIManager.GetInstance.SetWarningMessege($"폭탄이 설치 되엇습니다. 폭발까지 : {leftTurn}턴");
-
         }
     }
     public void OnTurnCounting()
@@ -279,10 +288,10 @@ public class BombLock : ILock
     {
         return released? $"{targetName}이 폭발했습니다.":$"{targetName} 폭발까지 : {leftTurn}턴";
     }
-    public BombLock(int leftTurn,string targetName,Vector3Int pos,ushort boundary,float damage)
+    public BombLock(int leftTurn,string targetName,Vector3Int pos,ushort boundary,float damage,Transform installObjParent)
     {
         this.leftTurn = (byte)leftTurn;
         this.targetName = targetName;
-        explosion = new ExplosionObject(boundary, damage, pos);
+        explosion = new AttachBoomb(boundary, damage, pos,installObjParent);
     }
 }

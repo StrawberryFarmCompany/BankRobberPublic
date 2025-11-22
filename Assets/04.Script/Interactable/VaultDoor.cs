@@ -25,19 +25,20 @@ public class VaultDoor : IInteractable
     private bool unlockInstalled = false;
     private bool isBattle { get { return GameManager.GetInstance.CurrentPhase == GamePhase.Battle; } }
     private string registedName;
-
-    public void Init(Vector3Int[] tile, Transform tr,int doorValue,DoorLockType lockType)
+    private Transform installObjParent;
+    public void Init(Vector3Int[] tile, Transform tr,int doorValue,DoorLockType lockType,Transform installPos)
     {
         this.tile = tile[0];
         this.tileTwo = tile[1];
         this.tr = tr;
-        lockModule = ILock.Factory(lockType, doorValue, "금고",tile[0],0,0f);
+        lockModule = ILock.Factory(lockType, doorValue, "금고",tile[0],0,0f,installPos);
         defaultRotation = tr.rotation.eulerAngles;
 
         isOpen = false;
         //배틀페이즈 전환 시 기존 등록 
         RegistInteraction(OnInteraction);
         SecurityData.OnBattlePhase += OnPhaseChanged;
+        installObjParent = installPos;
     }
     private void OnPhaseChanged()
     {
@@ -47,7 +48,7 @@ public class VaultDoor : IInteractable
         }
         else
         {
-            lockModule = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,4,5f);//폭탄방식으로 모듈 변경
+            lockModule = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,4,5f,installObjParent);//폭탄방식으로 모듈 변경
         }
     }
     public void OnInteraction(EntityStats stat)
