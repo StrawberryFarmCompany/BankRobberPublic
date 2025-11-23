@@ -40,6 +40,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2d6215dffcb4fb34ab2769834c36ffe9
+    m_Address: AlramLight
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 38f7c878ee9722947b104f4a4c52ce76
     m_Address: DamageText
     m_ReadOnly: 0
