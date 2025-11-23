@@ -63,6 +63,13 @@ public class PauseManager : MonoBehaviour
         if (!context.started)
             return;
 
+        if (NodePlayerManager.GetInstance == null)
+        {
+            if (isPaused) ResumeGame();
+            else PauseGame();
+            return;
+        }
+
         if (quitConfirmUI && quitConfirmUI.activeSelf)
         {
             CloseQuitConfirm();
