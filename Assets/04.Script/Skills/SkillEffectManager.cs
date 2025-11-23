@@ -19,7 +19,10 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
     public override void OnSceneChange()
     {
         shotEffect = null;
-        cooldowns.Clear();
+        if (LoadSceneManager.GetInstance.curSceneType == SceneType.MainTitleScene || LoadSceneManager.GetInstance.curSceneType == SceneType.LobbyScene)
+        {
+            cooldowns.Clear();
+        }
     }
 
     public int GetRemainingCooldown(NodePlayerController player, PlayerSkill skill)

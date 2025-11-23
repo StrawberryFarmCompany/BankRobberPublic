@@ -279,6 +279,7 @@ class GameManager : SingleTon<GameManager>
     public void EndPlayerTurn()
     {
         FloorCullingManager.GetInstance.EnableAllCollisionsAndRenderers();
+        SkillEffectManager.GetInstance.ReduceCooldowns();
         noneBattleTurn.ChangeState();
         /*if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState();

@@ -79,8 +79,13 @@ public class NodePlayerController : MonoBehaviour
         // [변경됨] 매니저에 자기 자신 등록
         NodePlayerManager.GetInstance.RegisterPlayer(this);
 
-        EquippedSkills.ApplyEquippedSkills(playerStats);
-        
+        CharacterType type = playerStats.characterType;
+        if (!EquippedSkills.applied.ContainsKey(type))
+        {
+            EquippedSkills.ApplyEquippedSkills(playerStats);
+            EquippedSkills.applied[type] = true;
+        }
+
         //FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
         animationController.Init();
 
