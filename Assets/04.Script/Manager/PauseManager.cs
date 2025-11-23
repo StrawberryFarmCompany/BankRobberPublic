@@ -63,12 +63,12 @@ public class PauseManager : MonoBehaviour
         if (!context.started)
             return;
 
-        if (NodePlayerManager.GetInstance == null)
-        {
-            if (isPaused) ResumeGame();
-            else PauseGame();
-            return;
-        }
+        //if (NodePlayerManager.GetInstance == null && LoadSceneManager.GetInstance.curSceneType != SceneType.LobbyScene && LoadSceneManager.GetInstance.curSceneType != SceneType.MainTitleScene)
+        //{
+        //    if (isPaused) ResumeGame();
+        //    else PauseGame();
+        //    return;
+        //}
 
         if (quitConfirmUI && quitConfirmUI.activeSelf)
         {
@@ -93,17 +93,46 @@ public class PauseManager : MonoBehaviour
             if (CharacterManager.Instance.player != null)
             {
                 if (CharacterManager.Instance.player.curUIPanel != null)
+                {
+                    CharacterManager.Instance.player.curUIPanel.SetActive(false);
+                    CharacterManager.Instance.player.controller.crosshair.SetActive(true);
+                    CharacterManager.Instance.player.controller.LockCursor();
+                    CharacterManager.Instance.player.controller.EnableActions();
+                    CharacterManager.Instance.player.curUIPanel = null;
+                    Debug.Log("UI 닫기");
+                    EventSystem.current.SetSelectedGameObject(null);
                     return;
+
+                }
+                else
+                {
+                                       Debug.Log("열린 UI 없음");
+                }
             }
+            else
+            {
+                               Debug.Log("플레이어 없음");
+            }
+        }
+        else
+        {
+                       Debug.Log("캐릭터 매니저 없음");
         }
 
         if (isPaused) ResumeGame();
         else
         {
-            if(NodePlayerManager.GetInstance.GetCurrentPlayer().currPlayerStatus != PlayerStatus.isMoveMode)
+            if(NodePlayerManager.GetInstance != null)
             {
-                UIManager.GetInstance.ShowActionPanel(true);
-                NodePlayerManager.GetInstance.GetCurrentPlayer().StartMode(PlayerStatus.isMoveMode);
+                if (NodePlayerManager.GetInstance.GetCurrentPlayer().currPlayerStatus != PlayerStatus.isMoveMode)
+                {
+                    UIManager.GetInstance.ShowActionPanel(true);
+                    NodePlayerManager.GetInstance.GetCurrentPlayer().StartMode(PlayerStatus.isMoveMode);
+                }
+                else
+                {
+                    PauseGame();
+                }
             }
             else
             {
