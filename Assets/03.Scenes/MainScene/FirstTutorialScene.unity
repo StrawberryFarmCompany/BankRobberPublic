@@ -9629,6 +9629,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 0ebe1f03d7f82cf4bb61ae4860c9051f, type: 2}
+  rifle: {fileID: 5154483734239374005, guid: 4614fda0c9223ad44be1881cde34aa46, type: 3}
+  sniperRifle: {fileID: 8211836092224656672, guid: 5c6bb62db82b21245bd7b19760202eb1,
+    type: 3}
+  shotGun: {fileID: 3710723296215505721, guid: 88af619b24577114c8f4842169c3e6cc, type: 3}
+  subMachineGun: {fileID: 7454090022656833440, guid: 0a36b2ae557645844b125ca639572fe1,
+    type: 3}
+  handGun: {fileID: 8739093877580884689, guid: 8e9e132d143d22749bce5fd7a90146fa, type: 3}
+  gunHoldPosition: {fileID: 904934737}
   gunName: 
   gunDescription: 
   type: 0
@@ -9647,6 +9655,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &188808520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62164,6 +62173,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 5154483734239374005, guid: 4614fda0c9223ad44be1881cde34aa46, type: 3}
+  sniperRifle: {fileID: 8211836092224656672, guid: 5c6bb62db82b21245bd7b19760202eb1,
+    type: 3}
+  shotGun: {fileID: 3710723296215505721, guid: 88af619b24577114c8f4842169c3e6cc, type: 3}
+  subMachineGun: {fileID: 7454090022656833440, guid: 0a36b2ae557645844b125ca639572fe1,
+    type: 3}
+  handGun: {fileID: 8739093877580884689, guid: 8e9e132d143d22749bce5fd7a90146fa, type: 3}
+  gunHoldPosition: {fileID: 226383758}
   gunName: 
   gunDescription: 
   type: 0
@@ -62182,6 +62199,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &1228724954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112884,15 +112902,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 450811692563055772}
-  rifle: {fileID: 6507046810373003895, guid: 67ca967a9f9178e4eb671b23c44388dd, type: 3}
-  sniperRifle: {fileID: 6507046810373003895, guid: 67ca967a9f9178e4eb671b23c44388dd,
-    type: 3}
-  shotGun: {fileID: 3710723296215505721, guid: 88af619b24577114c8f4842169c3e6cc, type: 3}
-  subMachineGun: {fileID: 1120754092437823813, guid: 60681019fcf069a4b83aea527b8574da,
-    type: 3}
-  handGun: {fileID: 1120754092437823813, guid: 60681019fcf069a4b83aea527b8574da, type: 3}
-  gunHoldPosition: {fileID: 8357529617746122964}
-  currentGun: {fileID: 0}
 --- !u!65 &2147359218125327577
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -144674,7 +144683,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48c03949df39464ab82c4e8a0fe5c27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 0}
+  data: {fileID: 11400000, guid: 4187ed4c18a381247b7786bc3e27a415, type: 2}
+  rifle: {fileID: 5154483734239374005, guid: 4614fda0c9223ad44be1881cde34aa46, type: 3}
+  sniperRifle: {fileID: 8211836092224656672, guid: 5c6bb62db82b21245bd7b19760202eb1,
+    type: 3}
+  shotGun: {fileID: 3710723296215505721, guid: 88af619b24577114c8f4842169c3e6cc, type: 3}
+  subMachineGun: {fileID: 7454090022656833440, guid: 0a36b2ae557645844b125ca639572fe1,
+    type: 3}
+  handGun: {fileID: 8739093877580884689, guid: 8e9e132d143d22749bce5fd7a90146fa, type: 3}
+  gunHoldPosition: {fileID: 8357529617746122964}
   gunName: 
   gunDescription: 
   type: 0
@@ -144693,6 +144710,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!65 &8745721145593033429
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -146694,10 +146712,9 @@ MonoBehaviour:
   playerInput: {fileID: 0}
   mainCamera: {fileID: 1712962910}
   highlighter: {fileID: 6675930035172390999}
-  gun: {fileID: 0}
+  gun: {fileID: 8744327004839024897}
   isHide: 0
   isAiming: 0
-  isActing: 0
   isEndReady: 0
   IsSkillAttack: 0
   currPlayerStatus: 0

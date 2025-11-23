@@ -378,16 +378,16 @@ class GameManager : SingleTon<GameManager>
         switch (sceneType) 
         {
             case SceneType.Stage01Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             case SceneType.Stage02Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             case SceneType.Stage03Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             case SceneType.Stage04Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             default:
                 break;
