@@ -646,6 +646,13 @@ public class EnemyNPC : MonoBehaviour
         }
     }
 
+    public void StopMove()
+    {
+        isMoving = false;
+        pathQueue.Clear();
+        agent.ResetPath();
+    }
+
     // 가장 가까운 노드 찾기
     private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
     {
