@@ -24,11 +24,14 @@ public class FloorCullingManager : MonoBehaviour
 
     private LayerMask excludeLayerMask = (1<<11) + (1<<8);
 
-    private float lastUpdateTime = 0f;
-
     private Renderer[] allRenderers;
     private Collider[] allColliders;
     private Image[] allImages = new Image[] { };
+
+    private readonly List<Renderer> manualRenderers = new List<Renderer>();
+    private readonly List<Collider> manualColliders = new List<Collider>();
+    private readonly List<Image> manualImages = new List<Image>();
+
 
     private void Awake()
     {
@@ -81,15 +84,29 @@ public class FloorCullingManager : MonoBehaviour
     /// </summary>
     public void RefreshRenderersAndColliders()
     {
-        allRenderers = FindObjectsOfType<Renderer>(true)
+        // 자동 스캔된 리스트 (레이어 필터 적용)
+        var autoRenderers = FindObjectsOfType<Renderer>(true)
             .Where(r => (excludeLayerMask.value & (1 << r.gameObject.layer)) == 0)
-            .ToArray();
+            .ToList();
 
-        allColliders = FindObjectsOfType<Collider>(true)
+        var autoColliders = FindObjectsOfType<Collider>(true)
             .Where(c => (excludeLayerMask.value & (1 << c.gameObject.layer)) == 0)
-            .ToArray();
-        
+            .ToList();
+
+        // 수동 등록된 렌더러/콜라이더/이미지들은 무조건 포함
+        foreach (var r in manualRenderers)
+            if (r != null && !autoRenderers.Contains(r))
+                autoRenderers.Add(r);
+
+        foreach (var c in manualColliders)
+            if (c != null && !autoColliders.Contains(c))
+                autoColliders.Add(c);
+
+        allRenderers = autoRenderers.ToArray();
+        allColliders = autoColliders.ToArray();
+        allImages = manualImages.ToArray(); // 이미지 자동 스캔 없음
     }
+
 
     /// <summary>
     /// 지정된 층 범위에 맞춰 렌더/충돌 활성화
@@ -217,49 +234,37 @@ public class FloorCullingManager : MonoBehaviour
 
     public void RegisterRenderersAndColliders(Renderer[] renderer, Collider[] collider, Image[] images)
     {
-        if (allRenderers == null || allColliders == null || allImages == null)
+        if (renderer.Length > 0)
         {
-            RefreshRenderersAndColliders();
-        }
-
-        if(renderer.Length != 0)
-        {
-            List<Renderer> rendererList = allRenderers.ToList();
             foreach (var r in renderer)
             {
-                if (!rendererList.Contains(r))
-                {
-                    rendererList.Add(r);
-                }
+                if (r != null && !manualRenderers.Contains(r))
+                    manualRenderers.Add(r);
             }
-            allRenderers = rendererList.ToArray();
         }
 
-        if (collider.Length != 0)
+        if (collider.Length > 0)
         {
-            List<Collider> colliderList = allColliders.ToList();
             foreach (var c in collider)
             {
-                if (!colliderList.Contains(c))
-                {
-                    colliderList.Add(c);
-                }
+                if (c != null && !manualColliders.Contains(c))
+                    manualColliders.Add(c);
             }
-            allColliders = colliderList.ToArray();
         }
 
-        if (images.Length != 0)
+        if (images.Length > 0)
         {
-            List<Image> imageList = allImages.ToList();
             foreach (var img in images)
             {
-                if (!imageList.Contains(img))
-                {
-                    imageList.Add(img);
-                }
+                if (img != null && !manualImages.Contains(img))
+                    manualImages.Add(img);
             }
-            allImages = imageList.ToArray();
         }
+
+        // 등록이 끝났으니 전체 목록 재빌드
+        RefreshRenderersAndColliders();
+        UpdateCullingByCurrentPlayer();
     }
+
 
 }
