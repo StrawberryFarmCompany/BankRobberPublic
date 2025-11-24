@@ -752,7 +752,7 @@ public class EnemyNPC : MonoBehaviour
                         {
                             if (kvp.Value.Target is Door door && !door.isOpen)
                             {
-                                int dist = Mathf.Abs(end.x - next.x) + Mathf.Abs(end.y - next.y);
+                                int dist = Mathf.Abs(end.x - next.x) + Mathf.Abs(end.z - next.z);
                                 blockingDoors.Add((door, dist));
                             }
                         }

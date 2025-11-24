@@ -86,7 +86,6 @@ public class PatrolEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel == 2)
         {
-            DetectVisibleTargets();
             if (nearPlayerLocation  != null && nearPlayerLocation.currNode.GetCenter != null)
             {
                 RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
