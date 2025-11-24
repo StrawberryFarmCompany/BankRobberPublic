@@ -35,6 +35,8 @@ public class UIManager : MonoBehaviour
 
     public LeftInteractionPanel leftInteractionPanel;
 
+    public TurnActionInput turnActionInput;
+
     [Header("게임 엔드 패널")]
     public GameEnd gameEndUI;
     //[HideInInspector]
@@ -139,7 +141,6 @@ public class UIManager : MonoBehaviour
         }
 
         Skill so = SkillSOMapper.Get(player.playerStats.playerSkill);
-        Debug.Log($"Skill: {player.playerStats.playerSkill}, SO: {so}, effect: {(so != null ? so.effect : "NULL")}");
 
         if (so == null) return;
 

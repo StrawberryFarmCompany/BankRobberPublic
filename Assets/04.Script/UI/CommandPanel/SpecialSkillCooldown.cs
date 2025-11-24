@@ -40,7 +40,7 @@ public class SpecialSkillCooldown : MonoBehaviour
 
         // 기본 설명 갱신
         Skill so = SkillSOMapper.Get(currentSkill);
-        tooltip.baseDescription = so != null ? so.effect : "스킬 설명 없음";
+        tooltip.baseDescription = so != null ? so.effect : "장착된 스킬 없음";
 
         // 쿨타임 계산
         int remain = SkillEffectManager.GetInstance.GetRemainingCooldown(player, currentSkill);
