@@ -23,7 +23,7 @@ public class MoveRangeHighlighter : MonoBehaviour
         //start위치까지 포함하여야 하고 음수처리 때문에 값 비교 array는 (range*2)+1
         GetPath(start, start, map,new int[(range*2)+1, (range * 2) + 1], range);
         map.Remove(start);
-        normalHighlighter.SetBoundMesh(map.ToArray());
+        NodePreviewer.SetBoundMesh(map.ToArray(),normalHighlighter.moveBoundMeshFilter,normalHighlighter.activatedBounds);
         /*        for (int x = -range; x <= range; x++)
                 {
                     for (int z = -range; z <= range; z++)

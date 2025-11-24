@@ -8,10 +8,9 @@ public class NodePreviewer
 {
     #region 범위프리뷰어
     GameObject boundPreviewerGOBJ;
-    [SerializeField]MeshFilter boundMeshFilter;
+    public MeshFilter moveBoundMeshFilter;
     public bool isBoundActivated { get { return boundPreviewerGOBJ.activeSelf; } }
-    HashSet<Vector3Int> activatedBounds;
-
+    public HashSet<Vector3Int> activatedBounds;
     #endregion
 
     #region 골 프리뷰어 변수
@@ -29,11 +28,8 @@ public class NodePreviewer
     Transform targetPreviewer;
     #endregion
 
-    //GC call 최적화를 위해 클래스 변수로 선언
-    private Dictionary<Vector3, int> vertDict;
-    Queue<int> triangleQueue;
     Queue<Vector2> uvQueue;
-    readonly Vector3[] meshPoints = new Vector3[6]
+    readonly static Vector3[] meshPoints = new Vector3[6]
     {
         new Vector3(0.5f , 0.03f , -0.5f),
         new Vector3(-0.5f , 0.03f, -0.5f),
@@ -46,6 +42,7 @@ public class NodePreviewer
 
     public NodePreviewer()
     {
+        activatedBounds = new HashSet<Vector3Int>();
         CreateBoundPreviewer();
         CreateGoalPreviewer();
         CreatePathPreviewer();
@@ -63,15 +60,21 @@ public class NodePreviewer
         throwPathLine.gameObject.SetActive(onOff);
         pathLine.gameObject.SetActive(false);
     }
-    public void SetBoundMesh(Vector3Int[] poses)
+    
+    public static void SetBoundMesh(Vector3Int[] poses,MeshFilter targetFilter,HashSet<Vector3Int> activatedBounds)
     {
-        boundMeshFilter.mesh = null;
-        activatedBounds.Clear();
+        targetFilter.mesh = null;
+
+        activatedBounds?.Clear();
+
+        Dictionary<Vector3, int> vertDict = new Dictionary<Vector3, int>();
+        Queue<int> triangleQueue = new Queue<int>();
+        Queue<Vector2> uvQueue = new Queue<Vector2>();
         //List<Vector3> points = new List<Vector3>();
         for (int i = 0; i < poses.Length; i++)
         {
             Vector3[] vert = GetPoints(poses[i]);
-            activatedBounds.Add(poses[i]);
+            activatedBounds?.Add(poses[i]);
             for (int j = 0; j < vert.Length; j++)
             {
                 if (vertDict.ContainsKey(vert[j]))
@@ -91,14 +94,14 @@ public class NodePreviewer
         mesh.vertices = vertDict.Keys.ToArray();
         mesh.triangles = triangleQueue.ToArray();
         mesh.uv = uvQueue.ToArray();
-        boundMeshFilter.mesh = mesh;
+        targetFilter.mesh = mesh;
         triangleQueue.Clear();
         uvQueue.Clear();
         vertDict.Clear();
     }
 
 
-    public Vector3[] GetPoints(Vector3 pos)
+    public static Vector3[] GetPoints(Vector3 pos)
     {
         Vector3[] points = new Vector3[meshPoints.Length];
         for (int i = 0; i < meshPoints.Length; i++)
@@ -121,7 +124,7 @@ public class NodePreviewer
         }
         
     }
-    public bool IsPosCludeInBound(Vector3Int pos)
+    public bool PosIncludeBound(Vector3Int pos)
     {
         return activatedBounds.Contains(pos);
     }
@@ -175,12 +178,10 @@ public class NodePreviewer
         boundPreviewerGOBJ.transform.eulerAngles = Vector3.zero;
         boundPreviewerGOBJ.transform.localScale = Vector3.one;
 
-        boundMeshFilter = boundPreviewerGOBJ.AddComponent<MeshFilter>();
+        moveBoundMeshFilter = boundPreviewerGOBJ.AddComponent<MeshFilter>();
         MeshRenderer mr = boundPreviewerGOBJ.AddComponent<MeshRenderer>();
         ResourceManager.GetInstance.LoadAsync<Material>("NodePreviewerMat", (mat) => { mr.material = mat;mr.enabled = true; });
         
-        vertDict = new Dictionary<Vector3, int>();
-        triangleQueue = new Queue<int>();
         uvQueue = new Queue<Vector2>();
     }
 
@@ -194,7 +195,6 @@ public class NodePreviewer
         goalPreviewer.transform.localScale = Vector3.one;
 
         Mesh goalPreviewerMesh = new Mesh();
-        activatedBounds = new HashSet<Vector3Int>();
 
         Vector3[] GPVerts = GetPoints(Vector3.up * 0.03f);
         goalPreviewerMesh.vertices = GPVerts;
