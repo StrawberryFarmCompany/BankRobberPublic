@@ -52,6 +52,7 @@ public class VaultDoor : IInteractable
         else
         {
             destroyLock = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,4,5f,installObjParent);//폭탄방식으로 모듈 변경
+            defaultModule = new NoneLock(false);
         }
     }
     public void OnInteraction(EntityStats stat)
