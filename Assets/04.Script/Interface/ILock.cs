@@ -14,7 +14,7 @@ public interface ILock
         switch (types)
         {
             case DoorLockType.none:
-                return new NoneLock();
+                return new NoneLock(true);
             case DoorLockType.lockPick:
                 return new LockPick(value);
             case DoorLockType.keyCard:
@@ -34,17 +34,21 @@ public interface ILock
 }
 public class NoneLock : ILock
 {
-
+    private bool defaultValue = true;
 
     public bool IsLock()
     {
-        return true;
+        return defaultValue;
     }
-    public bool TryUnLock(EntityStats stat) => true;
+    public NoneLock(bool dv)
+    {
+        defaultValue = dv;
+    }
+    public bool TryUnLock(EntityStats stat) => defaultValue;
 
     public string GetErrorMessege()
     {
-        return null;
+        return "";
     }
 }
 public class LockPick : ILock

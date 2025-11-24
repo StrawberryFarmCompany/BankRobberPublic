@@ -97,6 +97,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bae510d0931edcf4fbabe188736dc3ba
+    m_Address: EnemySiteMat
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c05591d701364984dbe289a109f08be2
     m_Address: BuffIcon
     m_ReadOnly: 0

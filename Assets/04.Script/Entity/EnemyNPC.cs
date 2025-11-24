@@ -21,6 +21,8 @@ public class EnemyNPC : MonoBehaviour
 
     public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
+    private EnemySitePreviewer sitePreviewer;
+
     Vector3Int curTargetPos;
     bool canNextMove;
     bool isMoving;
@@ -40,6 +42,8 @@ public class EnemyNPC : MonoBehaviour
         stats.NodeUpdates(transform.position,true);
 
         stats.secData = new SecurityData(stats);
+        sitePreviewer = new EnemySitePreviewer(gameObject,stats.characterName);
+
     }
 
     protected virtual void Update()
@@ -205,7 +209,7 @@ public class EnemyNPC : MonoBehaviour
         
         // 적 자신의 노드
         Vector3Int enemyPos = stats.currNode.GetCenter;
-
+        
         // 사정거리 안에 있는 모든 엔티티 가져오기
         List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.detectingDistance);//(int)stats.detectingDistance
         // 리스트 상태 출력 (디버그용)
