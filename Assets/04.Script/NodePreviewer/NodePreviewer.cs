@@ -65,7 +65,7 @@ public class NodePreviewer
     {
         targetFilter.mesh = null;
 
-        activatedBounds?.Clear();
+        activatedBounds.Clear();
 
         Dictionary<Vector3, int> vertDict = new Dictionary<Vector3, int>();
         Queue<int> triangleQueue = new Queue<int>();
@@ -74,7 +74,7 @@ public class NodePreviewer
         for (int i = 0; i < poses.Length; i++)
         {
             Vector3[] vert = GetPoints(poses[i]);
-            activatedBounds?.Add(poses[i]);
+            activatedBounds.Add(poses[i]);
             for (int j = 0; j < vert.Length; j++)
             {
                 if (vertDict.ContainsKey(vert[j]))
