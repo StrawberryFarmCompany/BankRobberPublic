@@ -13,11 +13,18 @@ public class TurnActionInput : MonoBehaviour
 
     [SerializeField] Button turnButton;
 
+    [SerializeField] private TextMeshProUGUI hideButtonLabel;
+
     TurnBehaviour onAllyStart, onEnemyStart, onNeutralStart;
     
     NodePlayerController playerController => NodePlayerManager.GetInstance.GetCurrentPlayer();
 
     NoneBattleTurnStateMachine SM => GameManager.GetInstance.NoneBattleTurn;
+
+    private void Start()
+    {
+        NodePlayerManager.OnPlayerChanged += RefreshHideUI;
+    }
 
     void Awake()
     {
@@ -84,17 +91,20 @@ public class TurnActionInput : MonoBehaviour
 
     public void OnHidePressed()
     {
-        if (playerController.IsMyTurn() && !playerController.isHide && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
+        if (!playerController.IsMyTurn() || playerController.currPlayerStatus != PlayerStatus.isMoveMode)
+            return;
+
+        if (!playerController.isHide)
         {
-            UIManager.GetInstance.ShowActionPanel(false);
             playerController.StartMode(PlayerStatus.isHideMode);
-        }
-        
-        if (playerController.IsMyTurn() && playerController.isHide && playerController.currPlayerStatus == PlayerStatus.isMoveMode)
-        {
             UIManager.GetInstance.ShowActionPanel(false);
-            playerController.StartMode(PlayerStatus.isSneakAttackMode);
+            UpdateHideButtonLabel("은신 해제");
+            return;
         }
+
+        playerController.StartMode(PlayerStatus.isUnhideMode);
+        UIManager.GetInstance.ShowActionPanel(false);
+        UpdateHideButtonLabel("은신");
     }
 
     public void OnRangedAttackPressed()
@@ -143,5 +153,41 @@ public class TurnActionInput : MonoBehaviour
             NodePlayerManager.GetInstance.NotifyPlayerEndTurn(playerController);
             //나중에 플레이어 턴 끝나면 패널 어떻게 처리할건지 논의
         }
+    }
+
+    public void RefreshHideUI()
+    {
+        NodePlayerController player = NodePlayerManager.GetInstance.GetCurrentPlayer();
+        if (player == null) return;
+
+        ActionTooltipTrigger tooltipTrigger = hideButtonLabel.GetComponentInParent<ActionTooltipTrigger>();
+        if (tooltipTrigger == null) return;
+
+        if (player.isHide)
+        {
+            UpdateHideButtonLabel("은신 해제");
+            tooltipTrigger.baseDescription = "은신을 해제합니다.\n해제 시 소음이 발생합니다.";
+        }
+        else
+        {
+            UpdateHideButtonLabel("은신");
+            tooltipTrigger.baseDescription = "행동력 1을 소모해 소음 범위를 줄입니다.";
+        }
+
+        var tooltipUI = UIManager.GetInstance.actionTooltip;
+        if (tooltipUI == null) return;
+
+        if (!tooltipUI.IsShowing) return;
+
+        RectTransform target = tooltipTrigger.GetComponent<RectTransform>();
+        if (target == null) return;
+
+        tooltipUI.Show(tooltipTrigger.baseDescription, target);
+    }
+
+    private void UpdateHideButtonLabel(string text)
+    {
+        if (hideButtonLabel != null)
+            hideButtonLabel.text = text;
     }
 }

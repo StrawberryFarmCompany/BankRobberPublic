@@ -60,6 +60,12 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.SetCharacterResultUI(players);
         UIManager.GetInstance.gameEndUI.TurnOffPanel();
 
+        foreach (var p in players)
+        {
+            p.isHide = false;
+        }
+        if (UIManager.GetInstance.turnActionInput != null)
+            UIManager.GetInstance.turnActionInput.RefreshHideUI();
     }
 
     public void PlayerTurnReset()

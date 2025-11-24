@@ -205,6 +205,15 @@ public class NodePlayerController : MonoBehaviour
         {
             HideMode();
             UIManager.GetInstance.ShowActionPanel(true);
+            StartMode(PlayerStatus.isMoveMode);
+            RefreshPipAllSafe();
+        }
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isUnhideMode)
+        {
+            RemoveHideMode();
+            UIManager.GetInstance.ShowActionPanel(true);
+            StartMode(PlayerStatus.isMoveMode);
+            RefreshPipAllSafe();
         }
         else if(context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isThrowMode)
         {
@@ -268,6 +277,7 @@ public class NodePlayerController : MonoBehaviour
         if(context.canceled && (currPlayerStatus == PlayerStatus.isRunMode ||
             currPlayerStatus == PlayerStatus.isAimingMode ||
             currPlayerStatus == PlayerStatus.isHideMode ||
+            currPlayerStatus == PlayerStatus.isUnhideMode ||
             currPlayerStatus == PlayerStatus.isReloadMode ||
             currPlayerStatus == PlayerStatus.isPerkActionMode))
         {
@@ -533,12 +543,24 @@ public class NodePlayerController : MonoBehaviour
             return;
         animationController.HideState();
         isHide = true;
+
+        var ui = UIManager.GetInstance;
+        if (ui != null && ui.turnActionInput != null)
+        {
+            ui.turnActionInput.RefreshHideUI();
+        }
     }
 
     private void RemoveHideMode()
     {
         isHide = false;
         NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Unstealth);
+
+        var ui = UIManager.GetInstance;
+        if (ui != null && ui.turnActionInput != null)
+        {
+            ui.turnActionInput.RefreshHideUI();
+        }
     }
 
     public void CheckSneakAttack(Vector3 mouseScreenPos, bool consumeAction = true)
@@ -1136,5 +1158,6 @@ public enum PlayerStatus {
     isRangeAttackMode,
     isPerkActionMode,
     isThrowMode,
-    isReloadMode
+    isReloadMode,
+    isUnhideMode
 }
