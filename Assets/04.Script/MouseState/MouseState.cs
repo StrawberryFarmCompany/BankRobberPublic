@@ -62,7 +62,7 @@ public class MouseMoveState : MouseState
     public override void Execute(Vector2 pos)
     {
         Vector3Int selectedNode = NodePlayerManager.GetInstance.GetCurrentPlayer().GetNodeVector3ByRay(pos, ~(1 << 8));
-        if (MoveRangeHighlighter.normalHighlighter.IsPosCludeInBound(selectedNode) && MoveRangeHighlighter.normalHighlighter.isBoundActivated)
+        if (MoveRangeHighlighter.normalHighlighter.PosIncludeBound(selectedNode) && MoveRangeHighlighter.normalHighlighter.isBoundActivated)
         {
             MoveRangeHighlighter.normalHighlighter.GoalPreviewOnOff(true);
             MoveRangeHighlighter.normalHighlighter.SetGoalPos(selectedNode);
