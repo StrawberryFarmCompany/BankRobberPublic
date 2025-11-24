@@ -1,9 +1,12 @@
 using BuffDefine;
 using DG.Tweening;
 using NodeDefines;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,7 +16,7 @@ public class EnemyNPC : MonoBehaviour
     protected EntityStats stats;
     protected EnemyStateMachine efsm;
     public Gun gun;
-
+    public float eta = 0f;
     public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
 
     [SerializeField] protected EntityStats nearPlayerLocation;
@@ -515,7 +518,7 @@ public class EnemyNPC : MonoBehaviour
         {
             if (stats.ConsumeMovement(1))
             {
-                pathQueue.Enqueue(step);
+                pathQueue.Enqueue((Vector3Int)step);
             }
             else
             {
@@ -531,7 +534,7 @@ public class EnemyNPC : MonoBehaviour
             return;
         }
 
-        float timePerTile = 0.4f;
+        float timePerTile = 0.3f;
         efsm.eta = pathQueue.Count * timePerTile;
 
         isMoving = true;
@@ -618,32 +621,46 @@ public class EnemyNPC : MonoBehaviour
         // 아직 목표가 없으면 다음 큐 꺼내기
         if (!isMoving) return;
 
-        // 경로가 없으면 즉시 종료
-        if (pathQueue.Count == 0)
-        {
-            isMoving = false;
-            return;
-        }
-
-        // 도착 판정 (== 대신 거리로 체크)
-        if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
-        {
-            canNextMove = true;
-        }
+        //도착 판정 거리로 체크
+        eta -= Time.deltaTime;
+        if (eta <= 0f) canNextMove = true;
 
         if (canNextMove && pathQueue.Count > 0)
         {
             canNextMove = false;
-
-            curTargetPos = pathQueue.Dequeue();
-            agent.SetDestination(curTargetPos);
-            stats.NodeUpdates(curTargetPos);
+            Vector3Int targetPos = pathQueue.Dequeue();
+            Node node = GameManager.GetInstance.GetNode(targetPos);
+            if (node != null && node.Standing.Count > 0)
+            {
+                stats.HealMovement(pathQueue.Count + 1);
+                pathQueue.Clear();
+                stats.NodeUpdates(transform.position);
+                stats.GetTileInteraction(transform.position);
+                return;
+            }
+            else if (pathQueue.Count <= 1)
+            {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
+                    stats.NodeUpdates(transform.position);
+                    stats.GetTileInteraction(transform.position);
+                });
+            }
+            else
+            {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
+                    stats.NodeUpdates(transform.position);
+                    stats.GetTileInteraction(transform.position);
+                });
+            }
         }
 
         // 모든 경로 소모 시 이동 종료
-        if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        if (pathQueue.Count == 0 && eta <= 0f)
         {
             isMoving = false;
+            eta = 0f;
+            efsm.eta = 0f;
+
             if (nearPlayerLocation != null)
             {
                 // LookAt 대신
@@ -652,6 +669,7 @@ public class EnemyNPC : MonoBehaviour
                 // 회전 끝난 후 공격
                 DOVirtual.DelayedCall(0.3f, () => TryAttack());
             }
+
         }
     }
 
@@ -659,9 +677,43 @@ public class EnemyNPC : MonoBehaviour
     {
         isMoving = false;
         pathQueue.Clear();
-        agent.ResetPath();
+        eta = 0f;
+        stats.NodeUpdates(transform.position);
+        stats.GetTileInteraction(transform.position);
     }
+    private float DoMoveAndRotate(Ease ease, Vector3Int pos, float moveDuration, float rotationDuration, Action action = null)
+    {
+        transform.DOComplete(true);
 
+        Vector2 relPos = new Vector2(pos.x, pos.z) - new Vector2(transform.position.x, transform.position.z);
+        float radian = Mathf.Atan2(relPos.x, relPos.y);
+        float angle = (Mathf.Rad2Deg * radian);
+
+
+        float minAngle = (Mathf.Min(angle, transform.eulerAngles.y) + 180) % 360f;
+        float maxAngle = (Mathf.Max(angle, transform.eulerAngles.y) + 180) % 360f;
+
+        float rotAngle = (maxAngle - minAngle) / 360f;
+        if (rotAngle == 0)
+        {
+            rotationDuration = 0;
+        }
+        else
+        {
+            float originRotDur = rotationDuration;
+            rotationDuration = originRotDur * rotAngle;
+            rotationDuration = MathF.Abs(rotationDuration);
+        }
+        transform.DORotate(Vector3.up * angle, rotationDuration).OnComplete(() =>
+        {
+            transform.DOMove(pos, moveDuration).SetEase(ease).OnComplete(() =>
+            {
+                if (stats == null) return;
+                action?.Invoke();
+            });
+        });
+        return moveDuration + rotationDuration;
+    }
     // 가장 가까운 노드 찾기
     private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
     {
@@ -810,8 +862,8 @@ public class EnemyNPC : MonoBehaviour
 
     private IEnumerator IdleRotation()
     {
-        float firstLookAngle = Random.Range(-180, 180); // 첫 번째 각도 확인
-        float secondLookAngle = Random.Range(-180, 180); // 두 번째 각도 확인
+        float firstLookAngle = UnityEngine.Random.Range(-180, 180); // 첫 번째 각도 확인
+        float secondLookAngle = UnityEngine.Random.Range(-180, 180); // 두 번째 각도 확인
         Quaternion originalRotation = transform.rotation;
 
         this.gameObject.transform.rotation = Quaternion.Euler(0, firstLookAngle, 0);
