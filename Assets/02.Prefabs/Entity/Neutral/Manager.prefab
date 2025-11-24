@@ -1617,6 +1617,7 @@ MonoBehaviour:
   - {fileID: 2680003610186152395}
   colliders:
   - {fileID: 7722449885207158140}
+  images: []
 --- !u!1 &3098168104586038257
 GameObject:
   m_ObjectHideFlags: 0

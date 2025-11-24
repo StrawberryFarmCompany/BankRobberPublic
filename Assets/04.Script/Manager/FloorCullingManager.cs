@@ -22,9 +22,7 @@ public class FloorCullingManager : MonoBehaviour
 
     private Dictionary<EntityStats, FogOfWarRevealer3D> playerRevealers = new Dictionary<EntityStats, FogOfWarRevealer3D>();
 
-    private LayerMask excludeLayerMask = (1<<11) + (1<<8);
-
-    private float lastUpdateTime = 0f;
+    private LayerMask excludeLayerMask = (1 << 11); //성능에 별반 차이가 없기에 그냥 마스크 풀었습니다
 
     private Renderer[] allRenderers;
     private Collider[] allColliders;
@@ -227,10 +225,8 @@ public class FloorCullingManager : MonoBehaviour
             List<Renderer> rendererList = allRenderers.ToList();
             foreach (var r in renderer)
             {
-                if (!rendererList.Contains(r))
-                {
-                    rendererList.Add(r);
-                }
+                rendererList.Add(r);
+                
             }
             allRenderers = rendererList.ToArray();
         }
@@ -240,10 +236,8 @@ public class FloorCullingManager : MonoBehaviour
             List<Collider> colliderList = allColliders.ToList();
             foreach (var c in collider)
             {
-                if (!colliderList.Contains(c))
-                {
                     colliderList.Add(c);
-                }
+                
             }
             allColliders = colliderList.ToArray();
         }
@@ -253,10 +247,7 @@ public class FloorCullingManager : MonoBehaviour
             List<Image> imageList = allImages.ToList();
             foreach (var img in images)
             {
-                if (!imageList.Contains(img))
-                {
                     imageList.Add(img);
-                }
             }
             allImages = imageList.ToArray();
         }

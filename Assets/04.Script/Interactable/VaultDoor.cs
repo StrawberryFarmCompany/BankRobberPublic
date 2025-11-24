@@ -12,7 +12,8 @@ public class VaultDoor : IInteractable
     public Vector3Int tile { get; set; }
     public Vector3Int tileTwo { get; set; }
     public Transform tr;
-    public ILock lockModule;
+    private ILock defaultModule;
+    public ILock destroyLock;
     private Vector3 defaultRotation;
     /// <summary>
     /// 
@@ -26,12 +27,14 @@ public class VaultDoor : IInteractable
     private bool isBattle { get { return GameManager.GetInstance.CurrentPhase == GamePhase.Battle; } }
     private string registedName;
     private Transform installObjParent;
-    public void Init(Vector3Int[] tile, Transform tr,int doorValue,DoorLockType lockType,Transform installPos)
+    public void Init(Vector3Int[] tile, Transform tr, int doorValue, DoorLockType lockType, Transform installPos)
     {
         this.tile = tile[0];
         this.tileTwo = tile[1];
         this.tr = tr;
-        lockModule = ILock.Factory(lockType, doorValue, "금고",tile[0],0,0f,installPos);
+        if (lockType != DoorLockType.drill && lockType != DoorLockType.bomb && lockType != DoorLockType.none) defaultModule = ILock.Factory(lockType, doorValue, "금고", tile[0], 0, 0f, installPos);
+        else defaultModule = new NoneLock(false);
+        destroyLock = ILock.Factory(DoorLockType.drill, doorValue, "금고",tile[0],0,0f,installPos);
         defaultRotation = tr.rotation.eulerAngles;
 
         isOpen = false;
@@ -42,13 +45,14 @@ public class VaultDoor : IInteractable
     }
     private void OnPhaseChanged()
     {
-        if (lockModule.IsLock() || unlockInstalled)
+        if (destroyLock.IsLock() || unlockInstalled)
         {
             return;
         }
         else
         {
-            lockModule = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,4,5f,installObjParent);//폭탄방식으로 모듈 변경
+            destroyLock = ILock.Factory(DoorLockType.bomb, 2, "금고",tile,4,5f,installObjParent);//폭탄방식으로 모듈 변경
+            defaultModule = new NoneLock(false);
         }
     }
     public void OnInteraction(EntityStats stat)
@@ -60,7 +64,11 @@ public class VaultDoor : IInteractable
             ReleaseInteraction(OnInteraction);
             RegistInteraction(UnInteraction);
         }
-        bool lockCheck = lockModule.TryUnLock(stat);
+        bool lockCheck = defaultModule.TryUnLock(stat);
+        if (!lockCheck)
+        {
+            lockCheck = destroyLock.TryUnLock(stat);
+        }
         if (lockCheck && !isOpen)
         {
             //이동 가능 불가 여부 추후 추가 필요
@@ -82,7 +90,7 @@ public class VaultDoor : IInteractable
     }
     public void DoorOpen()
     {
-        if (lockModule.IsLock())
+        if (destroyLock.IsLock()||defaultModule.IsLock())
         {
             unlockInstalled = false;
             Vector3 targetRot = defaultRotation + (Vector3.up * 90);
@@ -108,7 +116,7 @@ public class VaultDoor : IInteractable
         List<Vector3Int> vecs = GameManager.GetInstance.GetNearNodes(tile);
         if (isBattle)
         {
-            if (lockModule.IsLock())
+            if (destroyLock.IsLock())
             {
                 registedName = isOpen? "Close Door" : "Open Door";
             }
@@ -120,7 +128,7 @@ public class VaultDoor : IInteractable
         }
         else
         {
-            if (lockModule.IsLock())
+            if (destroyLock.IsLock())
             {
                 registedName = isOpen ? "Close Door" : "Open Door";
             }

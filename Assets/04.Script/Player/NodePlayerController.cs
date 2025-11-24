@@ -471,6 +471,18 @@ public class NodePlayerController : MonoBehaviour
         }
     }
 
+    public void StopMove()
+    {
+        pathQueue.Clear();
+        isMoving = false;
+        NodePlayerManager.GetInstance.isMoving = false;
+        eta = 0f;
+        playerStats.NodeUpdates(transform.position);
+        playerStats.GetTileInteraction(transform.position);
+        TurnOnHighlighter();
+        RefreshPipAllSafe();
+    }
+
     public void OnRun(InputAction.CallbackContext context)
     {
         if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isMoveMode)
