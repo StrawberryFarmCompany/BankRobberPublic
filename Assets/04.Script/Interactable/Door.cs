@@ -43,7 +43,7 @@ public class Door : IInteractable
 
         if(type == DoorLockType.password) index = doorValue;
 
-        lockModule = ILock.Factory(type, doorValue);
+        lockModule = ILock.Factory(type, doorValue,"문",tile,0,0f,null);
         defaultRotation = tr.rotation.eulerAngles;
 
 
@@ -93,8 +93,12 @@ public class Door : IInteractable
 
     public void OnInteraction(EntityStats stat)
     {
-        bool lockResult = lockModule.IsLock(stat);
-        if ((lockResult && !isOpen) || stat.characterType == CharacterType.None)
+        bool lockResult = stat.characterType == CharacterType.None;
+        if (stat.characterType != CharacterType.None)
+        {
+            lockResult = lockModule.TryUnLock(stat);
+        }
+        if (lockResult && !isOpen)
         {
             //이동 가능 불가 여부 추후 추가 필요
             Vector3 targetRot;
@@ -127,7 +131,7 @@ public class Door : IInteractable
 
             if (!lockResult)//false이기만 할 때
             {
-                UIManager.GetInstance.SetErrorMessege(lockModule.GetErrorMessege());
+                UIManager.GetInstance.SetWarningMessege(lockModule.GetErrorMessege());
                 tr.transform.DORotate(defaultRotation + (Vector3.up * 5), 0.1f).OnComplete(()=> 
                 {
                     tr.transform.DORotate(defaultRotation + (Vector3.up * -5), 0.1f).OnComplete(() =>
@@ -209,4 +213,4 @@ public class Door : IInteractable
         //}
     }*/
 }
-public enum DoorLockType{none,lockPick,keyCard,button,password}
+public enum DoorLockType{none,lockPick,keyCard,button,password,drill,bomb}

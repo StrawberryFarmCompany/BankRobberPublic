@@ -14,6 +14,8 @@ public static class EquippedSkills
 {
     public static event Action OnChanged;
 
+    public static Dictionary<CharacterType, bool> applied = new Dictionary<CharacterType, bool>();
+
     const string FileName = "equippedSkills.json";
     static string FilePath => Path.Combine(Application.persistentDataPath, FileName);
 
@@ -65,16 +67,6 @@ public static class EquippedSkills
         data.equipped.Add(key);
         Save();
         OnChanged?.Invoke();
-
-        if (skill.kind == Kind.Passive || skill.kind == Kind.Active || skill.kind == Kind.Upgrade)
-        {
-            NodePlayerController currentPlayer = NodePlayerManager.GetInstance?.GetCurrentPlayer();
-            if (currentPlayer != null && currentPlayer.playerStats != null)
-            {
-                ApplyEquippedSkills(currentPlayer.playerStats);
-                Debug.Log($"[EquippedSkills] ({skill.kind}) 새 스킬 세트 적용됨: {skill.title}");
-            }
-        }
     }
 
     //스킬 해제

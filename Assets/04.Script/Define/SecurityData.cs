@@ -43,7 +43,12 @@ public class SecurityData
         if (level == 2)
         {
             sharedSec = IBuff.Factory(data, stat, BuffType.securityLevel);
+            //GameManager.GetInstance.SetGamePhase(GamePhase.Battle);
             OnBattlePhase?.Invoke();
+            OnBattlePhase = null;
+            //TODO : 빌드 라이팅 오류시 해당 구문 오류 가능성 있음, 실시간 라이트 생성으로 인한 이슈
+            GameObject.Instantiate((GameObject)ResourceManager.GetInstance.GetPreLoad["AlramLight"]);
+            UIManager.GetInstance.SetWarningMessege("작전 발각!!");
         }
         else
         {

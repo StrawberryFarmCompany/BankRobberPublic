@@ -3,6 +3,7 @@ using DG.Tweening;
 using NodeDefines;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -30,6 +31,7 @@ public class EnemyNPC : MonoBehaviour
         stats = new EntityStats(entityData,gameObject);
         stats.NodeUpdates(transform.position);
         gun = GetComponent<Gun>();
+        gun.SetGun(gun.data);
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
         GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
 
@@ -95,7 +97,7 @@ public class EnemyNPC : MonoBehaviour
                 Vector3Int doorFront = FindNearestWalkableNodeAround(doorTile);
 
                 // 그곳까지 이동
-                Move((Vector3)doorFront);
+                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move((Vector3)doorFront); }, 0f));
                 efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
 
                 // 이동이 끝난 후에만 문 열기
@@ -162,7 +164,6 @@ public class EnemyNPC : MonoBehaviour
             }
 
             Move(targetPosition);
-            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
 
             DOVirtual.DelayedCall(0.6f, () =>
             {
@@ -197,7 +198,7 @@ public class EnemyNPC : MonoBehaviour
             });
         }, 0f));
         efsm.eta = 3;
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
+        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
     }
 
     public List<EntityStats> DetectVisibleTargets()
@@ -349,16 +350,19 @@ public class EnemyNPC : MonoBehaviour
             TryAttack();
 
             // 공격 후 타깃이 죽었으면 즉시 재탐색
-            var visible = DetectVisibleTargets();
-            nearPlayerLocation = FindNextAlivePlayer(visible);
+            if (nearPlayerLocation == null)
+            {
+                var visible = DetectVisibleTargets();
+                nearPlayerLocation = FindNextAlivePlayer(visible);
 
-            if (nearPlayerLocation != null && stats.movement > 0)
-            {
-                MoveAndAttackFlow();
-            }
-            else
-            {
-                Debug.Log($"{name}: 공격 후 더 이상 타깃 없음 -> 턴 종료");
+                if (nearPlayerLocation != null && stats.movement > 0)
+                {
+                    MoveAndAttackFlow();
+                }
+                else
+                {
+                    Debug.Log($"{name}: 공격 후 더 이상 타깃 없음 -> 턴 종료");
+                }
             }
         });
     }
@@ -371,7 +375,6 @@ public class EnemyNPC : MonoBehaviour
                 return;
 
             Move(nearPlayerLocation.GetPosition());
-            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
 
             // 이동 후 공격
             DOVirtual.DelayedCall(0.6f, () =>
@@ -395,7 +398,7 @@ public class EnemyNPC : MonoBehaviour
         }, 0f));
 
         efsm.eta = 3;
-        efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
+        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
     }
 
     public void SecurityLevel(ushort level)
@@ -727,6 +730,7 @@ public class EnemyNPC : MonoBehaviour
 
         Queue<Vector3Int> open = new Queue<Vector3Int>();
         HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+        List<(Door door, int distToTarget)> blockingDoors = new();
 
         open.Enqueue(start);
         visited.Add(start);
@@ -753,7 +757,10 @@ public class EnemyNPC : MonoBehaviour
                         foreach (var kvp in node.Interactions)
                         {
                             if (kvp.Value.Target is Door door && !door.isOpen)
-                                return door;   // 경로를 막는 바로 그 문
+                            {
+                                int dist = Mathf.Abs(end.x - next.x) + Mathf.Abs(end.y - next.y);
+                                blockingDoors.Add((door, dist));
+                            }
                         }
                     }
                     continue;
@@ -763,6 +770,9 @@ public class EnemyNPC : MonoBehaviour
                 open.Enqueue(next);
             }
         }
+
+        if (blockingDoors.Count > 0)
+            return blockingDoors.OrderBy(x => x.distToTarget).First().door;
 
         return null;
     }
@@ -780,6 +790,30 @@ public class EnemyNPC : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
             door.OnInteraction(stats);
         }
+    }
+
+    public void StartIdleRotation()
+    {
+        StartCoroutine(IdleRotation());
+    }
+
+    private IEnumerator IdleRotation()
+    {
+        float firstLookAngle = Random.Range(-180, 180); // 첫 번째 각도 확인
+        float secondLookAngle = Random.Range(-180, 180); // 두 번째 각도 확인
+        Quaternion originalRotation = transform.rotation;
+
+        this.gameObject.transform.rotation = Quaternion.Euler(0, firstLookAngle, 0);
+        Debug.Log(firstLookAngle);
+        yield return new WaitForSeconds(1.2f);
+
+        this.gameObject.transform.rotation = Quaternion.Euler(0, secondLookAngle, 0);
+        Debug.Log(secondLookAngle);
+        yield return new WaitForSeconds(1.2f);
+
+        // 정면 복귀
+        transform.rotation = originalRotation;
+        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
     }
 
     private void OnDestroy()

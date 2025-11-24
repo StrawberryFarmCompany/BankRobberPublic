@@ -159,6 +159,8 @@ public class EntityStats
         if (curActionPoint >= amount)
         {
             curActionPoint -= amount;
+            if(characterType != CharacterType.None)
+                UIManager.GetInstance.characterStatusUI.UpdateCharacterStatusElement(characterType);
             return true; // 행동 성공
         }
         return false; // 행동 실패, 행동력이 부족함
@@ -170,6 +172,8 @@ public class EntityStats
         if (movement >= amount)
         {
             movement -= amount;
+            if (characterType != CharacterType.None)
+                UIManager.GetInstance.characterStatusUI.UpdateCharacterStatusElement(characterType);
             return true; // 이동 성공
         }
         return false; // 이동 실패, 이동력이 부족함
@@ -178,6 +182,8 @@ public class EntityStats
     public void ActiveRun()
     {
         movement += movementSpeed; // 달리기 활성화 시 이동력 증가
+        if (characterType != CharacterType.None)
+            UIManager.GetInstance.characterStatusUI.UpdateCharacterStatusElement(characterType);
     }
 
     public void Damaged(float damage)
@@ -186,6 +192,12 @@ public class EntityStats
         CurHp -= damage;
 
         OnDamaged?.Invoke();
+
+        if (currNode != null)
+        {
+            Vector3 damageProjectorPos = currNode.GetCenter + (Vector3.up * 2);
+            GameManager.GetInstance.damageProjector.DeQueue(damage, damageProjectorPos);
+        }
 
         if (hpbar != null)
         {
@@ -200,6 +212,8 @@ public class EntityStats
             CurHp = 0;
             Dead();
         }
+        if (characterType != CharacterType.None)
+            UIManager.GetInstance.characterStatusUI.UpdateCharacterStatusElement(characterType);
     }
 
     private void Dead()
@@ -245,6 +259,8 @@ public class EntityStats
         {
             hpbar.SetCurrHP(CurHp);
         }
+        if (characterType != CharacterType.None)
+            UIManager.GetInstance.characterStatusUI.UpdateCharacterStatusElement(characterType);
     }
 
     public void HealActionPoint(int amount)
@@ -253,12 +269,16 @@ public class EntityStats
         if (curActionPoint > actionPoint)
         {
             curActionPoint = actionPoint;
+            if (characterType != CharacterType.None)
+                UIManager.GetInstance.characterStatusUI.UpdateCharacterStatusElement(characterType);
         }
     }
 
     public void HealMovement(int amount)
     {
         movement += amount;
+        if (characterType != CharacterType.None)
+            UIManager.GetInstance.characterStatusUI.UpdateCharacterStatusElement(characterType);
     }
 
     public void ResetForNewTurn()

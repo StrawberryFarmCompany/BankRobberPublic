@@ -53,6 +53,12 @@ public class LeftInteractionPanel : MonoBehaviour
         var curPlayer = npm.GetCurrentPlayer();
         if (curPlayer == null) { Hide(); return; }
 
+        if (curPlayer.isMoving || npm.isMoving)
+        {
+            Hide();
+            return;
+        }
+
         bool playerChanged = (_lastPlayer != curPlayer) || (_lastPlayerIndex != npm.currentPlayerIndex);
 
         var gm = GameManager.GetInstance;

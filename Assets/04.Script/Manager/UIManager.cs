@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
     public GuideUI guideUI;
     public ActionTooltip actionTooltip;
     [SerializeField] public ActionTooltipTrigger specialSkillTooltip;
+    public CharacterStatusUI characterStatusUI;
     public Transform CanvasRoot { get { return canvasRoot; } }
 
     private Defines.WarningMessage warningMessege;
@@ -71,6 +72,8 @@ public class UIManager : MonoBehaviour
     {
         actionPanel.SetActive(show);
         cancelPanel.SetActive(!show);
+        if (actionTooltip != null)
+            actionTooltip.Hide();
     }
 
     public void SetSelectionLocked(bool locked) => SelectionLocked = locked;
@@ -111,7 +114,7 @@ public class UIManager : MonoBehaviour
         passwordUI.gameObject.SetActive(true);
     }
 
-    public void SetErrorMessege(string str)
+    public void SetWarningMessege(string str)
     {
         warningMessege.SetErrorMessege(str);
     }

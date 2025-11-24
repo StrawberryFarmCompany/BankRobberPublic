@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 {
-    private Dictionary<PlayerSkill, int> cooldowns = new();
+    private Dictionary<NodePlayerController, Dictionary<PlayerSkill, int>> cooldowns = new Dictionary<NodePlayerController, Dictionary<PlayerSkill, int>>();
     private ShotEffect shotEffect;
     public ShotEffect ShotEffect 
     { 
@@ -19,36 +19,52 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
     public override void OnSceneChange()
     {
         shotEffect = null;
-    }
-    public void ReduceCooldowns()
-    {
-        List<PlayerSkill> keys = new List<PlayerSkill>(cooldowns.Keys);
-        foreach (PlayerSkill key in keys)
+        if (LoadSceneManager.GetInstance.curSceneType == SceneType.MainTitleScene || LoadSceneManager.GetInstance.curSceneType == SceneType.LobbyScene)
         {
-            if (cooldowns[key] > 0)
-                cooldowns[key]--;
+            cooldowns.Clear();
         }
     }
 
-    public bool CanUse(PlayerSkill skill)
+    public int GetRemainingCooldown(NodePlayerController player, PlayerSkill skill)
     {
-        return !cooldowns.ContainsKey(skill) || cooldowns[skill] <= 0;
+        if (!cooldowns.ContainsKey(player)) return 0;
+        if (!cooldowns[player].ContainsKey(skill)) return 0;
+        return cooldowns[player][skill];
     }
 
-    public void SetCooldown(PlayerSkill skill, int turns)
+    public void SetCooldown(NodePlayerController player, PlayerSkill skill, int turns)
     {
-        cooldowns[skill] = turns;
+        if (!cooldowns.ContainsKey(player))
+            cooldowns[player] = new Dictionary<PlayerSkill, int>();
+
+        cooldowns[player][skill] = turns;
     }
 
-    public int GetRemainingCooldown(PlayerSkill skill)
+    public bool CanUse(NodePlayerController player, PlayerSkill skill)
     {
-        return cooldowns.ContainsKey(skill) ? cooldowns[skill] : 0;
+        return GetRemainingCooldown(player, skill) <= 0;
+    }
+
+    public void ReduceCooldowns()
+    {
+        foreach (var playerEntry in cooldowns)
+        {
+            var player = playerEntry.Key;
+            var skills = playerEntry.Value;
+
+            List<PlayerSkill> keys = new List<PlayerSkill>(skills.Keys);
+
+            foreach (var skill in keys)
+            {
+                if (skills[skill] > 0)
+                    skills[skill]--;
+            }
+        }
     }
 
     public void UseSkill(NodePlayerController player, Vector3 mousePos)
     {
         PlayerSkill skill = player.playerStats.playerSkill;
-        Debug.Log($"[SkillEffectManager] 사용하려는 스킬 Enum: {skill}");
 
         if (skill == PlayerSkill.None)
         {
@@ -56,9 +72,9 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
             return;
         }
 
-        if (!CanUse(skill))
+        if (!CanUse(player, skill))
         {
-            Debug.Log($"[{skill}] 쿨타임 남은 턴: {cooldowns[skill]}");
+            Debug.Log($"[{skill}] 쿨타임 남은 턴: {GetRemainingCooldown(player, skill)}");
             return;
         }
 
@@ -69,7 +85,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 if (!player.playerStats.ConsumeActionPoint(2)) return;
                 player.playerStats.HealHealthPoint(1);
                 player.animationController.HealState();
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //체력 회복 강화A (3칸 회복)
@@ -77,7 +93,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 if (!player.playerStats.ConsumeActionPoint(2)) return;
                 player.playerStats.HealHealthPoint(3);
                 player.animationController.HealState();
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //체력 회복 강화B (모든 아군 회복)
@@ -86,33 +102,27 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 foreach (var ally in NodePlayerManager.GetInstance.GetAllPlayers())
                     ally.playerStats.HealHealthPoint(1);
                 player.animationController.HealState();
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //암습
             case PlayerSkill.SneakAttack:
-
                 player.CheckSneakAttack(mousePos);
-
-                SetCooldown(skill, 1);
+                SetCooldown(player, skill, 1);
                 break;
 
             //암습 강화A (성공 시 이동력 회복)
             case PlayerSkill.SneakAttack_A:
                 player.CheckSneakAttack(mousePos);
                 player.playerStats.HealMovement(5);
-                SetCooldown(skill, 1);
+                SetCooldown(player, skill, 1);
                 break;
 
             //암습 강화B (성공 확률 증가)
             case PlayerSkill.SneakAttack_B:
-
-                Debug.Log("[암습 강화B] 암습 2회 판정 시작");
-
                 player.CheckSneakAttack(mousePos, true);
-
                 player.StartCoroutine(DelayedSneakAttack(player, mousePos, 0.3f, false));
-                SetCooldown(skill, 1);
+                SetCooldown(player, skill, 1);
                 break;
 
             //소음 제거
@@ -126,7 +136,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                     hideMethod.Invoke(player, null);
                 }
 
-                SetCooldown(skill, 5);
+                SetCooldown(player, skill, 5);
                 break;
 
             //소음 제거 강화A (지속 턴 증가)
@@ -147,7 +157,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 };
                 player.playerStats.RegistBuff(new BuffDefine.BuffData(silenceBuffData));
                 Debug.Log("[소음 제거 강화A] 3턴간 소음 제거 상태 유지");
-                SetCooldown(skill, 5);
+                SetCooldown(player, skill, 5);
                 break;
 
             //소음 제거 강화B (모든 아군 소음 제거)
@@ -159,7 +169,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                         .GetMethod("HideMode", BindingFlags.NonPublic | BindingFlags.Instance);
                     hideMethod?.Invoke(ally, null);
                 }
-                SetCooldown(skill, 5);
+                SetCooldown(player, skill, 5);
                 break;
 
             //이중 타격
@@ -180,7 +190,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 }
                 StartCoroutine(DoubleAttackRoutine(player, mousePos));
 
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //이중 타격 강화A (3타격)
@@ -202,7 +212,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
                 StartCoroutine(TripleAttackRoutine(player, mousePos));
 
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //이중 타격 강화B (공격력 +1 보정)
@@ -221,7 +231,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
                 StartCoroutine(DoubleAttackRoutine(player, mousePos));
 
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //행동력 회복
@@ -229,14 +239,14 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 if (!player.playerStats.ConsumeActionPoint(1)) return;
                 player.playerStats.HealActionPoint(3);
                 player.animationController.ReadyState();
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //행동력 회복 강화A (전부 회복)
             case PlayerSkill.Ready_A:
                 if (!player.playerStats.ConsumeActionPoint(1)) return;
                 player.playerStats.HealActionPoint(player.playerStats.actionPoint);
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //행동력 회복 강화B (모든 아군 +3)
@@ -244,7 +254,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 if (!player.playerStats.ConsumeActionPoint(1)) return;
                 foreach (var ally in NodePlayerManager.GetInstance.GetAllPlayers())
                     ally.playerStats.HealActionPoint(3);
-                SetCooldown(skill, 3);
+                SetCooldown(player, skill, 3);
                 break;
 
             //회피율 증가 버프
@@ -266,7 +276,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 BuffDefine.BuffData evasionBuff = new BuffDefine.BuffData(evasion);
                 player.playerStats.RegistBuff(evasionBuff);
 
-                SetCooldown(skill, 5);
+                SetCooldown(player, skill, 5);
                 break;
 
             //회피율 증가 강화A (+4)
@@ -284,7 +294,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                     colorType = BuffDefine.BuffColorType.green
                 };
                 player.playerStats.RegistBuff(new BuffDefine.BuffData(evasionA));
-                SetCooldown(skill, 5);
+                SetCooldown(player, skill, 5);
                 break;
 
             //회피율 증가 강화B (모든 아군 +2)
@@ -306,11 +316,11 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                     ally.playerStats.RegistBuff(new BuffDefine.BuffData(evasionB));
 
                 Debug.Log("[회피율 증가 강화B] 모든 아군 회피율 +2");
-                SetCooldown(skill, 5);
+                SetCooldown(player, skill, 5);
                 break;
         }
     
-        Debug.Log($"[{skill}] 사용 완료. 쿨타임 {cooldowns[skill]}턴");
+        Debug.Log($"[{skill}] 사용 완료. 쿨타임 {GetRemainingCooldown(player, skill)}턴");
     }
 
     private IEnumerator DoubleAttackRoutine(NodePlayerController player, Vector3 mousePos)

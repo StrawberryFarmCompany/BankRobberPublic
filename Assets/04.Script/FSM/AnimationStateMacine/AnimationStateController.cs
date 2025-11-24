@@ -13,17 +13,6 @@ public class AnimationStateController : MonoBehaviour
     [Header("애니메이터")]
     [SerializeField] Animator animator;
 
-    [Header("총기류")]
-    public GameObject rifle;
-    public GameObject sniperRifle;
-    public GameObject shotGun;
-    public GameObject subMachineGun;
-    public GameObject handGun;
-
-    [Header("총기 부착 위치")]
-    public Transform gunHoldPosition;
-
-    public GameObject currentGun;
     private NodePlayerController playerController;
     private Gun gun;
 
@@ -90,44 +79,13 @@ public class AnimationStateController : MonoBehaviour
         if (playerController != null)
             playerController.animationController = this;
 
-        if (gun != null)
-        {
-            if(playerController.gun.data == null)
-            {
-                currentGun = Instantiate((WeaponManager.GetInstance.GetEquipData(playerController.playerStats.characterType).gunPrefab), gunHoldPosition); 
-            }
-            else
-            {
-                switch (gun.type)
-                {
-                    case GunType.HandGun:
-                        currentGun = Instantiate(handGun, gunHoldPosition);
-                        break;
-                    case GunType.AssaultRifle:
-                        currentGun = Instantiate(rifle, gunHoldPosition);
-                        break;
-                    case GunType.SniperRifle:
-                        currentGun = Instantiate(sniperRifle, gunHoldPosition);
-                        break;
-                    case GunType.ShotGun:
-                        currentGun = Instantiate(shotGun, gunHoldPosition);
-                        break;
-                    case GunType.SubMachineGun:
-                        currentGun = Instantiate(subMachineGun, gunHoldPosition);
-                        break;
-                    default:
-                        currentGun = null;
-                        break;
-                }
-            }
-        }
 
         if(playerController != null)
             playerController.playerStats.OnDamaged += DamagedState;
         if(playerController != null)
             playerController.playerStats.OnDead += DeadState;
 
-        gun.muzzlePoint = currentGun.transform.Find("ShootPos");
+        gun.muzzlePoint = gun.currentGun.transform.Find("ShootPos");
         // 처음 상태는 Idle
         stateMachine.ForceSet(idleState);
 
@@ -140,11 +98,11 @@ public class AnimationStateController : MonoBehaviour
     }
     public void OnEquipGun()
     {
-        currentGun?.SetActive(true);
+        gun.currentGun?.SetActive(true);
     }
     public void OnUnEquipGun()
     {
-        currentGun?.SetActive(false);
+        gun.currentGun?.SetActive(false);
     }
 
     public void OnThrow()
@@ -178,21 +136,6 @@ public class AnimationStateController : MonoBehaviour
     public void UnAiming()
     {
                animator.SetBool(isAiming, false);
-    }
-
-    public void OnEndActing()
-    {
-        if(playerController != null)
-        {
-            playerController.isActing = false;
-        }
-    }
-    public void OnStartActing()
-    {
-        if(playerController != null)
-        {
-            playerController.isActing = true;
-        }
     }
 
     public void MoveBestNode()
@@ -263,7 +206,7 @@ public class AnimationStateController : MonoBehaviour
     }
     public void RunState()
     {
-        currentGun.SetActive(false);
+        gun.currentGun.SetActive(false);
         stateMachine.ChangeState(runState);
     }
     public void SneakAttackState()

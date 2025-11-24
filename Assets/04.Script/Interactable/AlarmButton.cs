@@ -18,10 +18,11 @@ public class AlarmButton : IInteractable
         this.tile = tile;
         this.tr = tr;
         this.index = index;
-        lockModule = ILock.Factory(DoorLockType.button, index);
+        lockModule = ILock.Factory(DoorLockType.button, index, "알람", tile, 0, 0f, null);
 
         isOpen = false;
         RegistInteraction(OnInteraction);
+        SecurityData.OnBattlePhase += DoorOpen;
     }
 
     public void OnInteraction(EntityStats stat)
@@ -34,11 +35,7 @@ public class AlarmButton : IInteractable
             if (door != null)
             {
                 //문 열림
-                isOpen = true;
-                door.isOpen = true;
-                door.block.transform.DOScale(0, 0.5f);
-                GameManager.GetInstance.Nodes[door.tile].isWalkable = true;
-                NodePlayerManager.GetInstance.GetCurrentPlayer().TurnOnHighlighter();
+                DoorOpen();
             }
             else
             {
@@ -47,6 +44,16 @@ public class AlarmButton : IInteractable
             }
             ReleaseInteraction(OnInteraction);
         }
+    }
+    private void DoorOpen()
+    {
+        door = GameManager.GetInstance.GetMatchButtonDoor(index);
+        if (door == null) return;
+        isOpen = true;
+        door.isOpen = true;
+        door.block.transform.DOScale(0, 0.5f);
+        GameManager.GetInstance.Nodes[door.tile].isWalkable = true;
+        NodePlayerManager.GetInstance.GetCurrentPlayer().TurnOnHighlighter();
     }
     public void UnInteraction(EntityStats stat)
     {

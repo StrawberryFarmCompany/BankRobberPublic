@@ -8,6 +8,16 @@ public class Gun : MonoBehaviour
     [Tooltip("에너미는 할당해주고, 플레이어는 할당하지 읺기")]
     public GunData data;
 
+    [Header("총기류")]
+    public GameObject rifle;
+    public GameObject sniperRifle;
+    public GameObject shotGun;
+    public GameObject subMachineGun;
+    public GameObject handGun;
+
+    [Header("총기 부착 위치")]
+    public Transform gunHoldPosition;
+
     [Header("현재 총기 정보")]
     public string gunName;
     public string gunDescription;
@@ -31,6 +41,7 @@ public class Gun : MonoBehaviour
     public int isHit = 0;
     public bool makeNoise = false;
     public Transform muzzlePoint;
+    public GameObject currentGun;
     private void Awake()
     {
         if (data != null)
@@ -60,6 +71,62 @@ public class Gun : MonoBehaviour
         thirdRange = gunData.thirdRange;
         thirdRangeAccuracy = gunData.thirdRangeAccuracy;
         awayRangeAccuracy = gunData.awayRangeAccuracy;
+
+        NodePlayerController playerController = GetComponent<NodePlayerController>();
+        if (playerController != null)
+        {
+            if (playerController.gun.data == null)
+                currentGun = Instantiate((WeaponManager.GetInstance.GetEquipData(playerController.playerStats.characterType).gunPrefab), gunHoldPosition);
+            else
+            {
+                switch (type)
+                {
+                    case GunType.HandGun:
+                        currentGun = Instantiate(handGun, gunHoldPosition);
+                        break;
+                    case GunType.AssaultRifle:
+                        currentGun = Instantiate(rifle, gunHoldPosition);
+                        break;
+                    case GunType.SniperRifle:
+                        currentGun = Instantiate(sniperRifle, gunHoldPosition);
+                        break;
+                    case GunType.ShotGun:
+                        currentGun = Instantiate(shotGun, gunHoldPosition);
+                        break;
+                    case GunType.SubMachineGun:
+                        currentGun = Instantiate(subMachineGun, gunHoldPosition);
+                        break;
+                    default:
+                        currentGun = null;
+                        break;
+                }
+            }
+        }
+        else
+        {
+            switch (type)
+            {
+                case GunType.HandGun:
+                    currentGun = Instantiate(handGun, gunHoldPosition);
+                    break;
+                case GunType.AssaultRifle:
+                    currentGun = Instantiate(rifle, gunHoldPosition);
+                    break;
+                case GunType.SniperRifle:
+                    currentGun = Instantiate(sniperRifle, gunHoldPosition);
+                    break;
+                case GunType.ShotGun:
+                    currentGun = Instantiate(shotGun, gunHoldPosition);
+                    break;
+                case GunType.SubMachineGun:
+                    currentGun = Instantiate(subMachineGun, gunHoldPosition);
+                    break;
+                default:
+                    currentGun = null;
+                    break;
+            }
+        }
+
     }
 
     public void Reload()
@@ -139,11 +206,6 @@ public class Gun : MonoBehaviour
 
         tasks.Add(new TurnTask(() => entityStats.Damaged(totalDamage), 0f));
 
-        if (entityStats.currNode != null)
-        {
-            Vector3 damageProjectorPos = entityStats.currNode.GetCenter + (Vector3.up * 2);
-            tasks.Add(new TurnTask(() => GameManager.GetInstance.damageProjector.DeQueue(totalDamage, damageProjectorPos), 0.2f));
-        }
         TaskManager.GetInstance.AddActionBehaviour(tasks, 0);
         if (isHit >= 1)
         {

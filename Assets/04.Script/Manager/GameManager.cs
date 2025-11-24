@@ -105,7 +105,6 @@ class GameManager : SingleTon<GameManager>
         damageProjector?.OnReset();
         GatheredGold = 0;
         GatheredCost = 0;
-        SecurityData.Reset();
         OnNodeReset();            //나중에 nodeInteractions 가 Null 뜨는 거 잡기
         noneBattleTurn.OnSceneChange();
         OnEntityReset();
@@ -114,6 +113,7 @@ class GameManager : SingleTon<GameManager>
         ReleaseButtonDoor();
         ReleasePasswordDoor();
         ReleaseDocuments();
+        SecurityData.Reset();
         Debug.Log($"초기화된 돈 : {GatheredGold}");
     }
     public void OnEntityReset()
@@ -279,6 +279,7 @@ class GameManager : SingleTon<GameManager>
     public void EndPlayerTurn()
     {
         FloorCullingManager.GetInstance.EnableAllCollisionsAndRenderers();
+        SkillEffectManager.GetInstance.ReduceCooldowns();
         noneBattleTurn.ChangeState();
         /*if (IsNoneBattlePhase())
             noneBattleTurn.ChangeState();
@@ -377,16 +378,16 @@ class GameManager : SingleTon<GameManager>
         switch (sceneType) 
         {
             case SceneType.Stage01Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             case SceneType.Stage02Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             case SceneType.Stage03Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             case SceneType.Stage04Scene:
-                GatheredGold += 20000;
+                GatheredGold += 30000;
                 break;
             default:
                 break;
