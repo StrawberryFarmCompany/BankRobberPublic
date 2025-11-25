@@ -818,6 +818,7 @@ public class NodePlayerController : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(PlayerStatus.isPerkActionMode);
+            mouseStateMachine.ChangeState(MouseType.attack);
         }
     }
 
@@ -905,6 +906,8 @@ public class NodePlayerController : MonoBehaviour
                 else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isPerkActionMode:
+                if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.attack);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isThrowMode:
                 if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.throwing);

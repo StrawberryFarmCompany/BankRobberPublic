@@ -349,6 +349,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 SetCooldown(player, skill, 5);
                 break;
         }
+        player.StartMode(PlayerStatus.isMoveMode);
         UIManager.GetInstance?.GetComponentInChildren<SpecialSkillCooldown>(true)?.RefreshCooldownUI();
     }
 
