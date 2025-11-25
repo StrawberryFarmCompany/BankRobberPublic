@@ -304,7 +304,6 @@ public class EntityStats
             if(currNode != null)currNode.RemoveCharacter(this);
             currNode = GameManager.GetInstance.GetNode(tempPos);
             currNode.AddCharacter(this);
-            Debug.Log($"{pos}로 이동");
             if(hpbar != null)hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
         }
         FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();

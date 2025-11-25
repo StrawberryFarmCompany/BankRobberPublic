@@ -537,7 +537,9 @@ public class EnemyNPC : MonoBehaviour
 
         float timePerTile = 0.3f;
         efsm.eta = pathQueue.Count * timePerTile;
-
+        float time = GetPathTime(0.2f, 0.3f);
+        DOVirtual.DelayedCall(time, () => { Debug.LogWarning($"{gameObject.name}오브젝트 이동 예상시간 : {time} , 해당 디버그 곧 삭제해야됨"); });
+        
         isMoving = true;
         canNextMove = true;
     }
@@ -716,6 +718,43 @@ public class EnemyNPC : MonoBehaviour
             });
         });
         return moveDuration + rotationDuration;
+    }
+    private float GetPathTime(float moveDuration, float rotationDuration)
+    {
+        Queue<Vector3Int> copyQ = new Queue<Vector3Int>(pathQueue.ToArray());
+        float time = 0f;
+        Vector3 currPos = transform.position;
+        float currRot = transform.eulerAngles.y;
+        while (copyQ.Count > 0)
+        {
+            Vector3 nextPos = copyQ.Dequeue();
+            Vector2 relPos = new Vector2(nextPos.x, nextPos.z) - new Vector2(currPos.x, currPos.z);
+            float radian = Mathf.Atan2(relPos.x, relPos.y);
+            float angle = (Mathf.Rad2Deg * radian);
+
+
+            float minAngle = (Mathf.Min(angle, currRot) + 180) % 360f;
+            float maxAngle = (Mathf.Max(angle, currRot) + 180) % 360f;
+            
+            currRot = angle;
+            currPos = nextPos;
+
+            float rotAngle = (maxAngle - minAngle) / 360f;
+            float currRotDuration = rotationDuration;
+            if (rotAngle == 0)
+            {
+                currRotDuration = 0;
+            }
+            else
+            {
+                float originRotDur = currRotDuration;
+                currRotDuration = originRotDur * rotAngle;
+                currRotDuration = MathF.Abs(currRotDuration);
+            }
+            time += currRotDuration + moveDuration;
+        }
+
+        return time;
     }
     // 가장 가까운 노드 찾기
     private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
