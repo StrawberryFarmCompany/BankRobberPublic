@@ -531,7 +531,11 @@ public class EnemyNPC : MonoBehaviour
 
         float timePerTile = 0.3f;
         efsm.eta = pathQueue.Count * timePerTile;
-        TaskManager.GetInstance.AddActionBehaviour(new TurnTask(SequentialMove,GetPathTime(0.3f,0.2f)));
+
+        TurnTask task = new TurnTask(SequentialMove, GetPathTime(0.3f, 0.2f));
+        task.Action += () => efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+        TaskManager.GetInstance.AddActionBehaviour(task);
+
         isMoving = true;
         canNextMove = true;
     }
@@ -649,6 +653,7 @@ public class EnemyNPC : MonoBehaviour
             isMoving = false;
             eta = 0f;
             efsm.eta = 0f;
+            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
             if (nearPlayerLocation != null)
             {
                 // LookAt 대신
