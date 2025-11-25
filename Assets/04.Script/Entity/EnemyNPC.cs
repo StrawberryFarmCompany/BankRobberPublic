@@ -17,7 +17,7 @@ public class EnemyNPC : MonoBehaviour
     protected EnemyStateMachine efsm;
     public Gun gun;
     public float eta = 0f;
-    public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
+    private float fovAngle = 60f;    // 시야각 (부채꼴 각도)
 
     [SerializeField] protected EntityStats nearPlayerLocation;
     protected EntityStats lastTarget; // 이전 턴에 공격한 대상
@@ -47,7 +47,6 @@ public class EnemyNPC : MonoBehaviour
         stats.secData = new SecurityData(stats);
         sitePreviewer = new EnemySitePreviewer(gameObject,stats.characterName);
 
-        sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
         
     }
 
@@ -67,6 +66,8 @@ public class EnemyNPC : MonoBehaviour
         TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
 
         stats.NodeUpdates(transform.position);
+        sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
+
     }
 
     protected virtual void CombatBehaviour()
