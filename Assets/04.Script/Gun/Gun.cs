@@ -152,7 +152,6 @@ public class Gun : MonoBehaviour
 
         if(!ConsumeRounds(1/*useRoundsPerShot*/))
         {
-            Debug.Log("잔탄수 부족, 불발");
             return;
         }
 
@@ -160,11 +159,9 @@ public class Gun : MonoBehaviour
 
         if (entityStats == null)
         {
-            Debug.Log("검출되는 엔티티가 없음");
             return;
         }
 
-        Debug.Log($"{entityStats.characterName}에게 격발 데미지를 가했음");
         float totalDamage = 0f;
         List<TurnTask> tasks = new List<TurnTask>();
         if (muzzlePoint != null)
@@ -192,13 +189,11 @@ public class Gun : MonoBehaviour
                         tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, entityStats.currNode.GetCenter+pos), 0f));
                     }
                 }
-                Debug.Log($"{i+1}번째 격발 결과\n{entityStats.characterName}에게 {result * damagePerOneBulletMultiplier} 데미지를 가함 \n남은 HP: {entityStats.CurHp}");
                 isHit++;
                 totalDamage += currDamage;
             }
             else
             {
-                Debug.Log($"{i + 1}번째 격발 결과\n불발");
                 Vector3 pos = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
                 tasks.Add(new TurnTask(() => SkillEffectManager.GetInstance.ShotEffect.trailPool.PlayEffect(muzzlePoint.position, entityStats.currNode.GetCenter + pos), 0f));
             }
