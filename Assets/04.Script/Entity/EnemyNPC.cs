@@ -47,6 +47,8 @@ public class EnemyNPC : MonoBehaviour
         stats.secData = new SecurityData(stats);
         sitePreviewer = new EnemySitePreviewer(gameObject,stats.characterName);
 
+        sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
+        
     }
 
     protected virtual void Update()
@@ -211,10 +213,9 @@ public class EnemyNPC : MonoBehaviour
     public List<EntityStats> DetectVisibleTargets()
     {
         List<EntityStats> visibleTargets = new List<EntityStats>();
-        
+
         // 적 자신의 노드
         Vector3Int enemyPos = stats.currNode.GetCenter;
-        
         // 사정거리 안에 있는 모든 엔티티 가져오기
         List<EntityStats> targets = GameManager.GetInstance.GetEntitiesInRange(enemyPos, (int)stats.detectingDistance);//(int)stats.detectingDistance
         // 리스트 상태 출력 (디버그용)
