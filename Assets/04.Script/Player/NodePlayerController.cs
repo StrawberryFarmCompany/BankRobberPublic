@@ -577,9 +577,15 @@ public class NodePlayerController : MonoBehaviour
 
     public void CheckSneakAttack(Vector3 mouseScreenPos, bool consumeAction = true)
     {
-        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8), true);
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
+        {
+            return;
+        }
+
+        EntityStats targetEntity = GameManager.GetInstance.GetEntityAt(targetNodeCenter);
+        if (targetEntity == null)
         {
             return;
         }

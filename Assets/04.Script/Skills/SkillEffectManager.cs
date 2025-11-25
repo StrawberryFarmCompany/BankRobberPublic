@@ -107,22 +107,52 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
 
             //암습
             case PlayerSkill.SneakAttack:
+                Vector3Int before = player.targetNodePos;
+
                 player.CheckSneakAttack(mousePos);
-                SetCooldown(player, skill, 1);
+
+                if (player.targetNodePos != before)
+                {
+                    SetCooldown(player, skill, 1);
+                }
+                else
+                {
+                    return;
+                }
                 break;
 
             //암습 강화A (성공 시 이동력 회복)
             case PlayerSkill.SneakAttack_A:
+                Vector3Int beforeA = player.targetNodePos;
+
                 player.CheckSneakAttack(mousePos);
-                player.playerStats.HealMovement(5);
-                SetCooldown(player, skill, 1);
+
+                if (player.targetNodePos != beforeA)
+                {
+                    player.playerStats.HealMovement(5);
+                    SetCooldown(player, skill, 1);
+                }
+                else
+                {
+                    return;
+                }
                 break;
 
             //암습 강화B (성공 확률 증가)
             case PlayerSkill.SneakAttack_B:
+                Vector3Int beforeB = player.targetNodePos;
+
                 player.CheckSneakAttack(mousePos, true);
-                player.StartCoroutine(DelayedSneakAttack(player, mousePos, 0.3f, false));
-                SetCooldown(player, skill, 1);
+
+                if (player.targetNodePos != beforeB)
+                {
+                    player.StartCoroutine(DelayedSneakAttack(player, mousePos, 0.3f, false));
+                    SetCooldown(player, skill, 1);
+                }
+                else
+                {
+                    return;
+                }
                 break;
 
             //소음 제거
@@ -319,8 +349,7 @@ public class SkillEffectManager : MonoSingleTon<SkillEffectManager>
                 SetCooldown(player, skill, 5);
                 break;
         }
-    
-        Debug.Log($"[{skill}] 사용 완료. 쿨타임 {GetRemainingCooldown(player, skill)}턴");
+        UIManager.GetInstance?.GetComponentInChildren<SpecialSkillCooldown>(true)?.RefreshCooldownUI();
     }
 
     private IEnumerator DoubleAttackRoutine(NodePlayerController player, Vector3 mousePos)
