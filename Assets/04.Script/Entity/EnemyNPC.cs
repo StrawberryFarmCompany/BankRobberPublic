@@ -50,12 +50,6 @@ public class EnemyNPC : MonoBehaviour
         sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
     }
 
-    protected virtual void Update()
-    {
-        if (isMoving)
-            SequentialMove();
-    }
-
     protected virtual void CalculateBehaviour()
     {
         isMoving = false;
@@ -537,9 +531,7 @@ public class EnemyNPC : MonoBehaviour
 
         float timePerTile = 0.3f;
         efsm.eta = pathQueue.Count * timePerTile;
-        float time = GetPathTime(0.2f, 0.3f);
-        DOVirtual.DelayedCall(time, () => { Debug.LogWarning($"{gameObject.name}오브젝트 이동 예상시간 : {time} , 해당 디버그 곧 삭제해야됨"); });
-        
+        TaskManager.GetInstance.AddActionBehaviour(new TurnTask(SequentialMove,GetPathTime(0.3f,0.2f)));
         isMoving = true;
         canNextMove = true;
     }
@@ -621,16 +613,8 @@ public class EnemyNPC : MonoBehaviour
 
     public void SequentialMove()
     {
-        // 아직 목표가 없으면 다음 큐 꺼내기
-        if (!isMoving) return;
-
-        //도착 판정 거리로 체크
-        eta -= Time.deltaTime;
-        if (eta <= 0f) canNextMove = true;
-
-        if (canNextMove && pathQueue.Count > 0)
+        if (pathQueue.Count > 0)
         {
-            canNextMove = false;
             Vector3Int targetPos = pathQueue.Dequeue();
             Node node = GameManager.GetInstance.GetNode(targetPos);
             if (node != null && node.Standing.Count > 0)
@@ -647,6 +631,7 @@ public class EnemyNPC : MonoBehaviour
                     stats.NodeUpdates(transform.position);
                     sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
                     stats.GetTileInteraction(transform.position);
+                    SequentialMove();
                 });
             }
             else
@@ -655,17 +640,15 @@ public class EnemyNPC : MonoBehaviour
                     stats.NodeUpdates(transform.position);
                     sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
                     stats.GetTileInteraction(transform.position);
+                    SequentialMove();
                 });
             }
         }
-
-        // 모든 경로 소모 시 이동 종료
-        if (pathQueue.Count == 0 && eta <= 0f)
+        else
         {
             isMoving = false;
             eta = 0f;
             efsm.eta = 0f;
-
             if (nearPlayerLocation != null)
             {
                 // LookAt 대신
@@ -674,9 +657,10 @@ public class EnemyNPC : MonoBehaviour
                 // 회전 끝난 후 공격
                 DOVirtual.DelayedCall(0.3f, () => TryAttack());
             }
-
         }
     }
+
+
 
     public void StopMove()
     {

@@ -22,12 +22,6 @@ public class HoldEnemyNPC : EnemyNPC
         efsm = new EnemyStateMachine(this,transform.GetComponentInChildren<Animator>(), EnemyStates.HoldEnemyIdleState);
         stats.OnDead += DeadAnimator;
     }
-
-    protected override void Update()
-    {
-        base.Update();
-    }
-
     protected override void CalculateBehaviour()
     {
         DetectNoise();

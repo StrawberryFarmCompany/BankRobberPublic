@@ -29,12 +29,6 @@ public class PatrolEnemyNPC : EnemyNPC
         efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyIdleRotationState);
         stats.OnDead += DeadAnimator;
     }
-    
-    protected override void Update()
-    {
-        base.Update();
-    }
-
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
     {

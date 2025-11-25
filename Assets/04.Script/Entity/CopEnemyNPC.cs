@@ -17,10 +17,6 @@ public class CopEnemyNPC : EnemyNPC
         stats.OnDead += DeadAnimator;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     protected override void CalculateBehaviour()
     {
