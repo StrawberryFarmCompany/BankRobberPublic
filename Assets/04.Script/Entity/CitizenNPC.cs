@@ -44,14 +44,14 @@ public class CitizenNPC : NeutralNPC
 
         if (stats.secData.GetSecLevel >= 3 && isCowered == false)
         {
-            Debug.Log("개쫄은상태");
+            Debug.Log("겁먹은 상태");
             ChangeToCowerState();
             isCowered = true;
         }
 
         else if (isDetection == true && isCowered == false)//플레이어 발각시
         {
-            Debug.Log("존나 튀는 상태");
+            Debug.Log("도망가는 상태");
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(exitArea); }, 0f));
             nfsm.eta = 3;
             nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
