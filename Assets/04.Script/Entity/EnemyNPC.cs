@@ -47,7 +47,7 @@ public class EnemyNPC : MonoBehaviour
         stats.secData = new SecurityData(stats);
         sitePreviewer = new EnemySitePreviewer(gameObject,stats.characterName);
 
-        
+        sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
     }
 
     protected virtual void Update()
@@ -66,7 +66,6 @@ public class EnemyNPC : MonoBehaviour
         TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
 
         stats.NodeUpdates(transform.position);
-        sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
 
     }
 
@@ -644,6 +643,7 @@ public class EnemyNPC : MonoBehaviour
             {
                 eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
                     stats.NodeUpdates(transform.position);
+                    sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
                     stats.GetTileInteraction(transform.position);
                 });
             }
@@ -651,6 +651,7 @@ public class EnemyNPC : MonoBehaviour
             {
                 eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
                     stats.NodeUpdates(transform.position);
+                    sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
                     stats.GetTileInteraction(transform.position);
                 });
             }
