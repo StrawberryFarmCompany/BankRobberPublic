@@ -31,11 +31,9 @@ public class NeutralNPC : MonoBehaviour
     {
         stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
 
-        if (GameManager.GetInstance.CurrentPhase == GamePhase.NoneBattle)
-        {
-            TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
-        }
+        TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
+
         stats.NodeUpdates(transform.position);
 
         NoiseManager.ClearNoises(); // 소음 초기화 (턴 쪽에 넣으면 좋지만 잘 모르겠어서 NPC 이후에 있는 중립턴 일때 초기화 해줌(추후 바꿀 수 있으면 바꿔주기))

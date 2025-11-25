@@ -577,9 +577,15 @@ public class NodePlayerController : MonoBehaviour
 
     public void CheckSneakAttack(Vector3 mouseScreenPos, bool consumeAction = true)
     {
-        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8), true);
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
+        {
+            return;
+        }
+
+        EntityStats targetEntity = GameManager.GetInstance.GetEntityAt(targetNodeCenter);
+        if (targetEntity == null)
         {
             return;
         }
@@ -812,6 +818,7 @@ public class NodePlayerController : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(PlayerStatus.isPerkActionMode);
+            mouseStateMachine.ChangeState(MouseType.attack);
         }
     }
 
@@ -899,6 +906,8 @@ public class NodePlayerController : MonoBehaviour
                 else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isPerkActionMode:
+                if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.attack);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isThrowMode:
                 if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.throwing);
