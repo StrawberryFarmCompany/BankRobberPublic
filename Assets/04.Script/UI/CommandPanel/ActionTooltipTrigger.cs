@@ -24,18 +24,26 @@ public class ActionTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        var ui = UIManager.GetInstance;
+
+        if (ui == null || ui.turnActionInput == null || ui.actionTooltip == null)
+            return;
+
+        ui.turnActionInput.RefreshHideUI();
+
         if (useCooldownTooltip)
-        {
-            UIManager.GetInstance.actionTooltip.ShowCooldown(cooldownRemain, rect);
-        }
+            ui.actionTooltip.ShowCooldown(cooldownRemain, rect);
         else
-        {
-            UIManager.GetInstance.actionTooltip.Show(baseDescription, rect);
-        }
+            ui.actionTooltip.Show(baseDescription, rect);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        UIManager.GetInstance.actionTooltip.Hide();
+        var ui = UIManager.GetInstance;
+
+        if (ui == null || ui.actionTooltip == null)
+            return;
+
+        ui.actionTooltip.Hide();
     }
 }

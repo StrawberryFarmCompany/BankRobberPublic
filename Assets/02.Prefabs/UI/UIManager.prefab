@@ -22039,6 +22039,7 @@ MonoBehaviour:
   specialSkillTooltip: {fileID: 7775830884789119238}
   characterStatusUI: {fileID: 0}
   leftInteractionPanel: {fileID: 0}
+  turnActionInput: {fileID: 0}
   gameEndUI: {fileID: 4915801574846287520}
 --- !u!114 &3711329593896584344
 MonoBehaviour:

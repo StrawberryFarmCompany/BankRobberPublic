@@ -177,12 +177,10 @@ public class TurnActionInput : MonoBehaviour
         var tooltipUI = UIManager.GetInstance.actionTooltip;
         if (tooltipUI == null) return;
 
-        if (!tooltipUI.IsShowing) return;
-
         RectTransform target = tooltipTrigger.GetComponent<RectTransform>();
         if (target == null) return;
 
-        tooltipUI.Show(tooltipTrigger.baseDescription, target);
+        //tooltipUI.Show(tooltipTrigger.baseDescription, target);
     }
 
     private void UpdateHideButtonLabel(string text)

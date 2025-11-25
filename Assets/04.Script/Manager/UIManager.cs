@@ -60,6 +60,9 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         GetInstance = this;
+
+        turnActionInput = GetComponentInChildren<TurnActionInput>(true);
+        actionTooltip = GetComponentInChildren<ActionTooltip>(true);
     }
 
     private IEnumerator Start()
@@ -72,10 +75,20 @@ public class UIManager : MonoBehaviour
 
     public void ShowActionPanel(bool show)
     {
-        actionPanel.SetActive(show);
-        cancelPanel.SetActive(!show);
+        if (actionPanel != null)
+            actionPanel.SetActive(show);
+
+        if (cancelPanel != null)
+            cancelPanel.SetActive(!show);
+
         if (actionTooltip != null)
             actionTooltip.Hide();
+
+        if (show)
+        {
+            if (turnActionInput != null)
+                turnActionInput.RefreshHideUI();
+        }
     }
 
     public void SetSelectionLocked(bool locked) => SelectionLocked = locked;
@@ -145,6 +158,7 @@ public class UIManager : MonoBehaviour
         if (so == null) return;
 
         specialSkillTooltip.description = so.effect;
+        specialSkillTooltip.baseDescription = so.effect;
     }
 
     private void OnEnable()
