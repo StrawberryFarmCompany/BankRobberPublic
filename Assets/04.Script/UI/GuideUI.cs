@@ -17,6 +17,11 @@ public class GuideUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI bishopConditionText;
     [SerializeField] TextMeshProUGUI rookConditionText;
     [SerializeField] TextMeshProUGUI knightConditionText;
+    [SerializeField] GameObject textObject;
+    [SerializeField] Transform objectParant;
+    [SerializeField] Button extendButton;
+
+    public List<TextMeshProUGUI> textList = new List<TextMeshProUGUI>();
     bool isLastSet;
     private List<NodePlayerController> players = new List<NodePlayerController>();
 
@@ -46,6 +51,16 @@ public class GuideUI : MonoBehaviour
         knightConditionText.gameObject.SetActive(false);
         Vector2 panelScale = new Vector2(500, 120);
         panel.rectTransform.sizeDelta = panelScale;
+        extendButton.onClick.AddListener(OnExtendButton);
+
+        for(int i = 0; i < guideData.Elements.Count; i++)
+        {
+            GameObject obj = Instantiate(textObject, objectParant);
+            TextMeshProUGUI text = obj.GetComponent<TextMeshProUGUI>();
+            text.text = $"{i+1}. " + guideData.Elements[i].description;
+            textList.Add(text);
+
+        }
     }
 
     private void Update()
@@ -147,5 +162,18 @@ public class GuideUI : MonoBehaviour
             return $" : 알 수 없음";
         }
 
+    }
+
+    public void OnExtendButton()
+    {
+        for (int i = 0; i < textList.Count; i++)
+        {
+            if (guideData.Elements[i].IsMissionComplete())
+            {
+                Color color = new Color(190f / 255f, 190f / 255f, 190f / 255f);
+                textList[i].color = color;
+                textList[i].fontStyle = FontStyles.Strikethrough;
+            }
+        }
     }
 }
