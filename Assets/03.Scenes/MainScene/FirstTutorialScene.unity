@@ -4040,6 +4040,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1667522908}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &79117108
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 79117110}
+  - component: {fileID: 79117109}
+  m_Layer: 0
+  m_Name: EnemyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &79117109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79117108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ee1bbab4152211428a29659a1b13377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &79117110
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79117108}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &79770356
 GameObject:
   m_ObjectHideFlags: 0
@@ -9755,8 +9799,9 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 95b6962ea2b9aef4da7996fd0fd69431, type: 2}
   gun: {fileID: 0}
   eta: 0
-  fovAngle: 110
   agent: {fileID: 188808521}
+  isMoving: 0
+  isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
   noiseLocation: {x: 0, y: 0, z: 0}
 --- !u!195 &188808521
@@ -63053,8 +63098,9 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  fovAngle: 110
   agent: {fileID: 1228724955}
+  isMoving: 0
+  isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
   noiseLocation: {x: 0, y: 0, z: 0}
 --- !u!195 &1228724955
@@ -147947,6 +147993,7 @@ SceneRoots:
   - {fileID: 292439376}
   - {fileID: 382169318}
   - {fileID: 890701448}
+  - {fileID: 79117110}
   - {fileID: 863822800}
   - {fileID: 1137708093}
   - {fileID: 713502011}
