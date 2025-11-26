@@ -188,6 +188,10 @@ public class NodePlayerController : MonoBehaviour
             // 은신 중이 아닐 때 소음 발생
             if (!isHide)
                 NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Move);
+            else
+            {
+                NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Ambush);
+            }
         }
         else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRunMode)
         {

@@ -103,10 +103,10 @@ public class PatrolEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel == 3)
         {
-            CombatBehaviour();
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { CombatBehaviour(); }, 0f));
         }
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     public void DeadAnimator()
