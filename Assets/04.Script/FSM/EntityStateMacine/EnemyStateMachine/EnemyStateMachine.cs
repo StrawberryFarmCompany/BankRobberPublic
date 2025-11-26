@@ -13,9 +13,9 @@ public class EnemyStateMachine : IStateMachineBase<EnemyState>
 
     public void ChangeState(EnemyState next)
     {
+        currentState.Exit();
         currentState = next;
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration = eta));//듀레이션에 Eta(거리 도착 시간)만큼 주기
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Exit, 0f));
+        currentState.Enter();
     }
 
     public void ForceSet(EnemyState next)

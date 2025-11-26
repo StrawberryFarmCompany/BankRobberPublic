@@ -829,6 +829,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -847,6 +853,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &21352821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -861,8 +868,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 21352822}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -4910,6 +4919,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -4928,6 +4943,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &120292857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4942,8 +4958,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 120292858}
+  isMoving: 0
+  isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
   noiseLocation: {x: 0, y: 0, z: 0}
 --- !u!195 &120292858
@@ -7318,6 +7336,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -7336,6 +7360,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &179449264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7350,8 +7375,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 179449265}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -9974,6 +10001,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -9992,6 +10025,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &246809448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10006,8 +10040,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 246809449}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -21953,6 +21989,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -21971,6 +22013,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &548647859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21985,8 +22028,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 548647860}
+  isMoving: 0
+  isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
   noiseLocation: {x: 0, y: 0, z: 0}
 --- !u!195 &548647860
@@ -23644,6 +23689,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -23662,6 +23713,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &595624691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23676,8 +23728,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 595624692}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -24855,6 +24909,11 @@ PrefabInstance:
     - target: {fileID: 2572237385739704837, guid: bb0aa1d483618ef42a420dd44d700a54,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3429344338088541897, guid: bb0aa1d483618ef42a420dd44d700a54,
+        type: 3}
+      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3457458097741166380, guid: bb0aa1d483618ef42a420dd44d700a54,
@@ -26376,6 +26435,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -26394,6 +26459,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &653940059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26408,8 +26474,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 653940060}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -32998,6 +33066,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -33016,6 +33090,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &839063792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33030,8 +33105,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 839063793}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -35972,9 +36049,6 @@ MonoBehaviour:
   - name: 2F
     minY: 4
     maxY: 7
-  excludeLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
 --- !u!4 &931882414
 Transform:
   m_ObjectHideFlags: 0
@@ -40525,6 +40599,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -40543,6 +40623,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &1086857530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40557,8 +40638,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 1086857531}
+  isMoving: 0
+  isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
   noiseLocation: {x: 0, y: 0, z: 0}
 --- !u!195 &1086857531
@@ -48098,6 +48181,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -48116,6 +48205,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &1301510480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48130,8 +48220,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 1301510481}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -54161,6 +54253,50 @@ Transform:
   - {fileID: 2084194391}
   m_Father: {fileID: 573421739}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1487125318
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1487125320}
+  - component: {fileID: 1487125319}
+  m_Layer: 0
+  m_Name: EnemyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1487125319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487125318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ee1bbab4152211428a29659a1b13377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1487125320
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487125318}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1489127329
 GameObject:
   m_ObjectHideFlags: 0
@@ -58421,6 +58557,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -58439,6 +58581,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &1601285334
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58453,8 +58596,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 1601285335}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -59949,6 +60094,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 9d00600022fe10444b6de3f6f13894a9, type: 2}
+  rifle: {fileID: 0}
+  sniperRifle: {fileID: 0}
+  shotGun: {fileID: 0}
+  subMachineGun: {fileID: 0}
+  handGun: {fileID: 0}
+  gunHoldPosition: {fileID: 0}
   gunName: 
   gunDescription: 
   type: 0
@@ -59967,6 +60118,7 @@ MonoBehaviour:
   isHit: 0
   makeNoise: 0
   muzzlePoint: {fileID: 0}
+  currentGun: {fileID: 0}
 --- !u!114 &1648490215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59981,8 +60133,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
-  fovAngle: 110
+  eta: 0
   agent: {fileID: 1648490216}
+  isMoving: 0
+  isEndTurn: 0
   departurePoint: 1
   destinationPoint: 0
   isNoise: 0
@@ -85319,6 +85473,7 @@ SceneRoots:
   - {fileID: 114104435}
   - {fileID: 1326801040}
   - {fileID: 899748279}
+  - {fileID: 1487125320}
   - {fileID: 75656551}
   - {fileID: 1046186598}
   - {fileID: 1209404191}

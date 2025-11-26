@@ -39,16 +39,19 @@ public class MainMenuUI : MonoBehaviour
 
         quitYesButton.onClick.AddListener(DoQuit);
         quitNoButton.onClick.AddListener(CloseExitConfirm);
+
+        continueButton.interactable = StorageManager.HasAnySave();
     }
 
     private void OnClickNewGame()
     {
-        LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene); // 나중에 씬 정리 완료 되면 이걸로 바꾸기
+        StorageManager.ResetAll();
+        LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
     }
 
     private void OnClickContinue()
     {
-        //저장 정보 가져오기
+        StorageManager.LoadAll();
         LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
     }
 
@@ -66,7 +69,6 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnClickExit()
     {
-        //종료 확인창 오픈
         qutiConfirmUI.SetActive(true);
     }
 

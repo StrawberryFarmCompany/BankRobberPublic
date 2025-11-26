@@ -216,7 +216,7 @@ public static class EquippedSkills
     }
 
     //로드
-    static void Load()
+    public static void Load()
     {
         try
         {
@@ -234,6 +234,13 @@ public static class EquippedSkills
         }
 
         data = new EquippedSkillData();
+    }
+
+    public static void ClearData()
+    {
+        data = new EquippedSkillData();
+        Save();
+        OnChanged?.Invoke();
     }
 }
 
