@@ -36,7 +36,7 @@
                     "name": "Inventory",
                     "type": "Button",
                     "id": "6dd4807e-4b35-4f1f-8997-447c6730424e",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -45,7 +45,7 @@
                     "name": "Interaction",
                     "type": "Button",
                     "id": "fc48c885-37fe-409d-a718-3ead005f6dc3",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -63,15 +63,6 @@
                     "name": "Quest",
                     "type": "Button",
                     "id": "da198627-1215-43b1-a3a0-854fe52e6882",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "LeftClick",
-                    "type": "Button",
-                    "id": "d12c2522-67d5-488c-a869-15047e5b6005",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -199,15 +190,72 @@
                     "action": "Quest",
                     "isComposite": false,
                     "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "GrenadeThrow",
+            "id": "c0780de5-9f52-42f6-9f07-87970f2b83e9",
+            "actions": [
+                {
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "82b0423e-6589-4e2b-a570-93d4b20c57ec",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "LeftClick",
+                    "type": "Button",
+                    "id": "6cb6fe42-3912-4df8-a237-d453f1577905",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Exit",
+                    "type": "Button",
+                    "id": "ee52503f-68b0-4eff-a53b-fa16d3585706",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "df82f7fd-a1c0-488e-a36e-0eb231edd2af",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "903adcf2-ea71-4384-8cc3-4d4a028637a6",
+                    "id": "1fc6a5bb-f5dc-4335-99a5-b2f2f798ea20",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "307e144e-1abe-4535-878b-17124446e144",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

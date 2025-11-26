@@ -306,7 +306,7 @@ public class EntityStats
             currNode.AddCharacter(this);
             if(hpbar != null)hpbar.SetPosition(currNode.GetCenter + Vector3.up * 2);
         }
-        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer(false);
     }
 
     public Vector3Int GetPosition()
