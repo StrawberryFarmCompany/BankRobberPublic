@@ -46,7 +46,6 @@ public class HoldEnemyNPC : EnemyNPC
             else if (isNoise == false && isHomePlace == false)
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(homeLocation); }, 0f));
-                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
 
                 if (Vector3.Distance(transform.position, homeLocation) < 0.1f)
                 {
@@ -56,7 +55,6 @@ public class HoldEnemyNPC : EnemyNPC
             else if (isNoise == true && isNoisePlace == false)
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(noiseLocation); }, 0f));
-                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
 
                 if (Vector3.Distance(transform.position, noiseLocation) < 0.1f)
                 {
@@ -85,7 +83,6 @@ public class HoldEnemyNPC : EnemyNPC
                 if (nearPlayerLocation != null)
                 {
                     TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
-                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 }
 
                 else
@@ -98,10 +95,10 @@ public class HoldEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel == 3)
         {
-            CombatBehaviour();
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { CombatBehaviour(); }, 0f));
         }
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     public void DeadAnimator()

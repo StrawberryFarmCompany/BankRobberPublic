@@ -20,9 +20,9 @@ public class CopEnemyNPC : EnemyNPC
 
     protected override void CalculateBehaviour()
     {
-        CombatBehaviour();
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { CombatBehaviour(); }, 0f));
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     //public void ChangeToChase()
