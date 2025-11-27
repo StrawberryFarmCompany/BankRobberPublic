@@ -10,6 +10,8 @@ public static class StorageManager
         Money.GetInstance.Load();
         AbilityPurchases.Load();
         EquippedSkills.Load();
+        WeaponManager.GetInstance.LoadWeapon();
+        ScoreManager.GetInstance.LoadScores();
     }
 
     public static void ResetAll()
@@ -17,11 +19,19 @@ public static class StorageManager
         ResetMoney();
         ResetPurchasedSkills();
         ResetEquippedSkills();
+        ResetWeapons();
+        ResetScores();
+        ResetNPCStates();
     }
 
     public static bool HasAnySave()
     {
-        return File.Exists(MoneyFilePath()) || File.Exists(AbilityFilePath()) || File.Exists(EquippedFilePath());
+        return File.Exists(MoneyFilePath())
+            || File.Exists(AbilityFilePath())
+            || File.Exists(EquippedFilePath())
+            || File.Exists(WeaponFilePath())
+            || File.Exists(ScoreFilePath())
+            || File.Exists(NPCStatesFilePath());
     }
 
     static void ResetMoney()
@@ -49,6 +59,34 @@ public static class StorageManager
         EquippedSkills.ClearData();
     }
 
+    static void ResetWeapons()
+    {
+        if (File.Exists(WeaponFilePath()))
+            File.Delete(WeaponFilePath());
+
+        WeaponManager.GetInstance.LoadWeapon();
+    }
+
+    static void ResetScores()
+    {
+        if (File.Exists(ScoreFilePath()))
+            File.Delete(ScoreFilePath());
+
+        ScoreManager.GetInstance.LoadScores();
+    }
+
+    static void ResetNPCStates()
+    {
+        string npcPath = NPCStatesFilePath();
+        if (File.Exists(npcPath))
+            File.Delete(npcPath);
+
+        if (NPCDialogueDataManager.Instance != null)
+        {
+            NPCDialogueDataManager.Instance.npcDialogueStates.Clear();
+        }
+    }
+
     static string MoneyFilePath()
     {
         return Path.Combine(Application.persistentDataPath, "money.json");
@@ -62,5 +100,20 @@ public static class StorageManager
     static string EquippedFilePath()
     {
         return Path.Combine(Application.persistentDataPath, "equippedSkills.json");
+    }
+
+    static string WeaponFilePath()
+    {
+        return Path.Combine(Application.persistentDataPath, "weapons.json");
+    }
+
+    static string ScoreFilePath()
+    {
+        return Path.Combine(Application.persistentDataPath, "scores.json");
+    }
+
+    static string NPCStatesFilePath()
+    {
+        return Path.Combine(Application.persistentDataPath, "npcStates.json");
     }
 }
