@@ -75,7 +75,8 @@ public class HoldEnemyNPC : EnemyNPC
             {
                 RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
             }
-            TryAttack();
+
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { TryAttack(); }, 0f));
 
             // 공격이 실패했거나 행동력이 남았으면 추적 후 공격
             if (stats.curActionPoint > 0)

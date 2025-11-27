@@ -22,7 +22,6 @@ public class EnemyNPC : MonoBehaviour
     [SerializeField] protected EntityStats nearPlayerLocation;
     protected EntityStats lastTarget; // 이전 턴에 공격한 대상
 
-    public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     private EnemySitePreviewer sitePreviewer;
 
@@ -234,10 +233,11 @@ public class EnemyNPC : MonoBehaviour
             if (nearPlayerLocation != null && nearPlayerLocation.currNode != null)
             {
                 Vector3Int targetPos = nearPlayerLocation.currNode.GetCenter;
-                //TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => gun.Shoot(targetPos, 1), 0f));
 
-                //efsm.eta = 1f;
-                //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
+                TurnTask task = new TurnTask(() => gun.Shoot(targetPos, 1), 1f);
+                task.Action += () => efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
+                TaskManager.GetInstance.AddActionBehaviour(task);
+
                 Debug.Log($"{name}: {nearPlayerLocation.characterName} 공격!");
             }
             else
@@ -248,9 +248,9 @@ public class EnemyNPC : MonoBehaviour
         }
         else
         {
-            //TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => gun.Reload(), 0f));
-            //efsm.eta = 1f;
-            //efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
+            TurnTask task = new TurnTask(gun.Reload, 1f);
+            task.Action += () => efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
+            TaskManager.GetInstance.AddActionBehaviour(task);
             Debug.Log($"{name}: 장전 중 ({gun.curRounds} 발 남음)");
         }
     }
@@ -447,12 +447,8 @@ public class EnemyNPC : MonoBehaviour
         if (pathQueue.Count == 0)
         {
             isMoving = false;
-            efsm.eta = 0;
             return;
         }
-
-        float timePerTile = 0.3f;
-        efsm.eta = pathQueue.Count * timePerTile;
 
         TurnTask task = new TurnTask(SequentialMove, GetPathTime(0.3f, 0.2f));
         task.Action += () => efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
@@ -574,7 +570,6 @@ public class EnemyNPC : MonoBehaviour
         {
             isMoving = false;
             eta = 0f;
-            efsm.eta = 0f;
             efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
             if (nearPlayerLocation != null)
             {

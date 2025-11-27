@@ -73,7 +73,7 @@ public static class AbilityPurchases
         }
     }
 
-    static void Load()
+    public static void Load()
     {
         try
         {
@@ -92,12 +92,10 @@ public static class AbilityPurchases
         data = new AbilityPurchaseData();
     }
 
-    //테스트용 모두 초기화
-    public static void ForceClear()
+    public static void ClearData()
     {
-        data.purchased.Clear();
+        data = new AbilityPurchaseData();
         Save();
         OnChanged?.Invoke();
-        Debug.Log("[AbilityPurchases] 구매 데이터 초기화");
     }
 }
