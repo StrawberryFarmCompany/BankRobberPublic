@@ -22,7 +22,6 @@ public class EnemyNPC : MonoBehaviour
     [SerializeField] protected EntityStats nearPlayerLocation;
     protected EntityStats lastTarget; // 이전 턴에 공격한 대상
 
-    public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     private EnemySitePreviewer sitePreviewer;
 
@@ -571,7 +570,6 @@ public class EnemyNPC : MonoBehaviour
         {
             isMoving = false;
             eta = 0f;
-            efsm.eta = 0f;
             efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
             if (nearPlayerLocation != null)
             {

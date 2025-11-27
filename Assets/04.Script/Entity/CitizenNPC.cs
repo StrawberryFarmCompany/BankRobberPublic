@@ -1,16 +1,22 @@
 using BuffDefine;
+using DG.Tweening;
+using NodeDefines;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 public class CitizenNPC : NeutralNPC
 {
     public bool isDetection = false;
     public bool isCowered = false;
     [SerializeField] private Vector3 exitArea;
+    public float eta = 0f;
 
-    public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
+    private EnemySitePreviewer sitePreviewer;
+
     Vector3Int curTargetPos;
     public bool isMoving;
     bool canNextMove;
@@ -22,14 +28,6 @@ public class CitizenNPC : NeutralNPC
         yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         nfsm = new NeutralStateMachine(this, transform.GetComponentInChildren<Animator>(), NeutralStates.CitizenIdleState);
         stats.OnDead += DeadAnimator;
-    }
-
-    private void Update()
-    {
-        if (isMoving)
-        {
-            SequentialMove();
-        }
     }
 
     protected override void CalculateBehaviour()
@@ -53,8 +51,6 @@ public class CitizenNPC : NeutralNPC
         {
             Debug.Log("도망가는 상태");
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(exitArea); }, 0f));
-            nfsm.eta = 3;
-            nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
         }
 
         base.CalculateBehaviour();
@@ -102,14 +98,9 @@ public class CitizenNPC : NeutralNPC
 
         if (GameManager.GetInstance.GetNode(targetPos) == null)
         {
+            isMoving = false;
             return;
         }
-
-        //if (!GameManager.GetInstance.GetNode(targetPos).isWalkable || GameManager.GetInstance.GetEntityAt(GameManager.GetInstance.GetNode(targetPos).GetCenter) != null)
-        //{
-        //    Debug.Log("갈 수 없는 곳이거나, 엔티티가 있다.");
-        //    return;
-        //}
 
         // 현재 좌표 (정수 격자 기준)
         Vector3Int start = GameManager.GetInstance.GetNode(transform.position).GetCenter;
@@ -134,43 +125,19 @@ public class CitizenNPC : NeutralNPC
             }
         }
 
-        if (pathQueue.Count > 0)
+        if (pathQueue.Count == 0)
         {
-            float totalDistance = 0f;
-            Vector3 lastPos = transform.position;
-            foreach (var step in pathQueue)
-            {
-                totalDistance += Vector3.Distance(lastPos, step);
-                lastPos = step;
-            }
-
-            if (agent == null)
-                agent = GetComponent<NavMeshAgent>();
-
-            if (agent.speed <= 0f)
-                agent.speed = 2f;
-
-            float eta = totalDistance / agent.speed;
-
-            if (nfsm.currentState != null)
-            {
-                nfsm.Current.duration = eta;
-                Debug.Log($"[ETA] {eta:F2}초 / 거리 {totalDistance:F2} / 속도 {agent.speed:F2}");
-            }
-            else
-            {
-                Debug.LogWarning("efsm.Current가 null입니다.");
-            }
-
             //최종 이동 구현
-            isMoving = true;
-            canNextMove = true;
+            isMoving = false;
+            return;
         }
-        //else 
-        //{
-        //    Debug.LogWarning("pathQueue가 비어있어 ETA계산 불가");
-        //}
 
+        TurnTask task = new TurnTask(SequentialMove, GetPathTime(0.3f, 0.2f));
+        task.Action += () => nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenFleeState));
+        TaskManager.GetInstance.AddActionBehaviour(task);
+
+        isMoving = true;
+        canNextMove = true;
     }
 
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
@@ -233,6 +200,7 @@ public class CitizenNPC : NeutralNPC
     /// <summary>
     /// BFS 탐색 후 start→end까지 역추적
     /// </summary>
+    /// 
     private List<Vector3Int> ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int start, Vector3Int end)
     {
         List<Vector3Int> path = new List<Vector3Int>();
@@ -250,29 +218,84 @@ public class CitizenNPC : NeutralNPC
 
     public void SequentialMove()
     {
-        // 아직 목표가 없으면 다음 큐 꺼내기
-        if (!isMoving) return;
-
-        // 도착 판정 (== 대신 거리로 체크)
-        if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        if (pathQueue.Count > 0)
         {
-            canNextMove = true;
+            Vector3Int targetPos = pathQueue.Dequeue();
+            Node node = GameManager.GetInstance.GetNode(targetPos);
+            if (node != null && node.Standing.Count > 0)
+            {
+                stats.HealMovement(pathQueue.Count + 1);
+                pathQueue.Clear();
+                stats.NodeUpdates(transform.position);
+                stats.GetTileInteraction(transform.position);
+                return;
+            }
+            else if (pathQueue.Count <= 1)
+            {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () =>
+                {
+                    stats.NodeUpdates(transform.position);
+                    sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
+                    stats.GetTileInteraction(transform.position);
+                    SequentialMove();
+                });
+            }
+            else
+            {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () =>
+                {
+                    stats.NodeUpdates(transform.position);
+                    sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
+                    stats.GetTileInteraction(transform.position);
+                    SequentialMove();
+                });
+            }
         }
-
-        if (canNextMove && pathQueue.Count > 0)
-        {
-            canNextMove = false;
-            curTargetPos = pathQueue.Dequeue();
-            agent.SetDestination(curTargetPos);
-            stats.NodeUpdates(curTargetPos);
-        }
-
-        // 모든 경로 소모 시 이동 종료
-        if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        else
         {
             isMoving = false;
+            eta = 0f;
+            nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenIdleState));
+
+        }
+    }
+
+    private float GetPathTime(float moveDuration, float rotationDuration)
+    {
+        Queue<Vector3Int> copyQ = new Queue<Vector3Int>(pathQueue.ToArray());
+        float time = 0f;
+        Vector3 currPos = transform.position;
+        float currRot = transform.eulerAngles.y;
+        while (copyQ.Count > 0)
+        {
+            Vector3 nextPos = copyQ.Dequeue();
+            Vector2 relPos = new Vector2(nextPos.x, nextPos.z) - new Vector2(currPos.x, currPos.z);
+            float radian = Mathf.Atan2(relPos.x, relPos.y);
+            float angle = (Mathf.Rad2Deg * radian);
+
+
+            float minAngle = (Mathf.Min(angle, currRot) + 180) % 360f;
+            float maxAngle = (Mathf.Max(angle, currRot) + 180) % 360f;
+
+            currRot = angle;
+            currPos = nextPos;
+
+            float rotAngle = (maxAngle - minAngle) / 360f;
+            float currRotDuration = rotationDuration;
+            if (rotAngle == 0)
+            {
+                currRotDuration = 0;
+            }
+            else
+            {
+                float originRotDur = currRotDuration;
+                currRotDuration = originRotDur * rotAngle;
+                currRotDuration = MathF.Abs(currRotDuration);
+            }
+            time += currRotDuration + moveDuration;
         }
 
+        return time;
     }
 
     private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
@@ -298,6 +321,40 @@ public class CitizenNPC : NeutralNPC
         }
 
         return best;
+    }
+
+    private float DoMoveAndRotate(Ease ease, Vector3Int pos, float moveDuration, float rotationDuration, Action action = null)
+    {
+        transform.DOComplete(true);
+
+        Vector2 relPos = new Vector2(pos.x, pos.z) - new Vector2(transform.position.x, transform.position.z);
+        float radian = Mathf.Atan2(relPos.x, relPos.y);
+        float angle = (Mathf.Rad2Deg * radian);
+
+
+        float minAngle = (Mathf.Min(angle, transform.eulerAngles.y) + 180) % 360f;
+        float maxAngle = (Mathf.Max(angle, transform.eulerAngles.y) + 180) % 360f;
+
+        float rotAngle = (maxAngle - minAngle) / 360f;
+        if (rotAngle == 0)
+        {
+            rotationDuration = 0;
+        }
+        else
+        {
+            float originRotDur = rotationDuration;
+            rotationDuration = originRotDur * rotAngle;
+            rotationDuration = MathF.Abs(rotationDuration);
+        }
+        transform.DORotate(Vector3.up * angle, rotationDuration).OnComplete(() =>
+        {
+            transform.DOMove(pos, moveDuration).SetEase(ease).OnComplete(() =>
+            {
+                if (stats == null) return;
+                action?.Invoke();
+            });
+        });
+        return moveDuration + rotationDuration;
     }
 
 }
