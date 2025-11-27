@@ -6,7 +6,6 @@ using UnityEngine;
 public class EnemyStateMachine : IStateMachineBase<EnemyState>
 {
     private Dictionary<EnemyStates, EnemyState> enemyStates;
-    public float eta;
     public EnemyState currentState;
 
     public EnemyState Current => currentState;
