@@ -70,6 +70,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bf085431c9fe18468768904e2c2d796
+    m_Address: Thrower
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 83db5124300aeb1459ea8642bda177f3
     m_Address: BulletTrail
     m_ReadOnly: 0
