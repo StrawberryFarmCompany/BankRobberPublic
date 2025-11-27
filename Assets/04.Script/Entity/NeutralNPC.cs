@@ -6,48 +6,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class NeutralNPC : MonoBehaviour
 {
     public EntityData entityData;
-    protected EntityStats stats;
+    public EntityStats stats;
     protected NeutralStateMachine nfsm;
     public float eta = 0f;
 
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     private EnemySitePreviewer sitePreviewer;
 
-    Vector3Int curTargetPos;
     public bool isMoving;
+    public bool isEndTurn;
     bool canNextMove;
 
-    public float fovAngle = 110f;
+    private float fovAngle = 60f;
 
     protected virtual IEnumerator Start()
     {
         if (ResourceManager.GetInstance.IsLoaded == false) yield return new WaitUntil(() => ResourceManager.GetInstance.IsLoaded);
         stats = new EntityStats(entityData,gameObject);
         stats.NodeUpdates(transform.position);
-        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.neutral, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
-        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.neutral, CalculateBehaviour);
+
+        NeutralManager.Instance.RegisterNeutral(this);
 
         yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.CreateHpBar();
         stats.NodeUpdates(transform.position, true);
         stats.secData = new SecurityData(stats);
+
+        isEndTurn = false;
+        isMoving = false;
     }
 
     protected virtual void CalculateBehaviour()
     {
-        stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
 
-        TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
-
-        stats.NodeUpdates(transform.position);
-
-        NoiseManager.ClearNoises(); // 소음 초기화 (턴 쪽에 넣으면 좋지만 잘 모르겠어서 NPC 이후에 있는 중립턴 일때 초기화 해줌(추후 바꿀 수 있으면 바꿔주기))
     }
 
     public List<EntityStats> DetectVisibleTargets()
@@ -424,5 +419,17 @@ public class NeutralNPC : MonoBehaviour
             });
         });
         return moveDuration + rotationDuration;
+    }
+
+    protected void EndMyTurn()
+    {
+        if (isEndTurn) return;
+        isEndTurn = true;
+        NeutralManager.Instance.ReportNeutralDone(this);
+    }
+
+    public void TakeTurn()
+    {
+        CalculateBehaviour();
     }
 }

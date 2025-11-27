@@ -1,12 +1,7 @@
-using BuffDefine;
-using DG.Tweening;
-using NodeDefines;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
+
 public class CitizenNPC : NeutralNPC
 {
     public bool isDetection = false;
@@ -14,6 +9,7 @@ public class CitizenNPC : NeutralNPC
     [SerializeField] private Vector3 exitArea;
 
     Animator animator;
+
     protected override IEnumerator Start()
     {
         animator = GetComponent<Animator>();
@@ -40,13 +36,13 @@ public class CitizenNPC : NeutralNPC
             isCowered = true;
         }
 
-        else if (isDetection == true && isCowered == false)//플레이어 발각시
+        else if (isDetection == true && isCowered == false) //플레이어 발각시
         {
             Debug.Log("도망가는 상태");
             TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(exitArea); }, 0f));
         }
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     public void ChangeToIdle()
@@ -74,7 +70,4 @@ public class CitizenNPC : NeutralNPC
         GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.neutral, CalculateBehaviour);
         Destroy(gameObject);
     }
-
-   
-
 }

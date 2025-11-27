@@ -9799,7 +9799,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 95b6962ea2b9aef4da7996fd0fd69431, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 188808521}
   isMoving: 0
   isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
@@ -63098,7 +63097,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 1228724955}
   isMoving: 0
   isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
@@ -101476,6 +101474,50 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2088894330}
   m_Mesh: {fileID: 4300000, guid: 365adfac290cc9a46b66b40f7944415c, type: 3}
+--- !u!1 &2094123071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2094123073}
+  - component: {fileID: 2094123072}
+  m_Layer: 0
+  m_Name: NeutralManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2094123072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094123071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66c3b5164eb930740ba0be988c3ba79f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2094123073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094123071}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2095693013
 GameObject:
   m_ObjectHideFlags: 0
@@ -147994,6 +148036,7 @@ SceneRoots:
   - {fileID: 382169318}
   - {fileID: 890701448}
   - {fileID: 79117110}
+  - {fileID: 2094123073}
   - {fileID: 863822800}
   - {fileID: 1137708093}
   - {fileID: 713502011}

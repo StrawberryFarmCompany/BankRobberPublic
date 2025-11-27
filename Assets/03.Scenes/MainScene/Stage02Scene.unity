@@ -869,7 +869,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 21352822}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -2732,7 +2731,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: f91de605f9a4f4e4bb56a777dd4f71b4, type: 2}
-  fovAngle: 110
+  eta: 0
+  isMoving: 0
+  isEndTurn: 0
   isDetection: 0
   isCowered: 0
 --- !u!195 &71633379
@@ -4959,7 +4960,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 120292858}
   isMoving: 0
   isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
@@ -7376,7 +7376,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 179449265}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -8421,7 +8420,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: f91de605f9a4f4e4bb56a777dd4f71b4, type: 2}
-  fovAngle: 110
+  eta: 0
+  isMoving: 0
+  isEndTurn: 0
   isDetection: 0
   isCowered: 0
 --- !u!195 &202545903
@@ -10041,7 +10042,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 246809449}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -12802,12 +12802,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: ea06bb0c08ea77749acf6dd94ffd8ced, type: 2}
-  fovAngle: 110
+  eta: 0
+  isMoving: 0
+  isEndTurn: 0
   isDetection: 0
   isCowered: 0
   exitArea: {x: 37, y: 0, z: 31}
-  agent: {fileID: 323039664}
-  isMoving: 0
 --- !u!195 &323039664
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -22029,7 +22029,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 548647860}
   isMoving: 0
   isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
@@ -23729,7 +23728,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 595624692}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -26475,7 +26473,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 653940060}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -31296,7 +31293,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: f91de605f9a4f4e4bb56a777dd4f71b4, type: 2}
-  fovAngle: 110
+  eta: 0
+  isMoving: 0
+  isEndTurn: 0
   isDetection: 0
   isCowered: 0
 --- !u!195 &774424623
@@ -33106,7 +33105,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 839063793}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -40639,7 +40637,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 1086857531}
   isMoving: 0
   isEndTurn: 0
   homeLocation: {x: 0, y: 0, z: 0}
@@ -42680,6 +42677,50 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1127141991}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1130572343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1130572345}
+  - component: {fileID: 1130572344}
+  m_Layer: 0
+  m_Name: NeutralManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1130572344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130572343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66c3b5164eb930740ba0be988c3ba79f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1130572345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130572343}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1130979764
 GameObject:
   m_ObjectHideFlags: 0
@@ -48221,7 +48262,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 1301510481}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -58597,7 +58637,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 1601285335}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -60134,7 +60173,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 653039c787c9c854ca65a36b64fc7ae8, type: 2}
   gun: {fileID: 0}
   eta: 0
-  agent: {fileID: 1648490216}
   isMoving: 0
   isEndTurn: 0
   departurePoint: 1
@@ -72469,7 +72507,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: f91de605f9a4f4e4bb56a777dd4f71b4, type: 2}
-  fovAngle: 110
+  eta: 0
+  isMoving: 0
+  isEndTurn: 0
   isDetection: 0
   isCowered: 0
 --- !u!195 &2056316938
@@ -85474,6 +85514,7 @@ SceneRoots:
   - {fileID: 1326801040}
   - {fileID: 899748279}
   - {fileID: 1487125320}
+  - {fileID: 1130572345}
   - {fileID: 75656551}
   - {fileID: 1046186598}
   - {fileID: 1209404191}
