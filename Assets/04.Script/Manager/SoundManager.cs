@@ -73,17 +73,29 @@ public class SoundManager : MonoBehaviour
         // 씬 이름으로 분기
         switch (scene.name)
         {
-            case "TitleScene": // 이후 씬 이름 바뀌면 수정
+            case "MainTitleScene":
                 PlayBGM(0);
                 break;
-            case "LobbyScene": // 이후 씬 이름 바뀌면 수정
+            case "LobbyScene":
                 PlayBGM(1);
                 break;
-            case "TutorialScene": // 이후 씬 이름 바뀌면 수정
+            case "FirstTutorialScene":
                 PlayBGM(2);
                 break;
-            case "추후 기입": // 본 게임 씬 이름 넣기
+            case "SecondTutorialScene":
                 PlayBGM(3);
+                break;
+            case "Stage01Scene":
+                PlayBGM(4);
+                break;
+            case "Stage02Scene":
+                PlayBGM(5);
+                break;
+            case "Stage03Scene":
+                PlayBGM(6);
+                break;
+            case "Stage04Scene":
+                PlayBGM(7);
                 break;
             default:
                 StopBGM(); // 지정된 게 없으면 정지
