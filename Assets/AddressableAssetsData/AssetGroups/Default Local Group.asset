@@ -96,7 +96,8 @@ MonoBehaviour:
   - m_GUID: b571da696fb64994288c3691c4958c0b
     m_Address: PathPreviewerMat
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b7a9aaa18592864498684abc1af31366
     m_Address: Grenade

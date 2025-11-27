@@ -117,4 +117,10 @@ public class EnemySitePreviewer
         }
         return visited.Where(x=>x.Value).Select(x=>x.Key).ToArray();
     }
+    public void Destroy()
+    {
+        meshRenderer.material = null;
+        mesh.mesh = null;
+        GameObject.Destroy(mesh.gameObject);
+    }
 }

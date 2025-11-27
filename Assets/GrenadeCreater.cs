@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class GrenadeCreater : MonoBehaviour
 {
     // Start is called before the first frame update
-    bool isLoadDone;
     IEnumerator Start()
     {
         if (ResourceManager.GetInstance.GetPreLoad.Count <= 0) yield return new WaitUntil(() => ResourceManager.GetInstance.GetPreLoad.ContainsKey("Thrower"));

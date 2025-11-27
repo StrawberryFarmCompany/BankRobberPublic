@@ -46,7 +46,7 @@ public class Grenade : MonoBehaviour
     }
     public void OnThrow(Vector3 dir,float power)
     {
-        rb.AddForce(dir * power,ForceMode.Force);
+        rb.velocity = dir * power;
         throwed = true;
     }
     private void OnExplosion()

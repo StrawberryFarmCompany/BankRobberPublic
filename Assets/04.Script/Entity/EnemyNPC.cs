@@ -840,5 +840,6 @@ public class EnemyNPC : MonoBehaviour
     {
         transform.DOKill(false);
         stats.DestroyEntity();
+        sitePreviewer?.Destroy();
     }
 }
