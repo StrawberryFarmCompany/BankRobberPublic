@@ -6,16 +6,15 @@ using UnityEngine;
 public class NeutralStateMachine : IStateMachineBase<NeutralState>
 {
     private Dictionary<NeutralStates, NeutralState> neutralStates;
-    public float eta;
     public NeutralState currentState;
 
     public NeutralState Current => currentState;
 
     public void ChangeState(NeutralState next)
     {
+        currentState.Exit();
         currentState = next;
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Enter, currentState.duration = eta));
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(currentState.Exit, 0f));
+        currentState.Enter();
     }
 
     public void ForceSet(NeutralState next)

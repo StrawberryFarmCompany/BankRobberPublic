@@ -105,6 +105,7 @@ public class BillBoard : MonoBehaviour
 {
     private void FixedUpdate()
     {
+        if (Camera.main == null) return;
         transform.rotation = Camera.main.transform.rotation;
     }
 }
