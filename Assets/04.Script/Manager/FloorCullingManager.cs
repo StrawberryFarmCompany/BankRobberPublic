@@ -37,13 +37,13 @@ public class FloorCullingManager : MonoBehaviour
     {
         RefreshRenderersAndColliders();
         RegisterPlayerRevealer();
-        UpdateCullingByCurrentPlayer();
+        UpdateCullingByCurrentPlayer(false);
     }
 
     /// <summary>
     /// 현재 플레이어의 위치를 기준으로 층별 Culling 적용
     /// </summary>
-    public void UpdateCullingByCurrentPlayer()
+    public void UpdateCullingByCurrentPlayer(bool renderOnly)
     {
         Transform player = NodePlayerManager.GetInstance.GetCurrentPlayer()?.transform;
         if (player == null) return;
@@ -58,7 +58,7 @@ public class FloorCullingManager : MonoBehaviour
             return;
         }
 
-        ApplyCulling(currentFloor.Value);
+        ApplyCulling(currentFloor.Value,renderOnly);
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public class FloorCullingManager : MonoBehaviour
     /// <summary>
     /// 지정된 층 범위에 맞춰 렌더/충돌 활성화
     /// </summary>
-    private void ApplyCulling(FloorRange floor)
+    private void ApplyCulling(FloorRange floor,bool renderOnly)
     {
         if (allRenderers == null || allColliders == null)
             RefreshRenderersAndColliders();
@@ -116,21 +116,24 @@ public class FloorCullingManager : MonoBehaviour
             r.enabled = visible;
         }
 
-        // 충돌 처리
-        foreach (var c in allColliders)
+        if (!renderOnly)
         {
-            if (c == null) continue;
-
-            // 플레이어 캐릭터는 충돌 유지
-            if (currentPlayer != null && c.transform.root == currentPlayer.root)
+            // 충돌 처리
+            foreach (var c in allColliders)
             {
-                c.enabled = true;
-                continue;
-            }
+                if (c == null) continue;
 
-            float cy = c.transform.position.y;
-            bool active = (cy >= floor.minY && cy < floor.maxY);
-            c.enabled = active;
+                // 플레이어 캐릭터는 충돌 유지
+                if (currentPlayer != null && c.transform.root == currentPlayer.root)
+                {
+                    c.enabled = true;
+                    continue;
+                }
+
+                float cy = c.transform.position.y;
+                bool active = (cy >= floor.minY && cy < floor.maxY);
+                c.enabled = active;
+            }
         }
 
         // 플레이어 시야 처리

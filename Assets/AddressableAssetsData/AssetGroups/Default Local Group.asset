@@ -70,6 +70,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bf085431c9fe18468768904e2c2d796
+    m_Address: Thrower
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 83db5124300aeb1459ea8642bda177f3
     m_Address: BulletTrail
     m_ReadOnly: 0
@@ -91,6 +97,12 @@ MonoBehaviour:
     m_Address: PathPreviewerMat
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7a9aaa18592864498684abc1af31366
+    m_Address: Grenade
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b99870a09a370684e918709181534155
     m_Address: TargetPreviewerMat

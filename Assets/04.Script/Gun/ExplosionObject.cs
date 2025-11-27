@@ -41,7 +41,7 @@ public class ExplosionObject
 
     }
     // bfs로 구현
-    private Dictionary<Vector3Int, float> GetBound()
+    protected virtual Dictionary<Vector3Int, float> GetBound()
     {
         Dictionary<Vector3Int, int> costMap = new Dictionary<Vector3Int, int>();
         costMap.Add(Vector3Int.zero, boundary);

@@ -160,7 +160,12 @@ public class UIManager : MonoBehaviour
         specialSkillTooltip.description = so.effect;
         specialSkillTooltip.baseDescription = so.effect;
     }
-
+    public void SetThrowingUIOnOff(bool onOff)
+    {
+        transform.Find("Canvas").gameObject.SetActive(onOff);
+        transform.Find("GuideUICanvas").gameObject.SetActive(onOff);
+        transform.Find("CharacterStatusCanvas").gameObject.SetActive(onOff);
+    }
     private void OnEnable()
     {
         EquippedSkills.OnChanged += RefreshSpecialSkillTooltip;

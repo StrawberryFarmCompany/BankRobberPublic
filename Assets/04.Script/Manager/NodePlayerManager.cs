@@ -104,7 +104,7 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.pip.RefreshAll();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
-        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer(false);
         UIManager.GetInstance.RefreshSpecialSkillTooltip();
         OnPlayerChanged?.Invoke();
     }
@@ -128,7 +128,20 @@ public class NodePlayerManager : MonoBehaviour
         UIManager.GetInstance.pip.RefreshAll();
         UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
         UIManager.GetInstance.ShowActionPanel(true);
-        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer();
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer(false);
+        UIManager.GetInstance.RefreshSpecialSkillTooltip();
+        OnPlayerChanged?.Invoke();
+    }
+    public void RefreshPlayer(bool renderOnly)
+    {
+        if (UIManager.GetInstance != null && UIManager.GetInstance.SelectionLocked) return;
+        players[currentPlayerIndex].StartMode(PlayerStatus.isMoveMode);
+        if(players[currentPlayerIndex].highlighter != null && players[currentPlayerIndex].playerStats.currNode != null)
+            players[currentPlayerIndex].TurnOnHighlighter();
+        UIManager.GetInstance.pip.RefreshAll();
+        UIManager.GetInstance.leftInteractionPanel.OnInteractionRefresh();
+        UIManager.GetInstance.ShowActionPanel(true);
+        FloorCullingManager.GetInstance.UpdateCullingByCurrentPlayer(renderOnly);
         UIManager.GetInstance.RefreshSpecialSkillTooltip();
         OnPlayerChanged?.Invoke();
     }
