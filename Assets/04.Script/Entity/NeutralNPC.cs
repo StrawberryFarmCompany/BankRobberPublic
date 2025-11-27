@@ -31,10 +31,15 @@ public class NeutralNPC : MonoBehaviour
 
         NeutralManager.Instance.RegisterNeutral(this);
 
-        yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
+        if (ResourceManager.GetInstance.GetBuffData.Count <= 0) yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.CreateHpBar();
         stats.NodeUpdates(transform.position, true);
+
         stats.secData = new SecurityData(stats);
+        sitePreviewer = new EnemySitePreviewer(gameObject, stats.characterName);
+
+        sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
+
 
         isEndTurn = false;
         isMoving = false;
@@ -315,15 +320,57 @@ public class NeutralNPC : MonoBehaviour
                 });
             }
         }
+
         else
         {
             isMoving = false;
             eta = 0f;
             nfsm.ChangeState(nfsm.FindState(NeutralStates.CitizenIdleState));
-
         }
     }
 
+    public void StopMove()
+    {
+        isMoving = false;
+        pathQueue.Clear();
+        eta = 0f;
+        stats.NodeUpdates(transform.position);
+        stats.GetTileInteraction(transform.position);
+    }
+
+    private float DoMoveAndRotate(Ease ease, Vector3Int pos, float moveDuration, float rotationDuration, Action action = null)
+    {
+        transform.DOComplete(true);
+
+        Vector2 relPos = new Vector2(pos.x, pos.z) - new Vector2(transform.position.x, transform.position.z);
+        float radian = Mathf.Atan2(relPos.x, relPos.y);
+        float angle = (Mathf.Rad2Deg * radian);
+
+
+        float minAngle = (Mathf.Min(angle, transform.eulerAngles.y) + 180) % 360f;
+        float maxAngle = (Mathf.Max(angle, transform.eulerAngles.y) + 180) % 360f;
+
+        float rotAngle = (maxAngle - minAngle) / 360f;
+        if (rotAngle == 0)
+        {
+            rotationDuration = 0;
+        }
+        else
+        {
+            float originRotDur = rotationDuration;
+            rotationDuration = originRotDur * rotAngle;
+            rotationDuration = MathF.Abs(rotationDuration);
+        }
+        transform.DORotate(Vector3.up * angle, rotationDuration).OnComplete(() =>
+        {
+            transform.DOMove(pos, moveDuration).SetEase(ease).OnComplete(() =>
+            {
+                if (stats == null) return;
+                action?.Invoke();
+            });
+        });
+        return moveDuration + rotationDuration;
+    }
     private float GetPathTime(float moveDuration, float rotationDuration)
     {
         Queue<Vector3Int> copyQ = new Queue<Vector3Int>(pathQueue.ToArray());
@@ -387,40 +434,6 @@ public class NeutralNPC : MonoBehaviour
         return best;
     }
 
-    private float DoMoveAndRotate(Ease ease, Vector3Int pos, float moveDuration, float rotationDuration, Action action = null)
-    {
-        transform.DOComplete(true);
-
-        Vector2 relPos = new Vector2(pos.x, pos.z) - new Vector2(transform.position.x, transform.position.z);
-        float radian = Mathf.Atan2(relPos.x, relPos.y);
-        float angle = (Mathf.Rad2Deg * radian);
-
-
-        float minAngle = (Mathf.Min(angle, transform.eulerAngles.y) + 180) % 360f;
-        float maxAngle = (Mathf.Max(angle, transform.eulerAngles.y) + 180) % 360f;
-
-        float rotAngle = (maxAngle - minAngle) / 360f;
-        if (rotAngle == 0)
-        {
-            rotationDuration = 0;
-        }
-        else
-        {
-            float originRotDur = rotationDuration;
-            rotationDuration = originRotDur * rotAngle;
-            rotationDuration = MathF.Abs(rotationDuration);
-        }
-        transform.DORotate(Vector3.up * angle, rotationDuration).OnComplete(() =>
-        {
-            transform.DOMove(pos, moveDuration).SetEase(ease).OnComplete(() =>
-            {
-                if (stats == null) return;
-                action?.Invoke();
-            });
-        });
-        return moveDuration + rotationDuration;
-    }
-
     protected void EndMyTurn()
     {
         if (isEndTurn) return;
@@ -431,5 +444,11 @@ public class NeutralNPC : MonoBehaviour
     public void TakeTurn()
     {
         CalculateBehaviour();
+    }
+
+    private void OnDestroy()
+    {
+        transform.DOKill(false);
+        stats.DestroyEntity();
     }
 }
