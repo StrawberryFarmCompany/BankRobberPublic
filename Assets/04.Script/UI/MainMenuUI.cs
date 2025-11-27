@@ -25,11 +25,19 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button quitYesButton;
     [SerializeField] private Button quitNoButton;
 
+    [Header("새로 시작 확인 UI")]
+    [SerializeField] private GameObject newGameConfirmUI;
+    [SerializeField] private Button newGameYesButton;
+    [SerializeField] private Button newGameNoButton;
+
     private void Start()
     {
         mainUI.SetActive(true);
         optionUI.SetActive(false);
         qutiConfirmUI.SetActive(false);
+
+        if (newGameConfirmUI != null)
+            newGameConfirmUI.SetActive(false);
 
         newGameButton.onClick.AddListener(OnClickNewGame);
         continueButton.onClick.AddListener(OnClickContinue);
@@ -40,13 +48,26 @@ public class MainMenuUI : MonoBehaviour
         quitYesButton.onClick.AddListener(DoQuit);
         quitNoButton.onClick.AddListener(CloseExitConfirm);
 
+        newGameYesButton.onClick.AddListener(DoNewGame);
+        newGameNoButton.onClick.AddListener(CloseNewGameConfirm);
+
         continueButton.interactable = StorageManager.HasAnySave();
     }
 
     private void OnClickNewGame()
     {
+        newGameConfirmUI.SetActive(true);
+    }
+
+    private void DoNewGame()
+    {
         StorageManager.ResetAll();
         LoadSceneManager.GetInstance.SceneLoad(SceneType.LobbyScene);
+    }
+
+    private void CloseNewGameConfirm()
+    {
+        newGameConfirmUI.SetActive(false);
     }
 
     private void OnClickContinue()
