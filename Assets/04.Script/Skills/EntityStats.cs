@@ -39,6 +39,7 @@ public class EntityStats
     public int aggroControl;
     public int maxRerollCount;
     public int curRerollCount;
+    public int grenadeCount = 1;
     public Sprite portrait;
     public CharacterType characterType;
     public SkillGroupType skillGroup;
@@ -86,6 +87,7 @@ public class EntityStats
         playerSkill = baseStats.playerSkill;
         portrait = baseStats.portrait;
         skillGroup = baseStats.skillGroup;
+        grenadeCount = 1;
         buffs = new List<IBuff>();
 
 

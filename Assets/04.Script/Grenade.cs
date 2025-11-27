@@ -31,11 +31,11 @@ public class Grenade : MonoBehaviour
             currTime += Time.deltaTime;
             if (!explode && currTime > goalTime)
             {
+                explosionDone?.Invoke();
                 OnExplosion();
             }
             else if(explode && currTime > explodeDoneTime)
             {
-                explosionDone?.Invoke();
                 enqueue?.Invoke(this);
             }
         }

@@ -21,6 +21,9 @@ public class GrenadeThrower : MonoBehaviour
     public Transform cameraPos;
     public GameObject grenadePrefab { get {return (GameObject)ResourceManager.GetInstance.GetPreLoad["Grenade"]; } }
     public Queue<Grenade> grenadePool = new Queue<Grenade>();
+
+    PlayerInput[] inputs;
+
     IEnumerator Start()
     {
         if (ResourceManager.GetInstance.GetBuffData.Count <= 0) yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
@@ -29,6 +32,17 @@ public class GrenadeThrower : MonoBehaviour
         bridgeCam.enabled = false;
         bridgeCam.GetUniversalAdditionalCameraData().renderPostProcessing = true;
         input.enabled = false;
+
+        List<PlayerInput> inputList = new List<PlayerInput>();
+
+        var players = NodePlayerManager.GetInstance.GetAllPlayers();
+        for (int i = 0; i < players.Count; i++)
+        {
+            inputList.Add(players[i].playerInput);
+        }
+        inputList.Add(NodePlayerManager.GetInstance.GetComponent<PlayerInput>());
+        inputList.Add(CameraManager.GetInstance.transform.Find("Target").GetComponent<PlayerInput>());
+        inputs = inputList.ToArray();
     }
     private void CamSwitchMove(Camera last, Camera next,Quaternion targetRot,Vector3 pos,bool throwSequence)
     {
@@ -51,10 +65,9 @@ public class GrenadeThrower : MonoBehaviour
                 input.enabled = throwSequence;
                 if (NodePlayerManager.GetInstance != null && throwSequence)
                 {
-                    var players = NodePlayerManager.GetInstance.GetAllPlayers();
-                    for (int i = 0; i < players.Count; i++)
+                    for (int i = 0; i < inputs.Length; i++)
                     {
-                        players[i].playerInput.enabled = false;
+                        inputs[i].enabled = false;
                     }
 
                     
@@ -65,14 +78,20 @@ public class GrenadeThrower : MonoBehaviour
     }
     public void SetThrowingSequence(NodePlayerController player)
     {
+        if (inputs == null || NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.grenadeCount <= 0) return;
         CamSwitchMove(mainCam, bridgeCam, player.transform.rotation,player.transform.position + (Vector3.up*1.8f),true);
         FloorCullingManager.GetInstance?.EnableAllCollisionsAndRenderers();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        UIManager.GetInstance.SetThrowingUIOnOff(false);
+
     }
 
     public void SetStrategySequence()
     {
         CamSwitchMove(bridgeCam, mainCam, mainCam.transform.rotation , mainCam.transform.position,false);
-        NodePlayerManager.GetInstance.RefreshPlayer(true);
+        
+
     }
 
     public void OnThrow(InputAction.CallbackContext ctx)
@@ -83,6 +102,8 @@ public class GrenadeThrower : MonoBehaviour
             grenade.transform.position = bridgeCam.transform.position;
             grenade.OnThrow(bridgeCam.transform.forward, 600f);
             SetStrategySequence();
+            NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.ConsumeActionPoint(1);
+            NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.grenadeCount -= 1;
         }
     }
 
@@ -113,16 +134,19 @@ public class GrenadeThrower : MonoBehaviour
     {
         NodePlayerManager.GetInstance.RefreshPlayer(false);
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        UIManager.GetInstance.SetThrowingUIOnOff(true);
+
         input.enabled = false;
         mainCam.enabled = true;
         bridgeCam.enabled = false;
 
         if (NodePlayerManager.GetInstance == null) return;
 
-        var players = NodePlayerManager.GetInstance.GetAllPlayers();
-        for (int i = 0; i < players.Count; i++)
+        for (int i = 0; i < inputs.Length; i++)
         {
-            players[i].playerInput.enabled = true;
+            inputs[i].enabled = true;
         }
     }
     private Grenade GrenadeDequeue()
