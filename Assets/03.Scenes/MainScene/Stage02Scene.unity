@@ -21050,7 +21050,7 @@ PrefabInstance:
     - target: {fileID: 1640705256110837235, guid: 9a95d9eca7567f242bc438afbc1ca0a7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 58
+      value: 20.5
       objectReference: {fileID: 0}
     - target: {fileID: 1640705256110837235, guid: 9a95d9eca7567f242bc438afbc1ca0a7,
         type: 3}
@@ -21115,7 +21115,7 @@ PrefabInstance:
     - target: {fileID: 4773985135664101380, guid: 9a95d9eca7567f242bc438afbc1ca0a7,
         type: 3}
       propertyPath: WorldBounds.m_Center.x
-      value: 58
+      value: 20.5
       objectReference: {fileID: 0}
     - target: {fileID: 4773985135664101380, guid: 9a95d9eca7567f242bc438afbc1ca0a7,
         type: 3}
