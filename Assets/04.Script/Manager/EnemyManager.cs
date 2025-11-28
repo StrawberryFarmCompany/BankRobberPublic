@@ -32,6 +32,7 @@ public class EnemyManager : MonoBehaviour
         // 모든 enemy의 isEndTurn 초기화
         foreach (var e in enemies)
         {
+            if (e == null) continue;
             e.isEndTurn = false;
             e.isMoving = false;
             e.stats.ResetForNewTurn();
