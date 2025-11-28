@@ -19,11 +19,15 @@ public class GrenadeThrower : MonoBehaviour
     private float camCurYRot;
     [SerializeField]private float lookSensitivity;
     public Transform cameraPos;
+    private float throwForce = 8f;
+
     public GameObject grenadePrefab { get {return (GameObject)ResourceManager.GetInstance.GetPreLoad["Grenade"]; } }
     public Queue<Grenade> grenadePool = new Queue<Grenade>();
 
-    PlayerInput[] inputs;
+    [SerializeField]GameObject throwUIPannel;
 
+    PlayerInput[] inputs;
+    LineRenderer line;
     IEnumerator Start()
     {
         if (ResourceManager.GetInstance.GetBuffData.Count <= 0) yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
@@ -31,6 +35,14 @@ public class GrenadeThrower : MonoBehaviour
         bridgeCam = new GameObject("BridgeCam").AddComponent<Camera>();
         bridgeCam.enabled = false;
         bridgeCam.GetUniversalAdditionalCameraData().renderPostProcessing = true;
+        bridgeCam.clearFlags = CameraClearFlags.SolidColor;
+        bridgeCam.backgroundColor = Color.black;
+        line = bridgeCam.gameObject.AddComponent<LineRenderer>();
+        line.material = (Material)ResourceManager.GetInstance.GetPreLoad["PathPreviewerMat"];
+        line.textureMode = LineTextureMode.Tile;
+        line.startWidth = 0.1f;
+        line.endWidth = 0.1f;
+        line.textureScale = new Vector2(15f, 1);
         input.enabled = false;
 
         List<PlayerInput> inputList = new List<PlayerInput>();
@@ -78,20 +90,20 @@ public class GrenadeThrower : MonoBehaviour
     }
     public void SetThrowingSequence(NodePlayerController player)
     {
-        if (inputs == null || NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.grenadeCount <= 0) return;
-        CamSwitchMove(mainCam, bridgeCam, player.transform.rotation,player.transform.position + (Vector3.up*1.8f),true);
+        if (inputs == null || NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.grenadeCount <= 0 || NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.curActionPoint <= 0) return;
+        CamSwitchMove(mainCam, bridgeCam, player.transform.rotation,player.transform.position + (Vector3.up*1.5f),true);
         FloorCullingManager.GetInstance?.EnableAllCollisionsAndRenderers();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         UIManager.GetInstance.SetThrowingUIOnOff(false);
-
+        NodePlayerManager.GetInstance.GetCurrentPlayer().GetComponent<Collider>().enabled = false;
+        throwUIPannel.SetActive(true);
+        line.enabled = true;
     }
 
     public void SetStrategySequence()
     {
         CamSwitchMove(bridgeCam, mainCam, mainCam.transform.rotation , mainCam.transform.position,false);
-        
-
     }
 
     public void OnThrow(InputAction.CallbackContext ctx)
@@ -100,10 +112,12 @@ public class GrenadeThrower : MonoBehaviour
         {
             Grenade grenade = GrenadeDequeue();
             grenade.transform.position = bridgeCam.transform.position;
-            grenade.OnThrow(bridgeCam.transform.forward, 600f);
+            grenade.OnThrow(bridgeCam.transform.forward, throwForce);
             SetStrategySequence();
             NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.ConsumeActionPoint(1);
             NodePlayerManager.GetInstance.GetCurrentPlayer().playerStats.grenadeCount -= 1;
+            throwUIPannel.SetActive(false);
+            line.enabled = false;
         }
     }
 
@@ -116,10 +130,16 @@ public class GrenadeThrower : MonoBehaviour
         camCurXRot = Mathf.Clamp(camCurXRot, minXLook, maxXLook);
         camCurYRot += temp.x * lookSensitivity;
         bridgeCam.transform.localEulerAngles = new Vector3(-camCurXRot, camCurYRot, 0);
+        SetLine();
     }
     public void OnExit(InputAction.CallbackContext ctx)
     {
-        if (ctx.started) RecoverControll();
+        if (ctx.started) 
+        {
+            RecoverControll();
+            throwUIPannel.SetActive(false);
+            line.enabled = false;
+        }
     }
 
 
@@ -133,6 +153,7 @@ public class GrenadeThrower : MonoBehaviour
     private void RecoverControll()
     {
         NodePlayerManager.GetInstance.RefreshPlayer(false);
+        NodePlayerManager.GetInstance.GetCurrentPlayer().GetComponent<Collider>().enabled = true;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -146,6 +167,7 @@ public class GrenadeThrower : MonoBehaviour
 
         for (int i = 0; i < inputs.Length; i++)
         {
+            if (inputs[i] == null) continue;
             inputs[i].enabled = true;
         }
     }
@@ -163,5 +185,31 @@ public class GrenadeThrower : MonoBehaviour
         }
         return grenade;
     }
-    
+    private void SetLine()
+    {
+        Vector3 startPos = bridgeCam.transform.position;
+        Vector3 startVelocity = bridgeCam.transform.forward * throwForce;
+
+        float deltaTime = Time.fixedDeltaTime;  // 0.02 (물리와 동기화)
+        int segmentCount = 32;
+
+        List<Vector3> positions = new List<Vector3>();
+        Vector3 currentPos = startPos;
+        Vector3 currentVel = startVelocity;
+
+        for (int i = 0; i < segmentCount; i++)
+        {
+            positions.Add(currentPos);
+
+            // 물리 엔진과 동일한 업데이트 순서
+            currentVel += Physics.gravity * deltaTime;              // 1. 속도 먼저 중력 적용
+            currentPos += currentVel * deltaTime;                   // 2. 새 속도로 위치 이동
+
+        }
+
+        line.useWorldSpace = true;
+        line.positionCount = positions.Count;
+        line.SetPositions(positions.ToArray());
+    }
+
 }
