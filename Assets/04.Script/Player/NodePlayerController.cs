@@ -188,6 +188,10 @@ public class NodePlayerController : MonoBehaviour
             // 은신 중이 아닐 때 소음 발생
             if (!isHide)
                 NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Move);
+            else
+            {
+                NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Ambush);
+            }
         }
         else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isRunMode)
         {
@@ -205,6 +209,15 @@ public class NodePlayerController : MonoBehaviour
         {
             HideMode();
             UIManager.GetInstance.ShowActionPanel(true);
+            StartMode(PlayerStatus.isMoveMode);
+            RefreshPipAllSafe();
+        }
+        else if (context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isUnhideMode)
+        {
+            RemoveHideMode();
+            UIManager.GetInstance.ShowActionPanel(true);
+            StartMode(PlayerStatus.isMoveMode);
+            RefreshPipAllSafe();
         }
         else if(context.started && IsMyTurn() && currPlayerStatus == PlayerStatus.isThrowMode)
         {
@@ -268,6 +281,7 @@ public class NodePlayerController : MonoBehaviour
         if(context.canceled && (currPlayerStatus == PlayerStatus.isRunMode ||
             currPlayerStatus == PlayerStatus.isAimingMode ||
             currPlayerStatus == PlayerStatus.isHideMode ||
+            currPlayerStatus == PlayerStatus.isUnhideMode ||
             currPlayerStatus == PlayerStatus.isReloadMode ||
             currPlayerStatus == PlayerStatus.isPerkActionMode))
         {
@@ -545,19 +559,37 @@ public class NodePlayerController : MonoBehaviour
             return;
         animationController.HideState();
         isHide = true;
+
+        var ui = UIManager.GetInstance;
+        if (ui != null && ui.turnActionInput != null)
+        {
+            ui.turnActionInput.RefreshHideUI();
+        }
     }
 
     private void RemoveHideMode()
     {
         isHide = false;
         NoiseManager.AddNoise(playerStats.currNode.GetCenter, NoiseType.Unstealth);
+
+        var ui = UIManager.GetInstance;
+        if (ui != null && ui.turnActionInput != null)
+        {
+            ui.turnActionInput.RefreshHideUI();
+        }
     }
 
     public void CheckSneakAttack(Vector3 mouseScreenPos, bool consumeAction = true)
     {
-        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8),true);
+        Vector3Int targetNodeCenter = GetNodeVector3ByRay(mouseScreenPos, (1 << 8), true);
 
         if (targetNodeCenter == new Vector3Int(-999, -999, -999))
+        {
+            return;
+        }
+
+        EntityStats targetEntity = GameManager.GetInstance.GetEntityAt(targetNodeCenter);
+        if (targetEntity == null)
         {
             return;
         }
@@ -790,6 +822,7 @@ public class NodePlayerController : MonoBehaviour
         {
             UIManager.GetInstance.ShowActionPanel(false);
             StartMode(PlayerStatus.isPerkActionMode);
+            mouseStateMachine.ChangeState(MouseType.attack);
         }
     }
 
@@ -877,6 +910,8 @@ public class NodePlayerController : MonoBehaviour
                 else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isPerkActionMode:
+                if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.attack);
+                else mouseStateMachine.ChangeState(MouseType.none);
                 break;
             case PlayerStatus.isThrowMode:
                 if (playerStats.curActionPoint > 0) mouseStateMachine.ChangeState(MouseType.throwing);
@@ -1148,5 +1183,6 @@ public enum PlayerStatus {
     isRangeAttackMode,
     isPerkActionMode,
     isThrowMode,
-    isReloadMode
+    isReloadMode,
+    isUnhideMode
 }

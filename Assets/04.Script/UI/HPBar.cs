@@ -71,7 +71,6 @@ public class HPBar
     public void SetPosition(Vector3 pos)
     {
         slotParent.position = pos;
-        Debug.Log($"피통 위치{pos}");
     }
     public void Destroy()
     {
@@ -106,6 +105,7 @@ public class BillBoard : MonoBehaviour
 {
     private void FixedUpdate()
     {
+        if (Camera.main == null) return;
         transform.rotation = Camera.main.transform.rotation;
     }
 }

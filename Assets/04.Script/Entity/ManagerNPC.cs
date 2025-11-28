@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 public class ManagerNPC : NeutralNPC
 {
     public bool isDetection = false;
     public bool isCowered = false;
     Animator animator;
+
     protected override IEnumerator Start()
     {
         animator = GetComponent<Animator>();
@@ -33,7 +35,7 @@ public class ManagerNPC : NeutralNPC
             isCowered = true;
         }
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     // 피격시 사망 // 위에서 Action에 추가 되어 있는데 추후에 해결하기.

@@ -78,7 +78,7 @@ public class GameEnd : MonoBehaviour
 
         cResult.portrait.sprite = stats.portrait;
         cResult.characterType = stats.characterType;
-        cResult.resultText.text = "이벤트 발생 전";
+        cResult.resultText.text = "습격 중 종료";
     }
 
     public void SetDeadCharacter(EntityStats stats)

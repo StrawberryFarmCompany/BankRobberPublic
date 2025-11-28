@@ -1,31 +1,31 @@
 using BuffDefine;
 using DG.Tweening;
 using NodeDefines;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyNPC : MonoBehaviour
 {
     public EntityData entityData;
-    protected EntityStats stats;
+    public EntityStats stats;
     protected EnemyStateMachine efsm;
     public Gun gun;
-
-    public float fovAngle = 110f;    // 시야각 (부채꼴 각도)
+    public float eta = 0f;
+    private float fovAngle = 60f;    // 시야각 (부채꼴 각도)
 
     [SerializeField] protected EntityStats nearPlayerLocation;
     protected EntityStats lastTarget; // 이전 턴에 공격한 대상
 
-    public NavMeshAgent agent;
     Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
     private EnemySitePreviewer sitePreviewer;
 
     Vector3Int curTargetPos;
     bool canNextMove;
-    bool isMoving;
+    public bool isMoving;
+    public bool isEndTurn;
 
     protected virtual IEnumerator Start()
     {
@@ -33,9 +33,8 @@ public class EnemyNPC : MonoBehaviour
         stats = new EntityStats(entityData,gameObject);
         stats.NodeUpdates(transform.position);
         gun = GetComponent<Gun>();
-        gun.SetGun(gun.data);
-        GameManager.GetInstance.NoneBattleTurn.RemoveStartPointer(TurnTypes.enemy, GameManager.GetInstance.NoneBattleTurn.NPCDefaultEnterPoint);
-        GameManager.GetInstance.NoneBattleTurn.AddStartPointer(TurnTypes.enemy, CalculateBehaviour);
+
+        EnemyManager.Instance.RegisterEnemy(this);
 
         if (ResourceManager.GetInstance.GetBuffData.Count <= 0) yield return new WaitUntil(() => ResourceManager.GetInstance.GetBuffData.Count > 0);
         stats.CreateHpBar();
@@ -45,23 +44,14 @@ public class EnemyNPC : MonoBehaviour
         sitePreviewer = new EnemySitePreviewer(gameObject,stats.characterName);
 
         sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
-        
-    }
 
-    protected virtual void Update()
-    {
-        if (isMoving)
-            SequentialMove();
+        isEndTurn = false;
+        isMoving = false;
     }
 
     protected virtual void CalculateBehaviour()
     {
-        stats.ResetForNewTurn(); // 행동력 및 이동력 초기화
-
-        TaskManager.GetInstance.RemoveTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 1f));
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(GameManager.GetInstance.NoneBattleTurn.ChangeState, 0f));
-
-        stats.NodeUpdates(transform.position);
+        
     }
 
     protected virtual void CombatBehaviour()
@@ -101,8 +91,7 @@ public class EnemyNPC : MonoBehaviour
                 Vector3Int doorFront = FindNearestWalkableNodeAround(doorTile);
 
                 // 그곳까지 이동
-                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move((Vector3)doorFront); }, 0f));
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+                Move((Vector3)doorFront);
 
                 // 이동이 끝난 후에만 문 열기
                 StartCoroutine(TryOpenDoorWhenArrived(blockingDoor, doorFront));
@@ -119,11 +108,9 @@ public class EnemyNPC : MonoBehaviour
 
         // 6) 이동력 없으면 공격만
         RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
-        DOVirtual.DelayedCall(0.3f, () =>
-        {
-            TryAttack();
-            lastTarget = nearPlayerLocation;
-        });
+
+        TryAttack();
+        lastTarget = nearPlayerLocation;
     }
 
     // 시야 안 플레이어를 우선
@@ -149,60 +136,6 @@ public class EnemyNPC : MonoBehaviour
 
         // 3. 아무도 없으면 null
         return null;
-    }
-
-    protected void MoveAndEndTurn(Vector3 targetPosition)
-    {
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() =>
-        {
-            if (this == null || gameObject == null)
-            {
-                Debug.LogWarning("자기 자신이 Destroy됨 -> 행동 중단");
-                return;
-            }
-
-            if (nearPlayerLocation == null)
-            {
-                Debug.LogWarning($"{name}: 타깃이 사라짐 -> 턴 종료");
-                return;
-            }
-
-            Move(targetPosition);
-
-            DOVirtual.DelayedCall(0.6f, () =>
-            {
-                if (nearPlayerLocation == null)
-                {
-                    return;
-                }
-
-                RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
-
-                DOVirtual.DelayedCall(0.3f, () =>
-                {
-                    TryAttack();
-
-                    if (nearPlayerLocation == null || nearPlayerLocation.CurHp <= 0)
-                    {
-                        nearPlayerLocation = FindNextAlivePlayer(null);
-                        if (nearPlayerLocation != null && stats.movement > 0)
-                        {
-                            Debug.Log($"{name}: 추가 타깃 발견 -> {nearPlayerLocation.characterName} 추적 재시작");
-                            MoveAndEndTurn(nearPlayerLocation.GetPosition());
-                            return;
-                        }
-                        else
-                        {
-                            nearPlayerLocation = null;
-                        }
-                    }
-
-                    lastTarget = nearPlayerLocation;
-                });
-            });
-        }, 0f));
-        efsm.eta = 3;
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
     }
 
     public List<EntityStats> DetectVisibleTargets()
@@ -297,10 +230,11 @@ public class EnemyNPC : MonoBehaviour
             if (nearPlayerLocation != null && nearPlayerLocation.currNode != null)
             {
                 Vector3Int targetPos = nearPlayerLocation.currNode.GetCenter;
-                TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => gun.Shoot(targetPos, 1), 0f));
 
-                efsm.eta = 1f;
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
+                TurnTask task = new TurnTask(() => gun.Shoot(targetPos, 1), 1f);
+                task.Action += () => efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyCombatState));
+                TaskManager.GetInstance.AddActionBehaviour(task);
+
                 Debug.Log($"{name}: {nearPlayerLocation.characterName} 공격!");
             }
             else
@@ -311,9 +245,9 @@ public class EnemyNPC : MonoBehaviour
         }
         else
         {
-            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => gun.Reload(), 0f));
-            efsm.eta = 1f;
-            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
+            TurnTask task = new TurnTask(gun.Reload, 1f);
+            task.Action += () => efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyReloadState));
+            TaskManager.GetInstance.AddActionBehaviour(task);
             Debug.Log($"{name}: 장전 중 ({gun.curRounds} 발 남음)");
         }
     }
@@ -348,60 +282,44 @@ public class EnemyNPC : MonoBehaviour
     {
         RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
 
-        DOVirtual.DelayedCall(0.3f, () =>
+        TryAttack();
+
+        // 공격 후 타깃이 죽었으면 즉시 재탐색
+        if (nearPlayerLocation == null)
         {
-            TryAttack();
+            var visible = DetectVisibleTargets();
+            nearPlayerLocation = FindNextAlivePlayer(visible);
 
-            // 공격 후 타깃이 죽었으면 즉시 재탐색
-            if (nearPlayerLocation == null)
+            if (nearPlayerLocation != null && stats.movement > 0)
             {
-                var visible = DetectVisibleTargets();
-                nearPlayerLocation = FindNextAlivePlayer(visible);
-
-                if (nearPlayerLocation != null && stats.movement > 0)
-                {
-                    MoveAndAttackFlow();
-                }
-                else
-                {
-                    Debug.Log($"{name}: 공격 후 더 이상 타깃 없음 -> 턴 종료");
-                }
+                MoveAndAttackFlow();
             }
-        });
+            else
+            {
+                Debug.Log($"{name}: 공격 후 더 이상 타깃 없음 -> 턴 종료");
+            }
+        }
     }
 
     private void MoveAndAttackFlow()
     {
-        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() =>
-        {
-            if (nearPlayerLocation == null)
-                return;
+        if (nearPlayerLocation == null)
+            return;
 
-            Move(nearPlayerLocation.GetPosition());
+        Move(nearPlayerLocation.GetPosition());
 
-            // 이동 후 공격
-            DOVirtual.DelayedCall(0.6f, () =>
-            {
-                if (nearPlayerLocation == null) return;
+        //// 이동 후 공격
+        if (nearPlayerLocation == null) return;
 
-                RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
+        RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
 
-                DOVirtual.DelayedCall(0.3f, () =>
-                {
-                    TryAttack();
+        TryAttack();
 
-                    // 공격 후 타깃 갱신
-                    var visible = DetectVisibleTargets();
-                    nearPlayerLocation = FindNextAlivePlayer(visible);
+        // 공격 후 타깃 갱신
+        var visible = DetectVisibleTargets();
+        nearPlayerLocation = FindNextAlivePlayer(visible);
 
-                    lastTarget = nearPlayerLocation;
-                });
-            });
-
-        }, 0f));
-
-        efsm.eta = 3;
-        efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+        lastTarget = nearPlayerLocation;
     }
 
     public void SecurityLevel(ushort level)
@@ -496,6 +414,7 @@ public class EnemyNPC : MonoBehaviour
 
         if (GameManager.GetInstance.GetNode(targetPos) == null)
         {
+            isMoving = false;
             return;
         }
 
@@ -513,7 +432,7 @@ public class EnemyNPC : MonoBehaviour
         {
             if (stats.ConsumeMovement(1))
             {
-                pathQueue.Enqueue(step);
+                pathQueue.Enqueue((Vector3Int)step);
             }
             else
             {
@@ -522,18 +441,18 @@ public class EnemyNPC : MonoBehaviour
             }
         }
 
-        if (pathQueue.Count > 0)
+        if (pathQueue.Count == 0)
         {
-            float timePerTile = 0.5f;
-            efsm.eta = pathQueue.Count * timePerTile;
-            //최종 이동 구현
-            isMoving = true;
-            canNextMove = true;
+            isMoving = false;
+            return;
         }
-        else
-        {
-            efsm.eta = 0;
-        }
+
+        TurnTask task = new TurnTask(SequentialMove, GetPathTime(0.3f, 0.2f));
+        task.Action += () => efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
+        TaskManager.GetInstance.AddActionBehaviour(task);
+
+        isMoving = true;
+        canNextMove = true;
     }
 
     private List<Vector3Int> GenerateChebyshevPath(Vector3Int start, Vector3Int end)
@@ -613,46 +532,133 @@ public class EnemyNPC : MonoBehaviour
 
     public void SequentialMove()
     {
-        // 아직 목표가 없으면 다음 큐 꺼내기
-        if (!isMoving) return;
-
-        // 도착 판정 (== 대신 거리로 체크)
-        if (Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        if (pathQueue.Count > 0)
         {
-            canNextMove = true;
+            Vector3Int targetPos = pathQueue.Dequeue();
+            Node node = GameManager.GetInstance.GetNode(targetPos);
+            if (node != null && node.Standing.Count > 0)
+            {
+                stats.HealMovement(pathQueue.Count + 1);
+                pathQueue.Clear();
+                stats.NodeUpdates(transform.position);
+                stats.GetTileInteraction(transform.position);
+                return;
+            }
+            else if (pathQueue.Count <= 1)
+            {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
+                    stats.NodeUpdates(transform.position);
+                    sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
+                    stats.GetTileInteraction(transform.position);
+                    SequentialMove();
+                });
+            }
+            else
+            {
+                eta = DoMoveAndRotate(Ease.Unset, targetPos, 0.2f, 0.3f, () => {
+                    stats.NodeUpdates(transform.position);
+                    sitePreviewer.SetMesh(stats.currNode.GetCenter, fovAngle * 0.5f, transform.eulerAngles.y, stats.attackRange);
+                    stats.GetTileInteraction(transform.position);
+                    SequentialMove();
+                });
+            }
         }
-
-        if (canNextMove && pathQueue.Count > 0)
-        {
-            canNextMove = false;
-
-            curTargetPos = pathQueue.Dequeue();
-            agent.SetDestination(curTargetPos);
-            stats.NodeUpdates(curTargetPos);
-        }
-
-        // 모든 경로 소모 시 이동 종료
-        if (pathQueue.Count == 0 && Vector3.Distance(transform.position, curTargetPos) < 0.1f)
+        else
         {
             isMoving = false;
+            eta = 0f;
+            efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
             if (nearPlayerLocation != null)
             {
                 // LookAt 대신
                 RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
 
                 // 회전 끝난 후 공격
-                DOVirtual.DelayedCall(0.3f, () => TryAttack());
+                TryAttack();
             }
         }
     }
+
+
 
     public void StopMove()
     {
         isMoving = false;
         pathQueue.Clear();
-        agent.ResetPath();
+        eta = 0f;
+        stats.NodeUpdates(transform.position);
+        stats.GetTileInteraction(transform.position);
     }
+    private float DoMoveAndRotate(Ease ease, Vector3Int pos, float moveDuration, float rotationDuration, Action action = null)
+    {
+        transform.DOComplete(true);
 
+        Vector2 relPos = new Vector2(pos.x, pos.z) - new Vector2(transform.position.x, transform.position.z);
+        float radian = Mathf.Atan2(relPos.x, relPos.y);
+        float angle = (Mathf.Rad2Deg * radian);
+
+
+        float minAngle = (Mathf.Min(angle, transform.eulerAngles.y) + 180) % 360f;
+        float maxAngle = (Mathf.Max(angle, transform.eulerAngles.y) + 180) % 360f;
+
+        float rotAngle = (maxAngle - minAngle) / 360f;
+        if (rotAngle == 0)
+        {
+            rotationDuration = 0;
+        }
+        else
+        {
+            float originRotDur = rotationDuration;
+            rotationDuration = originRotDur * rotAngle;
+            rotationDuration = MathF.Abs(rotationDuration);
+        }
+        transform.DORotate(Vector3.up * angle, rotationDuration).OnComplete(() =>
+        {
+            transform.DOMove(pos, moveDuration).SetEase(ease).OnComplete(() =>
+            {
+                if (stats == null) return;
+                action?.Invoke();
+            });
+        });
+        return moveDuration + rotationDuration;
+    }
+    private float GetPathTime(float moveDuration, float rotationDuration)
+    {
+        Queue<Vector3Int> copyQ = new Queue<Vector3Int>(pathQueue.ToArray());
+        float time = 0f;
+        Vector3 currPos = transform.position;
+        float currRot = transform.eulerAngles.y;
+        while (copyQ.Count > 0)
+        {
+            Vector3 nextPos = copyQ.Dequeue();
+            Vector2 relPos = new Vector2(nextPos.x, nextPos.z) - new Vector2(currPos.x, currPos.z);
+            float radian = Mathf.Atan2(relPos.x, relPos.y);
+            float angle = (Mathf.Rad2Deg * radian);
+
+
+            float minAngle = (Mathf.Min(angle, currRot) + 180) % 360f;
+            float maxAngle = (Mathf.Max(angle, currRot) + 180) % 360f;
+            
+            currRot = angle;
+            currPos = nextPos;
+
+            float rotAngle = (maxAngle - minAngle) / 360f;
+            float currRotDuration = rotationDuration;
+            if (rotAngle == 0)
+            {
+                currRotDuration = 0;
+            }
+            else
+            {
+                float originRotDur = currRotDuration;
+                currRotDuration = originRotDur * rotAngle;
+                currRotDuration = MathF.Abs(currRotDuration);
+            }
+            time += currRotDuration + moveDuration;
+        }
+
+        return time;
+    }
     // 가장 가까운 노드 찾기
     private Vector3Int FindNearestWalkableNodeAround(Vector3Int center)
     {
@@ -801,8 +807,8 @@ public class EnemyNPC : MonoBehaviour
 
     private IEnumerator IdleRotation()
     {
-        float firstLookAngle = Random.Range(-180, 180); // 첫 번째 각도 확인
-        float secondLookAngle = Random.Range(-180, 180); // 두 번째 각도 확인
+        float firstLookAngle = UnityEngine.Random.Range(-180, 180); // 첫 번째 각도 확인
+        float secondLookAngle = UnityEngine.Random.Range(-180, 180); // 두 번째 각도 확인
         Quaternion originalRotation = transform.rotation;
 
         this.gameObject.transform.rotation = Quaternion.Euler(0, firstLookAngle, 0);
@@ -818,9 +824,22 @@ public class EnemyNPC : MonoBehaviour
         efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyIdleRotationState));
     }
 
+    protected void EndMyTurn()
+    {
+        if (isEndTurn) return;
+        isEndTurn = true;
+        EnemyManager.Instance.ReportEnemyDone(this);
+    }
+
+    public void TakeTurn()
+    {
+        CalculateBehaviour();
+    }
+
     private void OnDestroy()
     {
         transform.DOKill(false);
         stats.DestroyEntity();
+        sitePreviewer?.Destroy();
     }
 }

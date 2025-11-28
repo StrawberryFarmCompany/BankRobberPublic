@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26a5f1d1181dc8d44ba6bbfa1d3cc5b5, type: 3}
+  m_Name: Quest1
+  m_EditorClassIdentifier: 
+  questID: 1
+  questName: "\uB450 \uBC88\uC9F8 \uD29C\uD1A0\uB9AC\uC5BC"
+  description: "\uAC01\uC790\uC758 \uC815\uC758\uC5D0 \uB530\uB77C \uB300\uC758\uB97C
+    \uD589\uD558\uAE30 \uC704\uD574 \uD3F0\uACFC \uC870\uC6B0\uD588\uB2E4.\n\n\uD3F0\uC758
+    \uB9D0\uB300\uB85C \uB450 \uBC18\uCA68 \uD29C\uD1A0\uB9AC\uC5BC\uC744 \uB05D\uB0B4\uBCF4\uC790."
+  scene: 3
+  sceneName: "\uD29C\uD1A0\uB9AC\uC5BC2 \uC2A4\uD14C\uC774\uC9C0"
+  requiredScore: 0
+  currentScore: 0
+  isScoreCompleted: 0
+  requiredSuccesses: 0
+  currentSuccesses: 0
+  isSuccessesCompleted: 1
+  requiredPerfects: 0
+  currentPerfects: 0
+  isPerfectsCompleted: 1
+  requiredFails: 0
+  currentFails: 0
+  isFailedCompleted: 1
+  characterWithGuns: []
+  targetNpc: 0
+  branch: 0
+  index: 0
+  targetDialogue: 
+  status: 0
+  successChanges: []
+  failChanges: []

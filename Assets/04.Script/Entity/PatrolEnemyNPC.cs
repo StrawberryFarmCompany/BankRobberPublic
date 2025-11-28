@@ -1,9 +1,6 @@
-using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class PatrolEnemyNPC : EnemyNPC
 {
@@ -29,11 +26,6 @@ public class PatrolEnemyNPC : EnemyNPC
         efsm = new EnemyStateMachine(this, transform.GetComponentInChildren<Animator>() ,EnemyStates.PatrolEnemyIdleRotationState);
         stats.OnDead += DeadAnimator;
     }
-    
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     // 턴마다 실행될 매서드
     protected override void CalculateBehaviour()
@@ -55,7 +47,6 @@ public class PatrolEnemyNPC : EnemyNPC
             if (isNoise == true && isArrivedNoisePlace == false)
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(noiseLocation); }, 0f));
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyInvestigateState));
 
                 if (Vector3.Distance(transform.position, noiseLocation) < 0.1f)
                 {
@@ -73,7 +64,6 @@ public class PatrolEnemyNPC : EnemyNPC
             else if (GameManager.GetInstance.GetVecInt(locationList[curLocation]) != GameManager.GetInstance.GetVecInt(gameObject.transform.position))
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(locationList[curLocation]); }, 0f));
-                efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
             }
 
             else if (Vector3.Distance(transform.position, locationList[curLocation]) < 0.1f)
@@ -90,7 +80,8 @@ public class PatrolEnemyNPC : EnemyNPC
             {
                 RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
             }
-            TryAttack();
+
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { TryAttack(); }, 0f));
 
             // 공격이 실패했거나 행동력이 남았으면 추적 후 공격
             if (stats.curActionPoint > 0)
@@ -98,7 +89,6 @@ public class PatrolEnemyNPC : EnemyNPC
                 if (nearPlayerLocation != null)
                 {
                     TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
-                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 }
 
                 else
@@ -111,10 +101,10 @@ public class PatrolEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel == 3)
         {
-            CombatBehaviour();
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { CombatBehaviour(); }, 0f));
         }
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     public void DeadAnimator()

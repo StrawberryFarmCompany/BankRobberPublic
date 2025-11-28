@@ -17,16 +17,12 @@ public class CopEnemyNPC : EnemyNPC
         stats.OnDead += DeadAnimator;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     protected override void CalculateBehaviour()
     {
-        CombatBehaviour();
+        TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { CombatBehaviour(); }, 0f));
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     //public void ChangeToChase()

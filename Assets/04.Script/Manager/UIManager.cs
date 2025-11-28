@@ -35,6 +35,8 @@ public class UIManager : MonoBehaviour
 
     public LeftInteractionPanel leftInteractionPanel;
 
+    public TurnActionInput turnActionInput;
+
     [Header("게임 엔드 패널")]
     public GameEnd gameEndUI;
     //[HideInInspector]
@@ -58,6 +60,9 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         GetInstance = this;
+
+        turnActionInput = GetComponentInChildren<TurnActionInput>(true);
+        actionTooltip = GetComponentInChildren<ActionTooltip>(true);
     }
 
     private IEnumerator Start()
@@ -70,10 +75,20 @@ public class UIManager : MonoBehaviour
 
     public void ShowActionPanel(bool show)
     {
-        actionPanel.SetActive(show);
-        cancelPanel.SetActive(!show);
+        if (actionPanel != null)
+            actionPanel.SetActive(show);
+
+        if (cancelPanel != null)
+            cancelPanel.SetActive(!show);
+
         if (actionTooltip != null)
             actionTooltip.Hide();
+
+        if (show)
+        {
+            if (turnActionInput != null)
+                turnActionInput.RefreshHideUI();
+        }
     }
 
     public void SetSelectionLocked(bool locked) => SelectionLocked = locked;
@@ -139,13 +154,18 @@ public class UIManager : MonoBehaviour
         }
 
         Skill so = SkillSOMapper.Get(player.playerStats.playerSkill);
-        Debug.Log($"Skill: {player.playerStats.playerSkill}, SO: {so}, effect: {(so != null ? so.effect : "NULL")}");
 
         if (so == null) return;
 
         specialSkillTooltip.description = so.effect;
+        specialSkillTooltip.baseDescription = so.effect;
     }
-
+    public void SetThrowingUIOnOff(bool onOff)
+    {
+        transform.Find("Canvas").gameObject.SetActive(onOff);
+        transform.Find("GuideUICanvas").gameObject.SetActive(onOff);
+        transform.Find("CharacterStatusCanvas").gameObject.SetActive(onOff);
+    }
     private void OnEnable()
     {
         EquippedSkills.OnChanged += RefreshSpecialSkillTooltip;

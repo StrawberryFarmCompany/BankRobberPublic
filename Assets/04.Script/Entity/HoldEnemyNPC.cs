@@ -22,12 +22,6 @@ public class HoldEnemyNPC : EnemyNPC
         efsm = new EnemyStateMachine(this,transform.GetComponentInChildren<Animator>(), EnemyStates.HoldEnemyIdleState);
         stats.OnDead += DeadAnimator;
     }
-
-    protected override void Update()
-    {
-        base.Update();
-    }
-
     protected override void CalculateBehaviour()
     {
         DetectNoise();
@@ -52,7 +46,6 @@ public class HoldEnemyNPC : EnemyNPC
             else if (isNoise == false && isHomePlace == false)
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(homeLocation); }, 0f));
-                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyChaseState));
 
                 if (Vector3.Distance(transform.position, homeLocation) < 0.1f)
                 {
@@ -62,7 +55,6 @@ public class HoldEnemyNPC : EnemyNPC
             else if (isNoise == true && isNoisePlace == false)
             {
                 TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(noiseLocation); }, 0f));
-                efsm.ChangeState(efsm.FindState(EnemyStates.HoldEnemyInvestigateState));
 
                 if (Vector3.Distance(transform.position, noiseLocation) < 0.1f)
                 {
@@ -83,7 +75,8 @@ public class HoldEnemyNPC : EnemyNPC
             {
                 RotateToward(nearPlayerLocation.currNode.GetCenter, 0.3f);
             }
-            TryAttack();
+
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { TryAttack(); }, 0f));
 
             // 공격이 실패했거나 행동력이 남았으면 추적 후 공격
             if (stats.curActionPoint > 0)
@@ -91,7 +84,6 @@ public class HoldEnemyNPC : EnemyNPC
                 if (nearPlayerLocation != null)
                 {
                     TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { Move(nearPlayerLocation.GetPosition()); }, 0f));
-                    efsm.ChangeState(efsm.FindState(EnemyStates.PatrolEnemyPatrolState));
                 }
 
                 else
@@ -104,10 +96,10 @@ public class HoldEnemyNPC : EnemyNPC
 
         else if (stats.secData.GetSecLevel == 3)
         {
-            CombatBehaviour();
+            TaskManager.GetInstance.AddTurnBehaviour(new TurnTask(() => { CombatBehaviour(); }, 0f));
         }
 
-        base.CalculateBehaviour();
+        EndMyTurn();
     }
 
     public void DeadAnimator()
